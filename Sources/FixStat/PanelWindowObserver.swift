@@ -58,6 +58,9 @@ struct PanelWindowObserver: NSViewRepresentable {
             // the next opening can be placed afresh (e.g. on another screen).
             anchoredTop = visible ? window.frame.maxY : nil
             onVisibilityChange(visible)
+            // The content may have changed size while the panel was closed (e.g.
+            // technician mode switched in Settings); fit the window on opening.
+            if visible { keepTopEdge() }
         }
 
         override func setFrameSize(_ newSize: NSSize) {
