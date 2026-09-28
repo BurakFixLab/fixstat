@@ -529,6 +529,16 @@
         }
       }
     },
+    "Chip" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çip"
+          }
+        }
+      }
+    },
     "Contract" : {
       "localizations" : {
         "tr" : {
@@ -545,6 +555,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Serin"
+          }
+        }
+      }
+    },
+    "Created with FixStat %@ — github.com/BurakFixLab/fixstat. Serial numbers are masked." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FixStat %@ ile oluşturuldu — github.com/BurakFixLab/fixstat. Seri numaraları maskelenmiştir."
           }
         }
       }
@@ -599,12 +619,32 @@
         }
       }
     },
+    "Design capacity" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasarım kapasitesi"
+          }
+        }
+      }
+    },
     "Details" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayrıntılar"
+          }
+        }
+      }
+    },
+    "Device" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cihaz"
           }
         }
       }
@@ -919,6 +959,16 @@
         }
       }
     },
+    "Highest temperature (lifetime)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek sıcaklık (ömür boyu)"
+          }
+        }
+      }
+    },
     "Hot" : {
       "localizations" : {
         "tr" : {
@@ -1039,6 +1089,26 @@
         }
       }
     },
+    "Mac" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac"
+          }
+        }
+      }
+    },
+    "Mac inspection report" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac inceleme raporu"
+          }
+        }
+      }
+    },
     "Manufacturer data" : {
       "localizations" : {
         "tr" : {
@@ -1055,6 +1125,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gerçek maks."
+          }
+        }
+      }
+    },
+    "Maximum capacity" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerçek maksimum kapasite"
           }
         }
       }
@@ -1085,6 +1165,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mac tamircileri için menü çubuğu izleme uygulaması. Sensörleri yalnızca okur — SMC'ye asla yazmaz."
+          }
+        }
+      }
+    },
+    "Model identifier" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model kimliği"
           }
         }
       }
@@ -1219,6 +1309,16 @@
         }
       }
     },
+    "Note at the bottom" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alt not"
+          }
+        }
+      }
+    },
     "On battery" : {
       "localizations" : {
         "tr" : {
@@ -1289,6 +1389,46 @@
         }
       }
     },
+    "Optional" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İsteğe bağlı"
+          }
+        }
+      }
+    },
+    "Optional, e.g. phone or warranty terms" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İsteğe bağlı, ör. telefon veya garanti koşulları"
+          }
+        }
+      }
+    },
+    "PDF report" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF rapor"
+          }
+        }
+      }
+    },
+    "PDF…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF…"
+          }
+        }
+      }
+    },
     "Pack" : {
       "localizations" : {
         "tr" : {
@@ -1335,6 +1475,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tamir sonrası test"
+          }
+        }
+      }
+    },
+    "Power" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç"
+          }
+        }
+      }
+    },
+    "Power adapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç adaptörü"
           }
         }
       }
@@ -1509,6 +1669,16 @@
         }
       }
     },
+    "Shop name" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dükkân adı"
+          }
+        }
+      }
+    },
     "Show" : {
       "localizations" : {
         "tr" : {
@@ -1645,6 +1815,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sıcaklık renkleri"
+          }
+        }
+      }
+    },
+    "Temperatures (at report time)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıcaklıklar (rapor anında)"
           }
         }
       }
@@ -1845,6 +2025,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "kullanımda"
+          }
+        }
+      }
+    },
+    "macOS" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS"
           }
         }
       }

@@ -21,7 +21,7 @@ struct SettingsView: View {
                 .tabItem { Label("Sensors", systemImage: "list.bullet") }
                 .tag(2)
         }
-        .frame(width: 520, height: 540)
+        .frame(width: 540, height: 640)
     }
 }
 
@@ -72,6 +72,7 @@ private struct GeneralSettings: View {
                 Text("While the menu is closed, values refresh at most every 5 seconds to save energy.")
                     .foregroundStyle(.secondary)
             }
+            ReportSettingsSection()
             AboutSection()
         }
         .formStyle(.grouped)
@@ -211,5 +212,21 @@ private struct SensorSettingsRow: View {
                 .frame(width: 44, alignment: .leading)
         }
         .onAppear { name = sensor.resolved?.name ?? "" }
+    }
+}
+
+/// Shop name and note for the PDF customer report.
+private struct ReportSettingsSection: View {
+    @AppStorage(Pref.reportShopName) private var shopName = ""
+    @AppStorage(Pref.reportNote) private var note = ""
+
+    var body: some View {
+        Section {
+            TextField("Shop name", text: $shopName, prompt: Text("Optional"))
+            TextField("Note at the bottom", text: $note, prompt: Text("Optional, e.g. phone or warranty terms"), axis: .vertical)
+                .lineLimit(1...3)
+        } header: {
+            Text("PDF report")
+        }
     }
 }

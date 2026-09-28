@@ -12,6 +12,9 @@ enum Pref {
     static let hotThreshold = "threshold.hot"
     static let cellImbalanceThreshold = "threshold.cellImbalance"
     static let updateInterval = "updateInterval"
+    /// Shop name and footer note printed on the PDF report.
+    static let reportShopName = "report.shopName"
+    static let reportNote = "report.note"
     /// Newline-separated sensor uids hidden from the lists.
     static let hiddenSensors = "hiddenSensors"
 

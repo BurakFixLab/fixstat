@@ -145,12 +145,32 @@ struct ExportMenu: View {
 
     var body: some View {
         Menu("Export report") {
+            Button("PDF…") { exportPDF() }
             Button("CSV…") { export(csv: true) }
             Button("JSON…") { export(csv: false) }
         }
         .menuStyle(.button)
         .buttonStyle(.borderedProminent)
         .fixedSize()
+    }
+
+    private func exportPDF() {
+        guard let data = PDFReport.render(monitor: monitor) else { return }
+        save(data, type: .pdf, extension: "pdf")
+    }
+
+    private func save(_ data: Data, type: UTType, extension ext: String) {
+        let panel = NSSavePanel()
+        panel.allowedContentTypes = [type]
+        let date = Date().formatted(.iso8601.year().month().day())
+        panel.nameFieldStringValue = "FixStat-\(monitor.system.model)-\(date).\(ext)"
+        NSApp.activate()
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        do {
+            try data.write(to: url)
+        } catch {
+            NSAlert(error: error).runModal()
+        }
     }
 
     private func export(csv: Bool) {

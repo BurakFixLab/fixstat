@@ -9,7 +9,7 @@ import SwiftUI
 /// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead,
 /// `--details` the battery details window, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
 ///
-///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json
+///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf
 ///
 /// writes the same report as "Export report" (serials masked) and exits.
 ///
@@ -87,7 +87,12 @@ enum Snapshot {
             monitor.refresh()
             let report = SensorReport(monitor: monitor)
             do {
-                let data = url.pathExtension.lowercased() == "csv" ? report.csv() : try report.json()
+                let data: Data
+                switch url.pathExtension.lowercased() {
+                case "csv": data = report.csv()
+                case "pdf": data = PDFReport.render(monitor: monitor) ?? Data()
+                default: data = try report.json()
+                }
                 try data.write(to: url)
                 exit(0)
             } catch {
