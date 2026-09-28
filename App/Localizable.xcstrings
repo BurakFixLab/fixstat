@@ -66,6 +66,16 @@
         }
       }
     },
+    "About FixStat" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FixStat Hakkında"
+          }
+        }
+      }
+    },
     "Adapter %@" : {
       "localizations" : {
         "tr" : {
@@ -422,6 +432,16 @@
         }
       }
     },
+    "Free and open source (MIT License)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ücretsiz ve açık kaynak (MIT Lisansı)."
+          }
+        }
+      }
+    },
     "Full in" : {
       "localizations" : {
         "tr" : {
@@ -592,6 +612,16 @@
         }
       }
     },
+    "Menu bar monitor for Mac repair technicians. Reads sensors only — never writes to the SMC." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac tamircileri için menü çubuğu izleme uygulaması. Sensörleri yalnızca okur — SMC'ye asla yazmaz."
+          }
+        }
+      }
+    },
     "Name" : {
       "localizations" : {
         "tr" : {
@@ -728,6 +758,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Güç adaptörü · şu an %@"
+          }
+        }
+      }
+    },
+    "Project page" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proje sayfası"
           }
         }
       }
@@ -938,6 +978,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Güncelleme sıklığı"
+          }
+        }
+      }
+    },
+    "Version" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sürüm"
           }
         }
       }

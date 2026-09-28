@@ -21,7 +21,7 @@ struct SettingsView: View {
                 .tabItem { Label("Sensors", systemImage: "list.bullet") }
                 .tag(2)
         }
-        .frame(width: 520, height: 460)
+        .frame(width: 520, height: 540)
     }
 }
 
@@ -72,6 +72,7 @@ private struct GeneralSettings: View {
                 Text("While the menu is closed, values refresh at most every 5 seconds to save energy.")
                     .foregroundStyle(.secondary)
             }
+            AboutSection()
         }
         .formStyle(.grouped)
     }

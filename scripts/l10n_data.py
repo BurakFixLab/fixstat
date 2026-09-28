@@ -92,6 +92,12 @@ TR = {
         "Menü kapalıyken değerler enerji tasarrufu için en fazla 5 saniyede bir yenilenir.",
     "estimated": "tahmini",
 
+    "About FixStat": "FixStat Hakkında",
+    "Free and open source (MIT License).": "Ücretsiz ve açık kaynak (MIT Lisansı).",
+    "Menu bar monitor for Mac repair technicians. Reads sensors only — never writes to the SMC.":
+        "Mac tamircileri için menü çubuğu izleme uygulaması. Sensörleri yalnızca okur — SMC'ye asla yazmaz.",
+    "Project page": "Proje sayfası",
+    "Version": "Sürüm",
     "Appearance": "Görünüm",
     "Dark": "Koyu",
     "Light": "Açık",
