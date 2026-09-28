@@ -7,6 +7,7 @@ let package = Package(
     products: [
         .library(name: "MacSensors", targets: ["MacSensors"]),
         .executable(name: "sensordump", targets: ["sensordump"]),
+        .executable(name: "sensormap", targets: ["sensormap"]),
     ],
     targets: [
         // C shims for the AppleSMC user client (read-only) and the private
@@ -23,6 +24,11 @@ let package = Package(
         .executableTarget(
             name: "sensordump",
             dependencies: ["MacSensors"]
+        ),
+        .executableTarget(
+            name: "sensormap",
+            dependencies: ["MacSensors"],
+            linkerSettings: [.linkedFramework("Metal")]
         ),
         .testTarget(
             name: "MacSensorsTests",
