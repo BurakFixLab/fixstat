@@ -177,7 +177,9 @@ struct TechnicianPanel: View {
                     }
                 }
             }
-            .frame(maxHeight: 280)
+            // Explicit height, see DefaultPanel: a ScrollView in the menu bar
+            // window would otherwise collapse.
+            .frame(height: min(CGFloat(matched.count + (unmatched.isEmpty ? 0 : 1)) * 29, 300))
         }
     }
 

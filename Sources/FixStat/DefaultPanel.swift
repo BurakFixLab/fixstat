@@ -85,6 +85,8 @@ struct DefaultPanel: View {
                     .font(.caption)
             }
             if showAll {
+                // Explicit height: inside the menu bar window a ScrollView has no
+                // ideal height of its own and would collapse to zero.
                 ScrollView {
                     VStack(spacing: 5) {
                         ForEach(visible.sorted(by: Self.displayOrder)) { sensor in
@@ -92,7 +94,7 @@ struct DefaultPanel: View {
                         }
                     }
                 }
-                .frame(maxHeight: 260)
+                .frame(height: min(CGFloat(visible.count) * Self.rowHeight, 280))
             } else if rows.isEmpty {
                 Text("No temperature sensors found").font(.callout).foregroundStyle(.secondary)
             } else {
@@ -106,6 +108,9 @@ struct DefaultPanel: View {
     /// Id prefixes in display order; unlisted ids come after, by group.
     private static let idOrder = ["cpu.pcluster", "cpu.ecluster", "cpu.", "gpu.", "ssd.nand", "ssd.",
                                   "battery.", "chassis.", "soc.", "board.", "pmu.", "pmu2."]
+
+    /// Approximate height of one sensor row including spacing.
+    static let rowHeight: CGFloat = 22
 
     static func displayOrder(_ a: DisplaySensor, _ b: DisplaySensor) -> Bool {
         func rank(_ sensor: DisplaySensor) -> Int {
