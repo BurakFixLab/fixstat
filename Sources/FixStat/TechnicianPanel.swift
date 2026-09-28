@@ -23,6 +23,7 @@ struct TechnicianPanel: View {
             fanRow
             HStack {
                 SettingsButton()
+                HistoryButton()
                 Spacer()
                 ExportMenu()
             }

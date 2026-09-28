@@ -31,6 +31,8 @@ struct SensorReport: Encodable {
     let sensors: [Sensor]
     let fans: [FanReading]
     let load: Load
+    /// Daily battery health recorded by FixStat on this Mac (oldest first).
+    let healthHistory: [BatteryHealthRecord]
 
     @MainActor
     init(monitor: Monitor) {
@@ -53,6 +55,7 @@ struct SensorReport: Encodable {
         load = Load(cpuUsagePercent: monitor.cpuUsage.map { $0 * 100 },
                     memoryUsedBytes: monitor.memory?.used,
                     memoryTotalBytes: monitor.memory?.total)
+        healthHistory = monitor.history.healthRecords()
     }
 
     func json() throws -> Data {
@@ -98,6 +101,9 @@ struct SensorReport: Encodable {
         }
         for fan in fans {
             add("fan", "F\(fan.index)Ac", "", fan.actual, "rpm")
+        }
+        for record in healthHistory {
+            add("healthHistory", record.day, record.cycleCount.map { "cycles \($0)" } ?? "", record.health, "%")
         }
         add("load", "cpu", "", load.cpuUsagePercent, "%")
         add("load", "memoryUsed", "", load.memoryUsedBytes.map(Double.init), "B")

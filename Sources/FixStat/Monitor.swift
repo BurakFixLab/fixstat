@@ -47,9 +47,15 @@ final class Monitor {
     @ObservationIgnored private var timer: Timer?
     @ObservationIgnored private var defaultsObserver: NSObjectProtocol?
     @ObservationIgnored private var lastInterval = 0.0
+    @ObservationIgnored let history: BatteryHistoryStore
+    @ObservationIgnored private var lastHistorySample = Date.distantPast
+    @ObservationIgnored private var lastPrune = Date.distantPast
+    /// Seconds between two battery history samples.
+    static let historyInterval: TimeInterval = 60
 
     init() {
         Pref.register()
+        history = BatteryHistoryStore(directory: Self.dataDirectory)
         loadMap()
         buildSensors()
         refresh()
@@ -63,9 +69,19 @@ final class Monitor {
 
     // MARK: - Sensor map
 
-    static var userMapURL: URL {
+    /// ~/Library/Application Support/FixStat, or the directory passed with
+    /// `--data-dir` (used for UI checks with sample data).
+    static var dataDirectory: URL {
+        let arguments = CommandLine.arguments
+        if let index = arguments.firstIndex(of: "--data-dir"), index + 1 < arguments.count {
+            return URL(fileURLWithPath: arguments[index + 1], isDirectory: true)
+        }
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        return base.appendingPathComponent("FixStat", isDirectory: true).appendingPathComponent("sensor-map.json")
+        return base.appendingPathComponent("FixStat", isDirectory: true)
+    }
+
+    static var userMapURL: URL {
+        dataDirectory.appendingPathComponent("sensor-map.json")
     }
 
     static var bundledMapURL: URL? {
@@ -158,11 +174,21 @@ final class Monitor {
 
     func refresh() {
         let defaults = UserDefaults.standard
-        let needsBattery = panelVisible || defaults.bool(forKey: Pref.menuBarBatteryIcon)
+        let now = Date()
+        let historyDue = now.timeIntervalSince(lastHistorySample) >= Self.historyInterval
+        let needsBattery = panelVisible || historyDue || defaults.bool(forKey: Pref.menuBarBatteryIcon)
             || defaults.bool(forKey: Pref.menuBarBatteryPercent)
         if needsBattery {
             let latest = BatteryReader.read()
             if latest != battery { battery = latest }
+            if historyDue, let latest {
+                history.record(latest, at: now)
+                lastHistorySample = now
+                if now.timeIntervalSince(lastPrune) > 24 * 3600 {
+                    history.prune(now: now)
+                    lastPrune = now
+                }
+            }
         }
 
         guard let sampler else { return }

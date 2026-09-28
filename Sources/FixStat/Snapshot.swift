@@ -6,7 +6,8 @@ import SwiftUI
 ///   FixStat.app/Contents/MacOS/FixStat --snapshot out.png [--technician] [--settings TAB]
 ///       [--dark|--light] [-AppleLanguages "(tr)"]
 ///
-/// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead.
+/// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead,
+/// `--history` the battery history window (use `--data-dir DIR` for sample data).
 ///
 ///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json
 ///
@@ -31,7 +32,12 @@ enum Snapshot {
             i + 1 < arguments.count ? Int(arguments[i + 1]) : nil
         }
         let root: AnyView
-        if let settingsTab {
+        if arguments.contains("--history") {
+            root = AnyView(HistoryView()
+                .environment(monitor)
+                .frame(width: 680, height: 700)
+                .background(Color(nsColor: .windowBackgroundColor)))
+        } else if let settingsTab {
             root = AnyView(SettingsView(initialTab: settingsTab)
                 .environment(monitor)
                 .background(Color(nsColor: .windowBackgroundColor)))

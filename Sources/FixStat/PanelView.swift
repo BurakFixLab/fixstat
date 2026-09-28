@@ -21,25 +21,44 @@ struct PanelView: View {
     }
 }
 
-/// Settings / Quit buttons shared by both panels.
+/// Settings / History / Quit buttons shared by both panels.
 struct SettingsButton: View {
     @Environment(\.openSettings) private var openSettings
 
     var body: some View {
         Button("Settings…") {
-            closePanel()
-            NSApp.activate()
-            openSettings()
-            // A menu bar (LSUIElement) app does not bring the newly created
-            // Settings window to the front by itself.
-            DispatchQueue.main.async {
-                NSApp.activate()
-                NSApp.windows
-                    .first { $0.identifier?.rawValue.contains("Settings") == true }?
-                    .makeKeyAndOrderFront(nil)
-            }
+            present(windowIdentifier: "Settings") { openSettings() }
         }
         .keyboardShortcut(",")
+    }
+}
+
+struct HistoryButton: View {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Button {
+            present(windowIdentifier: HistoryView.windowID) { openWindow(id: HistoryView.windowID) }
+        } label: {
+            Label("History", systemImage: "chart.xyaxis.line")
+        }
+        .help(Text("Battery history"))
+    }
+}
+
+/// Opens a window from the menu bar panel: closes the panel, activates the app
+/// and brings the window to the front (a menu bar / LSUIElement app does not do
+/// that by itself for newly created windows).
+@MainActor
+private func present(windowIdentifier: String, open: () -> Void) {
+    closePanel()
+    NSApp.activate()
+    open()
+    DispatchQueue.main.async {
+        NSApp.activate()
+        NSApp.windows
+            .first { $0.identifier?.rawValue.contains(windowIdentifier) == true }?
+            .makeKeyAndOrderFront(nil)
     }
 }
 

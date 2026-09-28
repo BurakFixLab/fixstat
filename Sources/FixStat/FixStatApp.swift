@@ -20,6 +20,12 @@ struct FixStatApp: App {
         }
         .menuBarExtraStyle(.window)
 
+        Window("Battery history", id: HistoryView.windowID) {
+            HistoryView()
+                .environment(monitor)
+        }
+        .defaultSize(width: 680, height: 640)
+
         Settings {
             SettingsView()
                 .environment(monitor)

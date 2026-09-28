@@ -102,12 +102,42 @@
         }
       }
     },
+    "Average charge current" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortalama şarj akımı"
+          }
+        }
+      }
+    },
+    "Average discharge current" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortalama deşarj akımı"
+          }
+        }
+      }
+    },
     "Battery" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya"
+          }
+        }
+      }
+    },
+    "Battery history" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya geçmişi"
           }
         }
       }
@@ -192,6 +222,16 @@
         }
       }
     },
+    "Charge" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şarj"
+          }
+        }
+      }
+    },
     "Charging" : {
       "localizations" : {
         "tr" : {
@@ -242,6 +282,16 @@
         }
       }
     },
+    "Day" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gün"
+          }
+        }
+      }
+    },
     "Design cap." : {
       "localizations" : {
         "tr" : {
@@ -262,6 +312,16 @@
         }
       }
     },
+    "Discharging" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deşarj"
+          }
+        }
+      }
+    },
     "Efficiency clusters" : {
       "localizations" : {
         "tr" : {
@@ -278,6 +338,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kasa"
+          }
+        }
+      }
+    },
+    "Export history" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçmişi dışa aktar"
           }
         }
       }
@@ -318,6 +388,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FixStat"
+          }
+        }
+      }
+    },
+    "FixStat records the battery once a minute while it is running. Samples are kept for 30 days, daily health values indefinitely." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FixStat çalıştığı sürece bataryayı dakikada bir kaydeder. Örnekler 30 gün, günlük sağlık değerleri süresiz saklanır."
           }
         }
       }
@@ -392,6 +472,26 @@
         }
       }
     },
+    "Highest temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek sıcaklık"
+          }
+        }
+      }
+    },
+    "History" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçmiş"
+          }
+        }
+      }
+    },
     "Hot" : {
       "localizations" : {
         "tr" : {
@@ -418,6 +518,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "JSON…"
+          }
+        }
+      }
+    },
+    "Last 24 hours" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son 24 saat"
+          }
+        }
+      }
+    },
+    "Last 30 days" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son 30 gün"
+          }
+        }
+      }
+    },
+    "Last 7 days" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son 7 gün"
           }
         }
       }
@@ -472,12 +602,32 @@
         }
       }
     },
+    "No battery history yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz batarya geçmişi yok"
+          }
+        }
+      }
+    },
     "No fans" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fan yok"
+          }
+        }
+      }
+    },
+    "No health values recorded yet." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz sağlık değeri kaydedilmedi."
           }
         }
       }
@@ -582,6 +732,16 @@
         }
       }
     },
+    "Range" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aralık"
+          }
+        }
+      }
+    },
     "Remaining" : {
       "localizations" : {
         "tr" : {
@@ -648,6 +808,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ham batarya verilerini, hücre voltajlarını ve her sensörü ham anahtarıyla gösterir."
+          }
+        }
+      }
+    },
+    "Since %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ tarihinden beri"
           }
         }
       }
@@ -732,6 +902,16 @@
         }
       }
     },
+    "Time" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaman"
+          }
+        }
+      }
+    },
     "Unmatched sensors (%lld)" : {
       "localizations" : {
         "tr" : {
@@ -798,6 +978,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Menü kapalıyken değerler enerji tasarrufu için en fazla 5 saniyede bir yenilenir."
+          }
+        }
+      }
+    },
+    "Zero" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıfır"
           }
         }
       }

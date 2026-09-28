@@ -90,6 +90,27 @@ TR = {
     "While the menu is closed, values refresh at most every 5 seconds to save energy.":
         "Menü kapalıyken değerler enerji tasarrufu için en fazla 5 saniyede bir yenilenir.",
     "estimated": "tahmini",
+
+    "Average charge current": "Ortalama şarj akımı",
+    "Average discharge current": "Ortalama deşarj akımı",
+    "Battery history": "Batarya geçmişi",
+    "Charge": "Şarj",
+    "Day": "Gün",
+    "Discharging": "Deşarj",
+    "Export history": "Geçmişi dışa aktar",
+    "FixStat records the battery once a minute while it is running. Samples are kept for 30 days, daily health values indefinitely.":
+        "FixStat çalıştığı sürece bataryayı dakikada bir kaydeder. Örnekler 30 gün, günlük sağlık değerleri süresiz saklanır.",
+    "Highest temperature": "En yüksek sıcaklık",
+    "History": "Geçmiş",
+    "Last 24 hours": "Son 24 saat",
+    "Last 30 days": "Son 30 gün",
+    "Last 7 days": "Son 7 gün",
+    "No battery history yet": "Henüz batarya geçmişi yok",
+    "No health values recorded yet.": "Henüz sağlık değeri kaydedilmedi.",
+    "Range": "Aralık",
+    "Since %@": "%@ tarihinden beri",
+    "Time": "Zaman",
+    "Zero": "Sıfır",
 }
 
 # key: (English, Turkish)

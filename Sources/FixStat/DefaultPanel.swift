@@ -24,6 +24,7 @@ struct DefaultPanel: View {
             Divider()
             HStack {
                 SettingsButton()
+                HistoryButton()
                 Spacer()
                 QuitButton()
             }
