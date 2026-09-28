@@ -30,6 +30,12 @@ let package = Package(
             dependencies: ["MacSensors"],
             linkerSettings: [.linkedFramework("Metal")]
         ),
+        // Menu bar app. Built into FixStat.app by scripts/build-app.sh, which also
+        // compiles App/Localizable.xcstrings and bundles the sensor map.
+        .executableTarget(
+            name: "FixStat",
+            dependencies: ["MacSensors"]
+        ),
         .testTarget(
             name: "MacSensorsTests",
             dependencies: ["MacSensors"]

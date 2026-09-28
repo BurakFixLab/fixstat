@@ -1,0 +1,1411 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ / %@" : {
+      "comment" : "Memory used / total",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@"
+          }
+        }
+      }
+    },
+    "%@ remaining" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ kaldı"
+          }
+        }
+      }
+    },
+    "%@ rpm" : {
+      "comment" : "Fan speed",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ rpm"
+          }
+        }
+      }
+    },
+    "%@°" : {
+      "comment" : "Compact temperature, e.g. 58°",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@°"
+          }
+        }
+      }
+    },
+    "%lld / %lld matched on this model" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / %2$lld matched on this model"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu modelde %1$lld / %2$lld eşleşti"
+          }
+        }
+      }
+    },
+    "Adapter %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptör %@"
+          }
+        }
+      }
+    },
+    "Adapter %@ · now %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adapter %1$@ · now %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptör %1$@ · şu an %2$@"
+          }
+        }
+      }
+    },
+    "All (%lld)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tümü (%lld)"
+          }
+        }
+      }
+    },
+    "Battery" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya"
+          }
+        }
+      }
+    },
+    "Battery icon" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya simgesi"
+          }
+        }
+      }
+    },
+    "Battery percentage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya yüzdesi"
+          }
+        }
+      }
+    },
+    "CPU" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU"
+          }
+        }
+      }
+    },
+    "CPU temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU sıcaklığı"
+          }
+        }
+      }
+    },
+    "CSV…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CSV…"
+          }
+        }
+      }
+    },
+    "Cell %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre %lld"
+          }
+        }
+      }
+    },
+    "Cell voltage spread" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre voltajı farkı"
+          }
+        }
+      }
+    },
+    "Cell voltages" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre voltajları"
+          }
+        }
+      }
+    },
+    "Charging" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şarj oluyor"
+          }
+        }
+      }
+    },
+    "Charging · %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şarj oluyor · %@"
+          }
+        }
+      }
+    },
+    "Cool" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serin"
+          }
+        }
+      }
+    },
+    "Current" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akım"
+          }
+        }
+      }
+    },
+    "Cycles" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Döngü"
+          }
+        }
+      }
+    },
+    "Design cap." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasarım kap."
+          }
+        }
+      }
+    },
+    "Difference between the highest and lowest cell voltage." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek ve en düşük hücre voltajı arasındaki fark."
+          }
+        }
+      }
+    },
+    "Efficiency clusters" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verimlilik kümeleri"
+          }
+        }
+      }
+    },
+    "Enclosure" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kasa"
+          }
+        }
+      }
+    },
+    "Export report" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapor dışa aktar"
+          }
+        }
+      }
+    },
+    "Fan %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fan %lld"
+          }
+        }
+      }
+    },
+    "Fans" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fanlar"
+          }
+        }
+      }
+    },
+    "FixStat" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FixStat"
+          }
+        }
+      }
+    },
+    "Full in" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dolum"
+          }
+        }
+      }
+    },
+    "Full in %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dolmasına %@"
+          }
+        }
+      }
+    },
+    "Fully charged" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamen dolu"
+          }
+        }
+      }
+    },
+    "GPU" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPU"
+          }
+        }
+      }
+    },
+    "General" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Genel"
+          }
+        }
+      }
+    },
+    "Health" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sağlık"
+          }
+        }
+      }
+    },
+    "Hide sensors or give them your own name. Names are saved in your sensor map." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensörleri gizleyin veya kendi adınızı verin. İsimler sensör haritanıza kaydedilir."
+          }
+        }
+      }
+    },
+    "Hot" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıcak"
+          }
+        }
+      }
+    },
+    "Hot from" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıcak eşiği"
+          }
+        }
+      }
+    },
+    "JSON…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON…"
+          }
+        }
+      }
+    },
+    "Less" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha az"
+          }
+        }
+      }
+    },
+    "Max cap." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerçek maks."
+          }
+        }
+      }
+    },
+    "Memory" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bellek"
+          }
+        }
+      }
+    },
+    "Menu bar" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menü çubuğu"
+          }
+        }
+      }
+    },
+    "Name" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ad"
+          }
+        }
+      }
+    },
+    "No fans" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fan yok"
+          }
+        }
+      }
+    },
+    "No power adapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç adaptörü bağlı değil"
+          }
+        }
+      }
+    },
+    "No temperature sensors found" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıcaklık sensörü bulunamadı"
+          }
+        }
+      }
+    },
+    "On battery" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bataryada"
+          }
+        }
+      }
+    },
+    "On battery · %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bataryada · %@"
+          }
+        }
+      }
+    },
+    "On power adapter · not charging" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptöre bağlı · şarj olmuyor"
+          }
+        }
+      }
+    },
+    "Open at login" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oturum açılışında başlat"
+          }
+        }
+      }
+    },
+    "Performance clusters" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performans kümeleri"
+          }
+        }
+      }
+    },
+    "Power adapter connected" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç adaptörü bağlı"
+          }
+        }
+      }
+    },
+    "Power adapter · now %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç adaptörü · şu an %@"
+          }
+        }
+      }
+    },
+    "Quit" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çık"
+          }
+        }
+      }
+    },
+    "Remaining" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalan"
+          }
+        }
+      }
+    },
+    "Restore defaults" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Varsayılanlara dön"
+          }
+        }
+      }
+    },
+    "SSD (NAND)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD (NAND)"
+          }
+        }
+      }
+    },
+    "Sensors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensörler"
+          }
+        }
+      }
+    },
+    "Settings…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlar…"
+          }
+        }
+      }
+    },
+    "Show" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Göster"
+          }
+        }
+      }
+    },
+    "Shows raw battery data, cell voltages and every sensor with its raw key." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ham batarya verilerini, hücre voltajlarını ve her sensörü ham anahtarıyla gösterir."
+          }
+        }
+      }
+    },
+    "Spread %@ · balanced" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fark %@ · dengeli"
+          }
+        }
+      }
+    },
+    "Spread %@ · imbalanced" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fark %@ · dengesiz"
+          }
+        }
+      }
+    },
+    "System" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem"
+          }
+        }
+      }
+    },
+    "Technician" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teknisyen"
+          }
+        }
+      }
+    },
+    "Technician mode" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teknisyen modu"
+          }
+        }
+      }
+    },
+    "Temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıcaklık"
+          }
+        }
+      }
+    },
+    "Temperature colours" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıcaklık renkleri"
+          }
+        }
+      }
+    },
+    "Thresholds" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eşikler"
+          }
+        }
+      }
+    },
+    "Unmatched sensors (%lld)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eşleşmemiş sensörler (%lld)"
+          }
+        }
+      }
+    },
+    "Update interval" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güncelleme sıklığı"
+          }
+        }
+      }
+    },
+    "Voltage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voltaj"
+          }
+        }
+      }
+    },
+    "Warm" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ilık"
+          }
+        }
+      }
+    },
+    "Warm from" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ilık eşiği"
+          }
+        }
+      }
+    },
+    "Warn above" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyarı eşiği"
+          }
+        }
+      }
+    },
+    "While the menu is closed, values refresh at most every 5 seconds to save energy." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menü kapalıyken değerler enerji tasarrufu için en fazla 5 saniyede bir yenilenir."
+          }
+        }
+      }
+    },
+    "estimated" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tahmini"
+          }
+        }
+      }
+    },
+    "sensor.battery.gauge.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battery (gas gauge) %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya (gauge) %lld"
+          }
+        }
+      }
+    },
+    "sensor.battery.pack.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battery pack %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya paketi %lld"
+          }
+        }
+      }
+    },
+    "sensor.board.charger" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Charger proximity"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şarj devresi yakını"
+          }
+        }
+      }
+    },
+    "sensor.board.io" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I/O ports proximity"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "G/Ç portları yakını"
+          }
+        }
+      }
+    },
+    "sensor.board.memory" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memory proximity"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bellek yakını"
+          }
+        }
+      }
+    },
+    "sensor.board.memory_vr" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memory VR proximity"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bellek VR yakını"
+          }
+        }
+      }
+    },
+    "sensor.board.pch" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PCH die"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PCH die"
+          }
+        }
+      }
+    },
+    "sensor.board.pmu" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU proximity"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU yakını"
+          }
+        }
+      }
+    },
+    "sensor.board.psu" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Power input proximity"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç girişi yakını"
+          }
+        }
+      }
+    },
+    "sensor.board.wifi" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wi-Fi module proximity"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wi-Fi modülü yakını"
+          }
+        }
+      }
+    },
+    "sensor.chassis.airflow.left" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Airflow left"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hava akışı sol"
+          }
+        }
+      }
+    },
+    "sensor.chassis.airflow.right" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Airflow right"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hava akışı sağ"
+          }
+        }
+      }
+    },
+    "sensor.chassis.ambient" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ambient (virtual)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortam (sanal)"
+          }
+        }
+      }
+    },
+    "sensor.chassis.palmrest.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Palm rest %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avuç içi dayanağı %lld"
+          }
+        }
+      }
+    },
+    "sensor.chassis.skin.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enclosure surface %lld (virtual)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kasa yüzeyi %lld (sanal)"
+          }
+        }
+      }
+    },
+    "sensor.cpu.core.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU core %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU çekirdeği %lld"
+          }
+        }
+      }
+    },
+    "sensor.cpu.die" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU die"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU die"
+          }
+        }
+      }
+    },
+    "sensor.cpu.ecluster.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Efficiency cluster %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verimlilik kümesi %lld"
+          }
+        }
+      }
+    },
+    "sensor.cpu.pcluster.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performance cluster %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performans kümesi %lld"
+          }
+        }
+      }
+    },
+    "sensor.cpu.proximity" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU proximity"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU yakını"
+          }
+        }
+      }
+    },
+    "sensor.gpu.cluster.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPU cluster %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPU kümesi %lld"
+          }
+        }
+      }
+    },
+    "sensor.gpu.die" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPU die"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPU die"
+          }
+        }
+      }
+    },
+    "sensor.gpu.proximity" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPU proximity"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPU yakını"
+          }
+        }
+      }
+    },
+    "sensor.pmu.die.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU die %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU die %lld"
+          }
+        }
+      }
+    },
+    "sensor.pmu.ntc.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU NTC %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU NTC %lld"
+          }
+        }
+      }
+    },
+    "sensor.pmu2.die.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU2 die %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU2 die %lld"
+          }
+        }
+      }
+    },
+    "sensor.pmu2.ntc.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU2 NTC %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU2 NTC %lld"
+          }
+        }
+      }
+    },
+    "sensor.soc.ane.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neural Engine %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neural Engine %lld"
+          }
+        }
+      }
+    },
+    "sensor.soc.isp.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image signal processor %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görüntü işlemcisi (ISP) %lld"
+          }
+        }
+      }
+    },
+    "sensor.soc.mtr.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SoC zone %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SoC bölgesi %lld"
+          }
+        }
+      }
+    },
+    "sensor.soc.pmgr.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SoC die (PMGR) %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SoC die (PMGR) %lld"
+          }
+        }
+      }
+    },
+    "sensor.ssd.nand.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD (NAND) channel %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD (NAND) kanal %lld"
+          }
+        }
+      }
+    },
+    "sensor.ssd.proximity.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD proximity %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD yakını %lld"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -1,0 +1,180 @@
+import MacSensors
+import ServiceManagement
+import SwiftUI
+
+struct SettingsView: View {
+    var body: some View {
+        TabView {
+            GeneralSettings()
+                .tabItem { Label("General", systemImage: "gearshape") }
+            ThresholdSettings()
+                .tabItem { Label("Thresholds", systemImage: "thermometer.medium") }
+            SensorSettings()
+                .tabItem { Label("Sensors", systemImage: "list.bullet") }
+        }
+        .frame(width: 520, height: 460)
+    }
+}
+
+private struct GeneralSettings: View {
+    @AppStorage(Pref.menuBarBatteryIcon) private var batteryIcon = true
+    @AppStorage(Pref.menuBarBatteryPercent) private var batteryPercent = true
+    @AppStorage(Pref.menuBarCPUTemperature) private var cpuTemperature = true
+    @AppStorage(Pref.technicianMode) private var technicianMode = false
+    @AppStorage(Pref.updateInterval) private var interval = Pref.defaultInterval
+    @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
+    @State private var loginError: String?
+
+    var body: some View {
+        Form {
+            Section("Menu bar") {
+                Toggle("Battery icon", isOn: $batteryIcon)
+                Toggle("Battery percentage", isOn: $batteryPercent)
+                Toggle("CPU temperature", isOn: $cpuTemperature)
+            }
+            Section {
+                Toggle("Technician mode", isOn: $technicianMode)
+            } footer: {
+                Text("Shows raw battery data, cell voltages and every sensor with its raw key.")
+                    .foregroundStyle(.secondary)
+            }
+            Section {
+                Picker("Update interval", selection: $interval) {
+                    ForEach(Pref.intervals, id: \.self) { seconds in
+                        Text(Duration.seconds(seconds).formatted(.units(allowed: [.seconds], width: .wide)))
+                            .tag(seconds)
+                    }
+                }
+                Toggle("Open at login", isOn: $launchAtLogin)
+                    .onChange(of: launchAtLogin) { _, enabled in setLaunchAtLogin(enabled) }
+                if let loginError {
+                    Text(verbatim: loginError).font(.caption).foregroundStyle(.secondary)
+                }
+            } footer: {
+                Text("While the menu is closed, values refresh at most every 5 seconds to save energy.")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .formStyle(.grouped)
+    }
+
+    private func setLaunchAtLogin(_ enabled: Bool) {
+        do {
+            if enabled {
+                try SMAppService.mainApp.register()
+            } else {
+                try SMAppService.mainApp.unregister()
+            }
+            loginError = nil
+        } catch {
+            loginError = error.localizedDescription
+            launchAtLogin = SMAppService.mainApp.status == .enabled
+        }
+    }
+}
+
+private struct ThresholdSettings: View {
+    @AppStorage(Pref.warmThreshold) private var warm = Pref.defaultWarm
+    @AppStorage(Pref.hotThreshold) private var hot = Pref.defaultHot
+    @AppStorage(Pref.cellImbalanceThreshold) private var imbalance = Pref.defaultCellImbalance
+
+    var body: some View {
+        Form {
+            Section {
+                Stepper(value: $warm, in: 30...(hot - 1), step: 1) {
+                    LabeledContent("Warm from", value: Format.temperature(warm, digits: 0))
+                }
+                Stepper(value: $hot, in: (warm + 1)...100, step: 1) {
+                    LabeledContent("Hot from", value: Format.temperature(hot, digits: 0))
+                }
+                HStack(spacing: 12) {
+                    legend(TemperatureColor.cool, "Cool")
+                    legend(TemperatureColor.warm, "Warm")
+                    legend(TemperatureColor.hot, "Hot")
+                }
+            } header: {
+                Text("Temperature colours")
+            }
+            Section {
+                Stepper(value: $imbalance, in: 5...500, step: 5) {
+                    LabeledContent("Warn above", value: Format.millivolts(imbalance))
+                }
+            } header: {
+                Text("Cell voltage spread")
+            } footer: {
+                Text("Difference between the highest and lowest cell voltage.")
+                    .foregroundStyle(.secondary)
+            }
+            Section {
+                Button("Restore defaults") {
+                    warm = Pref.defaultWarm
+                    hot = Pref.defaultHot
+                    imbalance = Pref.defaultCellImbalance
+                }
+            }
+        }
+        .formStyle(.grouped)
+    }
+
+    private func legend(_ color: Color, _ title: LocalizedStringKey) -> some View {
+        Label {
+            Text(title)
+        } icon: {
+            Circle().fill(color).frame(width: 8, height: 8)
+        }
+        .font(.caption)
+    }
+}
+
+private struct SensorSettings: View {
+    @Environment(Monitor.self) private var monitor
+    @AppStorage(Pref.hiddenSensors) private var hiddenRaw = ""
+
+    var body: some View {
+        let hidden = Pref.hiddenSet(hiddenRaw)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Hide sensors or give them your own name. Names are saved in your sensor map.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+            List(monitor.sensors.sorted(by: DefaultPanel.displayOrder)) { sensor in
+                SensorSettingsRow(sensor: sensor, isVisible: Binding(
+                    get: { !hidden.contains(sensor.id) },
+                    set: { visible in
+                        var set = Pref.hiddenSet(hiddenRaw)
+                        if visible { set.remove(sensor.id) } else { set.insert(sensor.id) }
+                        hiddenRaw = Pref.hiddenString(set)
+                    }
+                ))
+            }
+            Text(verbatim: Monitor.userMapURL.path.replacingOccurrences(of: NSHomeDirectory(), with: "~"))
+                .font(.caption.monospaced())
+                .foregroundStyle(.tertiary)
+                .textSelection(.enabled)
+        }
+        .padding()
+    }
+}
+
+private struct SensorSettingsRow: View {
+    @Environment(Monitor.self) private var monitor
+    let sensor: DisplaySensor
+    @Binding var isVisible: Bool
+    @State private var name = ""
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Toggle("Show", isOn: $isVisible).labelsHidden()
+            TextField(text: $name, prompt: Text(verbatim: SensorNames.defaultName(for: sensor))) {
+                Text("Name")
+            }
+            .labelsHidden()
+            .textFieldStyle(.roundedBorder)
+            .onSubmit { monitor.rename(sensor, to: name) }
+            Text(verbatim: sensor.descriptor.rawLabel)
+                .font(.caption.monospaced())
+                .foregroundStyle(.secondary)
+                .frame(width: 44, alignment: .leading)
+        }
+        .onAppear { name = sensor.resolved?.name ?? "" }
+    }
+}

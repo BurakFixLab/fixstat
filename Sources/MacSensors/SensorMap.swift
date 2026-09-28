@@ -30,15 +30,19 @@ public struct SensorMap: Codable, Sendable, Equatable {
         public var hidName: String?
         /// Why this mapping was chosen (test results, naming convention).
         public var note: String?
+        /// A display name set by the user. Overrides the localized name of `id`.
+        /// Only used in the user's own map, not in the bundled one.
+        public var name: String?
 
         public init(key: String, id: String, group: Group, confidence: Confidence,
-                    hidName: String? = nil, note: String? = nil) {
+                    hidName: String? = nil, note: String? = nil, name: String? = nil) {
             self.key = key
             self.id = id
             self.group = group
             self.confidence = confidence
             self.hidName = hidName
             self.note = note
+            self.name = name
         }
     }
 
@@ -121,6 +125,17 @@ public struct ResolvedSensor: Sendable, Equatable {
     public let group: SensorMap.Group
     public let confidence: SensorMap.Confidence
     public let level: Level
+    /// User-defined display name, if any.
+    public var name: String?
+
+    public init(id: String, group: SensorMap.Group, confidence: SensorMap.Confidence,
+                level: Level, name: String? = nil) {
+        self.id = id
+        self.group = group
+        self.confidence = confidence
+        self.level = level
+        self.name = name
+    }
 }
 
 public extension SensorMap {
@@ -131,7 +146,8 @@ public extension SensorMap {
         guard !lookup.isEmpty else { return nil }
 
         if let entry = models[model]?.sensors.first(where: { lookup.contains($0.key) }) {
-            return ResolvedSensor(id: entry.id, group: entry.group, confidence: entry.confidence, level: .model)
+            return ResolvedSensor(id: entry.id, group: entry.group, confidence: entry.confidence,
+                                  level: .model, name: entry.name)
         }
         if let chip, let entry = chips[chip]?.sensors.first(where: { lookup.contains($0.key) }) {
             return ResolvedSensor(id: entry.id, group: entry.group, confidence: .estimated, level: .chip)
@@ -142,6 +158,30 @@ public extension SensorMap {
             }
         }
         return nil
+    }
+
+    /// This map with `overrides` layered on top: model entries of the override
+    /// replace entries with the same key; its ignored/derived lists are added.
+    func merged(with overrides: SensorMap) -> SensorMap {
+        var result = self
+        for (model, override) in overrides.models {
+            guard var base = result.models[model] else {
+                result.models[model] = override
+                continue
+            }
+            let replaced = Set(override.sensors.map(\.key))
+            base.sensors = override.sensors + base.sensors.filter { !replaced.contains($0.key) }
+            if let ignored = override.ignored { base.ignored = (base.ignored ?? []) + ignored }
+            if let derived = override.derived { base.derived = (base.derived ?? []) + derived }
+            result.models[model] = base
+        }
+        for (chip, override) in overrides.chips {
+            let replaced = Set(override.sensors.map(\.key))
+            let existing = result.chips[chip]?.sensors.filter { !replaced.contains($0.key) } ?? []
+            result.chips[chip] = ChipMap(sensors: override.sensors + existing)
+        }
+        result.patterns = overrides.patterns + result.patterns
+        return result
     }
 
     /// Whether the model lists the key as meaningless or derived, i.e. it should

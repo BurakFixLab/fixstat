@@ -1,9 +1,12 @@
 import Foundation
+import IOKit
 
 /// Identification of the Mac. Contains no serial numbers or UUIDs.
 public struct SystemInfo: Codable, Sendable, Equatable {
     /// e.g. "MacBookAir10,1"
     public var model: String
+    /// e.g. "MacBook Air (M1, 2020)"; nil if unknown.
+    public var marketingName: String?
     /// Board target, e.g. "J313" (Apple Silicon device tree `target-type`).
     public var boardTarget: String?
     /// e.g. "Apple M1"
@@ -20,12 +23,31 @@ public struct SystemInfo: Codable, Sendable, Equatable {
         let appleSilicon = arch == "arm64" || translated
         return SystemInfo(
             model: sysctlString("hw.model") ?? "unknown",
+            marketingName: marketingName(model: sysctlString("hw.model")),
             boardTarget: Registry.platformString("target-type"),
             chip: sysctlString("machdep.cpu.brand_string") ?? "unknown",
             architecture: arch,
             isAppleSilicon: appleSilicon,
             osVersion: osVersionString()
         )
+    }
+
+    /// Apple Silicon: device tree `product-name`. Intel: the model name from the
+    /// system's machine attribute database.
+    static func marketingName(model: String?) -> String? {
+        let product = IORegistryEntryFromPath(kIOMainPortDefault, "IODeviceTree:/product")
+        if product != IO_OBJECT_NULL {
+            defer { IOObjectRelease(product) }
+            if let data = IORegistryEntryCreateCFProperty(product, "product-name" as CFString, kCFAllocatorDefault, 0)?
+                .takeRetainedValue() as? Data {
+                let name = String(decoding: data.prefix { $0 != 0 }, as: UTF8.self)
+                if !name.isEmpty { return name }
+            }
+        }
+        let path = "/System/Library/PrivateFrameworks/ServerInformation.framework/Versions/A/Resources/en.lproj/SIMachineAttributes.plist"
+        guard let model, let attributes = NSDictionary(contentsOfFile: path)?[model] as? [String: Any],
+              let localizable = attributes["_LOCALIZABLE_"] as? [String: Any] else { return nil }
+        return (localizable["marketingModel"] ?? localizable["model"]) as? String
     }
 
     static func osVersionString() -> String {

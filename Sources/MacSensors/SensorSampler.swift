@@ -34,7 +34,9 @@ public final class TemperatureSampler {
     private let smc: SMC?
     private var smcKeys: [FourCC] = []
 
-    public init() {
+    /// - Parameter includeSMCKey: filter for SMC keys to sample; HID sensors are
+    ///   always included (they are read in one call anyway).
+    public init(includeSMCKey: (String) -> Bool = { _ in true }) {
         hid = HIDSensorReader(kind: .temperature)
         smc = try? SMC()
 
@@ -48,11 +50,26 @@ public final class TemperatureSampler {
         }
         let hidKeys = Set(hidReadings.compactMap(\.key))
         if let smc, let keys = try? smc.allKeys() {
-            for reading in smc.temperatureReadings(keys: keys) where !hidKeys.contains(reading.key) {
+            let candidates = keys.filter { includeSMCKey($0.description) }
+            for reading in smc.temperatureReadings(keys: candidates) where !hidKeys.contains(reading.key) {
                 sensors.append(SensorDescriptor(source: .smc, key: reading.key, hidName: nil))
                 smcKeys.append(FourCC(reading.key))
             }
         }
+    }
+
+    /// Fans via the same SMC connection (empty on fanless Macs).
+    public func fans() -> [FanReading] {
+        smc?.fans() ?? []
+    }
+
+    /// Only the HID sensors (one IPC call), keyed by uid. Cheaper than `sample()`.
+    public func sampleHID() -> [String: Double] {
+        var values: [String: Double] = [:]
+        for reading in hid?.read() ?? [] {
+            values[SensorDescriptor(source: .hid, key: reading.key, hidName: reading.name).uid] = reading.value
+        }
+        return values
     }
 
     /// One value per entry of `sensors` (nil if the read failed).
