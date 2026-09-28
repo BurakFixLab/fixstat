@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the privacy scan checks the whole history
+
+      - name: Toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Build
+        run: swift build
+
+      - name: Unit tests
+        run: swift test
+
+      - name: Build and package the app
+        run: scripts/package-release.sh
+
+      - name: String catalog is in sync with the code
+        run: |
+          # build-app.sh syncs the catalog with the strings in the code; a diff
+          # means new strings were not committed with their translations.
+          git diff --exit-code -- App/Localizable.xcstrings
+
+      - name: Privacy scan (whole history)
+        run: scripts/privacy-scan.sh --history
+
+      - name: Upload app
+        uses: actions/upload-artifact@v4
+        with:
+          name: FixStat-${{ github.sha }}
+          path: build/FixStat.zip
+          retention-days: 14
