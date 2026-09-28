@@ -14,13 +14,28 @@ struct HistoryView: View {
         var id: Int { rawValue }
 
         var duration: TimeInterval {
-            [3_600, 3 * 3_600, 6 * 3_600, 12 * 3_600, 86_400, 7 * 86_400, 30 * 86_400][rawValue]
+            let hour: TimeInterval = 3_600
+            switch self {
+            case .hour1: return hour
+            case .hours3: return 3 * hour
+            case .hours6: return 6 * hour
+            case .hours12: return 12 * hour
+            case .day: return 24 * hour
+            case .week: return 7 * 24 * hour
+            case .month: return 30 * 24 * hour
+            }
         }
 
         /// Bucket size so that every range has at most ~360 points. Up to 6 h the
         /// raw minute samples are shown.
         var bucket: TimeInterval {
-            [60, 60, 60, 120, 240, 1_800, 7_200][rawValue]
+            switch self {
+            case .hour1, .hours3, .hours6: return 60
+            case .hours12: return 120
+            case .day: return 240
+            case .week: return 1_800
+            case .month: return 7_200
+            }
         }
 
         /// "1 hour", "12 hours", "1 day", "7 days" in the user's language.

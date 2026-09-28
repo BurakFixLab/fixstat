@@ -18,7 +18,7 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0 # the privacy scan checks the whole history
 
@@ -46,7 +46,7 @@ jobs:
         run: scripts/privacy-scan.sh --history
 
       - name: Upload app
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: FixStat-${{ github.sha }}
           path: build/FixStat.zip
