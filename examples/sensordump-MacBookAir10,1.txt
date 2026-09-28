@@ -1,0 +1,213 @@
+sensordump 0.1.0
+  Model  MacBookAir10,1 (J313)
+  Chip   Apple M1 · arm64
+  macOS  26.6.2 (25G83)
+
+BATTERY
+  Gauge               bq20z451
+  State               Discharging, 23 % (gauge SOC 23 %)
+  Health (raw max)    73.3 %  = AppleRawMaxCapacity 3213 / DesignCapacity 4382 mAh
+  Health (nominal)    76.3 %  = NominalChargeCapacity 3343 mAh
+  Remaining capacity  717 mAh
+  Cycle count         359 / 1000 design
+  Temperature         30.16 °C (virtual 28.39 °C)
+  Voltage             11135 mV
+  Amperage            -383 mA (instant -383 mA)
+  Battery power       -4.26 W
+  Time to empty       1 h 12 min
+  Cell voltages       1: 3727 mV  2: 3691 mV  3: 3718 mV
+  Cell imbalance      36 mV
+  Cell Qmax           4103 / 3967 / 4076 mAh
+  Permanent failure   0
+  Cell disconnects    0
+  Serial              D86**************
+
+POWER INPUT
+  External power     not connected
+  Input power        0.00 W (0 mV, 0 mA)
+  System load        4.26 W
+  Adapter loss       0.00 W
+  Charging current   0 mA
+  Charging voltage   4002 mV
+  NotChargingReason  128
+
+HID TEMPERATURES (57)
+  Name                       Key      °C
+  -------------------------  ----  -----  --------------------------
+  ANE MTR Temp Sensor1       Ta1i   30.0
+  eACC MTR Temp Sensor0      Te0i   34.9
+  eACC MTR Temp Sensor3      Te3i   32.2
+  gas gauge battery          TG0B   28.4
+  gas gauge battery          TG0C   26.0
+  gas gauge battery          TG0H   28.0
+  gas gauge battery          TG0V   28.4
+  gas gauge battery          TG1B   28.4
+  gas gauge battery          TG2B   26.9
+  GPU MTR Temp Sensor1       Tg1i   33.4
+  GPU MTR Temp Sensor4       Tg4i   32.4
+  ISP MTR Temp Sensor5       Ts5i   30.0
+  NAND CH0 temp              TN0n   33.0
+  pACC MTR Temp Sensor2      Tp2i   32.4
+  pACC MTR Temp Sensor3      Tp3i   33.5
+  pACC MTR Temp Sensor4      Tp4i   33.9
+  pACC MTR Temp Sensor5      Tp5i   35.4
+  pACC MTR Temp Sensor7      Tp7i   34.6
+  pACC MTR Temp Sensor8      Tp8i   35.9
+  pACC MTR Temp Sensor9      Tp9i   33.0
+  PMGR SOC Die Temp Sensor0  Th0i   34.7
+  PMGR SOC Die Temp Sensor1  Th1i   34.9
+  PMGR SOC Die Temp Sensor2  Th2i   34.7
+  PMU tcal                   TP0Z   51.9
+  PMU tdev1                  TP1d  -22.0  implausible (open sensor?)
+  PMU tdev2                  TP2d  -22.1  implausible (open sensor?)
+  PMU tdev3                  TP3d   33.4
+  PMU tdev4                  TP4d   35.4
+  PMU tdev5                  TP5d   36.3
+  PMU tdev6                  TP6d  -22.1  implausible (open sensor?)
+  PMU tdev7                  TP7d   33.5
+  PMU tdev8                  TP8d   34.5
+  PMU tdie1                  TP1l   42.0
+  PMU tdie2                  TP2b   39.9
+  PMU tdie4                  TP4b   40.3
+  PMU tdie5                  TP5b   40.0
+  PMU tdie6                  TP6b   41.0
+  PMU tdie7                  TP7b   41.3
+  PMU tdie8                  TP8b   39.0
+  PMU TP3w                   TP3w   40.7
+  PMU2 tcal                  TR0Z   51.9
+  PMU2 tdev1                 TR1d  -21.7  implausible (open sensor?)
+  PMU2 tdev2                 TR2d   34.2
+  PMU2 tdev3                 TR3d  -21.6  implausible (open sensor?)
+  PMU2 tdev4                 TR4d   36.5
+  PMU2 tdev5                 TR5d   33.5
+  PMU2 tdie1                 TR1l   42.9
+  PMU2 tdie2                 TR2l   43.1
+  PMU2 tdie3                 TR3b   40.4
+  PMU2 tdie4                 TR4b   42.7
+  PMU2 tdie5                 TR5b   43.3
+  PMU2 tdie6                 TR6b   41.4
+  PMU2 tdie7                 TR7b   42.4
+  PMU2 tdie8                 TR8b   42.0
+  SOC MTR Temp Sensor0       Ts0i   34.7
+  SOC MTR Temp Sensor1       Ts1i   36.7
+  SOC MTR Temp Sensor2       Ts2i   32.0
+
+SMC TEMPERATURES (113, 33 implausible hidden, use --all)
+  Key   Type    °C
+  ----  ----  ----
+  TB0T  flt   28.4
+  TB1T  flt   28.4
+  TB2T  flt   26.9
+  TCHP  flt   33.5
+  TCMb  flt   44.9
+  TCMz  flt   55.0
+  TG0B  ioft  28.4
+  TG0C  ioft  26.0
+  TG0H  ioft  28.0
+  TG0V  ioft  28.4
+  TG1B  ioft  28.4
+  TG2B  ioft  26.9
+  TH0T  flt   34.2
+  TH0x  flt   34.2
+  TIOP  flt   33.0
+  TMVR  flt   34.8
+  TPMP  flt   36.3
+  TPSP  flt   33.7
+  TR0Z  ioft  51.9
+  TR2d  ioft  34.1
+  TR4d  ioft  36.5
+  TR5d  ioft  33.6
+  TSCD  flt   36.6
+  TVA0  flt   23.5
+  TVD0  flt   44.9
+  TVS0  flt   30.0
+  TVS1  flt   30.1
+  TVSx  flt   30.1
+  TW0P  flt   35.4
+  Ta1b  flt   10.4
+  Ta1z  flt   16.0
+  Tc0a  flt   37.1
+  Tc0b  flt   37.1
+  Tc0x  flt   38.7
+  Tc0z  flt   38.7
+  Tc7a  flt   34.2
+  Tc7b  flt   34.2
+  Tc7x  flt   36.1
+  Tc7z  flt   36.1
+  Tc8a  flt   34.6
+  Tc8b  flt   34.6
+  Tc8x  flt   37.8
+  Tc8z  flt   37.8
+  Tc9a  flt   34.7
+  Tc9b  flt   34.7
+  Tc9x  flt   36.5
+  Tc9z  flt   36.5
+  Tcaa  flt   36.5
+  Tcab  flt   36.5
+  Tcax  flt   39.0
+  Tcaz  flt   39.0
+  Te0a  flt   34.2
+  Te0b  flt   34.2
+  Te0x  flt   36.1
+  Te0z  flt   36.1
+  Te3a  flt   32.6
+  Te3b  flt   41.3
+  Te3x  flt   34.4
+  Te3z  flt   54.4
+  Th0a  flt   34.9
+  Th0b  flt   34.9
+  Th0x  flt   35.2
+  Th0z  flt   35.2
+  Th1a  flt   34.9
+  Th1b  flt   43.9
+  Th1x  flt   35.1
+  Th1z  flt   44.1
+  Th2a  flt   34.8
+  Th2b  flt   43.8
+  Th2x  flt   35.0
+  Th2z  flt   44.0
+  Tp2a  flt   32.6
+  Tp2b  flt   41.7
+  Tp2x  flt   34.6
+  Tp2z  flt   49.6
+  Tp3a  flt   34.4
+  Tp3b  flt   41.8
+  Tp3x  flt   37.8
+  Tp3z  flt   49.8
+  Tp4a  flt   33.8
+  Tp4b  flt   43.9
+  Tp4x  flt   36.9
+  Tp4z  flt   53.9
+  Tp5a  flt   34.7
+  Tp5b  flt   44.9
+  Tp5x  flt   36.5
+  Tp5z  flt   52.5
+  Tp7a  flt   35.1
+  Tp7b  flt   44.2
+  Tp7x  flt   38.0
+  Tp7z  flt   53.0
+  Tp8a  flt   36.3
+  Tp8b  flt   43.7
+  Tp8x  flt   39.0
+  Tp8z  flt   51.0
+  Tp9a  flt   34.8
+  Tp9b  flt   44.9
+  Tp9x  flt   38.0
+  Tp9z  flt   55.0
+  Ts0a  flt   34.5
+  Ts0b  flt   34.5
+  Ts0x  flt   35.8
+  Ts0z  flt   35.8
+  Ts1a  flt   37.1
+  Ts1b  flt   42.1
+  Ts1x  flt   38.7
+  Ts1z  flt   43.7
+  Ts2a  flt   32.9
+  Ts2b  flt   37.9
+  Ts2x  flt   34.5
+  Ts2z  flt   39.5
+  Ts5b  flt    8.0
+  Ts5z  flt   10.0
+
+FANS (0)
+  none reported by SMC (FNum = 0 or missing)
