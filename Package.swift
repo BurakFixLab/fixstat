@@ -19,7 +19,7 @@ let package = Package(
         .target(
             name: "MacSensors",
             dependencies: ["CMacSensors"],
-            linkerSettings: [.linkedFramework("IOKit")]
+            linkerSettings: [.linkedFramework("IOKit"), .linkedFramework("Metal")]
         ),
         .executableTarget(
             name: "sensordump",
@@ -27,8 +27,7 @@ let package = Package(
         ),
         .executableTarget(
             name: "sensormap",
-            dependencies: ["MacSensors"],
-            linkerSettings: [.linkedFramework("Metal")]
+            dependencies: ["MacSensors"]
         ),
         // Menu bar app. Built into FixStat.app by scripts/build-app.sh, which also
         // compiles App/Localizable.xcstrings and bundles the sensor map.

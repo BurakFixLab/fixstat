@@ -52,6 +52,7 @@ enum Snapshot {
         } else {
             root = AnyView(PanelView()
                 .environment(monitor)
+                .environment(TestRunner(monitor: monitor))
                 .background(Color(nsColor: .windowBackgroundColor)))
         }
         let host = NSHostingView(rootView: root)

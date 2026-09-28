@@ -45,6 +45,22 @@
         }
       }
     },
+    "%@ reached %@ (limit %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ reached %2$@ (limit %3$@)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@ değerine ulaştı (sınır %3$@)"
+          }
+        }
+      }
+    },
     "%@ remaining" : {
       "localizations" : {
         "tr" : {
@@ -159,6 +175,16 @@
         }
       }
     },
+    "Average battery current" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortalama batarya akımı"
+          }
+        }
+      }
+    },
     "Average charge current" : {
       "localizations" : {
         "tr" : {
@@ -195,6 +221,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya"
+          }
+        }
+      }
+    },
+    "Battery charge" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya şarjı"
           }
         }
       }
@@ -249,6 +285,22 @@
         }
       }
     },
+    "Battery reached %@ (limit %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battery reached %1$@ (limit %2$@)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya %1$@ değerine ulaştı (sınır %2$@)"
+          }
+        }
+      }
+    },
     "CPU" : {
       "localizations" : {
         "tr" : {
@@ -299,6 +351,22 @@
         }
       }
     },
+    "Cell %lld dropped to %@ under load (limit %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cell %1$lld dropped to %2$@ under load (limit %3$@)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre %1$lld yük altında %2$@ değerine düştü (sınır %3$@)"
+          }
+        }
+      }
+    },
     "Cell %lld: %@" : {
       "localizations" : {
         "en" : {
@@ -321,6 +389,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hücre kopmaları"
+          }
+        }
+      }
+    },
+    "Cell spread reached %@ under load (limit %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cell spread reached %1$@ under load (limit %2$@)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre farkı yük altında %1$@ oldu (sınır %2$@)"
           }
         }
       }
@@ -545,6 +629,16 @@
         }
       }
     },
+    "Duration" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Süre"
+          }
+        }
+      }
+    },
     "Efficiency clusters" : {
       "localizations" : {
         "tr" : {
@@ -705,6 +799,16 @@
         }
       }
     },
+    "Group" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grup"
+          }
+        }
+      }
+    },
     "Hard resets" : {
       "localizations" : {
         "tr" : {
@@ -731,6 +835,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sensörleri gizleyin veya kendi adınızı verin. İsimler sensör haritanıza kaydedilir."
+          }
+        }
+      }
+    },
+    "Highest CPU temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek CPU sıcaklığı"
+          }
+        }
+      }
+    },
+    "Highest GPU temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek GPU sıcaklığı"
+          }
+        }
+      }
+    },
+    "Highest SSD temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek SSD sıcaklığı"
+          }
+        }
+      }
+    },
+    "Highest battery temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek batarya sıcaklığı"
           }
         }
       }
@@ -775,16 +919,6 @@
         }
       }
     },
-    "History" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geçmiş"
-          }
-        }
-      }
-    },
     "Hot" : {
       "localizations" : {
         "tr" : {
@@ -825,6 +959,16 @@
         }
       }
     },
+    "Largest cell spread" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En büyük hücre farkı"
+          }
+        }
+      }
+    },
     "Less" : {
       "localizations" : {
         "tr" : {
@@ -851,6 +995,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Açık"
+          }
+        }
+      }
+    },
+    "Loads the CPU and GPU for a few minutes and checks temperatures, cell voltages and power delivery. Run it after a repair with the case closed, on a desk." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU ve GPU'yu birkaç dakika yükler; sıcaklıkları, hücre voltajlarını ve güç beslemesini kontrol eder. Tamirden sonra, kasa kapalıyken ve masa üstünde çalıştırın."
+          }
+        }
+      }
+    },
+    "Lowest cell voltage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En düşük hücre voltajı"
           }
         }
       }
@@ -935,6 +1099,16 @@
         }
       }
     },
+    "Needs attention" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dikkat edilmesi gerekenler"
+          }
+        }
+      }
+    },
     "No USB-C Power Delivery contract." : {
       "localizations" : {
         "tr" : {
@@ -1001,6 +1175,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adaptör bağlı değil — son sözleşme:"
+          }
+        }
+      }
+    },
+    "No problems found" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorun bulunmadı"
           }
         }
       }
@@ -1075,6 +1259,16 @@
         }
       }
     },
+    "On the power adapter the battery was still discharging (average %@) — adapter, cable or charging circuit may be weak" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptör takılıyken batarya yine de boşaldı (ortalama %@) — adaptör, kablo veya şarj devresi yetersiz olabilir"
+          }
+        }
+      }
+    },
     "Open at login" : {
       "localizations" : {
         "tr" : {
@@ -1131,6 +1325,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Takma / çıkarma"
+          }
+        }
+      }
+    },
+    "Post-repair test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamir sonrası test"
           }
         }
       }
@@ -1365,12 +1569,32 @@
         }
       }
     },
+    "Start test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Testi başlat"
+          }
+        }
+      }
+    },
     "State" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Durum"
+          }
+        }
+      }
+    },
+    "Stop" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durdur"
           }
         }
       }
@@ -1425,6 +1649,16 @@
         }
       }
     },
+    "Test was stopped before the planned duration" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test planlanan süreden önce durduruldu"
+          }
+        }
+      }
+    },
     "The Mac reported that the adapter cannot supply what it needs." : {
       "localizations" : {
         "tr" : {
@@ -1471,6 +1705,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zaman"
+          }
+        }
+      }
+    },
+    "Time at or above hot threshold" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıcak eşiğinde veya üstünde geçen süre"
+          }
+        }
+      }
+    },
+    "Tools" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Araçlar"
           }
         }
       }
@@ -2225,6 +2479,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ortalamaya göre"
+          }
+        }
+      }
+    },
+    "°C" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "°C"
           }
         }
       }

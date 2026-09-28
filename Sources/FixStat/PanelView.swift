@@ -32,16 +32,23 @@ struct SettingsButton: View {
     }
 }
 
-struct HistoryButton: View {
+/// History, battery details and the post-repair test.
+struct ToolsMenu: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        Button {
-            present(windowIdentifier: HistoryView.windowID) { openWindow(id: HistoryView.windowID) }
+        Menu {
+            Button("Battery history") { open(HistoryView.windowID) }
+            Button("Battery details") { open(BatteryDetailsView.windowID) }
+            Button("Post-repair test") { open(TestView.windowID) }
         } label: {
-            Label("History", systemImage: "chart.xyaxis.line")
+            Label("Tools", systemImage: "wrench.and.screwdriver")
         }
-        .help(Text("Battery history"))
+        .fixedSize()
+    }
+
+    private func open(_ id: String) {
+        present(windowIdentifier: id) { openWindow(id: id) }
     }
 }
 

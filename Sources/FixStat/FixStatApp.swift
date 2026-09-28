@@ -3,10 +3,12 @@ import SwiftUI
 @main
 struct FixStatApp: App {
     @State private var monitor: Monitor
+    @State private var testRunner: TestRunner
 
     init() {
         let monitor = Monitor()
         _monitor = State(initialValue: monitor)
+        _testRunner = State(initialValue: TestRunner(monitor: monitor))
         DispatchQueue.main.async { Snapshot.runIfRequested(monitor: monitor) }
     }
 
@@ -25,6 +27,13 @@ struct FixStatApp: App {
                 .environment(monitor)
         }
         .defaultSize(width: 680, height: 640)
+
+        Window("Post-repair test", id: TestView.windowID) {
+            TestView()
+                .environment(monitor)
+                .environment(testRunner)
+        }
+        .defaultSize(width: 640, height: 640)
 
         Window("Battery details", id: BatteryDetailsView.windowID) {
             BatteryDetailsView()

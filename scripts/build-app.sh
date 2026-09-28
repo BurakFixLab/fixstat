@@ -14,9 +14,25 @@ config="${1:-release}"
 strings_dir="$PWD/.build/strings"
 app="build/FixStat.app"
 
-rm -rf "$strings_dir"
-swift build -c "$config" --product FixStat \
-    -Xswiftc -emit-localized-strings -Xswiftc -emit-localized-strings-path -Xswiftc "$strings_dir"
+# The compiler only writes .stringsdata for files it recompiles, so the directory is
+# kept between builds. Files whose source was deleted are removed below.
+mkdir -p "$strings_dir"
+build() {
+    swift build -c "$config" --product FixStat \
+        -Xswiftc -emit-localized-strings -Xswiftc -emit-localized-strings-path -Xswiftc "$strings_dir"
+}
+build
+if ! ls "$strings_dir"/*.stringsdata >/dev/null 2>&1; then
+    # Up-to-date build from before this directory existed: force the app sources to recompile.
+    touch Sources/FixStat/*.swift
+    build
+fi
+for data in "$strings_dir"/*.stringsdata; do
+    name="$(basename "$data" .stringsdata)"
+    if ! ls Sources/*/"$name".swift >/dev/null 2>&1; then
+        rm -f "$data"
+    fi
+done
 
 xcrun xcstringstool sync App/Localizable.xcstrings --stringsdata "$strings_dir"/*.stringsdata
 python3 scripts/localize.py check

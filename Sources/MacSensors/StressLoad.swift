@@ -2,24 +2,27 @@ import Foundation
 @preconcurrency import Metal
 
 /// Shared stop signal for load threads.
-final class StopFlag: @unchecked Sendable {
+public final class StopFlag: @unchecked Sendable {
     private let lock = NSLock()
     private var stopped = false
 
-    var isStopped: Bool {
+    public init() {}
+
+    public var isStopped: Bool {
         lock.lock(); defer { lock.unlock() }
         return stopped
     }
 
-    func stop() {
+    public func stop() {
         lock.lock(); stopped = true; lock.unlock()
     }
 }
 
-/// Synthetic loads used to heat specific parts of the SoC / board.
-enum LoadGenerator {
+/// Synthetic loads used to heat specific parts of the SoC / board
+/// (`sensormap` load tests and the app's post-repair test).
+public enum LoadGenerator {
     /// Starts `threads` busy threads doing floating point work until `flag` is set.
-    static func cpu(threads: Int, flag: StopFlag) {
+    public static func cpu(threads: Int, flag: StopFlag) {
         for _ in 0..<threads {
             let thread = Thread {
                 var x = 1.000001
@@ -52,7 +55,8 @@ enum LoadGenerator {
 
     /// Runs a Metal compute kernel in a loop until `flag` is set.
     /// Returns an error description if Metal is not available.
-    static func gpu(flag: StopFlag) -> String? {
+    @discardableResult
+    public static func gpu(flag: StopFlag) -> String? {
         guard let device = MTLCreateSystemDefaultDevice() else { return "no Metal device" }
         do {
             let library = try device.makeLibrary(source: metalSource, options: nil)
@@ -76,6 +80,9 @@ enum LoadGenerator {
                     commands.waitUntilCompleted()
                 }
             }
+            // Same priority as the CPU load threads; with a lower one the feeding
+            // thread starves under full CPU load and the GPU idles between dispatches.
+            thread.qualityOfService = .userInteractive
             thread.start()
             return nil
         } catch {
@@ -85,7 +92,7 @@ enum LoadGenerator {
 
     /// Writes and reads back a scratch file with the page cache disabled until
     /// `flag` is set. The file is removed afterwards.
-    static func ssd(directory: URL, fileSize: Int, flag: StopFlag) {
+    public static func ssd(directory: URL, fileSize: Int, flag: StopFlag) {
         let thread = Thread {
             let url = directory.appendingPathComponent("sensormap-ssd-\(getpid()).bin")
             let chunkSize = 8 << 20

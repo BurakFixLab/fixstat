@@ -42,6 +42,14 @@ final class Monitor {
         }
     }
 
+    /// While a stress test runs, the test drives full refreshes itself.
+    var testRunning = false {
+        didSet { scheduleTimer() }
+    }
+
+    /// Result of the last post-repair test (for reports).
+    var lastTestResult: StressTestResult?
+
     /// The battery details window refreshes the battery at the panel's rate.
     var detailsVisible = false {
         didSet {
@@ -189,7 +197,7 @@ final class Monitor {
         let defaults = UserDefaults.standard
         let now = Date()
         let historyDue = now.timeIntervalSince(lastHistorySample) >= Self.historyInterval
-        let needsBattery = panelVisible || detailsVisible || historyDue || defaults.bool(forKey: Pref.menuBarBatteryIcon)
+        let needsBattery = panelVisible || detailsVisible || testRunning || historyDue || defaults.bool(forKey: Pref.menuBarBatteryIcon)
             || defaults.bool(forKey: Pref.menuBarBatteryPercent)
         if needsBattery {
             let latest = BatteryReader.read()
@@ -205,7 +213,7 @@ final class Monitor {
         }
 
         guard let sampler else { return }
-        if panelVisible {
+        if panelVisible || testRunning {
             var latest: [String: Double] = [:]
             for (sensor, value) in zip(sampler.sensors, sampler.sample()) {
                 if let value { latest[sensor.uid] = value }

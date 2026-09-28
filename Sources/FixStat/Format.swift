@@ -58,6 +58,11 @@ enum Format {
         Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))
     }
 
+    /// "4:05" style minutes and seconds.
+    static func minutesSeconds(_ seconds: TimeInterval) -> String {
+        Duration.seconds(seconds.rounded()).formatted(.time(pattern: .minuteSecond))
+    }
+
     static func gigabytes(_ bytes: UInt64, digits: Int = 1) -> String {
         Measurement(value: Double(bytes) / 1_073_741_824, unit: UnitInformationStorage.gigabytes)
             .formatted(.measurement(width: .abbreviated, usage: .asProvided,
