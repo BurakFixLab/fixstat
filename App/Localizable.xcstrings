@@ -102,6 +102,16 @@
         }
       }
     },
+    "Appearance" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görünüm"
+          }
+        }
+      }
+    },
     "Average charge current" : {
       "localizations" : {
         "tr" : {
@@ -278,6 +288,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Döngü"
+          }
+        }
+      }
+    },
+    "Dark" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koyu"
           }
         }
       }
@@ -528,6 +548,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Daha az"
+          }
+        }
+      }
+    },
+    "Light" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açık"
           }
         }
       }

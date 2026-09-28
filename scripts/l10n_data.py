@@ -92,6 +92,9 @@ TR = {
         "Menü kapalıyken değerler enerji tasarrufu için en fazla 5 saniyede bir yenilenir.",
     "estimated": "tahmini",
 
+    "Appearance": "Görünüm",
+    "Dark": "Koyu",
+    "Light": "Açık",
     "Average charge current": "Ortalama şarj akımı",
     "Average discharge current": "Ortalama deşarj akımı",
     "Battery history": "Batarya geçmişi",

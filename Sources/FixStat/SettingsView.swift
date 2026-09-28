@@ -30,6 +30,7 @@ private struct GeneralSettings: View {
     @AppStorage(Pref.menuBarBatteryPercent) private var batteryPercent = true
     @AppStorage(Pref.menuBarCPUTemperature) private var cpuTemperature = true
     @AppStorage(Pref.technicianMode) private var technicianMode = false
+    @AppStorage(Pref.appearance) private var appearance = AppearancePreference.system.rawValue
     @AppStorage(Pref.updateInterval) private var interval = Pref.defaultInterval
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
     @State private var loginError: String?
@@ -40,6 +41,14 @@ private struct GeneralSettings: View {
                 Toggle("Battery icon", isOn: $batteryIcon)
                 Toggle("Battery percentage", isOn: $batteryPercent)
                 Toggle("CPU temperature", isOn: $cpuTemperature)
+            }
+            Section {
+                Picker("Appearance", selection: $appearance) {
+                    Text("System").tag(AppearancePreference.system.rawValue)
+                    Text("Light").tag(AppearancePreference.light.rawValue)
+                    Text("Dark").tag(AppearancePreference.dark.rawValue)
+                }
+                .pickerStyle(.segmented)
             }
             Section {
                 Toggle("Technician mode", isOn: $technicianMode)

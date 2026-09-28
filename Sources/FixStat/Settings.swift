@@ -6,6 +6,8 @@ enum Pref {
     static let menuBarBatteryPercent = "menuBar.batteryPercent"
     static let menuBarCPUTemperature = "menuBar.cpuTemperature"
     static let technicianMode = "technicianMode"
+    /// "system", "light" or "dark" (AppearancePreference).
+    static let appearance = "appearance"
     static let warmThreshold = "threshold.warm"
     static let hotThreshold = "threshold.hot"
     static let cellImbalanceThreshold = "threshold.cellImbalance"
@@ -25,6 +27,7 @@ enum Pref {
             menuBarBatteryPercent: true,
             menuBarCPUTemperature: true,
             technicianMode: false,
+            appearance: AppearancePreference.system.rawValue,
             warmThreshold: defaultWarm,
             hotThreshold: defaultHot,
             cellImbalanceThreshold: defaultCellImbalance,

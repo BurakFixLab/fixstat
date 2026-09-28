@@ -63,8 +63,12 @@ final class Monitor {
         defaultsObserver = NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification, object: nil, queue: .main
         ) { [weak self] _ in
-            MainActor.assumeIsolated { self?.scheduleTimer() }
+            MainActor.assumeIsolated {
+                self?.scheduleTimer()
+                AppearancePreference.apply()
+            }
         }
+        DispatchQueue.main.async { AppearancePreference.apply() }
     }
 
     // MARK: - Sensor map
