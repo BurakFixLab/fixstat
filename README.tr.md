@@ -1,0 +1,124 @@
+# FixStat
+
+**Kart seviyesinde Mac tamiri için yapılmış, ücretsiz ve açık kaynak bir macOS menü çubuğu izleme uygulaması.**
+
+[English](README.md)
+
+FixStat batarya, sıcaklık, fan ve sistem verilerini menü çubuğunda gösterir. Sensör
+isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg` içinden
+çıkardığınız ham batarya gauge verilerini tek ekranda toplar.
+
+| Varsayılan | Teknisyen modu |
+|---|---|
+| ![Varsayılan panel](docs/screenshots/tr/panel-light.png) | ![Teknisyen modu](docs/screenshots/tr/technician-dark.png) |
+
+![Batarya geçmişi (örnek veri)](docs/screenshots/tr/history.png)
+<sub>Batarya geçmişi penceresi, örnek veriyle.</sub>
+
+## Stats ve iStat Menus'tan farkı
+
+- **Modele özel, doğrulanmış sensör isimleri.** Diğer uygulamalar ham anahtarları
+  (`Tp09`, `TG0B`, `PMU tdev7`) ya da tüm Mac'ler için tek bir genel liste gösterir.
+  FixStat her model için ayrı bir [sensör haritası](SensorMaps/sensor-map.json) tutar.
+  Her kayıt yük testleriyle (tek çekirdek, tüm çekirdekler, GPU, SSD, şarj) bulunmuştur;
+  test doğruladıysa **doğrulanmış**, doğrulamadıysa **tahmini** olarak işaretlenir ve
+  arayüz bunu gösterir.
+- **Katmanlı eşleştirme.** Önce model kaydı, sonra aynı çipin kaydı, en son anahtar
+  kalıbından tahmin (`Tp`, `Te`, `Tg`, `TB`, `TH`, `NAND`, `PMU tdie` …). Çip ve kalıptan
+  gelen isimler her zaman "tahmini" görünür. Apple Silicon die sensörleri tek tek
+  çekirdek olarak değil, kümedeki termal bölge olarak adlandırılır ("Performans kümesi 3").
+- **Teknisyen modu.** Tasarım ve ham maksimum kapasite, ondalıklı sağlık, döngü sayısı,
+  işaretli akım, voltaj, dengesizlik uyarılı hücre voltajları, adaptörün etiket değeri
+  ve şu an gerçekte verdiği güç (`SystemPowerIn`), her sensörün ham SMC / HID anahtarı ve
+  eşleşmeyen sensörler için ayrı bir liste.
+- **Kart seviyesi ayrıntılar.** HID sensörleri SMC anahtarlarıyla eşleştirilir (HID
+  `LocationID` değeri SMC anahtarıdır). Örneğin `TCHP`, `PMU tdev7` üzerinden okunan
+  şarj devresi NTC'si olarak görünür.
+- **Batarya geçmişi.** Son 1 saatten 30 güne kadar şarj, akım ve sağlık; ayrıca süresiz
+  tutulan günlük sağlık kaydı.
+- **Raporlar.** Müşteri cihazları için CSV / JSON dışa aktarma; seri numaraları her
+  zaman maskeli.
+- **Sadece okuma.** FixStat SMC'ye hiçbir zaman yazmaz, fan kontrolü yoktur ve yönetici
+  izni gerektirmez.
+
+## Doğrulanmış modeller
+
+| Model kimliği | Mac | Çip | Kart | İsimlendirilen sensör | Testle doğrulanan | macOS |
+|---|---|---|---|---|---|---|
+| `MacBookAir10,1` | MacBook Air (M1, 2020) | Apple M1 | J313 | 69'da 64 | 16 | 26.6 |
+
+Diğer Mac'lerde de çalışır; o durumda sensörler çip ve anahtar kalıplarından
+isimlendirilir ve "tahmini" olarak işaretlenir. Kendi modelinizi eklemek için
+[CONTRIBUTING.md](CONTRIBUTING.md) dosyasına bakın veya
+[yeni model issue'su](../../issues/new?template=new-model-sensor-data.yml) açın.
+
+## Kurulum
+
+### İndirme
+
+1. [Releases](../../releases) sayfasından `FixStat.zip` dosyasını indirin ve
+   `FixStat.app`'i `/Applications` (Uygulamalar) klasörüne taşıyın.
+2. FixStat Apple tarafından notarize edilmemiştir (bunun için ücretli geliştirici
+   hesabı gerekir), bu yüzden macOS ilk açılışı engeller. Uygulamayı bir kez açmayı
+   deneyin, ardından **Sistem Ayarları › Gizlilik ve Güvenlik** bölümünde FixStat
+   uyarısının yanındaki **Yine de Aç** düğmesine tıklayın.
+   Alternatif olarak Terminal'de:
+   ```bash
+   xattr -dr com.apple.quarantine /Applications/FixStat.app
+   ```
+3. FixStat menü çubuğunda çalışır (Dock simgesi yoktur). **Oturum açılışında başlat**
+   seçeneği ayarlarındadır.
+
+### Kaynaktan derleme
+
+macOS 14 veya üstü ve Xcode 16 veya üstü (Swift 6) gerekir. Başka araç gerekmez.
+
+```bash
+git clone https://github.com/BurakFixLab/fixstat.git
+cd fixstat
+git config core.hooksPath .githooks   # her commit öncesi gizlilik kontrolü
+scripts/build-app.sh                  # build/FixStat.app oluşturur
+open build/FixStat.app
+```
+
+## Komut satırı araçları
+
+```bash
+swift build -c release
+.build/release/sensordump             # batarya, sıcaklıklar, fanlar (tablo)
+.build/release/sensordump --json      # aynısı JSON olarak
+.build/release/sensordump --raw       # ayrıca tüm AppleSmartBattery registry değerleri
+.build/release/sensormap record       # sensörleri tanımlamak için yük testleri (CONTRIBUTING'e bakın)
+```
+
+`sensordump`, `--include-serial` verilmedikçe seri numaralarını maskeler. Komut satırı
+araçlarının çıktısı yalnızca İngilizcedir.
+
+## Dil
+
+FixStat sistem dilini izler; İngilizce ve Türkçe dahildir, diğer dillerde İngilizce
+açılır. FixStat'ı sistemden farklı bir dilde kullanmak için **Sistem Ayarları › Genel ›
+Dil ve Bölge › Uygulamalar** bölümüne FixStat'ı ekleyip dil seçin. Sayı ve birim
+biçimleri bölge ayarınızı izler.
+
+## Güvenlik ve gizlilik
+
+- **Sadece okuma.** SMC erişimi, `AppleSMC` user client'ının yalnızca anahtar bilgisi,
+  okuma ve indeksle okuma komutlarını kullanır. Yazma komutu hiç yazılmamıştır ve C
+  katmanı başka her komutu reddeder. Fan kontrolü, root yetkisi ve `powermetrics` yoktur.
+- **Özel (private) API'ler.** Apple Silicon'da sıcaklıklar herkese açık olmayan
+  `IOHIDEventSystemClient` API'sinden okunur. FixStat'ın App Store'da olmamasının
+  sebebi budur.
+- **Ağ erişimi yoktur.** Ayarlar, özel sensör isimleri ve batarya geçmişi
+  `~/Library/Application Support/FixStat/` klasöründe kalır.
+- **Seri numaraları** her çıktıda ve dışa aktarmada maskelenir.
+
+## Teşekkür
+
+SMC parametre yapısı ve IOHID sensör yaklaşımı, [exelban/stats](https://github.com/exelban/stats)
+(MIT) ve smcFanControl'ün kullandığı herkese açık tersine mühendislik bilgisine dayanır.
+FixStat'ın kodu bağımsız olarak yazılmıştır; kod kopyalanmamıştır.
+
+## Lisans
+
+[MIT](LICENSE)
