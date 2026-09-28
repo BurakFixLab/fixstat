@@ -522,36 +522,6 @@
         }
       }
     },
-    "Last 24 hours" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Son 24 saat"
-          }
-        }
-      }
-    },
-    "Last 30 days" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Son 30 gün"
-          }
-        }
-      }
-    },
-    "Last 7 days" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Son 7 gün"
-          }
-        }
-      }
-    },
     "Less" : {
       "localizations" : {
         "tr" : {

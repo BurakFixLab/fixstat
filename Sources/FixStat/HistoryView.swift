@@ -9,17 +9,28 @@ struct HistoryView: View {
     static let windowID = "battery-history"
 
     enum Range: Int, CaseIterable, Identifiable {
-        case day, week, month
+        case hour1, hours3, hours6, hours12, day, week, month
 
         var id: Int { rawValue }
-        var duration: TimeInterval { [86_400, 7 * 86_400, 30 * 86_400][rawValue] }
-        /// Bucket size so that every range has at most ~360 points.
-        var bucket: TimeInterval { [240, 1_800, 7_200][rawValue] }
-        var title: LocalizedStringKey { ["Last 24 hours", "Last 7 days", "Last 30 days"][rawValue] }
+
+        var duration: TimeInterval {
+            [3_600, 3 * 3_600, 6 * 3_600, 12 * 3_600, 86_400, 7 * 86_400, 30 * 86_400][rawValue]
+        }
+
+        /// Bucket size so that every range has at most ~360 points. Up to 6 h the
+        /// raw minute samples are shown.
+        var bucket: TimeInterval {
+            [60, 60, 60, 120, 240, 1_800, 7_200][rawValue]
+        }
+
+        /// "1 hour", "12 hours", "1 day", "7 days" in the user's language.
+        var title: String {
+            Duration.seconds(duration).formatted(.units(allowed: [.days, .hours], width: .wide))
+        }
     }
 
     @Environment(Monitor.self) private var monitor
-    @State private var range = Range.day
+    @State private var range: Range
     @State private var samples: [BatteryHistorySample] = []
     @State private var health: [BatteryHealthRecord] = []
 
@@ -27,7 +38,7 @@ struct HistoryView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Picker("Range", selection: $range) {
-                    ForEach(Range.allCases) { Text($0.title).tag($0) }
+                    ForEach(Range.allCases) { Text(verbatim: $0.title).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
@@ -51,8 +62,17 @@ struct HistoryView: View {
         .padding(20)
         .frame(minWidth: 560, minHeight: 520)
         .monospacedDigit()
-        .onAppear(perform: load)
-        .onChange(of: range) { load() }
+        // Reload when the range changes and then every minute (new samples).
+        .task(id: range) {
+            while !Task.isCancelled {
+                load()
+                try? await Task.sleep(for: .seconds(Monitor.historyInterval))
+            }
+        }
+    }
+
+    init(initialRange: Range = .day) {
+        _range = State(initialValue: initialRange)
     }
 
     private func load() {
