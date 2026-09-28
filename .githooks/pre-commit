@@ -1,0 +1,8 @@
+#!/bin/bash
+# Blocks commits that add serial numbers, UUIDs or home directory paths.
+# Enabled with: git config core.hooksPath .githooks
+repo_root="$(git rev-parse --show-toplevel)"
+if ! "$repo_root/scripts/privacy-scan.sh" --staged; then
+    echo "pre-commit: commit blocked by privacy scan." >&2
+    exit 1
+fi

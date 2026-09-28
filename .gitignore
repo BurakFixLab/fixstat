@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Xcode
+build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+xcuserdata/
+
+# Build products
+*.app
+*.dSYM
+*.dSYM.zip
+*.ipa
+*.xcarchive
+
+# Local test / dump output (may contain serial numbers or other personal data)
+output/
+local/
+*.local.json
+dumps/
+reports/
+*.ioreg
+*.log
+
+# Editors
+.vscode/
+.idea/
+*.swp
