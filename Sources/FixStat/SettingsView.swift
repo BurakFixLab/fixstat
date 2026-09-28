@@ -3,14 +3,23 @@ import ServiceManagement
 import SwiftUI
 
 struct SettingsView: View {
+    @State private var tab: Int
+
+    init(initialTab: Int = 0) {
+        _tab = State(initialValue: initialTab)
+    }
+
     var body: some View {
-        TabView {
+        TabView(selection: $tab) {
             GeneralSettings()
                 .tabItem { Label("General", systemImage: "gearshape") }
+                .tag(0)
             ThresholdSettings()
                 .tabItem { Label("Thresholds", systemImage: "thermometer.medium") }
+                .tag(1)
             SensorSettings()
                 .tabItem { Label("Sensors", systemImage: "list.bullet") }
+                .tag(2)
         }
         .frame(width: 520, height: 460)
     }
@@ -81,11 +90,11 @@ private struct ThresholdSettings: View {
     var body: some View {
         Form {
             Section {
-                Stepper(value: $warm, in: 30...(hot - 1), step: 1) {
-                    LabeledContent("Warm from", value: Format.temperature(warm, digits: 0))
+                StepperRow(title: "Warm from", value: Format.temperature(warm, digits: 0)) {
+                    Stepper("Warm from", value: $warm, in: 30...(hot - 1), step: 1)
                 }
-                Stepper(value: $hot, in: (warm + 1)...100, step: 1) {
-                    LabeledContent("Hot from", value: Format.temperature(hot, digits: 0))
+                StepperRow(title: "Hot from", value: Format.temperature(hot, digits: 0)) {
+                    Stepper("Hot from", value: $hot, in: (warm + 1)...100, step: 1)
                 }
                 HStack(spacing: 12) {
                     legend(TemperatureColor.cool, "Cool")
@@ -96,8 +105,8 @@ private struct ThresholdSettings: View {
                 Text("Temperature colours")
             }
             Section {
-                Stepper(value: $imbalance, in: 5...500, step: 5) {
-                    LabeledContent("Warn above", value: Format.millivolts(imbalance))
+                StepperRow(title: "Warn above", value: Format.millivolts(imbalance)) {
+                    Stepper("Warn above", value: $imbalance, in: 5...500, step: 5)
                 }
             } header: {
                 Text("Cell voltage spread")
@@ -123,6 +132,22 @@ private struct ThresholdSettings: View {
             Circle().fill(color).frame(width: 8, height: 8)
         }
         .font(.caption)
+    }
+}
+
+/// Title on the left, value and stepper on the right.
+private struct StepperRow<Control: View>: View {
+    let title: LocalizedStringKey
+    let value: String
+    @ViewBuilder let control: Control
+
+    var body: some View {
+        LabeledContent(title) {
+            HStack(spacing: 6) {
+                Text(value).monospacedDigit()
+                control.labelsHidden()
+            }
+        }
     }
 }
 
