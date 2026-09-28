@@ -36,6 +36,13 @@ enum Format {
                                     numberFormatStyle: .number.precision(.fractionLength(digits))))
     }
 
+    static func amps(milliamps: Int) -> String {
+        let digits = milliamps % 1000 == 0 ? 0 : (milliamps % 100 == 0 ? 1 : 2)
+        return Measurement(value: Double(milliamps) / 1000, unit: UnitElectricCurrent.amperes)
+            .formatted(.measurement(width: .abbreviated, usage: .asProvided,
+                                    numberFormatStyle: .number.precision(.fractionLength(digits))))
+    }
+
     static func millivolts(_ value: Int) -> String {
         Measurement(value: Double(value), unit: UnitElectricPotentialDifference.millivolts)
             .formatted(.measurement(width: .abbreviated, usage: .asProvided))

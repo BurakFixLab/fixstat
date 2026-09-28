@@ -42,6 +42,15 @@ final class Monitor {
         }
     }
 
+    /// The battery details window refreshes the battery at the panel's rate.
+    var detailsVisible = false {
+        didSet {
+            guard detailsVisible != oldValue else { return }
+            refresh()
+            scheduleTimer()
+        }
+    }
+
     @ObservationIgnored private var sampler: TemperatureSampler?
     @ObservationIgnored private let stats = SystemStats()
     @ObservationIgnored private var timer: Timer?
@@ -164,7 +173,7 @@ final class Monitor {
     }
 
     private func scheduleTimer() {
-        let interval = panelVisible ? configuredInterval : max(configuredInterval, 5)
+        let interval = panelVisible || detailsVisible ? configuredInterval : max(configuredInterval, 5)
         guard interval != lastInterval || timer == nil else { return }
         lastInterval = interval
         timer?.invalidate()
@@ -180,7 +189,7 @@ final class Monitor {
         let defaults = UserDefaults.standard
         let now = Date()
         let historyDue = now.timeIntervalSince(lastHistorySample) >= Self.historyInterval
-        let needsBattery = panelVisible || historyDue || defaults.bool(forKey: Pref.menuBarBatteryIcon)
+        let needsBattery = panelVisible || detailsVisible || historyDue || defaults.bool(forKey: Pref.menuBarBatteryIcon)
             || defaults.bool(forKey: Pref.menuBarBatteryPercent)
         if needsBattery {
             let latest = BatteryReader.read()

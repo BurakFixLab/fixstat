@@ -127,6 +127,19 @@ if let b = snapshot.battery {
     if let qmax = b.cellQmax {
         pairs.append(("Cell Qmax", qmax.map { "\($0)" }.joined(separator: " / ") + " mAh"))
     }
+    if let resistance = b.cellResistance {
+        pairs.append(("Cell resistance", resistance.map { "\($0)" }.joined(separator: " / ") + " (WeightedRa, gauge units)"))
+    }
+    for cell in CellAnalysis(battery: b).suspects {
+        var notes: [String] = []
+        if cell.highResistance, let d = cell.resistanceDeviation { notes.append(String(format: "resistance %+.0f %%", d * 100)) }
+        if cell.lowCapacity, let d = cell.qmaxDeviation { notes.append(String(format: "Qmax %+.0f %%", d * 100)) }
+        pairs.append(("Suspect cell", "\(cell.number): " + notes.joined(separator: ", ") + " vs. pack average"))
+    }
+    if let id = b.identity {
+        pairs.append(("Chemistry ID", fmt(id.chemistryID)))
+        pairs.append(("Manufacturer data", id.manufacturerStrings.isEmpty ? "-" : id.manufacturerStrings.joined(separator: " · ")))
+    }
     pairs.append(("Permanent failure", fmt(b.permanentFailureStatus)))
     pairs.append(("Cell disconnects", fmt(b.cellDisconnectCount)))
     pairs.append(("Serial", b.serial ?? "-"))
@@ -157,9 +170,38 @@ if let b = snapshot.battery {
             ("Charging current", fmt(c.chargingCurrent, unit: " mA")),
             ("Charging voltage", fmt(c.chargingVoltage, unit: " mV")),
             ("NotChargingReason", fmt(c.notChargingReason)),
+            ("SlowChargingReason", fmt(c.slowChargingReason)),
+            ("ChargerInhibitReason", fmt(c.chargerInhibitReason)),
         ]
     }
     keyValues(power)
+
+    if let l = b.lifetime {
+        section("LIFETIME (gauge)")
+        keyValues([
+            ("Operating time", fmt(l.totalOperatingTime, unit: " h")),
+            ("Temperature", "\(fmt(l.minimumTemperature, 1)) … \(fmt(l.maximumTemperature, 1)) °C (avg \(fmt(l.averageTemperature, 1)))"),
+            ("Max charge current", fmt(l.maximumChargeCurrent, unit: " mA")),
+            ("Max discharge current", fmt(l.maximumDischargeCurrent, unit: " mA")),
+            ("Pack voltage", "\(fmt(l.minimumPackVoltage)) … \(fmt(l.maximumPackVoltage, unit: " mV"))"),
+        ])
+    }
+
+    if let pd = b.powerDelivery {
+        section("USB-C POWER DELIVERY" + (b.externalConnected == true ? "" : " (last contract, adapter not connected)"))
+        var rows: [(String, String)] = []
+        if let c = pd.contract {
+            rows.append(("Contract", "profile \(c.objectPosition): \(fmt(c.voltage, unit: " mV")), requested \(fmt(c.operatingCurrent, unit: " mA"))"
+                + (c.capabilityMismatch ? " — capability mismatch" : "")))
+        }
+        for (i, pdo) in pd.sourceCapabilities.enumerated() {
+            let range = pdo.minVoltage.map { "\($0)–" } ?? ""
+            rows.append(("Source PDO \(i + 1)", "\(pdo.kind.rawValue) \(range)\(fmt(pdo.maxVoltage, unit: " mV")) \(fmt(pdo.maxCurrent, unit: " mA"))"))
+        }
+        rows.append(("Attach / detach", "\(fmt(pd.attachCount)) / \(fmt(pd.detachCount))"))
+        rows.append(("Hard resets", fmt(pd.hardResetCount)))
+        keyValues(rows)
+    }
 } else {
     section("BATTERY")
     print("  no AppleSmartBattery found")

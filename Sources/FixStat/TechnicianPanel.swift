@@ -82,7 +82,11 @@ struct TechnicianPanel: View {
 
     private func batteryGrid(_ b: BatteryInfo) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            SectionTitle(title: "Battery")
+            HStack {
+                SectionTitle(title: "Battery")
+                Spacer()
+                DetailsLink()
+            }
             Grid(horizontalSpacing: 6, verticalSpacing: 6) {
                 GridRow {
                     TechCell(title: "Design cap.", value: b.designCapacity.map(Format.milliampHours))

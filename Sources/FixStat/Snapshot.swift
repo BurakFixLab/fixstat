@@ -7,7 +7,7 @@ import SwiftUI
 ///       [--dark|--light] [-AppleLanguages "(tr)"]
 ///
 /// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead,
-/// `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
+/// `--details` the battery details window, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
 ///
 ///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json
 ///
@@ -32,7 +32,12 @@ enum Snapshot {
             i + 1 < arguments.count ? Int(arguments[i + 1]) : nil
         }
         let root: AnyView
-        if arguments.contains("--history") {
+        if arguments.contains("--details") {
+            root = AnyView(BatteryDetailsView()
+                .environment(monitor)
+                .frame(width: 720, height: 760)
+                .background(Color(nsColor: .windowBackgroundColor)))
+        } else if arguments.contains("--history") {
             let rangeIndex = arguments.firstIndex(of: "--range").flatMap { i in
                 i + 1 < arguments.count ? Int(arguments[i + 1]) : nil
             }

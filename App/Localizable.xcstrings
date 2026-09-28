@@ -18,6 +18,33 @@
         }
       }
     },
+    "%@ h" : {
+      "comment" : "Hours as reported by the gauge",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ sa"
+          }
+        }
+      }
+    },
+    "%@ of %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ of %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@"
+          }
+        }
+      }
+    },
     "%@ remaining" : {
       "localizations" : {
         "tr" : {
@@ -102,6 +129,16 @@
         }
       }
     },
+    "Adapter offers" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptörün sunduğu"
+          }
+        }
+      }
+    },
     "All (%lld)" : {
       "localizations" : {
         "tr" : {
@@ -142,12 +179,42 @@
         }
       }
     },
+    "Average temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortalama sıcaklık"
+          }
+        }
+      }
+    },
     "Battery" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya"
+          }
+        }
+      }
+    },
+    "Battery current" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya akımı"
+          }
+        }
+      }
+    },
+    "Battery details" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya ayrıntıları"
           }
         }
       }
@@ -212,12 +279,48 @@
         }
       }
     },
+    "Cell" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre"
+          }
+        }
+      }
+    },
     "Cell %lld" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hücre %lld"
+          }
+        }
+      }
+    },
+    "Cell %lld: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cell %1$lld: %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre %1$lld: %2$@"
+          }
+        }
+      }
+    },
+    "Cell disconnects" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre kopmaları"
           }
         }
       }
@@ -242,12 +345,72 @@
         }
       }
     },
+    "Cells" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücreler"
+          }
+        }
+      }
+    },
+    "Cells are consistent." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücreler birbiriyle tutarlı."
+          }
+        }
+      }
+    },
     "Charge" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Şarj"
+          }
+        }
+      }
+    },
+    "Charger" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şarj"
+          }
+        }
+      }
+    },
+    "Charger inhibit reason" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şarj engelleme nedeni"
+          }
+        }
+      }
+    },
+    "Charger target current" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şarj hedef akımı"
+          }
+        }
+      }
+    },
+    "Charger target voltage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şarj hedef voltajı"
           }
         }
       }
@@ -268,6 +431,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Şarj oluyor · %@"
+          }
+        }
+      }
+    },
+    "Chemistry ID" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kimya kodu"
+          }
+        }
+      }
+    },
+    "Contract" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sözleşme"
           }
         }
       }
@@ -328,6 +511,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tasarım kap."
+          }
+        }
+      }
+    },
+    "Details" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayrıntılar"
           }
         }
       }
@@ -432,6 +625,16 @@
         }
       }
     },
+    "Flash writes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flash yazma sayısı"
+          }
+        }
+      }
+    },
     "Free and open source (MIT License)." : {
       "localizations" : {
         "tr" : {
@@ -482,12 +685,32 @@
         }
       }
     },
+    "Gauge" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gauge"
+          }
+        }
+      }
+    },
     "General" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Genel"
+          }
+        }
+      }
+    },
+    "Hard resets" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard reset"
           }
         }
       }
@@ -508,6 +731,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sensörleri gizleyin veya kendi adınızı verin. İsimler sensör haritanıza kaydedilir."
+          }
+        }
+      }
+    },
+    "Highest charge current" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek şarj akımı"
+          }
+        }
+      }
+    },
+    "Highest discharge current" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek deşarj akımı"
+          }
+        }
+      }
+    },
+    "Highest pack voltage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek paket voltajı"
           }
         }
       }
@@ -552,6 +805,16 @@
         }
       }
     },
+    "Input" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giriş"
+          }
+        }
+      }
+    },
     "JSON…" : {
       "localizations" : {
         "tr" : {
@@ -572,12 +835,52 @@
         }
       }
     },
+    "Lifetime (gauge)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ömür boyu (gauge)"
+          }
+        }
+      }
+    },
     "Light" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Açık"
+          }
+        }
+      }
+    },
+    "Lowest pack voltage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En düşük paket voltajı"
+          }
+        }
+      }
+    },
+    "Lowest temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En düşük sıcaklık"
+          }
+        }
+      }
+    },
+    "Manufacturer data" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üretici verisi"
           }
         }
       }
@@ -632,6 +935,26 @@
         }
       }
     },
+    "No USB-C Power Delivery contract." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB-C Power Delivery sözleşmesi yok."
+          }
+        }
+      }
+    },
+    "No battery" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya yok"
+          }
+        }
+      }
+    },
     "No battery history yet" : {
       "localizations" : {
         "tr" : {
@@ -672,12 +995,42 @@
         }
       }
     },
+    "No power adapter — last contract:" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptör bağlı değil — son sözleşme:"
+          }
+        }
+      }
+    },
     "No temperature sensors found" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sıcaklık sensörü bulunamadı"
+          }
+        }
+      }
+    },
+    "Nominal health" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nominal sağlık"
+          }
+        }
+      }
+    },
+    "Not charging reason" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şarj olmama nedeni"
           }
         }
       }
@@ -732,12 +1085,52 @@
         }
       }
     },
+    "Operating time" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışma süresi"
+          }
+        }
+      }
+    },
+    "Pack" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paket"
+          }
+        }
+      }
+    },
     "Performance clusters" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Performans kümeleri"
+          }
+        }
+      }
+    },
+    "Permanent failure" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalıcı arıza"
+          }
+        }
+      }
+    },
+    "Plug-ins / removals" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takma / çıkarma"
           }
         }
       }
@@ -772,6 +1165,26 @@
         }
       }
     },
+    "Qmax" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qmax"
+          }
+        }
+      }
+    },
+    "Qmax %@ vs. average" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qmax ortalamaya göre %@"
+          }
+        }
+      }
+    },
     "Quit" : {
       "localizations" : {
         "tr" : {
@@ -792,12 +1205,52 @@
         }
       }
     },
+    "Reason codes are Apple's undocumented bit fields, shown as reported. 0 means none." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neden kodları Apple'ın belgelenmemiş bit alanlarıdır, okunduğu gibi gösterilir. 0 = yok."
+          }
+        }
+      }
+    },
     "Remaining" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kalan"
+          }
+        }
+      }
+    },
+    "Requested" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talep edilen"
+          }
+        }
+      }
+    },
+    "Resistance" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direnç"
+          }
+        }
+      }
+    },
+    "Resistance is the gauge's weighted cell resistance; its unit is not documented, compare the cells with each other." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direnç, gauge'un ağırlıklı hücre direncidir; birimi belgelenmemiştir, hücreleri birbiriyle karşılaştırın."
           }
         }
       }
@@ -828,6 +1281,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sensörler"
+          }
+        }
+      }
+    },
+    "Serial" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seri no"
           }
         }
       }
@@ -872,6 +1335,16 @@
         }
       }
     },
+    "Slow charging reason" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yavaş şarj nedeni"
+          }
+        }
+      }
+    },
     "Spread %@ · balanced" : {
       "localizations" : {
         "tr" : {
@@ -888,6 +1361,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fark %@ · dengesiz"
+          }
+        }
+      }
+    },
+    "State" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durum"
           }
         }
       }
@@ -942,6 +1425,36 @@
         }
       }
     },
+    "The Mac reported that the adapter cannot supply what it needs." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac, adaptörün ihtiyacını karşılayamadığını bildirdi."
+          }
+        }
+      }
+    },
+    "Thermally limited" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isıl sınırlama"
+          }
+        }
+      }
+    },
+    "This Mac has no internal battery." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Mac'te dahili batarya yok."
+          }
+        }
+      }
+    },
     "Thresholds" : {
       "localizations" : {
         "tr" : {
@@ -958,6 +1471,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zaman"
+          }
+        }
+      }
+    },
+    "USB-C Power Delivery" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB-C PD"
           }
         }
       }
@@ -1058,6 +1581,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tahmini"
+          }
+        }
+      }
+    },
+    "in use" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kullanımda"
+          }
+        }
+      }
+    },
+    "none" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yok"
+          }
+        }
+      }
+    },
+    "profile %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "profil %lld"
+          }
+        }
+      }
+    },
+    "resistance %@ vs. average" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "direnç ortalamaya göre %@"
           }
         }
       }
@@ -1652,6 +2215,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SSD yakını %lld"
+          }
+        }
+      }
+    },
+    "vs. average" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ortalamaya göre"
           }
         }
       }

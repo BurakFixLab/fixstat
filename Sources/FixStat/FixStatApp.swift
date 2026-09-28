@@ -26,6 +26,12 @@ struct FixStatApp: App {
         }
         .defaultSize(width: 680, height: 640)
 
+        Window("Battery details", id: BatteryDetailsView.windowID) {
+            BatteryDetailsView()
+                .environment(monitor)
+        }
+        .defaultSize(width: 720, height: 720)
+
         Settings {
             SettingsView()
                 .environment(monitor)

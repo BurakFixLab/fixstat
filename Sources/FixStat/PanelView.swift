@@ -45,6 +45,18 @@ struct HistoryButton: View {
     }
 }
 
+struct DetailsLink: View {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Button("Details") {
+            present(windowIdentifier: BatteryDetailsView.windowID) { openWindow(id: BatteryDetailsView.windowID) }
+        }
+        .buttonStyle(.link)
+        .font(.caption)
+    }
+}
+
 /// Opens a window from the menu bar panel: closes the panel, activates the app
 /// and brings the window to the front (a menu bar / LSUIElement app does not do
 /// that by itself for newly created windows).

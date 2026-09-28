@@ -92,6 +92,28 @@ struct SensorReport: Encodable {
                 add("battery", "CellVoltage\(index + 1)", "", Double(cell), "mV")
             }
             add("battery", "cellImbalance", "", b.cellImbalance.map(Double.init), "mV")
+            for (index, value) in (b.cellQmax ?? []).enumerated() {
+                add("battery", "Qmax\(index + 1)", "", Double(value), "mAh")
+            }
+            for (index, value) in (b.cellResistance ?? []).enumerated() {
+                add("battery", "WeightedRa\(index + 1)", "", Double(value), "")
+            }
+            add("battery", "ChemID", b.identity?.manufacturerStrings.joined(separator: " ") ?? "",
+                b.identity?.chemistryID.map(Double.init), "")
+            if let l = b.lifetime {
+                add("lifetime", "TotalOperatingTime", "", l.totalOperatingTime.map(Double.init), "h")
+                add("lifetime", "MaximumTemperature", "", l.maximumTemperature, "°C")
+                add("lifetime", "MinimumTemperature", "", l.minimumTemperature, "°C")
+                add("lifetime", "MaximumChargeCurrent", "", l.maximumChargeCurrent.map(Double.init), "mA")
+                add("lifetime", "MaximumDischargeCurrent", "", l.maximumDischargeCurrent.map(Double.init), "mA")
+            }
+            if let c = b.powerDelivery?.contract {
+                add("usbpd", "ContractVoltage", "profile \(c.objectPosition)", c.voltage.map(Double.init), "mV")
+                add("usbpd", "ContractCurrent", "", c.operatingCurrent.map(Double.init), "mA")
+            }
+            for (index, pdo) in (b.powerDelivery?.sourceCapabilities ?? []).enumerated() {
+                add("usbpd", "SourcePDO\(index + 1)", pdo.kind.rawValue, pdo.maxVoltage.map(Double.init), "mV")
+            }
             add("battery", "SystemPowerIn", "", b.powerTelemetry?.systemPowerIn.map(Double.init), "mW")
             add("battery", "AdapterWatts", b.adapter?.name ?? "", b.adapter?.ratedWatts.map(Double.init), "W")
             rows.append(["battery", "Serial", b.serial ?? "", "", ""])

@@ -44,9 +44,65 @@ public struct ChargerInfo: Codable, Sendable, Equatable {
     public var chargingCurrent: Int?
     /// Requested charging voltage in mV.
     public var chargingVoltage: Int?
+    /// Bit field; Apple does not document the bits. 0 = charging normally.
     public var notChargingReason: Int?
     public var slowChargingReason: Int?
+    public var chargerInhibitReason: Int?
+    /// As reported (`TimeChargingThermallyLimited`).
+    public var timeChargingThermallyLimited: Int?
     public var vacVoltageLimit: Int?
+}
+
+/// What the gauge recorded over the life of the pack (`BatteryData.LifetimeData`).
+public struct BatteryLifetime: Codable, Sendable, Equatable {
+    /// Hours.
+    public var totalOperatingTime: Int?
+    /// °C
+    public var maximumTemperature: Double?
+    public var minimumTemperature: Double?
+    public var averageTemperature: Double?
+    /// mA
+    public var maximumChargeCurrent: Int?
+    /// mA (negative)
+    public var maximumDischargeCurrent: Int?
+    /// mV
+    public var maximumPackVoltage: Int?
+    public var minimumPackVoltage: Int?
+}
+
+/// Pack identification that is not a serial number.
+public struct BatteryIdentity: Codable, Sendable, Equatable {
+    /// Gauge chemistry id (`BatteryData.ChemID`).
+    public var chemistryID: Int?
+    /// Text fields found in `ManufacturerData` (e.g. lot codes and the cell maker, "ATL").
+    public var manufacturerStrings: [String]
+    /// Gauge data flash write count.
+    public var dataFlashWriteCount: Int?
+
+    /// Length-prefixed text fields (2…16 letters, digits, space or dash) in the
+    /// manufacturer data block. Single bytes are not treated as text.
+    public static func strings(in data: Data) -> [String] {
+        let bytes = [UInt8](data)
+        var result: [String] = []
+        var index = 0
+        while index < bytes.count {
+            let length = Int(bytes[index])
+            if (2...16).contains(length), index + length < bytes.count {
+                let slice = bytes[(index + 1)...(index + length)]
+                let allowed: (UInt8) -> Bool = { byte in
+                    (0x30...0x39).contains(byte) || (0x41...0x5a).contains(byte)
+                        || (0x61...0x7a).contains(byte) || byte == 0x20 || byte == 0x2d
+                }
+                if slice.allSatisfy(allowed) {
+                    result.append(String(decoding: slice, as: UTF8.self))
+                    index += length + 1
+                    continue
+                }
+            }
+            index += 1
+        }
+        return result
+    }
 }
 
 /// Snapshot of `AppleSmartBattery`.
@@ -98,6 +154,9 @@ public struct BatteryInfo: Codable, Sendable, Equatable {
     public var cellImbalance: Int?
     /// mAh per cell (`BatteryData.Qmax`).
     public var cellQmax: [Int]?
+    /// Weighted cell resistance per cell (`BatteryData.WeightedRa`), gauge units.
+    /// Relative differences between cells matter; the absolute unit is not documented.
+    public var cellResistance: [Int]?
     /// Gauge-internal state of charge in % (`BatteryData.StateOfCharge`).
     public var gaugeStateOfCharge: Int?
     public var permanentFailureStatus: Int?
@@ -105,6 +164,9 @@ public struct BatteryInfo: Codable, Sendable, Equatable {
     public var adapter: AdapterInfo?
     public var powerTelemetry: PowerTelemetry?
     public var charger: ChargerInfo?
+    public var powerDelivery: PowerDeliveryInfo?
+    public var lifetime: BatteryLifetime?
+    public var identity: BatteryIdentity?
     /// Pack serial number; masked unless serial output is explicitly requested.
     public var serial: String?
 }
@@ -175,6 +237,28 @@ public enum BatteryReader {
             }
         }
         info.cellQmax = data.intArray("Qmax")
+        info.cellResistance = data.intArray("WeightedRa")
+        if let life = data.dict("LifetimeData") {
+            info.lifetime = BatteryLifetime(
+                totalOperatingTime: life.int("TotalOperatingTime"),
+                maximumTemperature: life.int("MaximumTemperature").map { Double($0) / 10 },
+                minimumTemperature: life.int("MinimumTemperature").map { Double($0) / 10 },
+                averageTemperature: life.int("AverageTemperature").map { Double($0) / 10 },
+                maximumChargeCurrent: life.int("MaximumChargeCurrent"),
+                maximumDischargeCurrent: life.int("MaximumDischargeCurrent"),
+                maximumPackVoltage: life.int("MaximumPackVoltage"),
+                minimumPackVoltage: life.int("MinimumPackVoltage")
+            )
+        }
+        let manufacturerData = (props["ManufacturerData"] as? Data) ?? (data["MfgData"] as? Data)
+        info.identity = BatteryIdentity(
+            chemistryID: data.int("ChemID"),
+            manufacturerStrings: manufacturerData.map(BatteryIdentity.strings) ?? [],
+            dataFlashWriteCount: data.int("DataFlashWriteCount")
+        )
+        if let ports = props["PortControllerInfo"] as? [[String: Any]] {
+            info.powerDelivery = PowerDeliveryInfo.parse(ports)
+        }
         info.gaugeStateOfCharge = data.int("StateOfCharge")
         info.permanentFailureStatus = props.int("PermanentFailureStatus")
         info.cellDisconnectCount = props.int("BatteryCellDisconnectCount")
@@ -223,6 +307,8 @@ public enum BatteryReader {
                 chargingVoltage: charger.int("ChargingVoltage"),
                 notChargingReason: charger.int("NotChargingReason"),
                 slowChargingReason: charger.int("SlowChargingReason"),
+                chargerInhibitReason: charger.int("ChargerInhibitReason"),
+                timeChargingThermallyLimited: charger.int("TimeChargingThermallyLimited"),
                 vacVoltageLimit: charger.int("VacVoltageLimit")
             )
         }
