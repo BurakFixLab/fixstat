@@ -28,9 +28,11 @@ public struct PowerTelemetry: Codable, Sendable, Equatable {
     public var systemVoltageIn: Int?
     /// Input current in mA.
     public var systemCurrentIn: Int?
-    /// System load in mW.
+    /// `SystemLoad` as reported, in mW. Observed to equal SystemPowerIn − BatteryPower.
     public var systemLoad: Int?
-    /// Battery power in mW (positive = charging).
+    /// `BatteryPower` as reported, in mW. Observed negative both while charging
+    /// and discharging (M1, macOS 26) — do not rely on its sign; use
+    /// `BatteryInfo.batteryPowerWatts` (voltage × signed amperage) instead.
     public var batteryPower: Int?
     /// Adapter efficiency loss in mW.
     public var adapterEfficiencyLoss: Int?
@@ -78,6 +80,9 @@ public struct BatteryInfo: Codable, Sendable, Equatable {
     public var instantAmperage: Int?
     /// Battery power in W (voltage × amperage), positive = charging.
     public var batteryPowerWatts: Double?
+    /// Power consumed by the system in W. On AC: input − battery power −
+    /// adapter loss; on battery: the discharge power.
+    public var systemPowerWatts: Double?
     public var isCharging: Bool?
     public var externalConnected: Bool?
     public var fullyCharged: Bool?
@@ -200,6 +205,16 @@ public enum BatteryReader {
                 batteryPower: telemetry.int("BatteryPower"),
                 adapterEfficiencyLoss: telemetry.int("AdapterEfficiencyLoss")
             )
+        }
+
+        if let battery = info.batteryPowerWatts {
+            let telemetry = info.powerTelemetry
+            if let input = telemetry?.systemPowerIn, input > 0, info.externalConnected == true {
+                let loss = Double(telemetry?.adapterEfficiencyLoss ?? 0) / 1000
+                info.systemPowerWatts = Double(input) / 1000 - battery - loss
+            } else if info.externalConnected != true {
+                info.systemPowerWatts = -battery
+            }
         }
 
         if let charger = props.dict("ChargerData") {

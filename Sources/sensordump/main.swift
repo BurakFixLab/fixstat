@@ -133,7 +133,10 @@ if let b = snapshot.battery {
     keyValues(pairs)
 
     section("POWER INPUT")
-    var power: [(String, String)] = [("External power", b.externalConnected == true ? "connected" : "not connected")]
+    var power: [(String, String)] = [
+        ("External power", b.externalConnected == true ? "connected" : "not connected"),
+        ("System power", fmt(b.systemPowerWatts, 2, unit: " W") + " (derived: input − battery V×I − adapter loss)"),
+    ]
     if let a = b.adapter {
         power += [
             ("Adapter", [a.manufacturer, a.name, a.description].compactMap { $0 }.joined(separator: " · ")),
@@ -145,7 +148,7 @@ if let b = snapshot.battery {
         power += [
             ("Input power", fmt(t.systemPowerIn.map { Double($0) / 1000 }, 2, unit: " W")
                 + " (\(fmt(t.systemVoltageIn, unit: " mV")), \(fmt(t.systemCurrentIn, unit: " mA")))"),
-            ("System load", fmt(t.systemLoad.map { Double($0) / 1000 }, 2, unit: " W")),
+            ("SystemLoad (raw)", fmt(t.systemLoad, unit: " mW")),
             ("Adapter loss", fmt(t.adapterEfficiencyLoss.map { Double($0) / 1000 }, 2, unit: " W")),
         ]
     }
