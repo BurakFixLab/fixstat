@@ -16,8 +16,7 @@ struct PanelView: View {
         }
         .frame(width: 360)
         .padding(14)
-        .onAppear { monitor.panelVisible = true }
-        .onDisappear { monitor.panelVisible = false }
+        .background(PanelWindowObserver { visible in monitor.panelVisible = visible })
     }
 }
 

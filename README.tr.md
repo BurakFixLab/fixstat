@@ -4,6 +4,9 @@
 
 [English](README.md)
 
+> **Test sürümü.** FixStat şu an **macOS 14 Sonoma veya üstünü** gerektirir.
+> **macOS 10.13 High Sierra'ya kadar** eski macOS sürümleri için destek yakında geliyor.
+
 FixStat batarya, sıcaklık, fan ve sistem verilerini menü çubuğunda gösterir. Sensör
 isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg` içinden
 çıkardığınız ham batarya gauge verilerini tek ekranda toplar.
@@ -55,6 +58,8 @@ isimlendirilir ve "tahmini" olarak işaretlenir. Kendi modelinizi eklemek için
 ## Kurulum
 
 ### İndirme
+
+macOS 14 Sonoma veya üstü gerekir (eski sürümler yakında, yukarıya bakın).
 
 1. [Releases](../../releases) sayfasından `FixStat.zip` dosyasını indirin ve
    `FixStat.app`'i `/Applications` (Uygulamalar) klasörüne taşıyın.

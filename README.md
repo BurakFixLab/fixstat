@@ -4,6 +4,9 @@
 
 [Türkçe](README.tr.md)
 
+> **Test release.** FixStat currently requires **macOS 14 Sonoma or later**.
+> Support for older macOS versions, down to **macOS 10.13 High Sierra**, is coming soon.
+
 FixStat shows battery, temperature, fan and system data in the menu bar — with
 sensor names that were verified per Mac model, and a technician mode with the raw
 battery gauge data you normally dig out of `ioreg`.
@@ -52,6 +55,8 @@ estimated. Please help add your model — see [CONTRIBUTING.md](CONTRIBUTING.md)
 ## Installation
 
 ### Download
+
+Requires macOS 14 Sonoma or later (older versions are coming soon, see above).
 
 1. Download `FixStat.zip` from [Releases](../../releases) and move `FixStat.app` to
    `/Applications`.
