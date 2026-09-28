@@ -54,24 +54,22 @@ estimated. Please help add your model — see [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Installation
 
-### Download
+**Step-by-step guide: [INSTALL.md](INSTALL.md)** — download, first launch of the unsigned
+app, menu bar, open at login, updating, uninstalling and troubleshooting.
 
-Requires macOS 14 Sonoma or later (older versions are coming soon, see above).
+In short (macOS 14 Sonoma or later):
 
 1. Download `FixStat.zip` from [Releases](../../releases) and move `FixStat.app` to
    `/Applications`.
-2. FixStat is not notarized by Apple (that needs a paid developer account), so macOS
-   blocks the first launch. Open the app once, then go to **System Settings › Privacy &
-   Security** and click **Open Anyway** next to the FixStat message.
-   Alternatively, in Terminal:
+2. FixStat is not notarized by Apple, so the first launch is blocked once: open it, then
+   click **Open Anyway** in **System Settings › Privacy & Security** (on macOS 14:
+   right-click › Open). Or in Terminal:
    ```bash
    xattr -dr com.apple.quarantine /Applications/FixStat.app
    ```
-3. FixStat lives in the menu bar (no Dock icon). **Open at login** is in its settings.
+3. FixStat runs in the menu bar (no Dock icon). **Open at login** is in its settings.
 
-### Build from source
-
-Requires macOS 14 or later and Xcode 16 or later (Swift 6). No other tools.
+To build from source (Xcode 16+, no other tools):
 
 ```bash
 git clone https://github.com/BurakFixLab/fixstat.git

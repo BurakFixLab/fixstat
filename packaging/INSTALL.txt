@@ -1,0 +1,72 @@
+FixStat — installation / kurulum
+================================
+
+English below · Türkçesi aşağıda
+Full guide with pictures of each step / ayrıntılı rehber:
+https://github.com/BurakFixLab/fixstat/blob/main/INSTALL.md
+https://github.com/BurakFixLab/fixstat/blob/main/INSTALL.tr.md
+
+
+ENGLISH
+-------
+
+Requires macOS 14 Sonoma or later. Support for older versions is coming soon.
+
+1. Drag FixStat.app into your Applications folder.
+
+2. Open it the first time. FixStat is not notarized by Apple, so macOS blocks
+   the first launch (only once):
+
+   macOS 15 Sequoia and later:
+     - Double-click FixStat, then click "Done" in the warning.
+     - Open System Settings > Privacy & Security, scroll to "Security".
+     - Click "Open Anyway" next to the FixStat message and confirm.
+
+   macOS 14 Sonoma:
+     - Right-click (Control-click) FixStat > Open > Open.
+
+   Or, on any version, in Terminal:
+     xattr -dr com.apple.quarantine /Applications/FixStat.app
+
+3. FixStat runs in the menu bar (top right: battery icon, percentage, CPU
+   temperature). It has no Dock icon. Click it to open the panel.
+   Settings... > General > "Open at login" starts it automatically.
+
+FixStat needs no administrator rights and no special permissions. It only
+reads sensor values and never writes to the SMC. It has no network access.
+
+Uninstall: turn off "Open at login", quit FixStat, move FixStat.app to the
+Trash. Optional: delete ~/Library/Application Support/FixStat
+
+
+TÜRKÇE
+------
+
+macOS 14 Sonoma veya üstü gerekir. Eski sürümler için destek yakında geliyor.
+
+1. FixStat.app'i Uygulamalar (Applications) klasörüne sürükleyin.
+
+2. İlk açılış. FixStat Apple tarafından notarize edilmediği için macOS ilk
+   açılışı engeller (yalnızca bir kez):
+
+   macOS 15 Sequoia ve sonrası:
+     - FixStat'a çift tıklayın, uyarıda "Bitti"ye tıklayın.
+     - Sistem Ayarları > Gizlilik ve Güvenlik'i açın, "Güvenlik" bölümüne inin.
+     - FixStat uyarısının yanındaki "Yine de Aç"a tıklayıp onaylayın.
+
+   macOS 14 Sonoma:
+     - FixStat'a sağ tıklayın (Control ile tıklayın) > Aç > Aç.
+
+   Ya da tüm sürümlerde Terminal'de:
+     xattr -dr com.apple.quarantine /Applications/FixStat.app
+
+3. FixStat menü çubuğunda çalışır (sağ üst: batarya simgesi, yüzde, CPU
+   sıcaklığı). Dock simgesi yoktur. Paneli açmak için tıklayın.
+   Ayarlar... > Genel > "Oturum açılışında başlat" ile otomatik başlar.
+
+FixStat yönetici yetkisi veya özel izin gerektirmez. Yalnızca sensör
+değerlerini okur, SMC'ye asla yazmaz. Ağ erişimi yoktur.
+
+Kaldırma: "Oturum açılışında başlat"ı kapatın, FixStat'tan çıkın,
+FixStat.app'i Çöp Sepeti'ne taşıyın. İsteğe bağlı:
+~/Library/Application Support/FixStat klasörünü silin.

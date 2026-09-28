@@ -153,6 +153,7 @@ swift build
 swift test
 .build/debug/sensordump [--json] [--raw] [--smc-all] [--hid-power] [--all] [--include-serial]
 scripts/build-app.sh            # → build/FixStat.app (ad-hoc signed)
+scripts/package-release.sh      # → build/FixStat.zip (app + packaging/INSTALL.txt) for Releases
 open build/FixStat.app
 # Render the panel, a Settings tab or the history window to PNG (no screen recording needed):
 build/FixStat.app/Contents/MacOS/FixStat --snapshot out.png [--technician] [--settings 0|1|2] \
@@ -169,6 +170,8 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json
 ├── .githooks/pre-commit        privacy check hook
 ├── scripts/privacy-scan.sh     privacy scanner (--staged / --history / files)
 ├── scripts/build-app.sh        builds build/FixStat.app
+├── scripts/package-release.sh  builds build/FixStat.zip for GitHub Releases
+├── packaging/INSTALL.txt       plain-text install notes (en + tr) shipped in the zip
 ├── scripts/localize.py         catalog apply / prune / check (+ l10n_data.py)
 ├── Package.swift               SPM: CMacSensors, MacSensors, sensordump, sensormap, FixStat, tests
 ├── Sources/CMacSensors/        C shims: read-only AppleSMC user client, private HID event API
@@ -187,6 +190,8 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json
 ## Documentation
 
 - Keep `README.md` and `README.tr.md` in sync, including the verified models table.
+  The same applies to `INSTALL.md` / `INSTALL.tr.md` and the bilingual
+  `packaging/INSTALL.txt` (user-facing installation steps).
 - Screenshots: English ones in README.md, Turkish ones in README.tr.md; check every
   screenshot by eye for serial numbers and user names before committing. The history
   screenshot uses synthetic sample data and is captioned as such.

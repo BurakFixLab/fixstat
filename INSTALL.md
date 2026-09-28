@@ -1,0 +1,111 @@
+# Installing FixStat
+
+[Türkçe](INSTALL.tr.md)
+
+> **Test release.** FixStat currently requires **macOS 14 Sonoma or later**.
+> Support for older versions (down to macOS 10.13 High Sierra) is coming soon.
+
+- [1. Download](#1-download)
+- [2. Open it the first time](#2-open-it-the-first-time)
+- [3. Find it in the menu bar](#3-find-it-in-the-menu-bar)
+- [4. Open at login (optional)](#4-open-at-login-optional)
+- [Updating](#updating)
+- [Uninstalling](#uninstalling)
+- [Building from source](#building-from-source)
+- [Troubleshooting](#troubleshooting)
+
+## 1. Download
+
+1. Download `FixStat.zip` from the [Releases](../../releases) page.
+2. Double-click the zip to unpack it.
+3. Drag **FixStat.app** into your **Applications** folder.
+
+## 2. Open it the first time
+
+FixStat is free and open source, but it is not notarized by Apple (that requires a paid
+developer account). macOS therefore blocks the first launch. You only have to do this once.
+
+**macOS 15 Sequoia and later**
+
+1. Double-click FixStat in Applications. macOS shows *"FixStat" Not Opened* — click **Done**.
+2. Open **System Settings › Privacy & Security** and scroll down to **Security**.
+3. Next to *"FixStat" was blocked…*, click **Open Anyway** and confirm with your password.
+4. Click **Open Anyway** once more in the dialog that follows.
+
+**macOS 14 Sonoma**
+
+1. In Applications, **right-click** (or Control-click) FixStat and choose **Open**.
+2. Click **Open** in the dialog.
+
+**Alternative for all versions (Terminal)**
+
+```bash
+xattr -dr com.apple.quarantine /Applications/FixStat.app
+```
+
+This removes the "downloaded from the internet" flag; FixStat then opens normally. Use it
+also if macOS says the app *"is damaged and can't be opened"*.
+
+FixStat needs **no special permissions**: no administrator rights, no Accessibility or Full
+Disk Access, no network access. It only reads sensor values; it never writes to the SMC.
+
+## 3. Find it in the menu bar
+
+FixStat has no Dock icon and no window at start — it lives in the **menu bar** at the top
+right (battery icon, percentage and CPU temperature). Click it to open the panel.
+
+- **Settings…** in the panel: what the menu bar shows, technician mode, appearance
+  (system / light / dark), thresholds, update interval, sensor names.
+- **History**: battery charge, current and health over time.
+- **Quit** closes FixStat.
+
+## 4. Open at login (optional)
+
+Settings › General › **Open at login**. macOS may ask you to allow FixStat under
+**System Settings › General › Login Items & Extensions**.
+
+## Updating
+
+Quit FixStat, replace `FixStat.app` in Applications with the new version and open it again
+(repeat step 2 if macOS asks). Settings, custom sensor names and battery history are kept.
+
+## Uninstalling
+
+1. In FixStat Settings, turn **Open at login** off, then **Quit**.
+2. Move `FixStat.app` from Applications to the Trash.
+3. Optional — remove settings, custom sensor names and battery history:
+   ```bash
+   rm -rf ~/Library/Application\ Support/FixStat
+   defaults delete io.github.burakfixlab.fixstat
+   ```
+
+## Building from source
+
+Requires macOS 14 or later and Xcode 16 or later (Swift 6). No other tools.
+
+```bash
+git clone https://github.com/BurakFixLab/fixstat.git
+cd fixstat
+scripts/build-app.sh          # builds build/FixStat.app
+open build/FixStat.app
+```
+
+A self-built app is not quarantined, so step 2 is not needed. The command-line tools:
+
+```bash
+swift build -c release
+.build/release/sensordump     # battery, temperatures, fans
+```
+
+## Troubleshooting
+
+| Problem | Solution |
+|---|---|
+| The icon does not appear in the menu bar | On MacBooks with a notch, a full menu bar can hide items behind the notch. Quit a few menu bar apps or use a menu bar manager. Check with Activity Monitor that FixStat is running. |
+| *"FixStat" Not Opened* / *can't be opened* | See step 2, or use the `xattr` command. |
+| *"is damaged and can't be opened"* | Use the `xattr` command in step 2. |
+| Open at login does not work | Allow FixStat in System Settings › General › Login Items & Extensions. |
+| Sensors show "estimated" | Your Mac model has no verified sensor map yet. Names are guessed from the chip and key patterns. You can [help add your model](CONTRIBUTING.md). |
+| Wrong language | FixStat follows the system language. To change it for FixStat only: System Settings › General › Language & Region › Applications. |
+
+Questions or problems: [open an issue](../../issues).

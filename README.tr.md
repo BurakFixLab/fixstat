@@ -57,26 +57,23 @@ isimlendirilir ve "tahmini" olarak işaretlenir. Kendi modelinizi eklemek için
 
 ## Kurulum
 
-### İndirme
+**Adım adım rehber: [INSTALL.tr.md](INSTALL.tr.md)** — indirme, imzasız uygulamanın ilk
+açılışı, menü çubuğu, oturum açılışında başlatma, güncelleme, kaldırma ve sorun giderme.
 
-macOS 14 Sonoma veya üstü gerekir (eski sürümler yakında, yukarıya bakın).
+Kısaca (macOS 14 Sonoma veya üstü):
 
-1. [Releases](../../releases) sayfasından `FixStat.zip` dosyasını indirin ve
-   `FixStat.app`'i `/Applications` (Uygulamalar) klasörüne taşıyın.
-2. FixStat Apple tarafından notarize edilmemiştir (bunun için ücretli geliştirici
-   hesabı gerekir), bu yüzden macOS ilk açılışı engeller. Uygulamayı bir kez açmayı
-   deneyin, ardından **Sistem Ayarları › Gizlilik ve Güvenlik** bölümünde FixStat
-   uyarısının yanındaki **Yine de Aç** düğmesine tıklayın.
-   Alternatif olarak Terminal'de:
+1. [Releases](../../releases) sayfasından `FixStat.zip`'i indirin ve `FixStat.app`'i
+   `/Applications` (Uygulamalar) klasörüne taşıyın.
+2. FixStat Apple tarafından notarize edilmediği için ilk açılış bir kez engellenir:
+   uygulamayı açmayı deneyin, sonra **Sistem Ayarları › Gizlilik ve Güvenlik**'te
+   **Yine de Aç**'a tıklayın (macOS 14'te: sağ tık › Aç). Ya da Terminal'de:
    ```bash
    xattr -dr com.apple.quarantine /Applications/FixStat.app
    ```
 3. FixStat menü çubuğunda çalışır (Dock simgesi yoktur). **Oturum açılışında başlat**
    seçeneği ayarlarındadır.
 
-### Kaynaktan derleme
-
-macOS 14 veya üstü ve Xcode 16 veya üstü (Swift 6) gerekir. Başka araç gerekmez.
+Kaynaktan derlemek için (Xcode 16+, başka araç gerekmez):
 
 ```bash
 git clone https://github.com/BurakFixLab/fixstat.git
