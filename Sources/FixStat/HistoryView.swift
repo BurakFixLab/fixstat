@@ -33,6 +33,10 @@ struct HistoryView: View {
     @State private var range: Range
     @State private var samples: [BatteryHistorySample] = []
     @State private var health: [BatteryHealthRecord] = []
+    /// Time under the pointer in the charge / current charts.
+    @State private var hoverTime: Date?
+    /// Day under the pointer in the health chart.
+    @State private var hoverDay: Date?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -102,6 +106,39 @@ struct HistoryView: View {
         return now.addingTimeInterval(-range.duration)...now
     }
 
+    /// The sample closest to the pointer, if the pointer is over a chart.
+    private var hoveredSample: BatteryHistorySample? {
+        guard let hoverTime, !samples.isEmpty else { return nil }
+        return samples.min { abs($0.time.timeIntervalSince(hoverTime)) < abs($1.time.timeIntervalSince(hoverTime)) }
+    }
+
+    /// The daily health record closest to the pointer.
+    private var hoveredHealth: BatteryHealthRecord? {
+        guard let hoverDay else { return nil }
+        return health
+            .filter { $0.date != nil }
+            .min { abs($0.date!.timeIntervalSince(hoverDay)) < abs($1.date!.timeIntervalSince(hoverDay)) }
+    }
+
+    /// Transparent layer that reports the date under the pointer (nil when it leaves).
+    private func hoverOverlay(_ proxy: ChartProxy, update: @escaping (Date?) -> Void) -> some View {
+        GeometryReader { geometry in
+            Rectangle()
+                .fill(.clear)
+                .contentShape(Rectangle())
+                .onContinuousHover { phase in
+                    switch phase {
+                    case .active(let location):
+                        guard let plotFrame = proxy.plotFrame else { return }
+                        let x = location.x - geometry[plotFrame].origin.x
+                        update(proxy.value(atX: x, as: Date.self))
+                    case .ended:
+                        update(nil)
+                    }
+                }
+        }
+    }
+
     /// One bucket's share of the plot width (≈ 600 pt), at least 1 pt.
     private var barWidth: CGFloat {
         max(1, 600 * range.bucket / range.duration)
@@ -110,18 +147,32 @@ struct HistoryView: View {
     private var chargeChart: some View {
         VStack(alignment: .leading, spacing: 6) {
             SectionTitle(title: "Charge")
-            Chart(samples, id: \.time) { sample in
-                AreaMark(x: .value("Time", sample.time), y: .value("Charge", sample.stateOfCharge))
-                    .foregroundStyle(Color.accentColor.opacity(0.15))
-                LineMark(x: .value("Time", sample.time), y: .value("Charge", sample.stateOfCharge))
-                    .foregroundStyle(Color.accentColor)
-                // A line needs two points; show the samples themselves while there are few.
-                if samples.count < 30 {
+            Chart {
+                ForEach(samples, id: \.time) { sample in
+                    AreaMark(x: .value("Time", sample.time), y: .value("Charge", sample.stateOfCharge))
+                        .foregroundStyle(Color.accentColor.opacity(0.15))
+                    LineMark(x: .value("Time", sample.time), y: .value("Charge", sample.stateOfCharge))
+                        .foregroundStyle(Color.accentColor)
+                    // A line needs two points; show the samples themselves while there are few.
+                    if samples.count < 30 {
+                        PointMark(x: .value("Time", sample.time), y: .value("Charge", sample.stateOfCharge))
+                            .foregroundStyle(Color.accentColor)
+                            .symbolSize(20)
+                    }
+                }
+                if let sample = hoveredSample {
+                    RuleMark(x: .value("Time", sample.time))
+                        .foregroundStyle(Color.secondary.opacity(0.6))
+                        .annotation(position: .top, spacing: 4,
+                                    overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
+                            SampleCard(sample: sample, showsDate: range.duration > 86_400)
+                        }
                     PointMark(x: .value("Time", sample.time), y: .value("Charge", sample.stateOfCharge))
                         .foregroundStyle(Color.accentColor)
-                        .symbolSize(20)
+                        .symbolSize(60)
                 }
             }
+            .chartOverlay { proxy in hoverOverlay(proxy) { hoverTime = $0 } }
             .chartXScale(domain: xDomain)
             .chartXAxis { AxisMarks(preset: .aligned) }
             .chartYScale(domain: 0...100)
@@ -131,7 +182,7 @@ struct HistoryView: View {
                     AxisValueLabel { Text(Format.percent(value.as(Double.self) ?? 0)) }
                 }
             }
-            .frame(height: 130)
+            .frame(height: 150)
             .accessibilityLabel(Text("Charge"))
         }
     }
@@ -146,13 +197,20 @@ struct HistoryView: View {
             }
             .font(.caption)
             .labelStyle(LegendLabelStyle())
-            Chart(samples, id: \.time) { sample in
-                BarMark(x: .value("Time", sample.time, unit: .second),
-                        y: .value("Current", sample.amperage),
-                        width: .fixed(barWidth))
-                    .foregroundStyle(sample.amperage >= 0 ? TemperatureColor.cool : TemperatureColor.hot)
+            Chart {
+                ForEach(samples, id: \.time) { sample in
+                    BarMark(x: .value("Time", sample.time, unit: .second),
+                            y: .value("Current", sample.amperage),
+                            width: .fixed(barWidth))
+                        .foregroundStyle(sample.amperage >= 0 ? TemperatureColor.cool : TemperatureColor.hot)
+                }
                 RuleMark(y: .value("Zero", 0)).foregroundStyle(.secondary.opacity(0.5))
+                if let sample = hoveredSample {
+                    RuleMark(x: .value("Time", sample.time))
+                        .foregroundStyle(Color.secondary.opacity(0.6))
+                }
             }
+            .chartOverlay { proxy in hoverOverlay(proxy) { hoverTime = $0 } }
             .chartXScale(domain: xDomain)
             .chartXAxis { AxisMarks(preset: .aligned) }
             .chartYAxis {
@@ -182,12 +240,23 @@ struct HistoryView: View {
             if points.isEmpty {
                 Text("No health values recorded yet.").font(.callout).foregroundStyle(.secondary)
             } else {
-                Chart(points, id: \.0) { point in
-                    LineMark(x: .value("Day", point.0, unit: .day), y: .value("Health", point.1))
-                        .foregroundStyle(Color.accentColor)
-                    PointMark(x: .value("Day", point.0, unit: .day), y: .value("Health", point.1))
-                        .foregroundStyle(Color.accentColor)
+                Chart {
+                    ForEach(points, id: \.0) { point in
+                        LineMark(x: .value("Day", point.0, unit: .day), y: .value("Health", point.1))
+                            .foregroundStyle(Color.accentColor)
+                        PointMark(x: .value("Day", point.0, unit: .day), y: .value("Health", point.1))
+                            .foregroundStyle(Color.accentColor)
+                    }
+                    if let record = hoveredHealth, let date = record.date {
+                        RuleMark(x: .value("Day", date, unit: .day))
+                            .foregroundStyle(Color.secondary.opacity(0.6))
+                            .annotation(position: .top, spacing: 4,
+                                        overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
+                                HealthCard(record: record)
+                            }
+                    }
                 }
+                .chartOverlay { proxy in hoverOverlay(proxy) { hoverDay = $0 } }
                 .chartXScale(domain: healthDomain(points.map(\.0)))
                 .chartXAxis { AxisMarks(preset: .aligned) }
                 .chartYScale(domain: max(0, (lowest - 5).rounded(.down))...100)
@@ -201,6 +270,73 @@ struct HistoryView: View {
                 .accessibilityLabel(Text("Health"))
             }
         }
+    }
+}
+
+/// Values of one sample, shown above the charts while hovering.
+private struct SampleCard: View {
+    let sample: BatteryHistorySample
+    let showsDate: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(sample.time.formatted(showsDate
+                                       ? .dateTime.day().month(.abbreviated).hour().minute()
+                                       : .dateTime.hour().minute()))
+                .font(.caption.weight(.semibold))
+            row("Charge", Format.percent(sample.stateOfCharge))
+            row("Current", Format.milliamps(sample.amperage))
+            if let temperature = sample.temperature {
+                row("Temperature", Format.temperature(temperature))
+            }
+            Text(sample.isCharging ? "Charging" : (sample.externalConnected ? "On power adapter" : "On battery"))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .monospacedDigit()
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 6))
+        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(.quaternary))
+    }
+
+    private func row(_ title: LocalizedStringKey, _ value: String) -> some View {
+        HStack(spacing: 8) {
+            Text(title).foregroundStyle(.secondary)
+            Spacer(minLength: 4)
+            Text(value)
+        }
+        .font(.caption)
+    }
+}
+
+/// Values of one day in the health chart.
+private struct HealthCard: View {
+    let record: BatteryHealthRecord
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(record.date?.formatted(date: .abbreviated, time: .omitted) ?? record.day)
+                .font(.caption.weight(.semibold))
+            HStack(spacing: 8) {
+                Text("Health").foregroundStyle(.secondary)
+                Spacer(minLength: 4)
+                Text(Format.percent(record.health, digits: 1))
+            }
+            if let cycles = record.cycleCount {
+                HStack(spacing: 8) {
+                    Text("Cycles").foregroundStyle(.secondary)
+                    Spacer(minLength: 4)
+                    Text(Format.number(Double(cycles)))
+                }
+            }
+        }
+        .font(.caption)
+        .monospacedDigit()
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 6))
+        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(.quaternary))
     }
 }
 

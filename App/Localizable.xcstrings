@@ -642,6 +642,16 @@
         }
       }
     },
+    "On power adapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptöre bağlı"
+          }
+        }
+      }
+    },
     "On power adapter · not charging" : {
       "localizations" : {
         "tr" : {

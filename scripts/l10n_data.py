@@ -59,6 +59,7 @@ TR = {
     "No temperature sensors found": "Sıcaklık sensörü bulunamadı",
     "On battery": "Bataryada",
     "On battery · %@": "Bataryada · %@",
+    "On power adapter": "Adaptöre bağlı",
     "On power adapter · not charging": "Adaptöre bağlı · şarj olmuyor",
     "Open at login": "Oturum açılışında başlat",
     "Performance clusters": "Performans kümeleri",
