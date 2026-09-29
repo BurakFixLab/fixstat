@@ -74,6 +74,11 @@ enum Format {
         Int64(value).formatted(.byteCount(style: .decimal))
     }
 
+    /// Installed memory in binary units ("8 GB" for 8 GiB), like "About This Mac".
+    static func memory(_ bytes: UInt64) -> String {
+        Int64(bytes).formatted(.byteCount(style: .memory))
+    }
+
     static func speed(megabytesPerSecond: Double) -> String {
         Measurement(value: megabytesPerSecond, unit: UnitInformationStorage.megabytes)
             .formatted(.measurement(width: .abbreviated, usage: .asProvided,

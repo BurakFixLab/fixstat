@@ -41,6 +41,7 @@ struct ToolsMenu: View {
             Button("Battery history") { open(HistoryView.windowID) }
             Button("Battery details") { open(BatteryDetailsView.windowID) }
             Button("SSD health and test") { open(SSDView.windowID) }
+            Button("Memory test") { open(MemoryView.windowID) }
             Button("Panic and shutdown history") { open(CrashHistoryView.windowID) }
             Button("Post-repair test") { open(TestView.windowID) }
         } label: {

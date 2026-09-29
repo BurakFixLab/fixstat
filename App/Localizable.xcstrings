@@ -165,6 +165,16 @@
         }
       }
     },
+    "%lld×" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld×"
+          }
+        }
+      }
+    },
     "/s" : {
       "comment" : "per second, after a data size",
       "localizations" : {
@@ -272,6 +282,16 @@
         }
       }
     },
+    "Address in address" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adres = veri"
+          }
+        }
+      }
+    },
     "Alert above" : {
       "localizations" : {
         "tr" : {
@@ -288,6 +308,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tümü (%lld)"
+          }
+        }
+      }
+    },
+    "All ones" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tümü 1"
+          }
+        }
+      }
+    },
+    "All zeros" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tümü 0"
           }
         }
       }
@@ -818,6 +858,16 @@
         }
       }
     },
+    "Checkerboard" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dama tahtası"
+          }
+        }
+      }
+    },
     "Chemistry ID" : {
       "localizations" : {
         "tr" : {
@@ -884,6 +934,16 @@
         }
       }
     },
+    "Compressed: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıkıştırılmış: %@"
+          }
+        }
+      }
+    },
     "Connect the power adapter to check it." : {
       "localizations" : {
         "tr" : {
@@ -930,6 +990,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kopyala"
+          }
+        }
+      }
+    },
+    "Could not reserve memory for the test." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test için bellek ayrılamadı."
           }
         }
       }
@@ -1150,6 +1220,16 @@
         }
       }
     },
+    "Errors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hatalar"
+          }
+        }
+      }
+    },
     "Export history" : {
       "localizations" : {
         "tr" : {
@@ -1200,6 +1280,16 @@
         }
       }
     },
+    "First failing offsets" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk hatalı konumlar"
+          }
+        }
+      }
+    },
     "FixStat" : {
       "localizations" : {
         "tr" : {
@@ -1226,6 +1316,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Flash yazma sayısı"
+          }
+        }
+      }
+    },
+    "Flipped bits" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bozulan bitler"
           }
         }
       }
@@ -1730,12 +1830,32 @@
         }
       }
     },
+    "Memory errors found" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bellek hatası bulundu"
+          }
+        }
+      }
+    },
     "Memory temperature limit exceeded" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bellek sıcaklık sınırı aşıldı"
+          }
+        }
+      }
+    },
+    "Memory test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bellek testi"
           }
         }
       }
@@ -1880,6 +2000,16 @@
         }
       }
     },
+    "No memory errors found" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bellek hatası bulunamadı"
+          }
+        }
+      }
+    },
     "No power adapter" : {
       "localizations" : {
         "tr" : {
@@ -2006,6 +2136,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Karar için yeterli referans verisi yok"
+          }
+        }
+      }
+    },
+    "Note" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not"
           }
         }
       }
@@ -2206,6 +2346,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Panic ve kapanmalar"
+          }
+        }
+      }
+    },
+    "Patterns" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desenler"
           }
         }
       }
@@ -2450,6 +2600,16 @@
         }
       }
     },
+    "Random data" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rastgele veri"
+          }
+        }
+      }
+    },
     "Range" : {
       "localizations" : {
         "tr" : {
@@ -2566,6 +2726,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Varsayılanlara dön"
+          }
+        }
+      }
+    },
+    "Result" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonuç"
+          }
+        }
+      }
+    },
+    "Rounds" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tur"
           }
         }
       }
@@ -2900,6 +3080,16 @@
         }
       }
     },
+    "Swap used: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kullanılan swap: %@"
+          }
+        }
+      }
+    },
     "System" : {
       "localizations" : {
         "tr" : {
@@ -3050,6 +3240,16 @@
         }
       }
     },
+    "Throughput" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hız"
+          }
+        }
+      }
+    },
     "Time" : {
       "localizations" : {
         "tr" : {
@@ -3180,6 +3380,16 @@
         }
       }
     },
+    "Walking ones" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kayan birler"
+          }
+        }
+      }
+    },
     "Warm" : {
       "localizations" : {
         "tr" : {
@@ -3276,6 +3486,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Boş alana bir test dosyası yazar, geri okur ve her baytı karşılaştırır. Veri bozulmasını, G/Ç hatalarını ve takılan bölgeleri bulur; bunlar arızalı NAND'e işaret eder. Yalnızca boş alan test edilebilir ve test SSD'nin yazma ömründen bir miktar harcar."
+          }
+        }
+      }
+    },
+    "Writes several bit patterns into free memory and reads them back. Finds clear memory faults; it cannot reach memory used by macOS itself, so it does not replace a full diagnostic that runs outside macOS." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boş belleğe çeşitli bit desenleri yazar ve geri okur. Belirgin bellek hatalarını bulur; macOS'un kendi kullandığı belleğe erişemediği için macOS dışında çalışan tam bir tanılamanın yerini tutmaz."
           }
         }
       }

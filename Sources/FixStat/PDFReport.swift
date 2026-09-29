@@ -38,6 +38,7 @@ struct ReportSnapshot {
     let ssdTest: SSDStressTest.Result?
     let panics: [PanicReport]
     let shutdowns: [ShutdownEvent]?
+    let memoryResult: MemoryTest.Result?
     let batteryCheck: PartCheck?
     let adapterCheck: PartCheck?
     let macOSHealth: MacOSBatteryHealth?
@@ -62,6 +63,7 @@ struct ReportSnapshot {
         ssdTest = monitor.lastSSDResult
         panics = monitor.lastCrashScan?.panics ?? CrashHistory.panics()
         shutdowns = monitor.lastCrashScan?.shutdowns
+        memoryResult = monitor.lastMemoryResult
         batteryCheck = battery.map { PartCheck.battery($0, model: monitor.system.model, reference: monitor.partsReference) }
         adapterCheck = battery.flatMap { PartCheck.adapter($0, reference: monitor.partsReference) }
         macOSHealth = MacOSBatteryHealth.read()
@@ -88,6 +90,13 @@ private struct ReportPage: View {
                 ssdSection(ssd)
             }
             crashSection
+            if let memory = snapshot.memoryResult {
+                ReportGroup(title: "Memory test") {
+                    ReportRow(title: "Result", value: memory.passed ? String(localized: "No memory errors found")
+                              : String(localized: "Memory errors found"))
+                    ReportRow(title: "Tested", value: "\(Format.bytes(Double(memory.bytes))) · \(memory.patternsCompleted.count) / \(MemoryTest.Pattern.allCases.count)")
+                }
+            }
             if let test = snapshot.test {
                 testSection(test)
             }

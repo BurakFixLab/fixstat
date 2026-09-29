@@ -5,12 +5,14 @@ struct FixStatApp: App {
     @State private var monitor: Monitor
     @State private var testRunner: TestRunner
     @State private var ssdRunner: SSDTestRunner
+    @State private var memoryRunner: MemoryTestRunner
 
     init() {
         let monitor = Monitor()
         _monitor = State(initialValue: monitor)
         _testRunner = State(initialValue: TestRunner(monitor: monitor))
         _ssdRunner = State(initialValue: SSDTestRunner(monitor: monitor))
+        _memoryRunner = State(initialValue: MemoryTestRunner(monitor: monitor))
         DispatchQueue.main.async { Snapshot.runIfRequested(monitor: monitor) }
     }
 
@@ -42,6 +44,12 @@ struct FixStatApp: App {
                 .environment(monitor)
         }
         .defaultSize(width: 680, height: 600)
+
+        Window("Memory test", id: MemoryView.windowID) {
+            MemoryView()
+                .environment(memoryRunner)
+        }
+        .defaultSize(width: 600, height: 480)
 
         Window("SSD", id: SSDView.windowID) {
             SSDView()
