@@ -107,10 +107,16 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 
 - One app for macOS 10.13+ (Intel) / 11+ (Apple Silicon). `main.swift` picks the interface:
   macOS 14+ → SwiftUI (`FixStatApp`, every declaration marked `@available(macOS 14.0, *)`);
-  older → AppKit (`LegacyApp`, in progress; `--legacy-ui` forces it for testing).
-  AppKit code must work on 10.13: no SwiftUI / Combine / FormatStyle and **no Swift
-  concurrency runtime** (MainActor.assumeIsolated, Task, async need 10.15) — use
-  target/selector timers and main-thread callbacks.
+  older → AppKit (`Sources/FixStatLegacy`, in progress; `--legacy-ui` forces it for
+  testing). The AppKit module must work on 10.13: no SwiftUI / Combine / FormatStyle and
+  **nothing that calls the Swift concurrency runtime** (missing before macOS 12). It is
+  compiled in **Swift 5 mode without actor annotations**: in Swift 6, a `@MainActor`
+  class called from AppKit gets main-actor checks that call `MainActor` metadata — weak
+  linked, so it loads, but calling it crashed on Big Sur (MacBookAir6,1, macOS 11.7).
+  Use target/selector timers. `scripts/simulate-old-macos.sh` runs the x86_64 slice with
+  every weak-linked library taken away (Rosetta) and `package-release.sh` refuses to
+  package if the AppKit interface does not survive; `scripts/check-weak-imports.sh`
+  catches non-weak imports from weak libraries.
 - SwiftUI `MenuBarExtra(.window)` + `Settings` scene + tool `Window`s, LSUIElement app.
 - `scripts/build-app.sh` compiles with clang/swiftc directly (SwiftPM raises the deployment
   target to 12): x86_64 for 10.13, arm64 for 11, lipo; the Swift runtime for < 10.14.4 is
@@ -295,7 +301,8 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.
 ├── Sources/sensordump/         CLI dump
 ├── Sources/sensormap/          load tests, report, map proposal
 ├── Sources/fixstat-diskscan/   read-only raw disk surface scan (full SSD test, runs as root)
-├── Sources/FixStat/            SwiftUI menu bar app
+├── Sources/FixStat/            SwiftUI menu bar app (macOS 14+) and main.swift
+├── Sources/FixStatLegacy/      AppKit interface for macOS 10.13 – 13 (Swift 5 mode)
 ├── Tests/MacSensorsTests/      swift-testing unit tests
 ├── SensorMaps/sensor-map.json  sensor naming database
 ├── App/                        Info.plist, Localizable.xcstrings, AppIcon.svg / .icns, DMGBackground.tiff

@@ -1,16 +1,18 @@
 import AppKit
 import MacSensors
 
-/// AppKit interface for macOS 10.13 – 13 (and `--legacy-ui`). Everything here must stay
-/// available on macOS 10.13: no SwiftUI, no Combine, no FormatStyle, and no Swift
-/// concurrency runtime (no Task / async / MainActor.assumeIsolated before macOS 10.15) —
-/// use target/selector timers and main-thread callbacks instead.
-@MainActor
-final class LegacyApp: NSObject, NSApplicationDelegate {
+/// AppKit interface for macOS 10.13 – 13 (and `--legacy-ui`). Everything in this module
+/// must work on macOS 10.13 – 11: no SwiftUI, no Combine, no FormatStyle, and nothing that
+/// calls into the Swift concurrency runtime (missing before macOS 12, back-deployable only
+/// to 10.15). The module is compiled in Swift 5 mode without actor annotations, because
+/// Swift 6 inserts main-actor checks into @MainActor code called from AppKit, and those
+/// crash on Big Sur. Use target/selector timers; AppKit calls everything on the main thread.
+/// `scripts/simulate-old-macos.sh` runs the app with those libraries missing.
+public final class LegacyApp: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var timer: Timer?
 
-    static func run() {
+    public static func run() {
         let app = NSApplication.shared
         let delegate = LegacyApp()
         app.delegate = delegate
@@ -18,7 +20,7 @@ final class LegacyApp: NSObject, NSApplicationDelegate {
         withExtendedLifetime(delegate) { app.run() }
     }
 
-    func applicationDidFinishLaunching(_ notification: Notification) {
+    public func applicationDidFinishLaunching(_ notification: Notification) {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem = item
         refresh()

@@ -12,6 +12,15 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 scripts/build-app.sh release
 
+# The AppKit interface must start on macOS 10.13 – 13: run it with every library that is
+# missing there taken away (needs Rosetta on Apple Silicon; skipped where unavailable).
+if arch -x86_64 /usr/bin/true 2>/dev/null; then
+    result="$(scripts/simulate-old-macos.sh build/FixStat.app 2>&1 | grep -v Terminated)"
+    echo "old macOS simulation: $result"
+    case "$result" in *"still running"*) ;; *) echo "error: the AppKit interface does not start without the newer libraries" >&2; exit 1 ;; esac
+fi
+scripts/check-weak-imports.sh build/FixStat.app/Contents/MacOS/FixStat x86_64
+
 volume="FixStat"
 work="$(mktemp -d)"
 staging="$work/staging"

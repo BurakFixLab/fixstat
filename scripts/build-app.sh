@@ -66,9 +66,14 @@ for target in "${targets[@]}"; do
         strings=(-emit-localized-strings -emit-localized-strings-path "$strings_dir")
         first=0
     fi
+    # AppKit interface (macOS 10.13 – 13): Swift 5 mode, no actor isolation checks.
+    swiftc -target "$target" "${optimize[@]}" -swift-version 5 -parse-as-library \
+        -module-name FixStatLegacy -I "$dir" -I "$work/include" ${strings[@]+"${strings[@]}"} \
+        -emit-module -emit-module-path "$dir/FixStatLegacy.swiftmodule" \
+        -emit-library -static -o "$dir/libFixStatLegacy.a" Sources/FixStatLegacy/*.swift
     swiftc -target "$target" "${optimize[@]}" -swift-version 6 -module-name FixStat \
         -I "$dir" -I "$work/include" ${strings[@]+"${strings[@]}"} \
-        Sources/FixStat/*.swift "$dir"/*.o -L "$dir" -lMacSensors \
+        Sources/FixStat/*.swift "$dir"/*.o -L "$dir" -lFixStatLegacy -lMacSensors \
         -framework IOKit -framework CoreFoundation -framework Metal \
         -framework CoreMedia -framework CoreVideo "${rpaths[@]}" \
         -o "$dir/FixStat"
