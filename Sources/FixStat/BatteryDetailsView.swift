@@ -6,11 +6,14 @@ struct BatteryDetailsView: View {
     static let windowID = "battery-details"
 
     @Environment(Monitor.self) private var monitor
+    @State private var macOSHealth: MacOSBatteryHealth?
 
     var body: some View {
         ScrollView {
             if let battery = monitor.battery {
                 VStack(alignment: .leading, spacing: 18) {
+                    OriginalitySection(battery: battery, model: monitor.system.model,
+                                       reference: monitor.partsReference, macOSHealth: macOSHealth)
                     CellsSection(battery: battery)
                     HStack(alignment: .top, spacing: 18) {
                         PackSection(battery: battery)
@@ -30,6 +33,9 @@ struct BatteryDetailsView: View {
         }
         .frame(minWidth: 640, minHeight: 560)
         .monospacedDigit()
+        .task {
+            macOSHealth = await Task.detached { MacOSBatteryHealth.read() }.value
+        }
         .onAppear { monitor.detailsVisible = true }
         .onDisappear { monitor.detailsVisible = false }
     }
@@ -80,6 +86,126 @@ private func hex(_ value: Int?) -> String? {
 private func signedPercent(_ fraction: Double) -> String {
     (fraction * 100).formatted(.number.precision(.fractionLength(0)).sign(strategy: .always(includingZero: false)))
         .appending(" %")
+}
+
+// MARK: - Originality
+
+private struct OriginalitySection: View {
+    let battery: BatteryInfo
+    let model: String
+    let reference: PartsReference
+    let macOSHealth: MacOSBatteryHealth?
+
+    var body: some View {
+        let batteryCheck = PartCheck.battery(battery, model: model, reference: reference)
+        let adapterCheck = PartCheck.adapter(battery, reference: reference)
+        DetailGroup(title: "Originality check") {
+            HStack(alignment: .top, spacing: 18) {
+                PartCheckColumn(title: "Battery", check: batteryCheck)
+                if let adapterCheck {
+                    PartCheckColumn(title: "Power adapter", check: adapterCheck)
+                } else {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Power adapter").font(.callout.weight(.semibold))
+                        Text("Connect the power adapter to check it.").font(.callout).foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                }
+            }
+            if let condition = macOSHealth?.condition {
+                Divider()
+                Label {
+                    let text = String(localized: "macOS battery condition: \(PartText.condition(condition))")
+                    Text(verbatim: text + (macOSHealth?.maximumCapacity.map { " · \($0)" } ?? ""))
+                } icon: {
+                    Image(systemName: macOSHealth?.isGood == true ? "checkmark.circle" : "exclamationmark.triangle.fill")
+                }
+                .foregroundStyle(macOSHealth?.isGood == true ? TemperatureColor.cool : TemperatureColor.hot)
+            }
+            Text("macOS has no genuine-part flag for Mac batteries and clones can copy digital data, so this is a consistency check against known genuine parts, not proof.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
+private struct PartCheckColumn: View {
+    let title: LocalizedStringKey
+    let check: PartCheck
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(title).font(.callout.weight(.semibold))
+            Label {
+                Text(verbatim: PartText.verdict(check.verdict))
+            } icon: {
+                Image(systemName: check.verdict == .consistent ? "checkmark.seal.fill"
+                      : check.verdict == .suspicious ? "exclamationmark.triangle.fill" : "questionmark.circle")
+            }
+            .font(.callout.weight(.medium))
+            .foregroundStyle(check.verdict == .consistent ? TemperatureColor.cool
+                             : check.verdict == .suspicious ? TemperatureColor.hot : .secondary)
+            ForEach(Array(check.items.enumerated()), id: \.offset) { _, item in
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Image(systemName: item.status == .pass ? "checkmark" : item.status == .warn ? "exclamationmark.triangle" : "info.circle")
+                        .foregroundStyle(item.status == .pass ? TemperatureColor.cool : item.status == .warn ? TemperatureColor.hot : .secondary)
+                        .frame(width: 14)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(verbatim: PartText.item(item.id))
+                        if !item.detail.isEmpty {
+                            Text(verbatim: item.detail).font(.caption.monospaced()).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .font(.callout)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+    }
+}
+
+/// Localized texts for the originality check (window and PDF report).
+enum PartText {
+    static func verdict(_ verdict: PartCheck.Verdict) -> String {
+        switch verdict {
+        case .consistent: String(localized: "Consistent with a genuine part")
+        case .suspicious: String(localized: "Suspicious — check the part")
+        case .unknown: String(localized: "Not enough reference data to decide")
+        }
+    }
+
+    static func item(_ id: String) -> String {
+        switch id {
+        case "ref.gauge": String(localized: "Gauge chip matches this model")
+        case "ref.chemistry": String(localized: "Chemistry ID matches this model")
+        case "ref.designCapacity": String(localized: "Design capacity matches this model")
+        case "ref.cellCount": String(localized: "Cell count matches this model")
+        case "ref.cellVendor": String(localized: "Cell maker seen in genuine packs of this model")
+        case "noReference": String(localized: "No reference data for this model yet")
+        case "gauge": String(localized: "Gauge chip")
+        case "manufacturerData": String(localized: "Manufacturer data present")
+        case "gaugeData": String(localized: "Gauge learning data present (Qmax, resistance, lifetime)")
+        case "serial": String(localized: "Pack serial number present")
+        case "cycleReset": String(localized: "Very low cycle count despite long operating time (reset or new pack?)")
+        case "adapter.manufacturer": String(localized: "Manufacturer reported as Apple")
+        case "adapter.nameWatts": String(localized: "Rated power matches the name")
+        case "adapter.serial": String(localized: "Adapter serial number present")
+        case "ref.adapter.id": String(localized: "Adapter ID matches a known Apple adapter")
+        case "ref.adapter.firmware": String(localized: "Firmware seen in genuine adapters")
+        case "ref.adapter.profiles": String(localized: "Power profiles match the genuine adapter")
+        case "adapter.noReference": String(localized: "No reference data for this adapter yet")
+        default: id
+        }
+    }
+
+    static func condition(_ value: String) -> String {
+        switch value.lowercased() {
+        case "good", "normal": String(localized: "Normal")
+        case "check battery": String(localized: "Check battery")
+        case "service recommended": String(localized: "Service recommended")
+        default: value
+        }
+    }
 }
 
 // MARK: - Cells

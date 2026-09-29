@@ -129,6 +129,20 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   6 h, then buckets (≤ ~360 points); reloads every minute while open; hover shows a rule and
   a value card; CSV/JSON export. The sensor report also includes the daily health history.
 
+## Diagnostics tools (Tools menu)
+
+- SSD: NVMe SMART via the NVMeSMARTLib CFPlugIn (no root); write–verify stress test on
+  free space (`SSDStressTest`, keeps 10 GB free, speeds from per-block I/O time).
+- Panic / shutdown history: `.panic` / panic `.ips` in DiagnosticReports (file names
+  contain the computer name — never show them); "Previous shutdown cause" from
+  `/usr/bin/log` (zsh has a `log` builtin — always use the full path). Code meanings are
+  community knowledge, labeled as such.
+- Originality check: `SensorMaps/parts.json` (known-genuine reference values) +
+  evidence rules in `PartCheck`; verdicts consistent / suspicious / unknown, never "proof".
+  macOS' own condition comes from `system_profiler SPPowerDataType -json`.
+- USB-C PD: the active profile is macOS' selection (`AdapterDetails.UsbHvcMenu` /
+  `UsbHvcHvcIndex`); the port controller's RDO can lag (showed 5 V while charging at 20 V).
+
 ## Localization
 
 - Apple String Catalog `App/Localizable.xcstrings`; development language English, plus

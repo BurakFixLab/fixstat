@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "note": "Reference data from parts known to be genuine. Add a model or adapter only from a known-genuine part (see CONTRIBUTING.md).",
+  "batteries": {
+    "MacBookAir10,1": {
+      "designCapacity": [4382],
+      "chemistryIDs": [10037],
+      "gauges": ["bq20z451"],
+      "cellCount": 3,
+      "cellVendors": ["ATL"],
+      "samples": 1
+    }
+  },
+  "adapters": [
+    {
+      "id": "0x7002",
+      "name": "96W USB-C Power Adapter",
+      "manufacturer": "Apple Inc.",
+      "watts": 94,
+      "profiles": [[5000, 3000], [9000, 3000], [15000, 3000], [20000, 4700]],
+      "firmware": ["01070051"],
+      "samples": 1
+    }
+  ]
+}

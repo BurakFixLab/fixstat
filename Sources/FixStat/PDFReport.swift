@@ -38,6 +38,9 @@ struct ReportSnapshot {
     let ssdTest: SSDStressTest.Result?
     let panics: [PanicReport]
     let shutdowns: [ShutdownEvent]?
+    let batteryCheck: PartCheck?
+    let adapterCheck: PartCheck?
+    let macOSHealth: MacOSBatteryHealth?
     let shopName: String
     let note: String
 
@@ -59,6 +62,9 @@ struct ReportSnapshot {
         ssdTest = monitor.lastSSDResult
         panics = monitor.lastCrashScan?.panics ?? CrashHistory.panics()
         shutdowns = monitor.lastCrashScan?.shutdowns
+        batteryCheck = battery.map { PartCheck.battery($0, model: monitor.system.model, reference: monitor.partsReference) }
+        adapterCheck = battery.flatMap { PartCheck.adapter($0, reference: monitor.partsReference) }
+        macOSHealth = MacOSBatteryHealth.read()
         let defaults = UserDefaults.standard
         shopName = defaults.string(forKey: Pref.reportShopName) ?? ""
         note = defaults.string(forKey: Pref.reportNote) ?? ""
@@ -129,6 +135,12 @@ private struct ReportPage: View {
                     ReportRow(title: "Maximum capacity", value: b.rawMaxCapacity.map(Format.milliampHours))
                     ReportRow(title: "Temperature", value: b.temperature.map { Format.temperature($0) })
                     ReportRow(title: "Serial", value: b.serial)
+                    if let condition = snapshot.macOSHealth?.condition {
+                        ReportRow(title: "macOS condition", value: PartText.condition(condition))
+                    }
+                    if let check = snapshot.batteryCheck {
+                        ReportRow(title: "Originality check", value: PartText.verdict(check.verdict))
+                    }
                 }
                 VStack(alignment: .leading, spacing: 3) {
                     Grid(alignment: .trailing, horizontalSpacing: 12, verticalSpacing: 2) {
@@ -182,6 +194,9 @@ private struct ReportPage: View {
             if let adapter = b.adapter {
                 ReportRow(title: "Power adapter", value: [adapter.name, adapter.ratedWatts.map { Format.watts(Double($0)) }]
                     .compactMap { $0 }.joined(separator: " · "))
+            }
+            if let check = snapshot.adapterCheck {
+                ReportRow(title: "Adapter originality", value: PartText.verdict(check.verdict))
             }
             if let active = b.powerDelivery?.activeProfile, b.externalConnected == true {
                 ReportRow(title: "Contract", value: [active.maxVoltage.map { Format.volts(millivolts: $0, digits: 0) },

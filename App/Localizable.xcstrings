@@ -232,12 +232,42 @@
         }
       }
     },
+    "Adapter ID matches a known Apple adapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptör kimliği bilinen bir Apple adaptörüyle uyuşuyor"
+          }
+        }
+      }
+    },
     "Adapter offers" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adaptörün sunduğu"
+          }
+        }
+      }
+    },
+    "Adapter originality" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptör orijinalliği"
+          }
+        }
+      }
+    },
+    "Adapter serial number present" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptör seri numarası mevcut"
           }
         }
       }
@@ -596,12 +626,32 @@
         }
       }
     },
+    "Cell count matches this model" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre sayısı bu modelle uyuşuyor"
+          }
+        }
+      }
+    },
     "Cell disconnects" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hücre kopmaları"
+          }
+        }
+      }
+    },
+    "Cell maker seen in genuine packs of this model" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre üreticisi bu modelin orijinal paketlerinde görülmüş"
           }
         }
       }
@@ -758,12 +808,32 @@
         }
       }
     },
+    "Check battery" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bataryayı kontrol et"
+          }
+        }
+      }
+    },
     "Chemistry ID" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kimya kodu"
+          }
+        }
+      }
+    },
+    "Chemistry ID matches this model" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kimya kodu bu modelle uyuşuyor"
           }
         }
       }
@@ -810,6 +880,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adaptörle iletişim sorunu"
+          }
+        }
+      }
+    },
+    "Connect the power adapter to check it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontrol için adaptörü takın."
+          }
+        }
+      }
+    },
+    "Consistent with a genuine part" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orijinal parçayla uyumlu"
           }
         }
       }
@@ -946,6 +1036,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tasarım kapasitesi"
+          }
+        }
+      }
+    },
+    "Design capacity matches this model" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasarım kapasitesi bu modelle uyuşuyor"
           }
         }
       }
@@ -1090,6 +1190,16 @@
         }
       }
     },
+    "Firmware seen in genuine adapters" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firmware orijinal adaptörlerde görülmüş"
+          }
+        }
+      }
+    },
     "FixStat" : {
       "localizations" : {
         "tr" : {
@@ -1196,6 +1306,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gauge"
+          }
+        }
+      }
+    },
+    "Gauge chip" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gauge çipi"
+          }
+        }
+      }
+    },
+    "Gauge chip matches this model" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gauge çipi bu modelle uyuşuyor"
+          }
+        }
+      }
+    },
+    "Gauge learning data present (Qmax, resistance, lifetime)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gauge öğrenme verileri mevcut (Qmax, direnç, ömür)"
           }
         }
       }
@@ -1530,6 +1670,26 @@
         }
       }
     },
+    "Manufacturer data present" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üretici verisi mevcut"
+          }
+        }
+      }
+    },
+    "Manufacturer reported as Apple" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üretici Apple olarak bildiriliyor"
+          }
+        }
+      }
+    },
     "Max cap." : {
       "localizations" : {
         "tr" : {
@@ -1750,6 +1910,26 @@
         }
       }
     },
+    "No reference data for this adapter yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu adaptör için henüz referans verisi yok"
+          }
+        }
+      }
+    },
+    "No reference data for this model yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu model için henüz referans verisi yok"
+          }
+        }
+      }
+    },
     "No shutdown causes in the system log. macOS records one at every start; older entries are removed after a while." : {
       "localizations" : {
         "tr" : {
@@ -1780,6 +1960,16 @@
         }
       }
     },
+    "Normal" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normal"
+          }
+        }
+      }
+    },
     "Normal shutdown" : {
       "localizations" : {
         "tr" : {
@@ -1806,6 +1996,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Test için yeterli boş alan yok"
+          }
+        }
+      }
+    },
+    "Not enough reference data to decide" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karar için yeterli referans verisi yok"
           }
         }
       }
@@ -1940,6 +2140,16 @@
         }
       }
     },
+    "Originality check" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orijinallik kontrolü"
+          }
+        }
+      }
+    },
     "PDF report" : {
       "localizations" : {
         "tr" : {
@@ -1966,6 +2176,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paket"
+          }
+        }
+      }
+    },
+    "Pack serial number present" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paket seri numarası mevcut"
           }
         }
       }
@@ -2140,6 +2360,16 @@
         }
       }
     },
+    "Power profiles match the genuine adapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç profilleri orijinal adaptörle uyuşuyor"
+          }
+        }
+      }
+    },
     "Power supply temperature exceeded" : {
       "localizations" : {
         "tr" : {
@@ -2236,6 +2466,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yazma ömrü tükenmiş (%%%lld)."
+          }
+        }
+      }
+    },
+    "Rated power matches the name" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etiket gücü adıyla uyuşuyor"
           }
         }
       }
@@ -2460,6 +2700,16 @@
         }
       }
     },
+    "Service recommended" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servis önerilir"
+          }
+        }
+      }
+    },
     "Settings…" : {
       "localizations" : {
         "tr" : {
@@ -2636,6 +2886,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Durdur"
+          }
+        }
+      }
+    },
+    "Suspicious — check the part" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şüpheli — parçayı kontrol edin"
           }
         }
       }
@@ -2900,6 +3160,16 @@
         }
       }
     },
+    "Very low cycle count despite long operating time (reset or new pack?)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uzun çalışma süresine rağmen çok düşük döngü sayısı (sıfırlanmış veya yeni paket?)"
+          }
+        }
+      }
+    },
     "Voltage" : {
       "localizations" : {
         "tr" : {
@@ -3086,6 +3356,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS"
+          }
+        }
+      }
+    },
+    "macOS battery condition: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS batarya durumu: %@"
+          }
+        }
+      }
+    },
+    "macOS condition" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS durumu"
+          }
+        }
+      }
+    },
+    "macOS has no genuine-part flag for Mac batteries and clones can copy digital data, so this is a consistency check against known genuine parts, not proof." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS'ta Mac bataryaları için orijinal parça bayrağı yoktur ve kopyalar dijital verileri taklit edebilir; bu nedenle bu, bilinen orijinal parçalarla bir tutarlılık kontrolüdür, kesin kanıt değildir."
           }
         }
       }

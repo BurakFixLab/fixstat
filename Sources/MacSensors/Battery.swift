@@ -56,18 +56,18 @@ public struct ChargerInfo: Codable, Sendable, Equatable {
 /// What the gauge recorded over the life of the pack (`BatteryData.LifetimeData`).
 public struct BatteryLifetime: Codable, Sendable, Equatable {
     /// Hours.
-    public var totalOperatingTime: Int?
+    public var totalOperatingTime: Int? = nil
     /// °C
-    public var maximumTemperature: Double?
-    public var minimumTemperature: Double?
-    public var averageTemperature: Double?
+    public var maximumTemperature: Double? = nil
+    public var minimumTemperature: Double? = nil
+    public var averageTemperature: Double? = nil
     /// mA
-    public var maximumChargeCurrent: Int?
+    public var maximumChargeCurrent: Int? = nil
     /// mA (negative)
-    public var maximumDischargeCurrent: Int?
+    public var maximumDischargeCurrent: Int? = nil
     /// mV
-    public var maximumPackVoltage: Int?
-    public var minimumPackVoltage: Int?
+    public var maximumPackVoltage: Int? = nil
+    public var minimumPackVoltage: Int? = nil
 }
 
 /// Pack identification that is not a serial number.

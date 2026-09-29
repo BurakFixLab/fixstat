@@ -80,6 +80,25 @@ Can't build it yourself? Open a
 [new model sensor data](../../issues/new?template=new-model-sensor-data.yml) issue with
 the masked `sensordump` output.
 
+## Adding reference data for the originality check
+
+`SensorMaps/parts.json` holds values of **known-genuine** batteries and power adapters.
+The originality check compares a Mac's battery / adapter with them. Only add data from
+parts you know are genuine (e.g. taken from a new Apple part or an untouched Mac).
+
+1. With the genuine part installed / connected, run:
+   ```bash
+   .build/release/sensordump --json > local/part.json
+   ```
+2. Battery (`batteries`, keyed by `hw.model`): from `battery` in the output take
+   `designCapacity`, `identity.chemistryID`, `gaugeDeviceName`, the number of
+   `cellVoltages` and the last entry of `identity.manufacturerStrings` (cell maker).
+   If the model already exists, add new values to the lists and increase `samples`.
+3. Adapter (`adapters`): from `battery.adapter` take `model` (id, e.g. `0x7002`),
+   `name`, `manufacturer`, `ratedWatts` (watts) and `firmwareVersion`; the profiles are
+   the `[voltage, current]` pairs of `battery.powerDelivery.adapterProfiles`.
+4. Never copy serial numbers. Run `swift test` and open a pull request.
+
 ## Adding a language
 
 1. Add the language code to `CFBundleLocalizations` in `App/Info.plist` and to

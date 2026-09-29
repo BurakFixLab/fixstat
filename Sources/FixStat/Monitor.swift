@@ -31,6 +31,12 @@ final class Monitor {
     private(set) var cpuUsage: Double?
     private(set) var memory: SystemStats.Memory?
     private(set) var map = SensorMap()
+    /// Reference data of genuine batteries and adapters (`parts.json`).
+    let partsReference: PartsReference = {
+        let url = Bundle.main.url(forResource: "parts", withExtension: "json")
+            ?? URL(fileURLWithPath: "SensorMaps/parts.json")
+        return (try? PartsReference.load(from: url)) ?? PartsReference()
+    }()
 
     /// While the panel is open, everything is refreshed at the configured
     /// interval. Otherwise only what the menu bar shows, and at most every 5 s.

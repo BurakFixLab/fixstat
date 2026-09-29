@@ -42,6 +42,7 @@ mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$(swift build -c "$config" --show-bin-path)/FixStat" "$app/Contents/MacOS/FixStat"
 cp App/Info.plist "$app/Contents/Info.plist"
 cp SensorMaps/sensor-map.json "$app/Contents/Resources/sensor-map.json"
+cp SensorMaps/parts.json "$app/Contents/Resources/parts.json"
 xcrun xcstringstool compile App/Localizable.xcstrings --output-directory "$app/Contents/Resources" >/dev/null
 codesign --force --sign - "$app"
 
