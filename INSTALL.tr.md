@@ -18,6 +18,9 @@
 
 ## 1. İndirme
 
+> **Henüz yayında değil.** İlk sürüm (v1.0) hâlâ hazırlanıyor, bu yüzden Releases sayfasında
+> henüz `FixStat.zip` yok. O zamana kadar [Kaynaktan derleme](#kaynaktan-derleme) bölümüne bakın.
+
 1. [Releases](../../releases) sayfasından `FixStat.zip` dosyasını indirin.
 2. Zip dosyasına çift tıklayarak açın.
 3. **FixStat.app**'i **Uygulamalar** (Applications) klasörüne sürükleyin.

@@ -16,6 +16,9 @@
 
 ## 1. Download
 
+> **Not available yet.** The first release (v1.0) is still being prepared, so the Releases
+> page has no `FixStat.zip` yet. Until then, see [Building from source](#building-from-source).
+
 1. Download `FixStat.zip` from the [Releases](../../releases) page.
 2. Double-click the zip to unpack it.
 3. Drag **FixStat.app** into your **Applications** folder.

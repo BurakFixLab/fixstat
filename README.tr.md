@@ -6,6 +6,10 @@
 
 > **Test sürümü.** FixStat şu an **macOS 14 Sonoma veya üstünü** gerektirir.
 > **macOS 10.13 High Sierra'ya kadar** eski macOS sürümleri için destek yakında geliyor.
+>
+> **Henüz indirilebilir sürüm yok.** Releases sayfasında şu an hazır bir `FixStat.app`
+> bulunmuyor; ilk sürüm (v1.0) hâlâ hazırlanıyor. O zamana kadar FixStat yalnızca
+> [kaynaktan derlenerek](#kurulum) kullanılabilir.
 
 FixStat batarya, sıcaklık, fan ve sistem verilerini menü çubuğunda gösterir. Sensör
 isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg` içinden
