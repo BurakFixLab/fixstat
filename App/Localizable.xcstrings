@@ -186,6 +186,16 @@
         }
       }
     },
+    "Abnormal shutdowns (30 days)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anormal kapanmalar (30 gün)"
+          }
+        }
+      }
+    },
     "About FixStat" : {
       "localizations" : {
         "tr" : {
@@ -248,6 +258,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tümü (%lld)"
+          }
+        }
+      }
+    },
+    "Always-On Processor" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always-On işlemci (AOP)"
           }
         }
       }
@@ -322,6 +342,16 @@
         }
       }
     },
+    "Battery cell under-voltage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya hücresi düşük voltaj"
+          }
+        }
+      }
+    },
     "Battery charge" : {
       "localizations" : {
         "tr" : {
@@ -352,6 +382,16 @@
         }
       }
     },
+    "Battery empty" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya bitti"
+          }
+        }
+      }
+    },
     "Battery history" : {
       "localizations" : {
         "tr" : {
@@ -378,6 +418,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya yüzdesi"
+          }
+        }
+      }
+    },
+    "Battery problem" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya sorunu"
           }
         }
       }
@@ -424,6 +474,16 @@
         }
       }
     },
+    "Battery temperature limit exceeded" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya sıcaklık sınırı aşıldı"
+          }
+        }
+      }
+    },
     "Block" : {
       "localizations" : {
         "tr" : {
@@ -460,6 +520,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "CPU sıcaklığı"
+          }
+        }
+      }
+    },
+    "CPU temperature limit exceeded" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU sıcaklık sınırı aşıldı"
           }
         }
       }
@@ -724,6 +794,26 @@
         }
       }
     },
+    "Code meanings come from the repair community, not from Apple, and can differ between models." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kod anlamları Apple'dan değil tamirci topluluğundan gelir ve modele göre değişebilir."
+          }
+        }
+      }
+    },
+    "Communication problem with the power adapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptörle iletişim sorunu"
+          }
+        }
+      }
+    },
     "Contract" : {
       "localizations" : {
         "tr" : {
@@ -740,6 +830,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Serin"
+          }
+        }
+      }
+    },
+    "Copy" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopyala"
           }
         }
       }
@@ -890,6 +990,16 @@
         }
       }
     },
+    "Display" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekran"
+          }
+        }
+      }
+    },
     "Duration" : {
       "localizations" : {
         "tr" : {
@@ -1010,6 +1120,16 @@
         }
       }
     },
+    "Forced shutdown by the PMU" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU tarafından zorla kapatma"
+          }
+        }
+      }
+    },
     "Free and open source (MIT License)." : {
       "localizations" : {
         "tr" : {
@@ -1036,6 +1156,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dolmasına %@"
+          }
+        }
+      }
+    },
+    "Full text" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tam metin"
           }
         }
       }
@@ -1240,6 +1370,16 @@
         }
       }
     },
+    "I2C bus" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I2C hattı"
+          }
+        }
+      }
+    },
     "Input" : {
       "localizations" : {
         "tr" : {
@@ -1256,6 +1396,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "JSON…"
+          }
+        }
+      }
+    },
+    "Kernel panics" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kernel panic'ler"
           }
         }
       }
@@ -1420,6 +1570,16 @@
         }
       }
     },
+    "Memory temperature limit exceeded" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bellek sıcaklık sınırı aşıldı"
+          }
+        }
+      }
+    },
     "Menu bar" : {
       "localizations" : {
         "tr" : {
@@ -1550,6 +1710,16 @@
         }
       }
     },
+    "No kernel panic reports found." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kernel panic raporu bulunamadı."
+          }
+        }
+      }
+    },
     "No power adapter" : {
       "localizations" : {
         "tr" : {
@@ -1580,6 +1750,16 @@
         }
       }
     },
+    "No shutdown causes in the system log. macOS records one at every start; older entries are removed after a while." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem günlüğünde kapanma nedeni yok. macOS her açılışta bir kayıt yazar; eski kayıtlar bir süre sonra silinir."
+          }
+        }
+      }
+    },
     "No temperature sensors found" : {
       "localizations" : {
         "tr" : {
@@ -1596,6 +1776,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nominal sağlık"
+          }
+        }
+      }
+    },
+    "Normal shutdown" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normal kapanma"
           }
         }
       }
@@ -1780,6 +1970,26 @@
         }
       }
     },
+    "Panic and shutdown history" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Panic ve kapanma geçmişi"
+          }
+        }
+      }
+    },
+    "Panics and shutdowns" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Panic ve kapanmalar"
+          }
+        }
+      }
+    },
     "Performance clusters" : {
       "localizations" : {
         "tr" : {
@@ -1890,12 +2100,52 @@
         }
       }
     },
+    "Power button held (forced shutdown)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç düğmesine basılı tutuldu (zorla kapatma)"
+          }
+        }
+      }
+    },
     "Power cycles" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Güç döngüsü"
+          }
+        }
+      }
+    },
+    "Power lost" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç kesildi"
+          }
+        }
+      }
+    },
+    "Power management" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç yönetimi"
+          }
+        }
+      }
+    },
+    "Power supply temperature exceeded" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç katı sıcaklığı aşıldı"
           }
         }
       }
@@ -1910,12 +2160,32 @@
         }
       }
     },
+    "Previous shutdown causes (last 30 days)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önceki kapanma nedenleri (son 30 gün)"
+          }
+        }
+      }
+    },
     "Project page" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Proje sayfası"
+          }
+        }
+      }
+    },
+    "Proximity sensor temperature exceeded" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakınlık sensörü sıcaklığı aşıldı"
           }
         }
       }
@@ -2090,6 +2360,26 @@
         }
       }
     },
+    "SMC" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SMC"
+          }
+        }
+      }
+    },
+    "SMC / power management watchdog" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SMC / güç yönetimi watchdog"
+          }
+        }
+      }
+    },
     "SSD" : {
       "localizations" : {
         "tr" : {
@@ -2110,6 +2400,16 @@
         }
       }
     },
+    "SSD controller" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD controller"
+          }
+        }
+      }
+    },
     "SSD health and test" : {
       "localizations" : {
         "tr" : {
@@ -2126,6 +2426,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SSD sağlığı iyi."
+          }
+        }
+      }
+    },
+    "Searching the system log — this can take about a minute." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem günlüğü taranıyor — bu yaklaşık bir dakika sürebilir."
           }
         }
       }
@@ -2216,6 +2526,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Boyut"
+          }
+        }
+      }
+    },
+    "Sleep / wake" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyku / uyanma"
           }
         }
       }
@@ -2370,6 +2690,16 @@
         }
       }
     },
+    "Temperature limit exceeded (several sensors)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıcaklık sınırı aşıldı (birden fazla sensör)"
+          }
+        }
+      }
+    },
     "Temperatures (at report time)" : {
       "localizations" : {
         "tr" : {
@@ -2416,6 +2746,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SSD kritik uyarı bildiriyor (kod %lld)."
+          }
+        }
+      }
+    },
+    "Thermal monitor" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termal izleyici"
           }
         }
       }
@@ -2480,12 +2820,42 @@
         }
       }
     },
+    "USB-C / ports" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB-C / portlar"
+          }
+        }
+      }
+    },
     "USB-C Power Delivery" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "USB-C PD"
+          }
+        }
+      }
+    },
+    "Unknown code" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilinmeyen kod"
+          }
+        }
+      }
+    },
+    "Unknown critical shutdown — often logic board" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilinmeyen kritik kapanma — çoğunlukla anakart"
           }
         }
       }
@@ -2570,12 +2940,42 @@
         }
       }
     },
+    "Watchdog" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Watchdog"
+          }
+        }
+      }
+    },
+    "Watchdog — often logic board or RAM" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Watchdog — çoğunlukla anakart veya RAM"
+          }
+        }
+      }
+    },
     "While the menu is closed, values refresh at most every 5 seconds to save energy." : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Menü kapalıyken değerler enerji tasarrufu için en fazla 5 saniyede bir yenilenir."
+          }
+        }
+      }
+    },
+    "Wi-Fi / Bluetooth" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wi-Fi / Bluetooth"
           }
         }
       }
@@ -2626,6 +3026,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yazılıyor…"
+          }
+        }
+      }
+    },
+    "Wrong current from the battery" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bataryadan hatalı akım"
+          }
+        }
+      }
+    },
+    "Wrong current from the power adapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptörden hatalı akım"
           }
         }
       }

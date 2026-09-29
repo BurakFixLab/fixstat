@@ -37,6 +37,12 @@ struct FixStatApp: App {
         }
         .defaultSize(width: 640, height: 640)
 
+        Window("Panic and shutdown history", id: CrashHistoryView.windowID) {
+            CrashHistoryView()
+                .environment(monitor)
+        }
+        .defaultSize(width: 680, height: 600)
+
         Window("SSD", id: SSDView.windowID) {
             SSDView()
                 .environment(ssdRunner)

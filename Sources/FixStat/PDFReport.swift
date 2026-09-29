@@ -36,6 +36,8 @@ struct ReportSnapshot {
     let test: StressTestResult?
     let ssd: SSDInfo?
     let ssdTest: SSDStressTest.Result?
+    let panics: [PanicReport]
+    let shutdowns: [ShutdownEvent]?
     let shopName: String
     let note: String
 
@@ -55,6 +57,8 @@ struct ReportSnapshot {
         test = monitor.lastTestResult
         ssd = SSDInfo.read(includeSerial: false)
         ssdTest = monitor.lastSSDResult
+        panics = monitor.lastCrashScan?.panics ?? CrashHistory.panics()
+        shutdowns = monitor.lastCrashScan?.shutdowns
         let defaults = UserDefaults.standard
         shopName = defaults.string(forKey: Pref.reportShopName) ?? ""
         note = defaults.string(forKey: Pref.reportNote) ?? ""
@@ -77,6 +81,7 @@ private struct ReportPage: View {
             if let ssd = snapshot.ssd {
                 ssdSection(ssd)
             }
+            crashSection
             if let test = snapshot.test {
                 testSection(test)
             }
@@ -224,6 +229,23 @@ private struct ReportPage: View {
                 ForEach(Array(problems.enumerated()), id: \.offset) { _, finding in
                     Text(verbatim: "• " + SSDText.finding(finding))
                 }
+            }
+        }
+    }
+
+    private var crashSection: some View {
+        ReportGroup(title: "Panics and shutdowns") {
+            ReportRow(title: "Kernel panics", value: snapshot.panics.isEmpty ? String(localized: "none")
+                      : Format.number(Double(snapshot.panics.count)))
+            ForEach(Array(snapshot.panics.prefix(3).enumerated()), id: \.offset) { _, panic in
+                Text(verbatim: "• " + panic.date.formatted(date: .abbreviated, time: .shortened) + " — "
+                     + (panic.area.map(CrashText.area) ?? "") + " " + String(panic.summary.prefix(90)))
+                    .lineLimit(1)
+            }
+            if let shutdowns = snapshot.shutdowns {
+                let faults = shutdowns.filter(\.isFault)
+                ReportRow(title: "Abnormal shutdowns (30 days)", value: faults.isEmpty ? String(localized: "none")
+                          : faults.prefix(4).map { "\($0.code)" }.joined(separator: ", "))
             }
         }
     }

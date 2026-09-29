@@ -49,6 +49,8 @@ final class Monitor {
 
     /// Result of the last post-repair test (for reports).
     var lastTestResult: StressTestResult?
+    /// Last panic / shutdown cause scan (for reports).
+    var lastCrashScan: CrashScan?
     /// Result of the last SSD write–verify test (for reports).
     var lastSSDResult: SSDStressTest.Result?
 
