@@ -45,6 +45,7 @@ cp "$(swift build -c "$config" --show-bin-path)/fixstat-diskscan" "$app/Contents
 cp App/Info.plist "$app/Contents/Info.plist"
 cp SensorMaps/sensor-map.json "$app/Contents/Resources/sensor-map.json"
 cp SensorMaps/parts.json "$app/Contents/Resources/parts.json"
+cp App/AppIcon.icns "$app/Contents/Resources/AppIcon.icns"
 # Permission prompts (Info.plist usage descriptions); English comes from Info.plist.
 for lproj in App/*.lproj; do
     mkdir -p "$app/Contents/Resources/$(basename "$lproj")"

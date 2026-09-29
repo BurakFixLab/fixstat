@@ -1,3 +1,5 @@
+<img src="App/AppIcon.svg" width="112" alt="FixStat simgesi">
+
 # FixStat
 
 **Kart seviyesinde Mac tamiri için yapılmış, ücretsiz ve açık kaynak bir macOS menü çubuğu izleme uygulaması.**

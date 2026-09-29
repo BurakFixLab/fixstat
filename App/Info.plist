@@ -9,6 +9,8 @@
 		<string>en</string>
 		<string>tr</string>
 	</array>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
 	<key>CFBundleExecutable</key>
 	<string>FixStat</string>
 	<key>CFBundleIdentifier</key>

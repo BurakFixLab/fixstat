@@ -1,3 +1,5 @@
+<img src="App/AppIcon.svg" width="112" alt="FixStat icon">
+
 # FixStat
 
 **A free, open-source menu bar monitor for macOS, built for board-level Mac repair.**

@@ -236,6 +236,7 @@ swift test
 .build/debug/sensordump [--json] [--raw] [--smc-all] [--hid-power] [--all] [--include-serial]
 scripts/build-app.sh            # → build/FixStat.app (ad-hoc signed)
 scripts/package-release.sh      # → build/FixStat.zip (app + packaging/INSTALL.txt) for Releases
+scripts/make-icon.sh            # App/AppIcon.svg → App/AppIcon.icns (WebKit render + iconutil)
 open build/FixStat.app
 # Render the panel, a Settings tab or the history window to PNG (no screen recording needed;
 # NavigationSplitView windows such as --hardware do not render this way, use a screenshot):
@@ -266,7 +267,7 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.
 ├── Sources/FixStat/            SwiftUI menu bar app
 ├── Tests/MacSensorsTests/      swift-testing unit tests
 ├── SensorMaps/sensor-map.json  sensor naming database
-├── App/                        Info.plist, Localizable.xcstrings
+├── App/                        Info.plist, Localizable.xcstrings, AppIcon.svg / .icns
 ├── examples/                   masked sample outputs per model
 ├── docs/screenshots/{en,tr}/   README screenshots (made with --snapshot)
 └── design/                     early UI mockups (internal reference, Turkish)
