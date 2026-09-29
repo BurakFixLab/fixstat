@@ -54,6 +54,11 @@ uygulamanın *"hasarlı olduğu ve açılamayacağını"* söylerse de bunu kull
 FixStat **özel bir izin gerektirmez**: yönetici yetkisi, Erişilebilirlik veya Tam Disk Erişimi,
 ağ erişimi yoktur. Yalnızca sensör değerlerini okur; SMC'ye asla yazmaz.
 
+Tek istisna isteğe bağlı **tam SSD testidir** (Araçlar › SSD sağlığı ve testi). Diskin tüm
+yüzeyini okumak için yönetici parolanız (her seferinde sorulur, FixStat saklamaz) ve **Tam
+Disk Erişimi** gerekir: Sistem Ayarları › Gizlilik ve Güvenlik › Tam Disk Erişimi › FixStat'ı
+açın. Tarama diski yalnızca okur.
+
 <a id="menu-cubugu"></a>
 
 ## 3. Menü çubuğunda bulma
@@ -123,6 +128,7 @@ swift build -c release
 | *"hasarlı ve açılamıyor"* | 2. adımdaki `xattr` komutunu kullanın. |
 | Oturum açılışında başlamıyor | Sistem Ayarları › Genel › Giriş Öğeleri ve Uzantılar'da FixStat'a izin verin. |
 | Sensörlerde "tahmini" yazıyor | Mac modeliniz için henüz doğrulanmış sensör haritası yok; isimler çip ve anahtar kalıplarından tahmin ediliyor. [Modelinizi eklemeye yardım edebilirsiniz](CONTRIBUTING.md). |
+| Tam SSD testi başlamıyor / "macOS diskin okunmasını engelledi" | Sistem Ayarları › Gizlilik ve Güvenlik › Tam Disk Erişimi'nde FixStat'ı açın. Uygulamayı değiştirdikten veya yeniden derledikten sonra kapatıp tekrar açın (imzasız derleme yeni bir uygulama sayılır). |
 | Dil yanlış | FixStat sistem dilini izler. Yalnızca FixStat için değiştirmek: Sistem Ayarları › Genel › Dil ve Bölge › Uygulamalar. |
 
 Soru veya sorun için: [issue açın](../../issues).

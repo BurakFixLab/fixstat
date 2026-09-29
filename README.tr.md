@@ -42,7 +42,8 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
 - **Raporlar.** Müşteri cihazları için CSV / JSON dışa aktarma; seri numaraları her
   zaman maskeli.
 - **Sadece okuma.** FixStat SMC'ye hiçbir zaman yazmaz, fan kontrolü yoktur ve yönetici
-  izni gerektirmez.
+  izni gerektirmez. Tek istisna isteğe bağlı tam SSD yüzey taramasıdır: parolanızı ve Tam
+  Disk Erişimi'ni ister ve diski yalnızca okur.
 
 ## Doğrulanmış modeller
 

@@ -165,6 +165,22 @@
         }
       }
     },
+    "%lld unreadable areas (%@) — failing NAND" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld unreadable areas (%2$@) — failing NAND"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld okunamayan bölge (%2$@) — arızalı NAND"
+          }
+        }
+      }
+    },
     "%lld×" : {
       "localizations" : {
         "tr" : {
@@ -292,6 +308,16 @@
         }
       }
     },
+    "Administrator permission was not given." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yönetici izni verilmedi."
+          }
+        }
+      }
+    },
     "Alert above" : {
       "localizations" : {
         "tr" : {
@@ -328,6 +354,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tümü 0"
+          }
+        }
+      }
+    },
+    "Also needs Full Disk Access: if the scan does not start, allow FixStat in System Settings › Privacy & Security › Full Disk Access." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tam Disk Erişimi de gerekir: tarama başlamazsa Sistem Ayarları › Gizlilik ve Güvenlik › Tam Disk Erişimi'nde FixStat'a izin verildiğini kontrol edin."
           }
         }
       }
@@ -388,6 +424,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ortalama deşarj akımı"
+          }
+        }
+      }
+    },
+    "Average read speed" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortalama okuma hızı"
           }
         }
       }
@@ -610,6 +656,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "CSV…"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vazgeç"
           }
         }
       }
@@ -1300,6 +1356,26 @@
         }
       }
     },
+    "FixStat needs Full Disk Access" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FixStat Tam Disk Erişimi istiyor"
+          }
+        }
+      }
+    },
+    "FixStat needs administrator rights to read the whole SSD. The scan only reads; nothing is written to the disk." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FixStat'ın SSD'nin tamamını okuyabilmesi için yönetici izni gerekiyor. Tarama yalnızca okur; diske hiçbir şey yazılmaz."
+          }
+        }
+      }
+    },
     "FixStat records the battery once a minute while it is running. Samples are kept for 30 days, daily health values indefinitely." : {
       "localizations" : {
         "tr" : {
@@ -1350,6 +1426,16 @@
         }
       }
     },
+    "Free space: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boş alan: %@"
+          }
+        }
+      }
+    },
     "Full in" : {
       "localizations" : {
         "tr" : {
@@ -1366,6 +1452,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dolmasına %@"
+          }
+        }
+      }
+    },
+    "Full test (administrator permission required)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tam kapsamlı test (yönetici izni gerekir)"
           }
         }
       }
@@ -2240,6 +2336,16 @@
         }
       }
     },
+    "Open System Settings" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem Ayarları'nı aç"
+          }
+        }
+      }
+    },
     "Open at login" : {
       "localizations" : {
         "tr" : {
@@ -2396,6 +2502,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Takma / çıkarma"
+          }
+        }
+      }
+    },
+    "Position" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konum"
           }
         }
       }
@@ -2660,12 +2776,48 @@
         }
       }
     },
+    "Read speed across the disk" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk boyunca okuma hızı"
+          }
+        }
+      }
+    },
     "Reading and verifying…" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Okunuyor ve doğrulanıyor…"
+          }
+        }
+      }
+    },
+    "Reading the whole SSD… %@ / %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading the whole SSD… %1$@ / %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD'nin tamamı okunuyor… %1$@ / %2$@"
+          }
+        }
+      }
+    },
+    "Reads the entire SSD — including used space and the system partitions — and maps unreadable and slow areas, then runs the write–verify test on free space. The scan only reads. macOS asks for an administrator password; FixStat never sees or stores it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD'nin tamamını — dolu alanlar ve sistem bölümleri dahil — okur, okunamayan ve yavaş bölgeleri haritalar, ardından boş alanda yazma–doğrulama testini çalıştırır. Tarama yalnızca okur. macOS yönetici parolası ister; FixStat parolayı görmez ve saklamaz."
           }
         }
       }
@@ -3040,6 +3192,16 @@
         }
       }
     },
+    "Start full test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tam kapsamlı testi başlat"
+          }
+        }
+      }
+    },
     "Start test" : {
       "localizations" : {
         "tr" : {
@@ -3066,6 +3228,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Durdur"
+          }
+        }
+      }
+    },
+    "Surface scanned" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taranan yüzey"
           }
         }
       }
@@ -3200,6 +3372,36 @@
         }
       }
     },
+    "The disk scan did not complete." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk taraması tamamlanamadı."
+          }
+        }
+      }
+    },
+    "The disk scan helper is missing from the app." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk tarama yardımcısı uygulamada bulunamadı."
+          }
+        }
+      }
+    },
+    "The internal SSD could not be identified." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dahili SSD belirlenemedi."
+          }
+        }
+      }
+    },
     "Thermal monitor" : {
       "localizations" : {
         "tr" : {
@@ -3270,6 +3472,16 @@
         }
       }
     },
+    "To read the whole SSD, turn on FixStat in Privacy & Security › Full Disk Access, then quit and reopen FixStat and start the test again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD'nin tamamını okuyabilmek için Gizlilik ve Güvenlik › Tam Disk Erişimi'nde FixStat'ı açın, ardından FixStat'tan çıkıp yeniden açın ve testi tekrar başlatın."
+          }
+        }
+      }
+    },
     "Tools" : {
       "localizations" : {
         "tr" : {
@@ -3326,6 +3538,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Eşleşmemiş sensörler (%lld)"
+          }
+        }
+      }
+    },
+    "Unreadable areas" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okunamayan bölgeler"
           }
         }
       }
@@ -3500,6 +3722,16 @@
         }
       }
     },
+    "Write–verify on free space…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boş alanda yazma–doğrulama…"
+          }
+        }
+      }
+    },
     "Write–verify stress test" : {
       "localizations" : {
         "tr" : {
@@ -3586,6 +3818,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS batarya durumu: %@"
+          }
+        }
+      }
+    },
+    "macOS blocked reading the disk. Allow FixStat in System Settings › Privacy & Security › Full Disk Access, then start the test again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS diskin okunmasını engelledi. Sistem Ayarları › Gizlilik ve Güvenlik › Tam Disk Erişimi'nde FixStat'a izin verin ve testi yeniden başlatın."
           }
         }
       }

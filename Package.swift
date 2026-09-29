@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "MacSensors", targets: ["MacSensors"]),
         .executable(name: "sensordump", targets: ["sensordump"]),
         .executable(name: "sensormap", targets: ["sensormap"]),
+        .executable(name: "fixstat-diskscan", targets: ["fixstat-diskscan"]),
     ],
     targets: [
         // C shims for the AppleSMC user client (read-only) and the private
@@ -29,6 +30,9 @@ let package = Package(
             name: "sensormap",
             dependencies: ["MacSensors"]
         ),
+        // Read-only raw disk scanner, run as root through the macOS administrator
+        // prompt for the full SSD test. Shipped inside FixStat.app.
+        .executableTarget(name: "fixstat-diskscan"),
         // Menu bar app. Built into FixStat.app by scripts/build-app.sh, which also
         // compiles App/Localizable.xcstrings and bundles the sensor map.
         .executableTarget(

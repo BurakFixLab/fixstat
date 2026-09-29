@@ -255,6 +255,34 @@ TR = {
     "Walking ones": "Kayan birler",
     "Writes several bit patterns into free memory and reads them back. Finds clear memory faults; it cannot reach memory used by macOS itself, so it does not replace a full diagnostic that runs outside macOS.":
         "Boş belleğe çeşitli bit desenleri yazar ve geri okur. Belirgin bellek hatalarını bulur; macOS'un kendi kullandığı belleğe erişemediği için macOS dışında çalışan tam bir tanılamanın yerini tutmaz.",
+    "%lld unreadable areas (%@) — failing NAND": "%1$lld okunamayan bölge (%2$@) — arızalı NAND",
+    "Administrator permission was not given.": "Yönetici izni verilmedi.",
+    "FixStat needs Full Disk Access": "FixStat Tam Disk Erişimi istiyor",
+    "Open System Settings": "Sistem Ayarları'nı aç",
+    "Cancel": "Vazgeç",
+    "To read the whole SSD, turn on FixStat in Privacy & Security › Full Disk Access, then quit and reopen FixStat and start the test again.":
+        "SSD'nin tamamını okuyabilmek için Gizlilik ve Güvenlik › Tam Disk Erişimi'nde FixStat'ı açın, ardından FixStat'tan çıkıp yeniden açın ve testi tekrar başlatın.",
+    "Also needs Full Disk Access: if the scan does not start, allow FixStat in System Settings › Privacy & Security › Full Disk Access.":
+        "Tam Disk Erişimi de gerekir: tarama başlamazsa Sistem Ayarları › Gizlilik ve Güvenlik › Tam Disk Erişimi'nde FixStat'a izin verildiğini kontrol edin.",
+    "macOS blocked reading the disk. Allow FixStat in System Settings › Privacy & Security › Full Disk Access, then start the test again.":
+        "macOS diskin okunmasını engelledi. Sistem Ayarları › Gizlilik ve Güvenlik › Tam Disk Erişimi'nde FixStat'a izin verin ve testi yeniden başlatın.",
+    "Average read speed": "Ortalama okuma hızı",
+    "FixStat needs administrator rights to read the whole SSD. The scan only reads; nothing is written to the disk.":
+        "FixStat'ın SSD'nin tamamını okuyabilmesi için yönetici izni gerekiyor. Tarama yalnızca okur; diske hiçbir şey yazılmaz.",
+    "Free space: %@": "Boş alan: %@",
+    "Full test (administrator permission required)": "Tam kapsamlı test (yönetici izni gerekir)",
+    "Position": "Konum",
+    "Read speed across the disk": "Disk boyunca okuma hızı",
+    "Reading the whole SSD… %@ / %@": "SSD'nin tamamı okunuyor… %1$@ / %2$@",
+    "Reads the entire SSD — including used space and the system partitions — and maps unreadable and slow areas, then runs the write–verify test on free space. The scan only reads. macOS asks for an administrator password; FixStat never sees or stores it.":
+        "SSD'nin tamamını — dolu alanlar ve sistem bölümleri dahil — okur, okunamayan ve yavaş bölgeleri haritalar, ardından boş alanda yazma–doğrulama testini çalıştırır. Tarama yalnızca okur. macOS yönetici parolası ister; FixStat parolayı görmez ve saklamaz.",
+    "Start full test": "Tam kapsamlı testi başlat",
+    "Surface scanned": "Taranan yüzey",
+    "The disk scan did not complete.": "Disk taraması tamamlanamadı.",
+    "The disk scan helper is missing from the app.": "Disk tarama yardımcısı uygulamada bulunamadı.",
+    "The internal SSD could not be identified.": "Dahili SSD belirlenemedi.",
+    "Unreadable areas": "Okunamayan bölgeler",
+    "Write–verify on free space…": "Boş alanda yazma–doğrulama…",
     "Chip": "Çip",
     "Created with FixStat %@ — github.com/BurakFixLab/fixstat. Serial numbers are masked.":
         "FixStat %@ ile oluşturuldu — github.com/BurakFixLab/fixstat. Seri numaraları maskelenmiştir.",

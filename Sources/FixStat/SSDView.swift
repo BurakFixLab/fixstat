@@ -75,6 +75,7 @@ struct SSDView: View {
     static let windowID = "ssd"
 
     @Environment(SSDTestRunner.self) private var runner
+    @Environment(FullSSDTestRunner.self) private var fullRunner
     @State private var info = SSDInfo.read()
     @State private var gigabytes = 8.0
 
@@ -144,7 +145,7 @@ struct SSDView: View {
                 } else {
                     Button("Start test") { runner.start(gigabytes: gigabytes) }
                         .buttonStyle(.borderedProminent)
-                        .disabled(available < 1)
+                        .disabled(available < 1 || fullRunner.isRunning)
                 }
             }
             if runner.state == .running {
@@ -158,6 +159,8 @@ struct SSDView: View {
             if let result = runner.result {
                 SSDResultView(result: result)
             }
+            Divider().padding(.vertical, 6)
+            FullSSDTestSection(writeVerifyGigabytes: gigabytes)
         }
     }
 

@@ -57,3 +57,31 @@ import Testing
         #expect(found.contains(.smartMediaErrorsIncreased(by: 3)))
     }
 }
+
+@Suite struct SurfaceScanTests {
+    @Test func parsesScanOutput() {
+        var lines = [#"{"type":"start","device":"/dev/rdisk0","size":83886080,"chunk":8388608}"#]
+        for i in 0..<10 {
+            let ms = i == 4 ? 900.0 : 4.0
+            lines.append(#"{"type":"chunk","offset":\#(i * 8_388_608),"length":8388608,"ms":\#(ms)}"#)
+        }
+        lines.append(#"{"type":"error","offset":33554432,"length":262144,"errno":5}"#)
+        lines.append(#"{"type":"end","bytes":83886080,"seconds":1.2,"cancelled":false}"#)
+        let r = SurfaceScanResult.parse(lines.joined(separator: "\n"))
+        #expect(r.finished)
+        #expect(r.bytesRead == 83_886_080)
+        #expect(r.fraction == 1)
+        #expect(r.badRanges == [.init(offset: 33_554_432, length: 262_144)])
+        #expect(r.slowChunks == [0.9])
+        #expect(!r.passed)
+        #expect(r.regions.count == 10)
+    }
+
+    @Test func partialOutputWhileRunning() {
+        let text = #"{"type":"start","size":800,"chunk":8}"# + "\n" + #"{"type":"chunk","offset":0,"length":8,"ms":1}"# + "\n" + #"{"type":"chu"#
+        let r = SurfaceScanResult.parse(text)
+        #expect(!r.finished)
+        #expect(r.bytesRead == 8)
+        #expect(abs(r.fraction - 0.01) < 1e-9)
+    }
+}

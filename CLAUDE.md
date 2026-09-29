@@ -13,7 +13,8 @@ Personal, machine-specific notes may exist in a git-ignored `CLAUDE.local.md`.
 - **Never write to the SMC.** Read-only access only. Fan control, charge limits and
   anything else that needs SMC writes is out of scope. The C shim implements only the
   key-info, read-bytes and read-index commands and rejects everything else.
-- **No sudo / root.** No `powermetrics` or other root-only tools.
+- **No sudo / root.** No `powermetrics` or other root-only tools. The one approved
+  exception is the optional full SSD surface scan (read-only, see Diagnostics tools).
 - Private APIs are allowed (no App Store, no sandbox): `IOHIDEventSystemClient` for Apple
   Silicon temperatures, the `AppleSMC` user client (read-only) for SMC keys.
 - No new dependencies (brew, SPM packages, code generators) without discussing it first.
@@ -133,6 +134,17 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 
 - SSD: NVMe SMART via the NVMeSMARTLib CFPlugIn (no root); write–verify stress test on
   free space (`SSDStressTest`, keeps 10 GB free, speeds from per-block I/O time).
+- Full SSD test: `fixstat-diskscan` (in `Contents/MacOS`) reads `/dev/rdiskN` read-only
+  (O_RDONLY + F_NOCACHE, 8 MiB chunks, 256 KB re-probe on errors) and writes JSON lines
+  that `SurfaceScanResult` parses; then the write–verify test runs on free space.
+  - Started as `/usr/bin/sudo -A` with an osascript askpass, **as a child of FixStat**, so
+    TCC attributes the raw-disk access to FixStat and its Full Disk Access applies.
+    `osascript … with administrator privileges` starts the command through a system
+    trampoline instead: EPERM on `/dev/rdisk0` even with Full Disk Access.
+  - The askpass prompt is embedded as an AppleScript literal (`system attribute` decodes
+    environment variables as Mac Roman → garbled Turkish).
+  - Full Disk Access check: open `/Library/Application Support/com.apple.TCC/TCC.db`.
+    Ad-hoc signed rebuilds lose the grant; toggle FixStat off/on in System Settings.
 - Panic / shutdown history: `.panic` / panic `.ips` in DiagnosticReports (file names
   contain the computer name — never show them); "Previous shutdown cause" from
   `/usr/bin/log` (zsh has a `log` builtin — always use the full path). Code meanings are
@@ -187,11 +199,12 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json
 ├── scripts/package-release.sh  builds build/FixStat.zip for GitHub Releases
 ├── packaging/INSTALL.txt       plain-text install notes (en + tr) shipped in the zip
 ├── scripts/localize.py         catalog apply / prune / check (+ l10n_data.py)
-├── Package.swift               SPM: CMacSensors, MacSensors, sensordump, sensormap, FixStat, tests
+├── Package.swift               SPM: CMacSensors, MacSensors, sensordump, sensormap, fixstat-diskscan, FixStat, tests
 ├── Sources/CMacSensors/        C shims: read-only AppleSMC user client, private HID event API
 ├── Sources/MacSensors/         SMC, HID, battery, system info, sensor map, history store, masking
 ├── Sources/sensordump/         CLI dump
 ├── Sources/sensormap/          load tests, report, map proposal
+├── Sources/fixstat-diskscan/   read-only raw disk surface scan (full SSD test, runs as root)
 ├── Sources/FixStat/            SwiftUI menu bar app
 ├── Tests/MacSensorsTests/      swift-testing unit tests
 ├── SensorMaps/sensor-map.json  sensor naming database

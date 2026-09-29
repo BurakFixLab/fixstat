@@ -49,6 +49,11 @@ also if macOS says the app *"is damaged and can't be opened"*.
 FixStat needs **no special permissions**: no administrator rights, no Accessibility or Full
 Disk Access, no network access. It only reads sensor values; it never writes to the SMC.
 
+The one exception is the optional **full SSD test** (Tools › SSD health and test). Reading
+the whole disk surface needs your administrator password (asked each time, FixStat never
+stores it) and **Full Disk Access**: System Settings › Privacy & Security › Full Disk
+Access › turn FixStat on. The scan only reads the disk.
+
 ## 3. Find it in the menu bar
 
 FixStat has no Dock icon and no window at start — it lives in the **menu bar** at the top
@@ -106,6 +111,7 @@ swift build -c release
 | *"is damaged and can't be opened"* | Use the `xattr` command in step 2. |
 | Open at login does not work | Allow FixStat in System Settings › General › Login Items & Extensions. |
 | Sensors show "estimated" | Your Mac model has no verified sensor map yet. Names are guessed from the chip and key patterns. You can [help add your model](CONTRIBUTING.md). |
+| The full SSD test does not start / "macOS blocked reading the disk" | Turn FixStat on in System Settings › Privacy & Security › Full Disk Access. After replacing or rebuilding the app, turn it off and on again (an unsigned build counts as a new app). |
 | Wrong language | FixStat follows the system language. To change it for FixStat only: System Settings › General › Language & Region › Applications. |
 
 Questions or problems: [open an issue](../../issues).

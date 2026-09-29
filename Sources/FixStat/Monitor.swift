@@ -59,6 +59,8 @@ final class Monitor {
     var lastMemoryResult: MemoryTest.Result?
     /// Last panic / shutdown cause scan (for reports).
     var lastCrashScan: CrashScan?
+    /// Result of the last full SSD test (for reports).
+    var lastFullSSDResult: FullSSDTestRunner.Result?
     /// Result of the last SSD write–verify test (for reports).
     var lastSSDResult: SSDStressTest.Result?
 

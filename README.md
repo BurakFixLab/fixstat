@@ -40,7 +40,8 @@ battery gauge data you normally dig out of `ioreg`.
   plus a daily health log that is kept indefinitely.
 - **Reports.** CSV / JSON export for customer devices, serial numbers always masked.
 - **Read-only.** FixStat never writes to the SMC, has no fan control and needs no
-  administrator rights.
+  administrator rights. The only exception is the optional full SSD surface scan, which
+  asks for your password and Full Disk Access and only reads the disk.
 
 ## Verified models
 
