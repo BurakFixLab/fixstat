@@ -9,6 +9,8 @@ import UserNotifications
 final class AlertManager {
     enum Kind: String, CaseIterable {
         case chipTemperature, batteryTemperature, cellImbalance, chargingStopped
+        /// Sent once, at launch after such a shutdown (see `UnexpectedShutdown`).
+        case unexpectedShutdown
 
         var enabledKey: String { "alerts.\(rawValue)" }
 
@@ -19,6 +21,7 @@ final class AlertManager {
             case .batteryTemperature: 30
             case .cellImbalance: 60
             case .chargingStopped: 180
+            case .unexpectedShutdown: 0
             }
         }
     }
@@ -93,13 +96,24 @@ final class AlertManager {
         post(kind, body: message())
     }
 
+    /// Posts a one-off notification (no delay or repeat logic), if notifications and
+    /// this kind are enabled.
+    static func postOnce(_ kind: Kind, body: String) {
+        guard enabled, UserDefaults.standard.object(forKey: kind.enabledKey) as? Bool ?? true else { return }
+        send(kind, body: body)
+    }
+
     private func post(_ kind: Kind, body: String) {
+        Self.send(kind, body: body)
+    }
+
+    private static func send(_ kind: Kind, body: String) {
         let content = UNMutableNotificationContent()
         content.title = String(localized: "FixStat")
         content.body = body
         content.sound = .default
         let request = UNNotificationRequest(identifier: "fixstat.\(kind.rawValue)", content: content, trigger: nil)
-        Self.log.info("posting \(kind.rawValue, privacy: .public) notification")
+        log.info("posting \(kind.rawValue, privacy: .public) notification")
         UNUserNotificationCenter.current().add(request) { error in
             if let error {
                 Self.log.error("notification failed: \(error.localizedDescription, privacy: .public)")

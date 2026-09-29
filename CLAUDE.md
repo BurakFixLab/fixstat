@@ -164,6 +164,13 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   `NSWorkspace.willPowerOffNotification` (also sent for logout: only kept if a boot follows)
   and reads it at the next launch within 15 min of the boot. mAh per hour = mA while off.
   Log-based periods are only flagged with ≥ 3 points of drop (whole percentages).
+- Capacity test runs can go to 0 %: samples are appended to `capacity-run.jsonl` in the data
+  directory and recovered at the next launch if the Mac turned off (above 5 % that is an
+  "unexpected shutdown" finding: the pack could not deliver what the gauge showed); a wake
+  during the run ends it (low-battery sleep at ≤ 10 %).
+- Unexpected shutdown notification (`UnexpectedShutdown`): at launch within an hour of a boot
+  that had no wtmp shutdown record, no panic and no power-button cause, while the log's last
+  charge was above 5 % (or the shutdown cause is battery related); once per boot.
 - Capacity test (`CapacityResult`, `CapacityTestView`): discharge under a steady load to a
   stop level; delivered mAh / Wh integrated from the gauge's Voltage × Amperage every 5 s;
   compared with the displayed % drop (extrapolated capacity vs. AppleRawMaxCapacity) and

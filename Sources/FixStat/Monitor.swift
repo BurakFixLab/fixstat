@@ -112,6 +112,7 @@ final class Monitor {
         history = BatteryHistoryStore(directory: Self.dataDirectory)
         if !CommandLine.arguments.contains("--snapshot") && !CommandLine.arguments.contains("--export") {
             offState = OffStateRecorder(directory: Self.dataDirectory)
+            UnexpectedShutdown.checkAtLaunch()
         }
         loadMap()
         buildSensors()

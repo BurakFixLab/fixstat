@@ -616,6 +616,16 @@
         }
       }
     },
+    "At 0 % macOS puts the Mac to sleep or turns it off by itself. The measurements are saved while the test runs; if the Mac turns off — also early, as a weak battery does — the result appears here the next time FixStat opens. Full discharges wear the battery, so use them sparingly." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%0'da macOS Mac'i kendiliğinden uyutur veya kapatır. Ölçümler test boyunca kaydedilir; Mac kapanırsa (zayıf bataryalardaki gibi erken de olsa) sonuç FixStat bir sonraki açılışında burada görünür. Tam boşaltma bataryayı yıpratır, idareli kullanın."
+          }
+        }
+      }
+    },
     "Automated enrollment (DEP)" : {
       "localizations" : {
         "tr" : {
@@ -792,6 +802,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya bitti"
+          }
+        }
+      }
+    },
+    "Battery empty: the Mac went to sleep or turned off" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya bitti: Mac uyudu veya kapandı"
           }
         }
       }
@@ -1014,6 +1034,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vazgeç"
+          }
+        }
+      }
+    },
+    "Capacity test: the Mac turned off unexpectedly at %@. The battery may be faulty." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapasite testi: Mac %@ seviyesinde beklenmedik şekilde kapandı. Bataryada sorun olabilir."
           }
         }
       }
@@ -2922,6 +2952,16 @@
         }
       }
     },
+    "Mac turned off unexpectedly (possible battery problem)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac beklenmedik şekilde kapandı (olası batarya sorunu)"
+          }
+        }
+      }
+    },
     "Manufacturer data" : {
       "localizations" : {
         "tr" : {
@@ -4774,6 +4814,22 @@
         }
       }
     },
+    "Shutdown cause %lld: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shutdown cause %1$lld: %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapanma nedeni %1$lld: %2$@"
+          }
+        }
+      }
+    },
     "Signal" : {
       "localizations" : {
         "tr" : {
@@ -5306,6 +5362,62 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mac, adaptörün ihtiyacını karşılayamadığını bildirdi."
+          }
+        }
+      }
+    },
+    "The Mac turned off unexpectedly" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac beklenmedik şekilde kapandı"
+          }
+        }
+      }
+    },
+    "The Mac turned off unexpectedly while the battery showed %@. The battery may be faulty." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac, batarya %@ gösterirken beklenmedik şekilde kapandı. Bataryada sorun olabilir."
+          }
+        }
+      }
+    },
+    "The Mac turned off unexpectedly. The battery may be faulty." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac beklenmedik şekilde kapandı. Bataryada sorun olabilir."
+          }
+        }
+      }
+    },
+    "The Mac turned off while the battery still showed %@. The battery cannot deliver the charge its gauge reports — typical for a weak cell or a voltage collapse under load." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac, batarya hâlâ %@ gösterirken kapandı. Batarya, gauge'unun bildirdiği şarjı veremiyor; zayıf hücre veya yük altında voltaj çöküşü için tipiktir."
+          }
+        }
+      }
+    },
+    "The Mac turned off without a normal shutdown %lld times while the battery still showed charge (last time at %@). Unless these were kernel panics or a held power button, the battery may be faulty." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Mac turned off without a normal shutdown %1$lld times while the battery still showed charge (last time at %2$@). Unless these were kernel panics or a held power button, the battery may be faulty."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac, batarya hâlâ şarj gösterirken %1$lld kez normal kapanma olmadan kapandı (son seferinde %2$@). Bunlar kernel panic veya basılı tutulan güç düğmesi değilse bataryada sorun olabilir."
           }
         }
       }

@@ -285,6 +285,15 @@ enum SleepText {
     /// A shut-down Mac should lose very little; more than 0.3 %/h (about 7 % a day) over
     /// at least four hours and a drop of at least 3 points is worth a look.
     static func offFindings(_ periods: [OffPeriod]) -> [String] {
+        var result: [String] = []
+        let lost = periods.filter { $0.shutdownEstimated && ($0.chargeBefore ?? 0) > 5 }
+        if let last = lost.last, let charge = last.chargeBefore {
+            result.append(String(localized: "The Mac turned off without a normal shutdown \(lost.count) times while the battery still showed charge (last time at \(Format.percent(charge))). Unless these were kernel panics or a held power button, the battery may be faulty."))
+        }
+        return result + drainFindings(periods)
+    }
+
+    private static func drainFindings(_ periods: [OffPeriod]) -> [String] {
         guard let s = OffStateDrain.summary(periods), s.hours >= 4, let rate = s.percentPerHour, rate > 0.3 else { return [] }
         // Whole percentages from the log round by up to 1 point at each end: only flag
         // when the drop is large enough, or when FixStat measured it in mAh.

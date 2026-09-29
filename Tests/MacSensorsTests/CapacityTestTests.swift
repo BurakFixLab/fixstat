@@ -52,3 +52,12 @@ import Testing
         #expect(r.findings.contains(.tooShort))
     }
 }
+
+@Suite struct CapacityShutdownTests {
+    @Test func earlyShutdownIsAFinding() {
+        let samples = CapacityTestTests.samples().filter { $0.idle || ($0.percent ?? 0) >= 78 }
+        let r = CapacityResult.compute(samples: samples, startedAt: Date(), stopReason: .unexpectedShutdown,
+                                       fullChargeCapacity: 4000, designCapacity: 4382)
+        #expect(r.findings.contains { if case .shutdownAtCharge(let p) = $0 { p >= 78 && p < 79 } else { false } })
+    }
+}

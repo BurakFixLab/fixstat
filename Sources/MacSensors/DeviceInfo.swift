@@ -80,7 +80,12 @@ public struct DeviceInfo: Codable, Sendable, Equatable {
 }
 
 /// Runs a system tool and returns its standard output (nil if it could not start).
-enum Command {
+public enum Command {
+    /// `pmset -g log` (the power management log, about a week).
+    public static func pmsetLog() -> String {
+        output("/usr/bin/pmset", ["-g", "log"]) ?? ""
+    }
+
     static func output(_ path: String, _ arguments: [String]) -> String? {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: path)

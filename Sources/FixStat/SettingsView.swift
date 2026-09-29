@@ -240,6 +240,7 @@ private struct NotificationSettingsSection: View {
     @AppStorage(AlertManager.Kind.batteryTemperature.enabledKey) private var battery = true
     @AppStorage(AlertManager.Kind.cellImbalance.enabledKey) private var cells = true
     @AppStorage(AlertManager.Kind.chargingStopped.enabledKey) private var charging = true
+    @AppStorage(AlertManager.Kind.unexpectedShutdown.enabledKey) private var shutdown = true
     @State private var authorized: Bool?
 
     var body: some View {
@@ -271,6 +272,7 @@ private struct NotificationSettingsSection: View {
                 Toggle("Battery temperature above 45 °C", isOn: $battery)
                 Toggle("Cell spread above the warning threshold (on battery)", isOn: $cells)
                 Toggle("Power adapter connected but not charging", isOn: $charging)
+                Toggle("Mac turned off unexpectedly (possible battery problem)", isOn: $shutdown)
             }
             .disabled(!enabled)
         } header: {

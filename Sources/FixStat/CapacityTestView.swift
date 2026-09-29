@@ -25,6 +25,19 @@ final class CapacityTestRunner {
     @ObservationIgnored private var clock = Date()
     @ObservationIgnored private var fullChargeCapacity: Int?
     @ObservationIgnored private var designCapacity: Int?
+    @ObservationIgnored private var journal: FileHandle?
+    @ObservationIgnored private var wakeObserver: NSObjectProtocol?
+
+    /// Samples are also appended to this file, so a run down to 0 % survives the Mac
+    /// turning itself off; the result is recovered at the next launch.
+    private var journalURL: URL { Monitor.dataDirectory.appendingPathComponent("capacity-run.jsonl") }
+
+    struct JournalHeader: Codable {
+        var startedAt: Date
+        var fullChargeCapacity: Int?
+        var designCapacity: Int?
+        var target: Double
+    }
 
     static let interval = 5.0
     static let settleTime = 30.0
@@ -32,6 +45,9 @@ final class CapacityTestRunner {
 
     init(monitor: Monitor) {
         self.monitor = monitor
+        if !CommandLine.arguments.contains("--snapshot") && !CommandLine.arguments.contains("--export") {
+            recoverJournal()
+        }
     }
 
     var elapsed: TimeInterval { samples.last(where: { !$0.idle }).map { $0.time - (firstLoaded?.time ?? 0) } ?? 0 }
@@ -58,7 +74,31 @@ final class CapacityTestRunner {
         }
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
+        // macOS forces a sleep when the battery is almost empty (or the lid was closed):
+        // end the test with what was measured before.
+        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.didWake() }
+        }
         tick()
+    }
+
+    private func didWake() {
+        guard state == .settling || state == .running else { return }
+        finish(Self.sleepReason(samples))
+    }
+
+    /// A run that ended because the Mac went to sleep: at low charge that is macOS'
+    /// low-battery sleep, otherwise (lid closed, …) just the end of the run.
+    static func sleepReason(_ samples: [CapacitySample]) -> CapacityResult.StopReason {
+        (samples.last?.percent ?? 100) <= 10 ? .batteryEmpty : .stopped
+    }
+
+    /// A run that ended because the Mac turned off: above a few percent the battery
+    /// could not deliver what the gauge still showed.
+    static func shutdownReason(_ samples: [CapacitySample]) -> CapacityResult.StopReason {
+        (samples.last?.percent ?? 100) <= 5 ? .batteryEmpty : .unexpectedShutdown
     }
 
     func stop() {
@@ -79,6 +119,7 @@ final class CapacityTestRunner {
             fullChargeCapacity = b.rawMaxCapacity
             designCapacity = b.designCapacity
             state = .settling
+            openJournal()
             record(b, idle: true)
         case .settling:
             guard Date().timeIntervalSince(clock) >= Self.interval else { return }
@@ -99,9 +140,49 @@ final class CapacityTestRunner {
     private func record(_ b: BatteryInfo, idle: Bool) {
         clock = Date()
         guard let voltage = b.voltage, let amperage = b.amperage else { return }
-        samples.append(CapacitySample(time: clock.timeIntervalSince(startedAt), voltage: voltage, amperage: amperage,
-                                      percent: b.stateOfCharge, remaining: b.rawCurrentCapacity,
-                                      cells: b.cellVoltages, temperature: b.temperature, idle: idle))
+        let sample = CapacitySample(time: clock.timeIntervalSince(startedAt), voltage: voltage, amperage: amperage,
+                                    percent: b.stateOfCharge, remaining: b.rawCurrentCapacity,
+                                    cells: b.cellVoltages, temperature: b.temperature, idle: idle)
+        samples.append(sample)
+        if let line = try? JSONEncoder().encode(sample) {
+            journal?.write(line + Data("\n".utf8))
+        }
+    }
+
+    private func openJournal() {
+        try? FileManager.default.createDirectory(at: Monitor.dataDirectory, withIntermediateDirectories: true)
+        let header = JournalHeader(startedAt: startedAt, fullChargeCapacity: fullChargeCapacity,
+                                   designCapacity: designCapacity, target: target)
+        guard let line = try? JSONEncoder().encode(header),
+              FileManager.default.createFile(atPath: journalURL.path, contents: line + Data("\n".utf8)) else { return }
+        journal = try? FileHandle(forWritingTo: journalURL)
+        _ = try? journal?.seekToEnd()
+    }
+
+    /// A journal left behind means the Mac turned off during the test.
+    private func recoverJournal() {
+        guard let text = try? String(contentsOf: journalURL, encoding: .utf8) else { return }
+        try? FileManager.default.removeItem(at: journalURL)
+        let lines = text.split(separator: "\n").map { Data($0.utf8) }
+        let decoder = JSONDecoder()
+        guard let first = lines.first, let header = try? decoder.decode(JournalHeader.self, from: first) else { return }
+        let recovered = lines.dropFirst().compactMap { try? decoder.decode(CapacitySample.self, from: $0) }
+        guard recovered.contains(where: { !$0.idle }) else { return }
+        samples = recovered
+        startedAt = header.startedAt
+        target = header.target
+        fullChargeCapacity = header.fullChargeCapacity
+        designCapacity = header.designCapacity
+        let result = CapacityResult.compute(samples: recovered, startedAt: header.startedAt,
+                                            stopReason: Self.shutdownReason(recovered),
+                                            fullChargeCapacity: header.fullChargeCapacity,
+                                            designCapacity: header.designCapacity)
+        self.result = result
+        monitor.lastCapacityResult = result
+        state = .finished
+        if result.stopReason == .unexpectedShutdown, let percent = result.endPercent {
+            AlertManager.postOnce(.unexpectedShutdown, body: String(localized: "Capacity test: the Mac turned off unexpectedly at \(Format.percent(percent)). The battery may be faulty."))
+        }
     }
 
     private func startLoad() {
@@ -137,6 +218,11 @@ final class CapacityTestRunner {
         timer = nil
         if let activity { ProcessInfo.processInfo.endActivity(activity) }
         activity = nil
+        if let wakeObserver { NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver) }
+        wakeObserver = nil
+        try? journal?.close()
+        journal = nil
+        try? FileManager.default.removeItem(at: journalURL)
     }
 
     func csv() -> Data {
@@ -166,6 +252,13 @@ struct CapacityTestView: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
                 controls
+                if target == 0 && !busy {
+                    Label("At 0 % macOS puts the Mac to sleep or turns it off by itself. The measurements are saved while the test runs; if the Mac turns off — also early, as a weak battery does — the result appears here the next time FixStat opens. Full discharges wear the battery, so use them sparingly.",
+                          systemImage: "info.circle")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 switch runner.state {
                 case .waitingForUnplug:
                     Label("Unplug the power adapter to start.", systemImage: "powerplug")
@@ -198,7 +291,7 @@ struct CapacityTestView: View {
     private var controls: some View {
         HStack(spacing: 14) {
             Picker("Stop at", selection: $target) {
-                ForEach([50.0, 20.0, 10.0], id: \.self) { Text(Format.percent($0)).tag($0) }
+                ForEach([50.0, 20.0, 10.0, 0.0], id: \.self) { Text(Format.percent($0)).tag($0) }
             }
             .pickerStyle(.segmented)
             .fixedSize()
@@ -307,6 +400,8 @@ enum CapacityText {
             String(localized: "The battery delivered only \(Format.percent(ratio * 100)) of the capacity its gauge reports. The gauge overstates the battery (common with reset or non-genuine gauges).")
         case .gaugeMiscount(let ratio):
             String(localized: "The gauge's remaining capacity changed differently from the charge delivered (\(Format.percent(ratio * 100))). The gauge counts incorrectly or needs calibration.")
+        case .shutdownAtCharge(let percent):
+            String(localized: "The Mac turned off while the battery still showed \(Format.percent(percent)). The battery cannot deliver the charge its gauge reports — typical for a weak cell or a voltage collapse under load.")
         case .weakCell(let cell, let spread):
             String(localized: "Cell \(cell) sags under load: cell voltages differ by up to \(Format.millivolts(spread)).")
         }
@@ -318,6 +413,8 @@ enum CapacityText {
         case .stopped: String(localized: "Stopped")
         case .adapterConnected: String(localized: "Power adapter connected")
         case .tooHot: String(localized: "Battery too hot")
+        case .batteryEmpty: String(localized: "Battery empty: the Mac went to sleep or turned off")
+        case .unexpectedShutdown: String(localized: "The Mac turned off unexpectedly")
         }
     }
 

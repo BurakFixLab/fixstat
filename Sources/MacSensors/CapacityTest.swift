@@ -44,7 +44,13 @@ public struct CapacitySample: Codable, Sendable, Equatable {
 }
 
 public struct CapacityResult: Codable, Sendable, Equatable {
-    public enum StopReason: String, Codable, Sendable { case targetReached, stopped, adapterConnected, tooHot }
+    public enum StopReason: String, Codable, Sendable {
+        case targetReached, stopped, adapterConnected, tooHot
+        /// The Mac went to sleep or turned off by itself at the end of the charge.
+        case batteryEmpty
+        /// The Mac turned off while the gauge still showed charge (above 5 %).
+        case unexpectedShutdown
+    }
 
     public var stopReason: StopReason
     public var startedAt: Date
@@ -82,6 +88,8 @@ public struct CapacityResult: Codable, Sendable, Equatable {
         case capacityBelowGauge(Double)
         case gaugeMiscount(Double)
         case weakCell(Int, Int)
+        /// Turned off at this displayed charge: the pack could not deliver what the gauge showed.
+        case shutdownAtCharge(Double)
     }
 
     /// The percentage drop needed for a meaningful extrapolation (1 % steps).
@@ -89,6 +97,7 @@ public struct CapacityResult: Codable, Sendable, Equatable {
 
     public var findings: [Finding] {
         var result: [Finding] = []
+        if stopReason == .unexpectedShutdown, let p = endPercent { result.append(.shutdownAtCharge(p)) }
         let drop = (startPercent ?? 0) - (endPercent ?? 0)
         if drop < Self.minimumPercentDrop { result.append(.tooShort) }
         if drop >= Self.minimumPercentDrop, let a = capacityAgreement, a < 0.85 { result.append(.capacityBelowGauge(a)) }

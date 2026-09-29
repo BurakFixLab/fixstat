@@ -665,6 +665,18 @@ TR = {
     "from log, power lost": "günlükten, güç kesildi",
     "measured": "ölçülen",
     "over %@ shut down": "%@ kapalı sürede",
+    # Capacity test: 0 % and shutdowns
+    "At 0 % macOS puts the Mac to sleep or turns it off by itself. The measurements are saved while the test runs; if the Mac turns off — also early, as a weak battery does — the result appears here the next time FixStat opens. Full discharges wear the battery, so use them sparingly.": "%0'da macOS Mac'i kendiliğinden uyutur veya kapatır. Ölçümler test boyunca kaydedilir; Mac kapanırsa (zayıf bataryalardaki gibi erken de olsa) sonuç FixStat bir sonraki açılışında burada görünür. Tam boşaltma bataryayı yıpratır, idareli kullanın.",
+    "Battery empty: the Mac went to sleep or turned off": "Batarya bitti: Mac uyudu veya kapandı",
+    "The Mac turned off unexpectedly": "Mac beklenmedik şekilde kapandı",
+    "The Mac turned off while the battery still showed %@. The battery cannot deliver the charge its gauge reports — typical for a weak cell or a voltage collapse under load.": "Mac, batarya hâlâ %@ gösterirken kapandı. Batarya, gauge'unun bildirdiği şarjı veremiyor; zayıf hücre veya yük altında voltaj çöküşü için tipiktir.",
+    # Unexpected shutdown
+    "Mac turned off unexpectedly (possible battery problem)": "Mac beklenmedik şekilde kapandı (olası batarya sorunu)",
+    "The Mac turned off unexpectedly while the battery showed %@. The battery may be faulty.": "Mac, batarya %@ gösterirken beklenmedik şekilde kapandı. Bataryada sorun olabilir.",
+    "The Mac turned off unexpectedly. The battery may be faulty.": "Mac beklenmedik şekilde kapandı. Bataryada sorun olabilir.",
+    "Shutdown cause %lld: %@": "Kapanma nedeni %1$lld: %2$@",
+    "Capacity test: the Mac turned off unexpectedly at %@. The battery may be faulty.": "Kapasite testi: Mac %@ seviyesinde beklenmedik şekilde kapandı. Bataryada sorun olabilir.",
+    "The Mac turned off without a normal shutdown %lld times while the battery still showed charge (last time at %@). Unless these were kernel panics or a held power button, the battery may be faulty.": "Mac, batarya hâlâ şarj gösterirken %1$lld kez normal kapanma olmadan kapandı (son seferinde %2$@). Bunlar kernel panic veya basılı tutulan güç düğmesi değilse bataryada sorun olabilir.",
 }
 
 # key: (English, Turkish)
