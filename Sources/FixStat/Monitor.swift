@@ -65,6 +65,12 @@ final class Monitor {
     var lastSSDResult: SSDStressTest.Result?
     /// Hardware checklist of this session (for reports).
     var hardwareCheck = HardwareCheck()
+    /// Device card data (system_profiler takes about a second, so it is loaded on demand).
+    var deviceInfo: DeviceInfo?
+
+    func loadDeviceInfo() async {
+        deviceInfo = await Task.detached { DeviceInfo.read() }.value
+    }
 
     /// The battery details window refreshes the battery at the panel's rate.
     var detailsVisible = false {

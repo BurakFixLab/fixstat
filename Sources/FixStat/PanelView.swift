@@ -38,6 +38,8 @@ struct ToolsMenu: View {
 
     var body: some View {
         Menu {
+            Button("Device info") { open(DeviceInfoView.windowID) }
+            Divider()
             Button("Battery history") { open(HistoryView.windowID) }
             Button("Battery details") { open(BatteryDetailsView.windowID) }
             Button("SSD health and test") { open(SSDView.windowID) }

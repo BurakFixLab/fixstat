@@ -129,6 +129,32 @@
         }
       }
     },
+    "%lld %% used" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%%%lld kullanılmış"
+          }
+        }
+      }
+    },
+    "%lld (%lld performance, %lld efficiency)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld (%2$lld performance, %3$lld efficiency)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld (%2$lld performans, %3$lld verimlilik)"
+          }
+        }
+      }
+    },
     "%lld / %lld keys" : {
       "localizations" : {
         "en" : {
@@ -215,6 +241,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld bağlı, %2$lld bağlı değil"
+          }
+        }
+      }
+    },
+    "%lld cycles" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld döngü"
           }
         }
       }
@@ -328,6 +364,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FixStat Hakkında"
+          }
+        }
+      }
+    },
+    "Activation Lock (Find My)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivasyon Kilidi (Bul)"
+          }
+        }
+      }
+    },
+    "Activation Lock · MDM" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivasyon Kilidi · MDM"
           }
         }
       }
@@ -504,6 +560,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Görünüm"
+          }
+        }
+      }
+    },
+    "Automated enrollment (DEP)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otomatik kayıt (DEP)"
           }
         }
       }
@@ -766,6 +832,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "CPU / GPU sıcaklığı"
+          }
+        }
+      }
+    },
+    "CPU cores" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU çekirdekleri"
           }
         }
       }
@@ -1206,6 +1282,16 @@
         }
       }
     },
+    "Configuration" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yapılandırma"
+          }
+        }
+      }
+    },
     "Connect the power adapter to check it." : {
       "localizations" : {
         "tr" : {
@@ -1256,12 +1342,32 @@
         }
       }
     },
+    "Copied" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopyalandı"
+          }
+        }
+      }
+    },
     "Copy" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kopyala"
+          }
+        }
+      }
+    },
+    "Copy as text" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metin olarak kopyala"
           }
         }
       }
@@ -1412,6 +1518,16 @@
         }
       }
     },
+    "Device info" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cihaz bilgisi"
+          }
+        }
+      }
+    },
     "Difference between the highest and lowest cell voltage." : {
       "localizations" : {
         "tr" : {
@@ -1492,6 +1608,26 @@
         }
       }
     },
+    "Enrolled" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kayıtlı"
+          }
+        }
+      }
+    },
+    "Enrolled — managed by an organisation" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kayıtlı — bir kurum tarafından yönetiliyor"
+          }
+        }
+      }
+    },
     "Error log entries" : {
       "localizations" : {
         "tr" : {
@@ -1562,12 +1698,32 @@
         }
       }
     },
+    "FileVault" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FileVault"
+          }
+        }
+      }
+    },
     "Firmware" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yazılım (firmware)"
+          }
+        }
+      }
+    },
+    "Firmware (iBoot)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firmware (iBoot)"
           }
         }
       }
@@ -1782,6 +1938,16 @@
         }
       }
     },
+    "GPU cores" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPU çekirdekleri"
+          }
+        }
+      }
+    },
     "Gauge" : {
       "localizations" : {
         "tr" : {
@@ -1888,6 +2054,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sağlık (SMART)"
+          }
+        }
+      }
+    },
+    "Health summary" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sağlık özeti"
           }
         }
       }
@@ -2092,6 +2268,16 @@
         }
       }
     },
+    "Kernel panics (30 days)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kernel panic (30 gün)"
+          }
+        }
+      }
+    },
     "Keyboard" : {
       "localizations" : {
         "tr" : {
@@ -2274,6 +2460,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "MB/sn"
+          }
+        }
+      }
+    },
+    "MDM enrollment" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MDM kaydı"
           }
         }
       }
@@ -2474,6 +2670,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dikkat edilmesi gerekenler"
+          }
+        }
+      }
+    },
+    "No" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hayır"
           }
         }
       }
@@ -2708,6 +2914,16 @@
         }
       }
     },
+    "Not enrolled" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kayıtlı değil"
+          }
+        }
+      }
+    },
     "Not tested" : {
       "localizations" : {
         "tr" : {
@@ -2768,6 +2984,36 @@
         }
       }
     },
+    "Off" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapalı"
+          }
+        }
+      }
+    },
+    "Off — modified system" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapalı — sistem değiştirilmiş"
+          }
+        }
+      }
+    },
+    "On" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açık"
+          }
+        }
+      }
+    },
     "On battery" : {
       "localizations" : {
         "tr" : {
@@ -2814,6 +3060,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adaptör takılıyken batarya yine de boşaldı (ortalama %@) — adaptör, kablo veya şarj devresi yetersiz olabilir"
+          }
+        }
+      }
+    },
+    "On — the owner must turn it off" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açık — sahibinin kapatması gerekir"
+          }
+        }
+      }
+    },
+    "On — the user password is needed to reach the data" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açık — verilere erişmek için kullanıcı parolası gerekir"
           }
         }
       }
@@ -2898,6 +3164,16 @@
         }
       }
     },
+    "Ownership and security" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sahiplik ve güvenlik"
+          }
+        }
+      }
+    },
     "PD hard resets" : {
       "localizations" : {
         "tr" : {
@@ -2974,6 +3250,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Panic ve kapanmalar"
+          }
+        }
+      }
+    },
+    "Part number · serial" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parça no · seri no"
           }
         }
       }
@@ -3744,6 +4030,16 @@
         }
       }
     },
+    "Serial %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seri no %@"
+          }
+        }
+      }
+    },
     "Service recommended" : {
       "localizations" : {
         "tr" : {
@@ -4136,6 +4432,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sistem"
+          }
+        }
+      }
+    },
+    "System Integrity Protection" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem Bütünlüğü Koruması (SIP)"
           }
         }
       }
@@ -4766,6 +5072,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adaptörden hatalı akım"
+          }
+        }
+      }
+    },
+    "Yes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evet"
           }
         }
       }
@@ -5666,6 +5982,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tarama sesi"
+          }
+        }
+      }
+    },
+    "unknown" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bilinmiyor"
           }
         }
       }

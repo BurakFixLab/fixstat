@@ -72,3 +72,20 @@ import Testing
         #expect(!PortControllerCounters.parse(idle, externalPower: true).hasFaults)
     }
 }
+
+@Suite struct DeviceInfoTests {
+    @Test func enrollment() {
+        let text = "Enrolled via DEP: No\nMDM enrollment: Yes (User Approved)\n"
+        #expect(DeviceInfo.parseEnrollment(text, prefix: "Enrolled via DEP:") == .off)
+        #expect(DeviceInfo.parseEnrollment(text, prefix: "MDM enrollment:") == .on)
+        #expect(DeviceInfo.parseEnrollment(nil, prefix: "MDM enrollment:") == .unknown)
+    }
+
+    @Test func statuses() {
+        #expect(DeviceInfo.activationLock("activation_lock_disabled") == .off)
+        #expect(DeviceInfo.activationLock("activation_lock_enabled") == .on)
+        #expect(DeviceInfo.activationLock(nil) == .unknown)
+        #expect(DeviceInfo.parseStatus("System Integrity Protection status: enabled.", on: "enabled", off: "disabled") == .on)
+        #expect(DeviceInfo.parseStatus("FileVault is Off.", on: "FileVault is On", off: "FileVault is Off") == .off)
+    }
+}

@@ -152,6 +152,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 - Originality check: `SensorMaps/parts.json` (known-genuine reference values) +
   evidence rules in `PartCheck`; verdicts consistent / suspicious / unknown, never "proof".
   macOS' own condition comes from `system_profiler SPPowerDataType -json`.
+- Device card (`DeviceInfo`, `DeviceInfoView`): `system_profiler SPHardwareDataType -json`
+  (part number `model_number`, `boot_rom_version`, `activation_lock_status`; serial masked,
+  platform UUID / provisioning UDID never read), `profiles status -type enrollment`
+  (DEP / MDM), `csrutil status`, `fdesetup status`, `gpu-core-count` of AGXAccelerator —
+  all without root. Loaded on demand (`Monitor.loadDeviceInfo`).
 - Hardware check (`HardwareCheckView`, model `HardwareCheck`): keyboard (layout from
   `KeyboardLayout` + legends from the current input source via `UCKeyTranslate`, ANSI/ISO
   from `KBGetLayoutType`; key codes of new function-row keys and NX media keys are mapped

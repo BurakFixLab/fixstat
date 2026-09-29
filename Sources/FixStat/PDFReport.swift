@@ -50,6 +50,7 @@ struct ReportSnapshot {
     let batteryCheck: PartCheck?
     let adapterCheck: PartCheck?
     let macOSHealth: MacOSBatteryHealth?
+    let device: DeviceInfo
     let shopName: String
     let note: String
 
@@ -75,6 +76,7 @@ struct ReportSnapshot {
         batteryCheck = battery.map { PartCheck.battery($0, model: monitor.system.model, reference: monitor.partsReference) }
         adapterCheck = battery.flatMap { PartCheck.adapter($0, reference: monitor.partsReference) }
         macOSHealth = MacOSBatteryHealth.read()
+        device = monitor.deviceInfo ?? DeviceInfo.read()
         let defaults = UserDefaults.standard
         shopName = defaults.string(forKey: Pref.reportShopName) ?? ""
         note = defaults.string(forKey: Pref.reportNote) ?? ""
@@ -136,8 +138,14 @@ private struct ReportPage: View {
             ReportRow(title: "Mac", value: snapshot.system.marketingName ?? snapshot.system.model)
             ReportRow(title: "Model identifier", value: [snapshot.system.model, snapshot.system.boardTarget]
                 .compactMap { $0 }.joined(separator: " · "))
+            ReportRow(title: "Part number · serial", value: [snapshot.device.partNumber, snapshot.device.serial]
+                .compactMap { $0 }.joined(separator: " · "))
             ReportRow(title: "Chip", value: snapshot.system.chip)
             ReportRow(title: "macOS", value: snapshot.system.osVersion)
+            ReportRow(title: "Activation Lock · MDM", value: [
+                DeviceText.state(snapshot.device.activationLock, on: String(localized: "On"), off: String(localized: "Off")),
+                DeviceText.state(snapshot.device.mdmEnrolled, on: String(localized: "Enrolled"), off: String(localized: "Not enrolled")),
+            ].joined(separator: " · "))
         }
     }
 
