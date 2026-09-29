@@ -7,12 +7,13 @@ import MacSensors
 
 let usage = """
     usage:
-      sensormap record [--tests single,all,gpu,ssd,charger] [--duration S] [--baseline S] [--out FILE]
+      sensormap record [--quick] [--tests single,all,gpu,ssd,charger] [--duration S] [--baseline S] [--out FILE]
       sensormap report FILE...
       sensormap propose FILE... [--write PATH]
       sensormap ssd [--gb N]
 
     record   Idle baseline, then each test (default 45 s) with cooldown in between.
+             --quick: all cores, GPU and SSD for 30 s each (about 3 minutes).
              The charger test asks you to unplug and re-plug the power adapter.
              Default output: local/sensormap/<model>-<timestamp>.json (git-ignored).
     report   Prints the per-sensor temperature change for each test.
@@ -26,17 +27,21 @@ func fail(_ message: String) -> Never {
     exit(2)
 }
 
-func loadRecordings(_ paths: [String]) -> [Recording] {
+func loadRecordings(_ paths: [String]) -> [SensorRecording] {
     let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .iso8601
     return paths.map { path in
         guard let data = FileManager.default.contents(atPath: path) else { fail("cannot read \(path)") }
         do {
-            return try decoder.decode(Recording.self, from: data)
+            return try decoder.decode(SensorRecording.self, from: data)
         } catch {
             fail("cannot parse \(path): \(error)")
         }
     }
+}
+
+func log(_ message: String) {
+    FileHandle.standardError.write(Data((message + "\n").utf8))
 }
 
 func alert(_ message: String) {
@@ -47,7 +52,7 @@ func alert(_ message: String) {
     try? sound.run()
 }
 
-func waitForPower(connected: Bool, recorder: Recorder, timeout: TimeInterval = 1800) -> Bool {
+func waitForPower(connected: Bool, recorder: SensorRecorder, timeout: TimeInterval = 1800) -> Bool {
     let deadline = Date().addingTimeInterval(timeout)
     while Date() < deadline {
         recorder.takeSample()
@@ -58,76 +63,51 @@ func waitForPower(connected: Bool, recorder: Recorder, timeout: TimeInterval = 1
 }
 
 func record(_ arguments: [String]) {
-    var tests = ["single", "all", "gpu", "ssd"]
-    var duration: TimeInterval = 45
-    var baseline: TimeInterval = 30
+    var plan = SensorLoadTests.Plan.full
+    var charger = false
     var outPath: String?
 
     var iterator = arguments.makeIterator()
     while let argument = iterator.next() {
         switch argument {
-        case "--tests": tests = (iterator.next() ?? "").split(separator: ",").map(String.init)
-        case "--duration": duration = TimeInterval(iterator.next() ?? "") ?? duration
-        case "--baseline": baseline = TimeInterval(iterator.next() ?? "") ?? baseline
+        case "--quick": plan = .quick
+        case "--tests":
+            let tests = (iterator.next() ?? "").split(separator: ",").map(String.init)
+            charger = tests.contains("charger")
+            plan.tests = tests.filter { $0 != "charger" }
+        case "--duration": plan.duration = TimeInterval(iterator.next() ?? "") ?? plan.duration
+        case "--baseline": plan.baseline = TimeInterval(iterator.next() ?? "") ?? plan.baseline
         case "--out": outPath = iterator.next()
         default: fail("unknown option \(argument)")
         }
     }
-    let known = Set(["single", "all", "gpu", "ssd", "charger"])
-    if let unknown = tests.first(where: { !known.contains($0) }) { fail("unknown test \(unknown)") }
+    if let unknown = plan.tests.first(where: { !SensorLoadTests.loadTests.contains($0) }) { fail("unknown test \(unknown)") }
 
-    let recorder = Recorder()
+    let recorder = SensorRecorder()
+    recorder.progress = log
     let system = recorder.recording.system
     log("sensormap: \(system.model) · \(system.chip) · \(recorder.sampler.sensors.count) temperature sensors")
     log("Keep the Mac idle (no other work) until the recording ends.\n")
 
-    log("baseline (\(Int(baseline)) s)")
-    recorder.phase("baseline", duration: baseline)
+    SensorLoadTests.run(plan, recorder: recorder)
 
-    for test in tests {
-        let reference = recorder.recentMeanHID()
-        switch test {
-        case "single", "all", "gpu", "ssd":
-            let flag = StopFlag()
-            switch test {
-            case "single":
-                LoadGenerator.cpu(threads: 1, flag: flag)
-            case "all":
-                LoadGenerator.cpu(threads: ProcessInfo.processInfo.activeProcessorCount, flag: flag)
-            case "gpu":
-                if let error = LoadGenerator.gpu(flag: flag) {
-                    log("gpu test skipped: \(error)")
-                    continue
-                }
-            default:
-                LoadGenerator.ssd(directory: FileManager.default.temporaryDirectory, fileSize: 2 << 30, flag: flag)
+    if charger {
+        if BatteryReader.read()?.externalConnected == true {
+            alert("UNPLUG the power adapter now.")
+            if !waitForPower(connected: false, recorder: recorder) {
+                log("charger test skipped: adapter was not unplugged within 30 min")
             }
-            log("\(test) load (\(Int(duration)) s)")
-            recorder.phase(test, duration: duration)
-            flag.stop()
-            log("cooldown")
-            recorder.cooldown(to: reference, minimum: 20, maximum: 120)
-
-        case "charger":
-            if BatteryReader.read()?.externalConnected == true {
-                alert("UNPLUG the power adapter now.")
-                guard waitForPower(connected: false, recorder: recorder) else {
-                    log("charger test skipped: adapter was not unplugged within 30 min")
-                    continue
-                }
-            }
+        }
+        if BatteryReader.read()?.externalConnected == false {
             log("on battery (90 s)")
             recorder.phase("unplugged", duration: 90)
             alert("PLUG IN the power adapter now.")
-            guard waitForPower(connected: true, recorder: recorder) else {
+            if waitForPower(connected: true, recorder: recorder) {
+                log("charging (180 s)")
+                recorder.phase("charging", duration: 180)
+            } else {
                 log("charger test incomplete: adapter was not plugged in within 30 min")
-                continue
             }
-            log("charging (180 s)")
-            recorder.phase("charging", duration: 180)
-
-        default:
-            break
         }
     }
 
@@ -149,8 +129,8 @@ func record(_ arguments: [String]) {
         fail("cannot write \(url.path): \(error)")
     }
     log("\nsaved \(url.path)\n")
-    let rows = Report.deltas(for: [recorder.recording])
-    print(Report.render(rows, tests: Report.testOrder.filter { name in rows.contains { $0.deltas[name] != nil } }))
+    let rows = SensorMapReport.deltas(for: [recorder.recording])
+    print(SensorMapReport.render(rows, tests: SensorMapReport.testOrder.filter { name in rows.contains { $0.deltas[name] != nil } }))
 }
 
 var arguments = Array(CommandLine.arguments.dropFirst())
@@ -162,8 +142,8 @@ case "record":
     record(arguments)
 case "report":
     guard !arguments.isEmpty else { fail("report needs at least one recording") }
-    let rows = Report.deltas(for: loadRecordings(arguments))
-    print(Report.render(rows, tests: Report.testOrder.filter { name in rows.contains { $0.deltas[name] != nil } }))
+    let rows = SensorMapReport.deltas(for: loadRecordings(arguments))
+    print(SensorMapReport.render(rows, tests: SensorMapReport.testOrder.filter { name in rows.contains { $0.deltas[name] != nil } }))
 case "propose":
     var files: [String] = []
     var writePath: String?
@@ -184,7 +164,7 @@ case "propose":
     } catch {
         fail("cannot load \(mapPath): \(error)")
     }
-    let proposal = Proposer.propose(recordings: recordings, map: map)
+    let proposal = SensorMapProposer.propose(recordings: recordings, map: map)
     let model = recordings[0].system.model
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]

@@ -1,25 +1,29 @@
 import Foundation
-import MacSensors
 
 /// Per-sensor temperature change for each test.
-struct SensorDeltas {
-    let sensor: SensorDescriptor
+public struct SensorDeltas: Sendable {
+    public let sensor: SensorDescriptor
     /// Mean during the baseline phase (first recording that has one).
-    var baseline: Double?
+    public var baseline: Double?
     /// Test name → Δ °C (mean of the last 10 s of the test minus mean of the
     /// last 10 s before it).
-    var deltas: [String: Double] = [:]
+    public var deltas: [String: Double] = [:]
 }
 
-enum Report {
-    static let testOrder = ["single", "all", "gpu", "ssd", "charging"]
+public enum SensorMapReport {
+    public static let testOrder = ["single", "all", "gpu", "ssd", "charging"]
+
+    static func fmt(_ value: Double?, _ digits: Int = 1) -> String {
+        guard let value else { return "-" }
+        return String(format: "%.\(digits)f", value)
+    }
 
     static func mean(_ values: [Double]) -> Double? {
         values.isEmpty ? nil : values.reduce(0, +) / Double(values.count)
     }
 
     /// Mean of sensor `index` over samples with `from <= t <= to`.
-    static func mean(_ recording: Recording, index: Int, from: Double, to: Double) -> Double? {
+    static func mean(_ recording: SensorRecording, index: Int, from: Double, to: Double) -> Double? {
         mean(recording.samples.filter { $0.t >= from && $0.t <= to }.compactMap { sample in
             guard index < sample.values.count, let value = sample.values[index],
                   SMC.plausibleTemperatureRange.contains(value) else { return nil }
@@ -29,7 +33,7 @@ enum Report {
 
     /// Computes deltas for all sensors of all recordings. Sensors are matched
     /// across recordings by uid.
-    static func deltas(for recordings: [Recording]) -> [SensorDeltas] {
+    public static func deltas(for recordings: [SensorRecording]) -> [SensorDeltas] {
         var order: [String] = []
         var result: [String: SensorDeltas] = [:]
         for recording in recordings {
@@ -56,7 +60,7 @@ enum Report {
         return order.compactMap { result[$0] }
     }
 
-    static func render(_ rows: [SensorDeltas], tests: [String]) -> String {
+    public static func render(_ rows: [SensorDeltas], tests: [String]) -> String {
         var lines: [String] = []
         let header = ["Key", "HID name", "Base"] + tests.map { "Δ" + $0 } + ["Strongest"]
         var table: [[String]] = [header]

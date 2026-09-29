@@ -63,7 +63,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 
 - `sensormap record`: idle baseline, single/all-core CPU, Metal GPU, SSD write/read and a
   charger unplug/replug test; samples every HID and SMC temperature at 1 Hz; recordings go
-  to git-ignored `local/sensormap/`.
+  to git-ignored `local/sensormap/`. `--quick` (all cores, GPU, SSD, 30 s each, ≈ 3 min)
+  gave the same ids for all 64 sensors of the M1 Air and verified 14 of 16 (the other two
+  are charger sensors).
+- The recording, report and proposal code lives in the library (`SensorRecording`,
+  `SensorLoadTests`, `SensorMapReport`, `SensorMapProposer`) so other tools can use it.
 - `sensormap report FILE...`: per-sensor rise for each test.
 - `sensormap propose FILE... [--write SensorMaps/sensor-map.json]`: names from pattern rules;
   `verified` only when the test matching the group gave ≥ 1.5 °C and ≥ 90 % of the sensor's

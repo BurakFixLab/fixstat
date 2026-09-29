@@ -1,5 +1,4 @@
 import Foundation
-import MacSensors
 
 /// Builds a proposed model entry for `sensor-map.json` from recordings.
 ///
@@ -8,7 +7,7 @@ import MacSensors
 /// a sensor is `verified` only if its strongest rise happened in the test that
 /// matches its group (cpu → CPU tests, gpu → GPU, ssd → SSD, battery → charging).
 /// Everything else is `estimated`, for the owner to confirm or correct.
-enum Proposer {
+public enum SensorMapProposer {
     static let expectedTests: [SensorMap.Group: Set<String>] = [
         .cpu: ["single", "all"],
         .gpu: ["gpu"],
@@ -30,14 +29,14 @@ enum Proposer {
     /// The expected test must reach this share of the strongest rise.
     static let dominance = 0.9
 
-    struct Proposal {
-        var model: SensorMap.ModelMap
+    public struct Proposal: Sendable {
+        public var model: SensorMap.ModelMap
         /// Sensors neither the patterns nor the tests could identify.
-        var unmatched: [SensorDescriptor]
+        public var unmatched: [SensorDescriptor]
     }
 
-    static func propose(recordings: [Recording], map: SensorMap) -> Proposal {
-        let rows = Report.deltas(for: recordings)
+    public static func propose(recordings: [SensorRecording], map: SensorMap) -> Proposal {
+        let rows = SensorMapReport.deltas(for: recordings)
         let system = recordings[0].system
         let patternsOnly = SensorMap(patterns: map.patterns)
 
@@ -83,7 +82,7 @@ enum Proposer {
             if isConstant {
                 notes.append("constant during all tests")
             }
-            let evidence = Report.testOrder.compactMap { test in
+            let evidence = SensorMapReport.testOrder.compactMap { test in
                 row.deltas[test].map { String(format: "Δ%@ %+.1f", test, $0) }
             }.joined(separator: ", ")
             if !evidence.isEmpty { notes.append(evidence) }
@@ -107,7 +106,7 @@ enum Proposer {
     /// filtered, so the series are not bit-identical. A pair counts as alias if
     /// the mean absolute difference is below 0.25 °C and the next best HID
     /// candidate is at least twice as far away.
-    static func findAliases(_ recordings: [Recording]) -> [String: String] {
+    static func findAliases(_ recordings: [SensorRecording]) -> [String: String] {
         guard let recording = recordings.first else { return [:] }
         let sensors = recording.sensors
         let series: [[Double?]] = sensors.indices.map { index in
@@ -142,7 +141,7 @@ enum Proposer {
     }
 
     /// Plausible min / max of a sensor over all recordings.
-    static func range(of sensor: SensorDescriptor, in recordings: [Recording]) -> (Double?, Double?) {
+    static func range(of sensor: SensorDescriptor, in recordings: [SensorRecording]) -> (Double?, Double?) {
         var values: [Double] = []
         for recording in recordings {
             guard let index = recording.sensors.firstIndex(of: sensor) else { continue }
