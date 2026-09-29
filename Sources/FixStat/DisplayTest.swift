@@ -2,6 +2,7 @@ import AppKit
 import MacSensors
 import SwiftUI
 
+@available(macOS 14.0, *)
 struct DisplayTestView: View {
     @Environment(Monitor.self) private var monitor
     @State private var shown: Set<Int> = []
@@ -39,6 +40,7 @@ struct DisplayTestView: View {
     }
 }
 
+@available(macOS 14.0, *)
 enum DisplayPattern: Int, CaseIterable {
     case black, white, red, green, blue, gray, gradient
 
@@ -78,6 +80,7 @@ enum DisplayPattern: Int, CaseIterable {
 }
 
 /// Borderless full-screen window on the built-in display cycling through the patterns.
+@available(macOS 14.0, *)
 @MainActor
 final class DisplayTestWindow: NSWindow {
     private static var current: DisplayTestWindow?
@@ -140,6 +143,7 @@ final class DisplayTestWindow: NSWindow {
     override func rightMouseDown(with event: NSEvent) { step(-1) }
 }
 
+@available(macOS 14.0, *)
 private struct PatternView: View {
     let pattern: DisplayPattern
     let hint: Bool

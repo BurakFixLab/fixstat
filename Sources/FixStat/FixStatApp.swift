@@ -1,6 +1,6 @@
 import SwiftUI
 
-@main
+@available(macOS 14.0, *)
 struct FixStatApp: App {
     @State private var monitor: Monitor
     @State private var testRunner: TestRunner

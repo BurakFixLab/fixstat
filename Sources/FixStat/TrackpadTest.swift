@@ -4,6 +4,7 @@ import MacSensors
 import SwiftUI
 
 /// What the trackpad test has seen so far.
+@available(macOS 14.0, *)
 struct TrackpadProgress: Equatable {
     static let columns = 16
     static let rows = 10
@@ -41,6 +42,7 @@ struct TrackpadProgress: Equatable {
     }
 }
 
+@available(macOS 14.0, *)
 struct TrackpadTestView: View {
     @Environment(Monitor.self) private var monitor
     @State private var tester = TrackpadTester()
@@ -159,6 +161,7 @@ struct TrackpadTestView: View {
 /// Raw contacts from MultitouchSupport (independent of the pointer position) plus
 /// click / scroll / gesture events. A click is assigned to the zone under the pressing
 /// finger (the largest contact) or, for a secondary click, under the fingers' centre.
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class TrackpadTester {
@@ -261,6 +264,7 @@ final class TrackpadTester {
 }
 
 /// Written on the MultitouchSupport thread, read on the main thread.
+@available(macOS 14.0, *)
 final class TouchBuffer: @unchecked Sendable {
     private let lock = NSLock()
     private var cells: Set<Int> = []

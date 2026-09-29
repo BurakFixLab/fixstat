@@ -1,6 +1,7 @@
 import Foundation
 
 /// UserDefaults keys and defaults for all preferences.
+@available(macOS 14.0, *)
 enum Pref {
     static let menuBarBatteryIcon = "menuBar.batteryIcon"
     static let menuBarBatteryPercent = "menuBar.batteryPercent"

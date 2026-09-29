@@ -3,6 +3,7 @@ import MacSensors
 import SwiftUI
 
 /// Runs the SSD write–verify test on a background thread and publishes progress.
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class SSDTestRunner {
@@ -71,6 +72,7 @@ final class SSDTestRunner {
 }
 
 /// SSD identity, NVMe health and the write–verify stress test.
+@available(macOS 14.0, *)
 struct SSDView: View {
     static let windowID = "ssd"
 
@@ -211,6 +213,7 @@ struct SSDView: View {
 }
 
 /// SMART values with an assessment.
+@available(macOS 14.0, *)
 private struct HealthCard: View {
     let health: NVMeHealth
 
@@ -244,6 +247,7 @@ private struct HealthCard: View {
     }
 }
 
+@available(macOS 14.0, *)
 struct SSDResultView: View {
     let result: SSDStressTest.Result
 
@@ -279,6 +283,7 @@ struct SSDResultView: View {
 }
 
 /// Localized SSD texts (window and PDF report).
+@available(macOS 14.0, *)
 enum SSDText {
     static let usedWarning = 80
     static let usedCritical = 100

@@ -2,6 +2,7 @@
 import MacSensors
 import SwiftUI
 
+@available(macOS 14.0, *)
 struct CameraTestView: View {
     @Environment(Monitor.self) private var monitor
     @State private var camera = CameraPreview()
@@ -52,6 +53,7 @@ struct CameraTestView: View {
     }
 }
 
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class CameraPreview {
@@ -109,6 +111,7 @@ final class CameraPreview {
 }
 
 /// Counts frames and measures the average luma of every 15th frame (Y plane, sparse).
+@available(macOS 14.0, *)
 private final class FrameSampler: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, @unchecked Sendable {
     var onFrame: ((Int, Double?) -> Void)?
     private var count = 0
@@ -138,6 +141,7 @@ private final class FrameSampler: NSObject, AVCaptureVideoDataOutputSampleBuffer
     }
 }
 
+@available(macOS 14.0, *)
 private struct PreviewLayerView: NSViewRepresentable {
     let session: AVCaptureSession
 

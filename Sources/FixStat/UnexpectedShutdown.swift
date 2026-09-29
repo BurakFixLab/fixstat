@@ -4,6 +4,7 @@ import MacSensors
 /// Checks at launch whether the Mac lost power without a normal shutdown while the
 /// battery still showed charge — typical for a weak cell or a failing battery — and
 /// posts a notification once per boot.
+@available(macOS 14.0, *)
 enum UnexpectedShutdown {
     struct Finding: Sendable {
         let boot: Date

@@ -2,6 +2,7 @@ import MacSensors
 import ServiceManagement
 import SwiftUI
 
+@available(macOS 14.0, *)
 struct SettingsView: View {
     @State private var tab: Int
 
@@ -25,6 +26,7 @@ struct SettingsView: View {
     }
 }
 
+@available(macOS 14.0, *)
 private struct GeneralSettings: View {
     @AppStorage(Pref.menuBarBatteryIcon) private var batteryIcon = true
     @AppStorage(Pref.menuBarBatteryPercent) private var batteryPercent = true
@@ -93,6 +95,7 @@ private struct GeneralSettings: View {
     }
 }
 
+@available(macOS 14.0, *)
 private struct ThresholdSettings: View {
     @AppStorage(Pref.warmThreshold) private var warm = Pref.defaultWarm
     @AppStorage(Pref.hotThreshold) private var hot = Pref.defaultHot
@@ -148,6 +151,7 @@ private struct ThresholdSettings: View {
 }
 
 /// Title on the left, value and stepper on the right.
+@available(macOS 14.0, *)
 struct StepperRow<Control: View>: View {
     let title: LocalizedStringKey
     let value: String
@@ -163,6 +167,7 @@ struct StepperRow<Control: View>: View {
     }
 }
 
+@available(macOS 14.0, *)
 private struct SensorSettings: View {
     @Environment(Monitor.self) private var monitor
     @AppStorage(Pref.hiddenSensors) private var hiddenRaw = ""
@@ -192,6 +197,7 @@ private struct SensorSettings: View {
     }
 }
 
+@available(macOS 14.0, *)
 private struct SensorSettingsRow: View {
     @Environment(Monitor.self) private var monitor
     let sensor: DisplaySensor
@@ -217,6 +223,7 @@ private struct SensorSettingsRow: View {
 }
 
 /// Shop name and note for the PDF customer report.
+@available(macOS 14.0, *)
 private struct ReportSettingsSection: View {
     @AppStorage(Pref.reportShopName) private var shopName = ""
     @AppStorage(Pref.reportNote) private var note = ""
@@ -233,6 +240,7 @@ private struct ReportSettingsSection: View {
 }
 
 /// Notification switches (Thresholds tab).
+@available(macOS 14.0, *)
 private struct NotificationSettingsSection: View {
     @AppStorage(Pref.alertsEnabled) private var enabled = false
     @AppStorage(Pref.alertChipTemperature) private var chipLimit = Pref.defaultAlertChipTemperature

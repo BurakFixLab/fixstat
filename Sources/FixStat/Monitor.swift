@@ -3,6 +3,7 @@ import MacSensors
 import Observation
 
 /// One temperature sensor as shown in the UI.
+@available(macOS 14.0, *)
 struct DisplaySensor: Identifiable, Equatable {
     let descriptor: SensorDescriptor
     let resolved: ResolvedSensor?
@@ -19,6 +20,7 @@ struct DisplaySensor: Identifiable, Equatable {
 ///
 /// Values are always assigned as whole Equatable values so that SwiftUI only
 /// invalidates views whose data actually changed.
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class Monitor {

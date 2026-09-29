@@ -4,6 +4,7 @@ import Observation
 
 /// Runs the post-repair stress test: applies CPU / GPU load for a fixed time and
 /// samples temperatures and battery values every second.
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class TestRunner {

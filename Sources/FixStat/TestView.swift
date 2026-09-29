@@ -3,6 +3,7 @@ import MacSensors
 import SwiftUI
 
 /// Post-repair stress test window.
+@available(macOS 14.0, *)
 struct TestView: View {
     static let windowID = "stress-test"
 
@@ -118,6 +119,7 @@ struct TestView: View {
 }
 
 /// Summary and findings after a test.
+@available(macOS 14.0, *)
 struct ResultView: View {
     let result: StressTestResult
 
@@ -154,6 +156,7 @@ struct ResultView: View {
 }
 
 /// Localized texts for test results (shared by the window and the PDF report).
+@available(macOS 14.0, *)
 enum TestText {
     static func finding(_ finding: StressTestResult.Finding) -> String {
         switch finding {

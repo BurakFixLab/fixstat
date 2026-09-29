@@ -2,6 +2,7 @@ import MacSensors
 import SwiftUI
 
 /// Sleep / wake analysis from the power management log.
+@available(macOS 14.0, *)
 struct SleepView: View {
     static let windowID = "sleep"
 
@@ -182,6 +183,7 @@ struct SleepView: View {
     }
 }
 
+@available(macOS 14.0, *)
 enum SleepText {
     static func drain(_ percentPerHour: Double) -> String {
         String(localized: "\(Format.percent(percentPerHour, digits: 1)) per hour")

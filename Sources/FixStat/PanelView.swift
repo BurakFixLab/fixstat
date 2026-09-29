@@ -2,6 +2,7 @@ import AppKit
 import SwiftUI
 
 /// The window shown from the menu bar item.
+@available(macOS 14.0, *)
 struct PanelView: View {
     @Environment(Monitor.self) private var monitor
     @AppStorage(Pref.technicianMode) private var technicianMode = false
@@ -21,6 +22,7 @@ struct PanelView: View {
 }
 
 /// Settings / History / Quit buttons shared by both panels.
+@available(macOS 14.0, *)
 struct SettingsButton: View {
     @Environment(\.openSettings) private var openSettings
 
@@ -29,10 +31,12 @@ struct SettingsButton: View {
             present(windowIdentifier: "Settings") { openSettings() }
         }
         .keyboardShortcut(",")
+        .fixedSize()
     }
 }
 
 /// History, battery details and the post-repair test.
+@available(macOS 14.0, *)
 struct ToolsMenu: View {
     @Environment(\.openWindow) private var openWindow
 
@@ -60,6 +64,7 @@ struct ToolsMenu: View {
     }
 }
 
+@available(macOS 14.0, *)
 struct DetailsLink: View {
     @Environment(\.openWindow) private var openWindow
 
@@ -75,6 +80,7 @@ struct DetailsLink: View {
 /// Opens a window from the menu bar panel: closes the panel, activates the app
 /// and brings the window to the front (a menu bar / LSUIElement app does not do
 /// that by itself for newly created windows).
+@available(macOS 14.0, *)
 @MainActor
 private func present(windowIdentifier: String, open: () -> Void) {
     closePanel()
@@ -93,6 +99,7 @@ private func present(windowIdentifier: String, open: () -> Void) {
 /// Hiding the panel window directly leaves MenuBarExtra believing it is still
 /// open (the next click on the status item then does nothing), so this toggles
 /// it the same way a click on the status item does.
+@available(macOS 14.0, *)
 @MainActor
 private func closePanel() {
     for window in NSApp.windows where window.className.contains("NSStatusBarWindow") {
@@ -103,6 +110,7 @@ private func closePanel() {
     }
 }
 
+@available(macOS 14.0, *)
 @MainActor
 private func findStatusButton(in view: NSView) -> NSStatusBarButton? {
     if let button = view as? NSStatusBarButton { return button }
@@ -112,9 +120,11 @@ private func findStatusButton(in view: NSView) -> NSStatusBarButton? {
     return nil
 }
 
+@available(macOS 14.0, *)
 struct QuitButton: View {
     var body: some View {
         Button("Quit") { NSApp.terminate(nil) }
             .keyboardShortcut("q")
+            .fixedSize()
     }
 }

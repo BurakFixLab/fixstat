@@ -5,6 +5,7 @@ import SwiftUI
 
 // MARK: - Wi-Fi
 
+@available(macOS 14.0, *)
 struct WiFiTestView: View {
     @Environment(Monitor.self) private var monitor
     @State private var link: WiFiLink?
@@ -81,6 +82,7 @@ struct WiFiTestView: View {
     }
 }
 
+@available(macOS 14.0, *)
 struct WiFiLink {
     let interface: String
     let powerOn: Bool
@@ -127,6 +129,7 @@ struct WiFiLink {
 
 /// Nearby networks. Without Location permission macOS hides the names, which are
 /// not needed here: the count and signal strengths test the radio and antennas.
+@available(macOS 14.0, *)
 struct WiFiScan: Sendable {
     let count: Int
     let strongest: Int?
@@ -152,6 +155,7 @@ struct WiFiScan: Sendable {
 
 // MARK: - Bluetooth
 
+@available(macOS 14.0, *)
 struct BluetoothTestView: View {
     @Environment(Monitor.self) private var monitor
     @State private var controller: BluetoothController?
@@ -218,6 +222,7 @@ struct BluetoothTestView: View {
 
 /// Controller facts from `system_profiler SPBluetoothDataType -json` (no permission
 /// needed; the controller address is not read).
+@available(macOS 14.0, *)
 struct BluetoothController: Sendable {
     let on: Bool
     let chipset: String?
@@ -250,6 +255,7 @@ struct BluetoothController: Sendable {
 }
 
 /// Counts advertising Bluetooth LE devices nearby.
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class BluetoothScanner: NSObject, CBCentralManagerDelegate {

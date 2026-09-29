@@ -3,6 +3,7 @@ import MacSensors
 import SwiftUI
 
 /// Device card: identity, configuration, ownership / security and a health summary.
+@available(macOS 14.0, *)
 struct DeviceInfoView: View {
     static let windowID = "device"
 
@@ -116,6 +117,7 @@ struct DeviceInfoView: View {
     }
 }
 
+@available(macOS 14.0, *)
 private struct SecurityRow: View {
     let title: String
     let value: String
@@ -132,6 +134,7 @@ private struct SecurityRow: View {
     }
 }
 
+@available(macOS 14.0, *)
 enum DeviceText {
     static func configuration(_ info: DeviceInfo, ssd: SSDInfo?) -> [(String, String)] {
         var rows: [(String, String)] = [(String(localized: "Chip"), info.system.chip)]

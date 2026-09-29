@@ -2,6 +2,7 @@ import AppKit
 import SwiftUI
 
 /// Version information and the standard About panel.
+@available(macOS 14.0, *)
 enum AboutInfo {
     static let repositoryURL = URL(string: "https://github.com/BurakFixLab/fixstat")!
 
@@ -42,6 +43,7 @@ enum AboutInfo {
 }
 
 /// Version line and About button at the bottom of the General settings.
+@available(macOS 14.0, *)
 struct AboutSection: View {
     var body: some View {
         Section {

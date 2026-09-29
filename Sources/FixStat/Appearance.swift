@@ -2,6 +2,7 @@ import AppKit
 
 /// Light / dark mode preference for all FixStat windows (panel, settings, history).
 /// The status item itself always follows the menu bar.
+@available(macOS 14.0, *)
 enum AppearancePreference: String, CaseIterable, Identifiable {
     case system, light, dark
 

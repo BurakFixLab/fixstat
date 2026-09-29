@@ -5,6 +5,7 @@ import SwiftUI
 
 // MARK: - Speakers
 
+@available(macOS 14.0, *)
 struct SpeakerTestView: View {
     @Environment(Monitor.self) private var monitor
     @State private var generator = ToneGenerator()
@@ -64,6 +65,7 @@ struct SpeakerTestView: View {
 }
 
 /// Sine tones on the left / right channel and a logarithmic sweep.
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class ToneGenerator {
@@ -114,6 +116,7 @@ final class ToneGenerator {
 }
 
 /// Render state, touched only by the audio thread.
+@available(macOS 14.0, *)
 private final class ToneState: @unchecked Sendable {
     let tone: ToneGenerator.Tone
     let rate: Double
@@ -152,6 +155,7 @@ private final class ToneState: @unchecked Sendable {
 
 // MARK: - Microphone
 
+@available(macOS 14.0, *)
 struct MicrophoneTestView: View {
     @Environment(Monitor.self) private var monitor
     @State private var meter = MicrophoneMeter()
@@ -204,6 +208,7 @@ struct MicrophoneTestView: View {
     }
 }
 
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class MicrophoneMeter {
@@ -319,6 +324,7 @@ final class MicrophoneMeter {
 
 // MARK: - Core Audio devices
 
+@available(macOS 14.0, *)
 struct AudioDevice {
     let name: String
     let isBuiltIn: Bool

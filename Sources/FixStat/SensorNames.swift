@@ -7,6 +7,7 @@ import MacSensors
 /// "sensor.cpu.pcluster.n" (a format with one integer, e.g. "Performance
 /// cluster %lld"), `board.charger` looks up "sensor.board.charger".
 /// A user-defined name wins; unmapped sensors show their raw name.
+@available(macOS 14.0, *)
 enum SensorNames {
     static func name(for sensor: DisplaySensor) -> String {
         if let custom = sensor.resolved?.name, !custom.isEmpty { return custom }

@@ -2,6 +2,7 @@ import MacSensors
 import SwiftUI
 
 /// Design A: battery, the most important sensors, fans and system load.
+@available(macOS 14.0, *)
 struct DefaultPanel: View {
     @Environment(Monitor.self) private var monitor
     @AppStorage(Pref.warmThreshold) private var warm = Pref.defaultWarm
@@ -170,6 +171,7 @@ struct DefaultPanel: View {
 }
 
 /// Label on the left, value right-aligned.
+@available(macOS 14.0, *)
 private struct ValueRow: View {
     let title: Text
     let value: String?

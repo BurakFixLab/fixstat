@@ -5,6 +5,7 @@ import SwiftUI
 /// Hardware checklist window: one test per component, each marked passed / failed /
 /// skipped by the technician. Tests that measure something fill in the evidence and
 /// mark the item passed on their own; the technician can always override.
+@available(macOS 14.0, *)
 struct HardwareCheckView: View {
     static let windowID = "hardware-check"
 
@@ -58,6 +59,7 @@ struct HardwareCheckView: View {
     }
 }
 
+@available(macOS 14.0, *)
 struct StatusIcon: View {
     let status: HardwareCheck.Status
 
@@ -76,6 +78,7 @@ struct StatusIcon: View {
 }
 
 /// Title, instructions, the test itself and the result bar.
+@available(macOS 14.0, *)
 private struct CheckDetail: View {
     let item: HardwareCheck.Item
 
@@ -110,6 +113,7 @@ private struct CheckDetail: View {
 }
 
 /// Passed / Failed / Skipped buttons, the measured evidence and a note.
+@available(macOS 14.0, *)
 private struct ResultBar: View {
     let item: HardwareCheck.Item
     @Environment(Monitor.self) private var monitor
@@ -150,6 +154,7 @@ private struct ResultBar: View {
     }
 }
 
+@available(macOS 14.0, *)
 extension Monitor {
     /// Stores measured evidence; marks the item passed if `passed` and nothing was
     /// marked yet (the technician's own choice is never overridden).
@@ -162,6 +167,7 @@ extension Monitor {
     }
 }
 
+@available(macOS 14.0, *)
 enum HardwareText {
     static func title(_ item: HardwareCheck.Item) -> String {
         switch item {

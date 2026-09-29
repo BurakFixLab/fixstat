@@ -5,6 +5,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 /// Battery history window: charge, current and long-term health.
+@available(macOS 14.0, *)
 struct HistoryView: View {
     static let windowID = "battery-history"
 
@@ -289,6 +290,7 @@ struct HistoryView: View {
 }
 
 /// Values of one sample, shown above the charts while hovering.
+@available(macOS 14.0, *)
 private struct SampleCard: View {
     let sample: BatteryHistorySample
     let showsDate: Bool
@@ -326,6 +328,7 @@ private struct SampleCard: View {
 }
 
 /// Values of one day in the health chart.
+@available(macOS 14.0, *)
 private struct HealthCard: View {
     let record: BatteryHealthRecord
 
@@ -357,6 +360,7 @@ private struct HealthCard: View {
 
 /// At least the last 7 days, padded by half a day, so a short history does not
 /// zoom the axis into hours.
+@available(macOS 14.0, *)
 private func healthDomain(_ dates: [Date]) -> ClosedRange<Date> {
     let now = Date()
     let start = min(dates.min() ?? now, now.addingTimeInterval(-7 * 86_400)).addingTimeInterval(-43_200)
@@ -365,6 +369,7 @@ private func healthDomain(_ dates: [Date]) -> ClosedRange<Date> {
 }
 
 /// Small coloured dot + text for chart legends.
+@available(macOS 14.0, *)
 private struct LegendLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 4) {
@@ -375,6 +380,7 @@ private struct LegendLabelStyle: LabelStyle {
 }
 
 /// Exports the history of the selected range (CSV: samples; JSON: samples + daily health).
+@available(macOS 14.0, *)
 private struct HistoryExportMenu: View {
     @Environment(Monitor.self) private var monitor
     let range: HistoryView.Range

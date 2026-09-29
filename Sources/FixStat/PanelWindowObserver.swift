@@ -11,6 +11,7 @@ import SwiftUI
 ///   looks detached from the menu bar. This view sits behind the content, so its
 ///   height is the content height: the window is fitted to it with the top edge
 ///   kept where the panel opened.
+@available(macOS 14.0, *)
 struct PanelWindowObserver: NSViewRepresentable {
     let onVisibilityChange: @MainActor (Bool) -> Void
 

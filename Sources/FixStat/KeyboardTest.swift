@@ -4,6 +4,7 @@ import MacSensors
 import SwiftUI
 
 /// Keyboard test: draws the built-in keyboard and marks every key that registered.
+@available(macOS 14.0, *)
 struct KeyboardTestView: View {
     @Environment(Monitor.self) private var monitor
     @State private var pressed: Set<Int> = []
@@ -154,6 +155,7 @@ struct KeyboardTestView: View {
 
 /// Keyboard event tap at the HID level: sees keys that macOS consumes before they reach
 /// an app. Active (can block the key) with Accessibility, listen-only with Input Monitoring.
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class KeyTap {
@@ -207,6 +209,7 @@ final class KeyTap {
 }
 
 /// Key legends and layout type from the current input source, like the Keyboard Viewer.
+@available(macOS 14.0, *)
 enum KeyLegend {
     static var kind: KeyboardLayout.Kind {
         KBGetLayoutType(Int16(LMGetKbdType())) == kKeyboardISO ? .iso : .ansi
@@ -286,6 +289,7 @@ enum KeyLegend {
 }
 
 /// Draws the keyboard rows, 14.5 units wide.
+@available(macOS 14.0, *)
 struct KeyboardDrawing: View {
     let kind: KeyboardLayout.Kind
     let pressed: Set<Int>

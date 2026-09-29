@@ -4,6 +4,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 /// A sensor report for customer devices. Serial numbers are always masked.
+@available(macOS 14.0, *)
 struct SensorReport: Encodable {
     struct Sensor: Encodable {
         let key: String
@@ -156,6 +157,7 @@ struct SensorReport: Encodable {
 }
 
 /// "Export report" menu with CSV and JSON.
+@available(macOS 14.0, *)
 struct ExportMenu: View {
     @Environment(Monitor.self) private var monitor
 

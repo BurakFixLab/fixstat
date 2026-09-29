@@ -4,6 +4,7 @@ import MacSensors
 /// Measures the battery drain while the Mac is shut down: saves the gauge's remaining
 /// capacity when macOS announces a power off and compares it when FixStat starts again
 /// after the next boot (FixStat must open at login for this).
+@available(macOS 14.0, *)
 @MainActor
 final class OffStateRecorder {
     private let directory: URL

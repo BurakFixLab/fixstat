@@ -3,6 +3,7 @@ import MacSensors
 import SwiftUI
 
 /// One-page A4 customer report rendered from SwiftUI.
+@available(macOS 14.0, *)
 enum PDFReport {
     static let pageSize = CGSize(width: 595, height: 842) // A4 in points
 
@@ -39,6 +40,7 @@ enum PDFReport {
 }
 
 /// Values captured for the report (serials are always masked).
+@available(macOS 14.0, *)
 struct ReportSnapshot {
     let date = Date()
     let system: SystemInfo
@@ -86,6 +88,7 @@ struct ReportSnapshot {
     }
 }
 
+@available(macOS 14.0, *)
 private struct ReportPage: View {
     let snapshot: ReportSnapshot
 
@@ -328,6 +331,7 @@ private struct ReportPage: View {
 
 /// Second page: the hardware checklist with status, evidence and notes.
 /// Second page: hardware checklist and sleep / wake analysis.
+@available(macOS 14.0, *)
 private struct SecondPage: View {
     let snapshot: ReportSnapshot
     let check: HardwareCheck?
@@ -425,6 +429,7 @@ private struct SecondPage: View {
     }
 }
 
+@available(macOS 14.0, *)
 private struct ReportGroup<Content: View>: View {
     let title: LocalizedStringKey
     @ViewBuilder let content: Content
@@ -440,6 +445,7 @@ private struct ReportGroup<Content: View>: View {
     }
 }
 
+@available(macOS 14.0, *)
 private struct ReportRow: View {
     let title: LocalizedStringKey
     let value: String?

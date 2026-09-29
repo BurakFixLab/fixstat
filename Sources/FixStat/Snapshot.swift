@@ -15,6 +15,7 @@ import SwiftUI
 /// writes the same report as "Export report" (serials masked) and exits.
 ///
 /// Used to check the UI and to produce README screenshots in each language.
+@available(macOS 14.0, *)
 @MainActor
 enum Snapshot {
     static func runIfRequested(monitor: Monitor) {

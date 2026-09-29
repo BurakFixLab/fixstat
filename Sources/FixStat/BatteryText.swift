@@ -2,6 +2,7 @@ import Foundation
 import MacSensors
 
 /// Localized battery state texts shared by both panels.
+@available(macOS 14.0, *)
 enum BatteryText {
     /// Power flowing in (adapter input) or out (battery) in W.
     static func watts(_ battery: BatteryInfo) -> Double? {

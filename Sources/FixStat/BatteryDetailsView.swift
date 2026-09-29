@@ -2,6 +2,7 @@ import MacSensors
 import SwiftUI
 
 /// Battery and charging diagnostics: cells, pack, lifetime data, charger and USB-C PD.
+@available(macOS 14.0, *)
 struct BatteryDetailsView: View {
     static let windowID = "battery-details"
 
@@ -44,6 +45,7 @@ struct BatteryDetailsView: View {
 // MARK: - Building blocks
 
 /// A titled group of label / value rows.
+@available(macOS 14.0, *)
 private struct DetailGroup<Content: View>: View {
     let title: LocalizedStringKey
     @ViewBuilder let content: Content
@@ -60,6 +62,7 @@ private struct DetailGroup<Content: View>: View {
     }
 }
 
+@available(macOS 14.0, *)
 private struct DetailRow: View {
     let title: LocalizedStringKey
     let value: String?
@@ -79,10 +82,12 @@ private struct DetailRow: View {
     }
 }
 
+@available(macOS 14.0, *)
 private func hex(_ value: Int?) -> String? {
     value.map { $0 == 0 ? "0" : String(format: "0x%X", $0) }
 }
 
+@available(macOS 14.0, *)
 private func signedPercent(_ fraction: Double) -> String {
     (fraction * 100).formatted(.number.precision(.fractionLength(0)).sign(strategy: .always(includingZero: false)))
         .appending(" %")
@@ -90,6 +95,7 @@ private func signedPercent(_ fraction: Double) -> String {
 
 // MARK: - Originality
 
+@available(macOS 14.0, *)
 private struct OriginalitySection: View {
     let battery: BatteryInfo
     let model: String
@@ -129,6 +135,7 @@ private struct OriginalitySection: View {
     }
 }
 
+@available(macOS 14.0, *)
 private struct PartCheckColumn: View {
     let title: LocalizedStringKey
     let check: PartCheck
@@ -165,6 +172,7 @@ private struct PartCheckColumn: View {
 }
 
 /// Localized texts for the originality check (window and PDF report).
+@available(macOS 14.0, *)
 enum PartText {
     static func verdict(_ verdict: PartCheck.Verdict) -> String {
         switch verdict {
@@ -210,6 +218,7 @@ enum PartText {
 
 // MARK: - Cells
 
+@available(macOS 14.0, *)
 private struct CellsSection: View {
     let battery: BatteryInfo
 
@@ -281,6 +290,7 @@ private struct CellsSection: View {
 
 // MARK: - Pack
 
+@available(macOS 14.0, *)
 private struct PackSection: View {
     let battery: BatteryInfo
 
@@ -315,6 +325,7 @@ private struct PackSection: View {
 
 // MARK: - Lifetime
 
+@available(macOS 14.0, *)
 private struct LifetimeSection: View {
     let lifetime: BatteryLifetime?
 
@@ -336,6 +347,7 @@ private struct LifetimeSection: View {
 
 // MARK: - Charging
 
+@available(macOS 14.0, *)
 private struct ChargingSection: View {
     let battery: BatteryInfo
 
@@ -377,6 +389,7 @@ private struct ChargingSection: View {
 
 // MARK: - USB-C Power Delivery
 
+@available(macOS 14.0, *)
 private struct PowerDeliverySection: View {
     let battery: BatteryInfo
 

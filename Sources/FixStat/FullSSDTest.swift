@@ -5,6 +5,7 @@ import SwiftUI
 
 /// Full SSD test: read-only surface scan of the whole disk (root, through the
 /// macOS administrator prompt), then the write–verify test on free space.
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class FullSSDTestRunner {
@@ -216,6 +217,7 @@ final class FullSSDTestRunner {
 }
 
 /// Section of the SSD window for the full test.
+@available(macOS 14.0, *)
 struct FullSSDTestSection: View {
     @Environment(FullSSDTestRunner.self) private var runner
     @Environment(SSDTestRunner.self) private var quickRunner
@@ -312,6 +314,7 @@ struct FullSSDTestSection: View {
     }
 }
 
+@available(macOS 14.0, *)
 struct FullSSDResultView: View {
     let result: FullSSDTestRunner.Result
 
@@ -346,6 +349,7 @@ struct FullSSDResultView: View {
     }
 }
 
+@available(macOS 14.0, *)
 enum FullSSDText {
     static func findings(_ r: FullSSDTestRunner.Result) -> [String] {
         var findings: [String] = []

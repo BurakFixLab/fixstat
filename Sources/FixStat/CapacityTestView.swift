@@ -5,6 +5,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 /// Runs the battery capacity (discharge) test.
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class CapacityTestRunner {
@@ -237,6 +238,7 @@ final class CapacityTestRunner {
     }
 }
 
+@available(macOS 14.0, *)
 struct CapacityTestView: View {
     static let windowID = "capacity"
 
@@ -386,6 +388,7 @@ struct CapacityTestView: View {
     }
 }
 
+@available(macOS 14.0, *)
 struct CapacityResultView: View {
     let result: CapacityResult
 
@@ -418,6 +421,7 @@ struct CapacityResultView: View {
     }
 }
 
+@available(macOS 14.0, *)
 enum CapacityText {
     static func finding(_ f: CapacityResult.Finding) -> String {
         switch f {

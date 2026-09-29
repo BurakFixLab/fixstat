@@ -3,6 +3,7 @@ import MacSensors
 import SwiftUI
 
 /// Kernel panics and previous shutdown causes.
+@available(macOS 14.0, *)
 struct CrashHistoryView: View {
     static let windowID = "crash-history"
 
@@ -132,12 +133,14 @@ struct CrashHistoryView: View {
 }
 
 /// Panics and shutdown causes found by the last scan (for reports).
+@available(macOS 14.0, *)
 struct CrashScan {
     let panics: [PanicReport]
     let shutdowns: [ShutdownEvent]
     var date = Date()
 }
 
+@available(macOS 14.0, *)
 enum CrashText {
     static func shutdownMeaning(_ id: String?) -> String {
         switch id {

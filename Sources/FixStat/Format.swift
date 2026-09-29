@@ -1,6 +1,7 @@
 import Foundation
 
 /// Locale-aware formatting of all numbers shown in the UI.
+@available(macOS 14.0, *)
 enum Format {
     static func percent(_ value: Double, digits: Int = 0) -> String {
         (value / 100).formatted(.percent.precision(.fractionLength(digits)))

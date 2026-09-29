@@ -2,6 +2,7 @@ import MacSensors
 import SwiftUI
 
 /// Design B: raw battery data, cell voltages, every sensor with its raw key.
+@available(macOS 14.0, *)
 struct TechnicianPanel: View {
     @Environment(Monitor.self) private var monitor
     @AppStorage(Pref.warmThreshold) private var warm = Pref.defaultWarm
@@ -21,13 +22,15 @@ struct TechnicianPanel: View {
             }
             sensorSection
             fanRow
-            HStack {
+            // Four buttons on 360 pt: small controls, so nothing truncates or widens the panel.
+            HStack(spacing: 6) {
                 SettingsButton()
                 ToolsMenu()
-                Spacer()
+                Spacer(minLength: 0)
                 ExportMenu()
                 QuitButton()
             }
+            .controlSize(.small)
         }
         .monospacedDigit()
     }
@@ -210,6 +213,7 @@ struct TechnicianPanel: View {
 }
 
 /// Label / value cell of the battery grid.
+@available(macOS 14.0, *)
 private struct TechCell: View {
     let title: LocalizedStringKey
     let value: String?
@@ -230,6 +234,7 @@ private struct TechCell: View {
 }
 
 /// Sensor row: colour dot, name, "estimated" tag, raw key, value.
+@available(macOS 14.0, *)
 struct TechSensorRow: View {
     let sensor: DisplaySensor
     let value: Double?

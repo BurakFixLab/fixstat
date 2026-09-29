@@ -5,6 +5,7 @@ import UserNotifications
 
 /// Posts macOS notifications for sustained problems. Each alert needs its
 /// condition to hold for a while and is repeated at most every 15 minutes.
+@available(macOS 14.0, *)
 @MainActor
 final class AlertManager {
     enum Kind: String, CaseIterable {

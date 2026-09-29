@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Status item content: battery icon, percentage and CPU temperature, each optional.
+@available(macOS 14.0, *)
 struct MenuBarLabel: View {
     @Environment(Monitor.self) private var monitor
     @AppStorage(Pref.menuBarBatteryIcon) private var showIcon = true

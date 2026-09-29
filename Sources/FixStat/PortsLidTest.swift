@@ -4,6 +4,7 @@ import SwiftUI
 
 // MARK: - Ports
 
+@available(macOS 14.0, *)
 struct PortsTestView: View {
     @Environment(Monitor.self) private var monitor
     @State private var ports: [PortStatus] = []
@@ -111,6 +112,7 @@ struct PortsTestView: View {
     }
 }
 
+@available(macOS 14.0, *)
 enum PortText {
     static func name(_ port: PortStatus) -> String {
         "\(port.type) \(port.number)"
@@ -146,6 +148,7 @@ enum PortText {
 
 // MARK: - Lid
 
+@available(macOS 14.0, *)
 struct LidTestView: View {
     @Environment(Monitor.self) private var monitor
     @State private var watcher = LidWatcher()
@@ -176,6 +179,7 @@ struct LidTestView: View {
 
 /// Polls `AppleClamshellState` and checks the sleep reason after a wake: closing the
 /// lid normally puts the Mac to sleep before a poll can see it.
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class LidWatcher {

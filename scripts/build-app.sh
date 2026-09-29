@@ -1,53 +1,85 @@
 #!/bin/bash
-# Builds build/FixStat.app from the Swift package.
+# Builds build/FixStat.app.
 #
 #   scripts/build-app.sh [release|debug]
 #
-# Steps: build with localized-string extraction, sync the string catalog with
-# the code, check that every string has English and Turkish values, assemble
-# the bundle (binary, Info.plist, sensor map, compiled strings) and sign it
-# ad hoc. No tools beyond Xcode and the system python3 are needed.
+# FixStat runs on macOS 10.13 and later (Intel) / 11 and later (Apple Silicon): macOS 14+
+# gets the SwiftUI interface, older systems the AppKit one (Sources/FixStat/main.swift).
+# SwiftPM raises the deployment target to macOS 12, so the app is compiled with clang and
+# swiftc directly:
+#   C shims → MacSensors (static library + module) → FixStat and fixstat-diskscan
+#   (with localized-string extraction) → lipo → string catalog sync + check → bundle
+#   (Swift runtime for macOS < 10.14.4 in Contents/Frameworks) → ad-hoc signature.
+# release: universal and optimized; debug: this Mac's architecture, unoptimized (faster).
+# `swift build` / `swift test` still work for development (SwiftPM, macOS 14).
+# No tools beyond Xcode and the system python3 are needed.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 config="${1:-release}"
-strings_dir="$PWD/.build/strings"
 app="build/FixStat.app"
+strings_dir="$PWD/.build/strings"
+work="$PWD/.build/app-$config"
 
-# The compiler only writes .stringsdata for files it recompiles, so the directory is
-# kept between builds. Files whose source was deleted are removed below.
-mkdir -p "$strings_dir"
-# Release builds are universal (Apple Silicon and Intel); debug builds are native only.
-arch_flags=()
-if [ "$config" = "release" ]; then
-    arch_flags=(--arch arm64 --arch x86_64)
-fi
-build() {
-    swift build -c "$config" ${arch_flags[@]+"${arch_flags[@]}"} --product FixStat \
-        -Xswiftc -emit-localized-strings -Xswiftc -emit-localized-strings-path -Xswiftc "$strings_dir"
+case "$config" in
+    release)
+        targets=(x86_64-apple-macos10.13 arm64-apple-macos11.0)
+        optimize=(-O -whole-module-optimization)
+        ;;
+    debug)
+        if [ "$(uname -m)" = "arm64" ]; then targets=(arm64-apple-macos11.0); else targets=(x86_64-apple-macos10.13); fi
+        optimize=(-Onone -g)
+        ;;
+    *) echo "usage: $0 [release|debug]" >&2; exit 2 ;;
+esac
+
+rm -rf "$work" "$strings_dir"
+mkdir -p "$work/include" "$strings_dir"
+
+# Module map for the C shims (SwiftPM generates one; here it is written by hand).
+cp Sources/CMacSensors/include/*.h "$work/include/"
+cat > "$work/include/module.modulemap" <<'MAP'
+module CMacSensors {
+    umbrella header "CMacSensors.h"
+    export *
 }
-build
-if ! ls "$strings_dir"/*.stringsdata >/dev/null 2>&1; then
-    # Up-to-date build from before this directory existed: force the app sources to recompile.
-    touch Sources/FixStat/*.swift
-    build
-fi
-for data in "$strings_dir"/*.stringsdata; do
-    name="$(basename "$data" .stringsdata)"
-    if ! ls Sources/*/"$name".swift >/dev/null 2>&1; then
-        rm -f "$data"
+MAP
+
+# swiftc adds /usr/lib/swift (the system's Swift runtime) first; the bundled copy is the fallback.
+rpaths=(-Xlinker -rpath -Xlinker @executable_path/../Frameworks)
+first=1
+for target in "${targets[@]}"; do
+    dir="$work/$target"
+    mkdir -p "$dir"
+    for c in Sources/CMacSensors/*.c; do
+        clang -c -O2 -target "$target" -I "$work/include" "$c" -o "$dir/$(basename "$c" .c).o"
+    done
+    swiftc -target "$target" "${optimize[@]}" -swift-version 6 -parse-as-library \
+        -module-name MacSensors -I "$work/include" \
+        -emit-module -emit-module-path "$dir/MacSensors.swiftmodule" \
+        -emit-library -static -o "$dir/libMacSensors.a" Sources/MacSensors/*.swift
+    # The string catalog is fed from the first architecture's compile.
+    strings=()
+    if [ "$first" = 1 ]; then
+        strings=(-emit-localized-strings -emit-localized-strings-path "$strings_dir")
+        first=0
     fi
+    swiftc -target "$target" "${optimize[@]}" -swift-version 6 -module-name FixStat \
+        -I "$dir" -I "$work/include" ${strings[@]+"${strings[@]}"} \
+        Sources/FixStat/*.swift "$dir"/*.o -L "$dir" -lMacSensors \
+        -framework IOKit -framework CoreFoundation -framework Metal "${rpaths[@]}" \
+        -o "$dir/FixStat"
+    swiftc -target "$target" "${optimize[@]}" -swift-version 6 -module-name fixstat_diskscan \
+        Sources/fixstat-diskscan/*.swift "${rpaths[@]}" -o "$dir/fixstat-diskscan"
 done
 
 xcrun xcstringstool sync App/Localizable.xcstrings --stringsdata "$strings_dir"/*.stringsdata
 python3 scripts/localize.py check
 
 rm -rf "$app"
-mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
-bin="$(swift build -c "$config" ${arch_flags[@]+"${arch_flags[@]}"} --show-bin-path)"
-cp "$bin/FixStat" "$app/Contents/MacOS/FixStat"
-swift build -c "$config" ${arch_flags[@]+"${arch_flags[@]}"} --product fixstat-diskscan >/dev/null
-cp "$bin/fixstat-diskscan" "$app/Contents/MacOS/fixstat-diskscan"
+mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources" "$app/Contents/Frameworks"
+lipo -create "$work"/*/FixStat -output "$app/Contents/MacOS/FixStat"
+lipo -create "$work"/*/fixstat-diskscan -output "$app/Contents/MacOS/fixstat-diskscan"
 cp App/Info.plist "$app/Contents/Info.plist"
 cp SensorMaps/sensor-map.json "$app/Contents/Resources/sensor-map.json"
 cp SensorMaps/parts.json "$app/Contents/Resources/parts.json"
@@ -59,6 +91,20 @@ for lproj in App/*.lproj; do
     cp "$lproj"/*.strings "$app/Contents/Resources/$(basename "$lproj")/"
 done
 xcrun xcstringstool compile App/Localizable.xcstrings --output-directory "$app/Contents/Resources" >/dev/null
+
+# Swift runtime for macOS 10.13 – 10.14.3; newer systems use /usr/lib/swift (first rpath).
+toolchain="$(dirname "$(dirname "$(xcrun --find swiftc)")")"
+for binary in "$app/Contents/MacOS/FixStat" "$app/Contents/MacOS/fixstat-diskscan"; do
+    xcrun swift-stdlib-tool --copy --scan-executable "$binary" --platform macosx \
+        --source-libraries "$toolchain/lib/swift-5.0/macosx" --destination "$app/Contents/Frameworks" >/dev/null
+done
+
+# Only the x86_64 (10.13) slice needs the bundled runtime; a native arm64 debug build has none.
+if ls "$app"/Contents/Frameworks/*.dylib >/dev/null 2>&1; then
+    codesign --force --sign - "$app"/Contents/Frameworks/*.dylib
+else
+    rmdir "$app/Contents/Frameworks"
+fi
 codesign --force --sign - "$app/Contents/MacOS/fixstat-diskscan"
 codesign --force --sign - "$app"
 

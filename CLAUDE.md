@@ -105,9 +105,20 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 
 ## App architecture (`Sources/FixStat`)
 
-- SwiftUI `MenuBarExtra(.window)` + `Settings` scene + battery history `Window`,
-  LSUIElement app, built as an SPM executable; `scripts/build-app.sh` assembles the bundle
-  (no Xcode project). Currently requires macOS 14.
+- One app for macOS 10.13+ (Intel) / 11+ (Apple Silicon). `main.swift` picks the interface:
+  macOS 14+ → SwiftUI (`FixStatApp`, every declaration marked `@available(macOS 14.0, *)`);
+  older → AppKit (`LegacyApp`, in progress; `--legacy-ui` forces it for testing).
+  AppKit code must work on 10.13: no SwiftUI / Combine / FormatStyle and **no Swift
+  concurrency runtime** (MainActor.assumeIsolated, Task, async need 10.15) — use
+  target/selector timers and main-thread callbacks.
+- SwiftUI `MenuBarExtra(.window)` + `Settings` scene + tool `Window`s, LSUIElement app.
+- `scripts/build-app.sh` compiles with clang/swiftc directly (SwiftPM raises the deployment
+  target to 12): x86_64 for 10.13, arm64 for 11, lipo; the Swift runtime for < 10.14.4 is
+  copied to Contents/Frameworks (rpath after /usr/lib/swift); frameworks newer than 10.13
+  (SwiftUI, Charts, UserNotifications, …) end up weak-linked — check with `otool -L`.
+  Building for macOS 11 changes a few SwiftUI defaults (e.g. wider menu buttons): the
+  technician footer uses small controls. `swift build` / `swift test` (SwiftPM, macOS 14)
+  are for development and tests only.
 - `Monitor` (@MainActor @Observable) polls battery (IORegistry), HID + selected SMC keys and
   CPU/memory. It assigns whole Equatable values (no in-place mutation) to limit view
   updates. Panel open → full refresh at the chosen interval; closed → only battery + HID

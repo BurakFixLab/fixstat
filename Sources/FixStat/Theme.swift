@@ -2,6 +2,7 @@ import AppKit
 import SwiftUI
 
 /// Temperature colours. Deliberately blue / amber / orange (no red–green split).
+@available(macOS 14.0, *)
 enum TemperatureColor {
     static let cool = Color(nsColor: .systemBlue)
     static let warm = Color(nsColor: NSColor(name: nil) { appearance in
@@ -20,6 +21,7 @@ enum TemperatureColor {
 }
 
 /// Section title in small caps style, e.g. "BATTERY".
+@available(macOS 14.0, *)
 struct SectionTitle: View {
     let title: LocalizedStringKey
 
@@ -33,6 +35,7 @@ struct SectionTitle: View {
 }
 
 /// Thin horizontal bar.
+@available(macOS 14.0, *)
 struct LevelBar: View {
     /// 0…1
     let fraction: Double
@@ -53,6 +56,7 @@ struct LevelBar: View {
 }
 
 /// A small rounded tile with a caption and a value.
+@available(macOS 14.0, *)
 struct Tile: View {
     let title: LocalizedStringKey
     let value: String
@@ -70,6 +74,7 @@ struct Tile: View {
     }
 }
 
+@available(macOS 14.0, *)
 extension Double {
     /// Maps a temperature onto a bar fraction (20 °C → 0, 100 °C → 1).
     var temperatureFraction: Double { (self - 20) / 80 }

@@ -2,6 +2,7 @@ import MacSensors
 import SwiftUI
 
 /// Runs the memory test on a background thread.
+@available(macOS 14.0, *)
 @MainActor
 @Observable
 final class MemoryTestRunner {
@@ -53,6 +54,7 @@ final class MemoryTestRunner {
     }
 }
 
+@available(macOS 14.0, *)
 struct MemoryView: View {
     static let windowID = "memory"
 
@@ -138,6 +140,7 @@ struct MemoryView: View {
     }
 }
 
+@available(macOS 14.0, *)
 struct MemoryResultView: View {
     let result: MemoryTest.Result
 
@@ -171,6 +174,7 @@ struct MemoryResultView: View {
     }
 }
 
+@available(macOS 14.0, *)
 enum MemoryText {
     static func pattern(_ p: MemoryTest.Pattern) -> String {
         switch p {
