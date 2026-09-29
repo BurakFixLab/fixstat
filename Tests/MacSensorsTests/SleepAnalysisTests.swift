@@ -64,3 +64,48 @@ import Testing
         #expect(preventing == ["powerd", "Claude"])
     }
 }
+
+@Suite struct OffStateDrainTests {
+    static let log = """
+        2026-09-24 09:49:37 +0300 Assertions          \tSummary- [System: PrevIdle DeclUser kDisp] Using Batt(Charge: 17)
+        2026-09-24 14:25:09 +0300 Start               \tpowerd process is started
+        2026-09-24 14:25:09 +0300 Assertions          \tSummary- [System: No Assertions] Using AC(Charge: 15)
+        2026-09-25 08:00:00 +0300 Assertions          \tSummary- [System: No Assertions] Using Batt(Charge: 40)
+        2026-09-25 12:00:00 +0300 Assertions          \tSummary- [System: No Assertions] Using AC(Charge: 38)
+        """
+
+    static func date(_ s: String) -> Date { SleepAnalysis.dateFormatter.date(from: s)! }
+
+    @Test func fromLog() {
+        let records: [(date: Date, isBoot: Bool)] = [
+            (Self.date("2026-09-24 10:01:55 +0300"), false),
+            (Self.date("2026-09-24 14:25:04 +0300"), true),
+            // Power loss: no shutdown record before this boot.
+            (Self.date("2026-09-25 11:59:00 +0300"), true),
+        ]
+        let periods = OffStateDrain.fromLog(Self.log, records: records, fullChargeCapacity: 3200)
+        #expect(periods.count == 2)
+        #expect(periods[0].chargeBefore == 17)
+        #expect(periods[0].chargeAfter == 15)
+        #expect(!periods[0].shutdownEstimated)
+        #expect(abs(periods[0].hours - 4.386) < 0.01)
+        #expect(abs((periods[0].lostMAh ?? 0) - 64) < 0.01)
+        #expect(periods[1].shutdownEstimated)
+        #expect(periods[1].shutdown == Self.date("2026-09-25 08:00:00 +0300"))
+        let summary = OffStateDrain.summary(periods)!
+        #expect(abs(summary.hours - (4.386 + 3.983)) < 0.01)
+        #expect(abs((summary.percentPerHour ?? 0) - 4 / summary.hours) < 0.001)
+    }
+
+    @Test func measured() {
+        let mark = OffStateDrain.PowerOffMark(date: Self.date("2026-09-24 20:00:00 +0300"), remaining: 2000,
+                                              charge: 62, fullChargeCapacity: 3200)
+        let boot = Self.date("2026-09-25 08:00:00 +0300")
+        let period = OffStateDrain.measured(mark: mark, records: [(boot, true)], now: boot.addingTimeInterval(60),
+                                            remaining: 1964, charge: 61)!
+        #expect(period.averageCurrent == 3) // 36 mAh in 12 h
+        #expect(period.isUsable)
+        #expect(OffStateDrain.measured(mark: mark, records: [(boot, true)], now: boot.addingTimeInterval(3600),
+                                       remaining: 1964, charge: 61) == nil)
+    }
+}

@@ -10,7 +10,7 @@ import SwiftUI
 /// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead,
 /// `--details` the battery details window, `--hardware [keyboard|trackpad|…]` the hardware check, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
 ///
-///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check] [--sleep]
+///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check] [--sample-capacity] [--sleep]
 ///
 /// writes the same report as "Export report" (serials masked) and exits.
 ///
@@ -99,10 +99,26 @@ enum Snapshot {
         return check
     }
 
+    /// Synthetic capacity test (`--sample-capacity`): 2 A for 90 min, 100 → 20 %.
+    static func sampleCapacity() -> CapacityResult {
+        var samples = [CapacitySample(time: 0, voltage: 12_700, amperage: -350, percent: 100, remaining: 3200,
+                                      cells: [4230, 4235, 4235], temperature: 30, idle: true)]
+        for step in 0...540 {
+            let f = Double(step) / 540
+            samples.append(CapacitySample(time: 30 + Double(step) * 10, voltage: 12_300 - Int(1200 * f), amperage: -2000,
+                                          percent: 100 - 80 * f, remaining: 3200 - Int(2950 * f),
+                                          cells: [4100 - Int(400 * f), 4090 - Int(420 * f), 4100 - Int(400 * f)],
+                                          temperature: 33, idle: false))
+        }
+        return CapacityResult.compute(samples: samples, startedAt: Date(), stopReason: .targetReached,
+                                      fullChargeCapacity: 3213, designCapacity: 4382)
+    }
+
     static func export(to url: URL, monitor: Monitor) {
         monitor.panelVisible = true
         if CommandLine.arguments.contains("--sample-check") { monitor.hardwareCheck = sampleCheck() }
         if CommandLine.arguments.contains("--sleep") { monitor.lastSleepAnalysis = SleepAnalysis.read() }
+        if CommandLine.arguments.contains("--sample-capacity") { monitor.lastCapacityResult = sampleCapacity() }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
             monitor.refresh()
             let report = SensorReport(monitor: monitor)

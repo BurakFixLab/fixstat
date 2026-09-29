@@ -42,6 +42,7 @@ struct ToolsMenu: View {
             Divider()
             Button("Battery history") { open(HistoryView.windowID) }
             Button("Battery details") { open(BatteryDetailsView.windowID) }
+            Button("Battery capacity test") { open(CapacityTestView.windowID) }
             Button("SSD health and test") { open(SSDView.windowID) }
             Button("Memory test") { open(MemoryView.windowID) }
             Button("Panic and shutdown history") { open(CrashHistoryView.windowID) }

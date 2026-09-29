@@ -58,6 +58,15 @@ enum Format {
         Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))
     }
 
+    static let wattHourUnit = UnitEnergy(symbol: "Wh", converter: UnitConverterLinear(coefficient: 3600))
+
+    /// "24.5 Wh"
+    static func watthours(_ value: Double) -> String {
+        Measurement(value: value, unit: wattHourUnit)
+            .formatted(.measurement(width: .abbreviated, usage: .asProvided,
+                                    numberFormatStyle: .number.precision(.fractionLength(1))))
+    }
+
     /// "3 h 12 min", "45 s": days / hours / minutes / seconds, largest two units.
     static func duration(_ seconds: Double) -> String {
         Duration.seconds(seconds.rounded()).formatted(.units(allowed: [.days, .hours, .minutes, .seconds],

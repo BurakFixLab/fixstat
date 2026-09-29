@@ -157,6 +157,19 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   in "(Charge:N%)") and `pmset -g` ("sleep prevented by …"). Drain while asleep = charge
   lost between sleep and the next (dark) wake on battery, sleeps ≥ 30 min. Assertion
   holders are ranked by their longest assertion (they overlap, so sums are meaningless).
+- Drain while shut down (`OffStateDrain`): from the log, the last "Charge: N" before a
+  shutdown and the first after the boot (wtmp boot / shutdown records via
+  `getutxent_wtmp`; `kern.boottime` is not reliable after hibernation); measured by
+  `OffStateRecorder`, which saves the gauge's remaining mAh on
+  `NSWorkspace.willPowerOffNotification` (also sent for logout: only kept if a boot follows)
+  and reads it at the next launch within 15 min of the boot. mAh per hour = mA while off.
+  Log-based periods are only flagged with ≥ 3 points of drop (whole percentages).
+- Capacity test (`CapacityResult`, `CapacityTestView`): discharge under a steady load to a
+  stop level; delivered mAh / Wh integrated from the gauge's Voltage × Amperage every 5 s;
+  compared with the displayed % drop (extrapolated capacity vs. AppleRawMaxCapacity) and
+  with the drop of AppleRawCurrentCapacity (gauge agreement); DC pack resistance from the
+  load step (Amperage is averaged, so ≥ 60 s after the load starts; shown only, no
+  threshold yet); cell spread under load.
 - Device card (`DeviceInfo`, `DeviceInfoView`): `system_profiler SPHardwareDataType -json`
   (part number `model_number`, `boot_rom_version`, `activation_lock_status`; serial masked,
   platform UUID / provisioning UDID never read), `profiles status -type enrollment`

@@ -45,7 +45,9 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
   tutulan günlük sağlık kaydı.
 - **Tek uygulamada tanı araçları.** Tamir sonrası stres testi, SSD sağlığı (NVMe SMART),
   yaz–doğrula stres testi ve isteğe bağlı tam yüzey taraması, bellek testi, kernel panic
-  ve kapanma nedeni geçmişi, batarya ve adaptör orijinallik kontrolü ve donanım kontrolü
+  ve kapanma nedeni geçmişi, batarya ve adaptör orijinallik kontrolü, batarya kapasite
+  (deşarj) testi, uykuda ve kapalıyken batarya tüketimiyle uyku / uyanma analizi, cihaz
+  kartı (Aktivasyon Kilidi, MDM, parça numarası) ve donanım kontrolü
   (klavye, trackpad yüzeyi, ekran, hoparlör, mikrofon, kamera, Wi-Fi, Bluetooth, arıza
   sayaçlı USB-C portları, kapak sensörü).
 - **Raporlar.** Müşteri cihazları için PDF / CSV / JSON dışa aktarma; seri numaraları

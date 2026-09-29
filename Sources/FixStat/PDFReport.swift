@@ -7,14 +7,16 @@ enum PDFReport {
     static let pageSize = CGSize(width: 595, height: 842) // A4 in points
 
     /// Page 1: device, battery, temperatures and tests. Page 2 (only when used): the
-    /// hardware checklist and the sleep / wake analysis.
+    /// hardware checklist, the battery capacity test and the sleep / wake analysis.
     @MainActor
     static func render(monitor: Monitor) -> Data? {
         let snapshot = ReportSnapshot(monitor: monitor)
         var pages = [AnyView(ReportPage(snapshot: snapshot))]
         let check = monitor.hardwareCheck.isEmpty ? nil : monitor.hardwareCheck
-        if check != nil || monitor.lastSleepAnalysis != nil {
-            pages.append(AnyView(SecondPage(snapshot: snapshot, check: check, sleep: monitor.lastSleepAnalysis)))
+        if check != nil || monitor.lastSleepAnalysis != nil || monitor.lastCapacityResult != nil {
+            pages.append(AnyView(SecondPage(snapshot: snapshot, check: check, sleep: monitor.lastSleepAnalysis,
+                                            capacity: monitor.lastCapacityResult,
+                                            off: monitor.lastSleepAnalysis.map(monitor.offPeriods) ?? [])))
         }
         let data = NSMutableData()
         var box = CGRect(origin: .zero, size: pageSize)
@@ -330,6 +332,8 @@ private struct SecondPage: View {
     let snapshot: ReportSnapshot
     let check: HardwareCheck?
     let sleep: SleepAnalysis?
+    let capacity: CapacityResult?
+    var off: [OffPeriod] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -345,6 +349,7 @@ private struct SecondPage: View {
             }
             Divider()
             if let check { hardware(check) }
+            if let capacity { capacitySection(capacity) }
             if let sleep { sleepSection(sleep) }
             Spacer(minLength: 0)
             Text("Created with FixStat \(AboutInfo.version) — github.com/BurakFixLab/fixstat. Serial numbers are masked.")
@@ -381,6 +386,21 @@ private struct SecondPage: View {
         }
     }
 
+    private func capacitySection(_ r: CapacityResult) -> some View {
+        ReportGroup(title: "Battery capacity test") {
+            ForEach(Array(CapacityText.rows(r).enumerated()), id: \.offset) { _, row in
+                HStack {
+                    Text(verbatim: row.0).foregroundStyle(.gray)
+                    Spacer()
+                    Text(verbatim: row.1)
+                }
+            }
+            ForEach(Array(r.findings.enumerated()), id: \.offset) { _, f in
+                Text(verbatim: "• " + CapacityText.finding(f))
+            }
+        }
+    }
+
     private func sleepSection(_ a: SleepAnalysis) -> some View {
         ReportGroup(title: "Sleep and wake") {
             if let from = a.from, let to = a.to {
@@ -390,10 +410,11 @@ private struct SecondPage: View {
             ReportRow(title: "Sleeps · wakes · dark wakes", value: "\(a.sleeps.count) · \(a.wakes.count) · \(a.darkWakes.count)")
             ReportRow(title: "Drain while asleep", value: a.sleepDrain.map { SleepText.drain($0.percentPerHour) })
             ReportRow(title: "Battery ran empty", value: Format.number(Double(a.lowPowerSleeps)))
+            ReportRow(title: "Drain while shut down", value: OffStateDrain.summary(off).map(SleepText.offSummary))
             if let top = a.reasons(.wake, limit: 3).first {
                 ReportRow(title: "Most common wake reason", value: "\(SleepText.category(top.name) ?? top.name) (\(top.count)×)")
             }
-            let findings = SleepText.findings(a)
+            let findings = SleepText.findings(a) + SleepText.offFindings(off)
             ForEach(Array(findings.enumerated()), id: \.offset) { _, f in
                 Text(verbatim: "• " + f)
             }

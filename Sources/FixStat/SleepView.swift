@@ -51,7 +51,8 @@ struct SleepView: View {
             Tile(title: "Low battery warnings", value: Format.number(Double(a.lowBatteryWarnings)))
         }
 
-        let findings = SleepText.findings(a)
+        let off = monitor.offPeriods(a)
+        let findings = SleepText.findings(a) + SleepText.offFindings(off)
         VStack(alignment: .leading, spacing: 6) {
             if findings.isEmpty {
                 Label("No sleep or wake problems found.", systemImage: "checkmark.seal.fill")
@@ -69,6 +70,8 @@ struct SleepView: View {
             countList("Wake reasons", a.reasons(.wake))
             countList("Dark wake reasons", a.reasons(.darkWake))
         }
+
+        offSection(off)
 
         if !a.preventingNow.isEmpty || !a.preventers.isEmpty {
             VStack(alignment: .leading, spacing: 6) {
@@ -113,6 +116,38 @@ struct SleepView: View {
                 }
             }
             .font(.caption)
+        }
+    }
+
+    private func offSection(_ periods: [OffPeriod]) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            SectionTitle(title: "While shut down")
+            if let summary = OffStateDrain.summary(periods) {
+                Text(verbatim: SleepText.offSummary(summary))
+                    .font(.callout.weight(.semibold))
+            }
+            if periods.isEmpty {
+                Text("No shutdowns with a known charge in the log yet.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+            Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 3) {
+                ForEach(Array(periods.reversed().enumerated()), id: \.offset) { _, p in
+                    GridRow {
+                        Text(p.shutdown.formatted(date: .abbreviated, time: .shortened)).foregroundStyle(.secondary)
+                        Text(verbatim: Format.duration(p.hours * 3600))
+                        Text(verbatim: SleepText.chargeChange(p))
+                        Text(verbatim: p.averageCurrent.map { SleepText.milliamps($0) } ?? "")
+                        Text(verbatim: SleepText.source(p)).foregroundStyle(.secondary)
+                    }
+                    .opacity(p.isUsable ? 1 : 0.5)
+                }
+            }
+            .font(.caption)
+            Text("Measured: FixStat saved the battery gauge at power off and read it after the boot (needs FixStat to open at login). From log: whole percentages from the power log, so short periods are rough.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -219,6 +254,44 @@ enum SleepText {
             result.append(String(localized: "The Mac is set never to sleep."))
         }
         return result
+    }
+
+    static func milliamps(_ value: Double) -> String {
+        "≈ " + Format.number(value, digits: value < 10 ? 1 : 0) + "\u{00A0}mA"
+    }
+
+    static func chargeChange(_ p: OffPeriod) -> String {
+        if let a = p.remainingBefore, let b = p.remainingAfter {
+            return Format.milliampHours(a) + " → " + Format.milliampHours(b)
+        }
+        return [p.chargeBefore, p.chargeAfter].map { $0.map { Format.percent($0) } ?? "–" }.joined(separator: " → ")
+    }
+
+    static func source(_ p: OffPeriod) -> String {
+        switch p.source {
+        case .measured: String(localized: "measured")
+        case .log: p.shutdownEstimated ? String(localized: "from log, power lost") : String(localized: "from log")
+        }
+    }
+
+    static func offSummary(_ s: (percentPerHour: Double?, milliamps: Double?, hours: Double)) -> String {
+        var parts: [String] = []
+        if let p = s.percentPerHour { parts.append(drain(p)) }
+        if let mA = s.milliamps { parts.append(milliamps(mA)) }
+        parts.append(String(localized: "over \(Format.duration(s.hours * 3600)) shut down"))
+        return parts.joined(separator: " · ")
+    }
+
+    /// A shut-down Mac should lose very little; more than 0.3 %/h (about 7 % a day) over
+    /// at least four hours and a drop of at least 3 points is worth a look.
+    static func offFindings(_ periods: [OffPeriod]) -> [String] {
+        guard let s = OffStateDrain.summary(periods), s.hours >= 4, let rate = s.percentPerHour, rate > 0.3 else { return [] }
+        // Whole percentages from the log round by up to 1 point at each end: only flag
+        // when the drop is large enough, or when FixStat measured it in mAh.
+        let usable = periods.filter(\.isUsable)
+        let lost = usable.compactMap(\.lostPercent).reduce(0, +)
+        guard usable.contains(where: { $0.source == .measured }) || lost >= 3 else { return [] }
+        return [String(localized: "High drain while shut down: \(offSummary(s)). A Mac that is off should lose very little; suspect a leakage current on the board or a battery with high self-discharge.")]
     }
 
     static func settingRows(_ s: [String: String]) -> [(String, String)] {

@@ -44,7 +44,9 @@ battery gauge data you normally dig out of `ioreg`.
   plus a daily health log that is kept indefinitely.
 - **Diagnostics in one app.** Post-repair stress test, SSD health (NVMe SMART) with a
   write–verify stress test and an optional full surface scan, memory test, kernel panic
-  and shutdown cause history, battery and power adapter originality check, and a
+  and shutdown cause history, battery and power adapter originality check, battery
+  capacity (discharge) test, sleep / wake analysis with battery drain while asleep and
+  while shut down, a device card (Activation Lock, MDM, part number), and a
   hardware check (keyboard, trackpad surface, display, speakers, microphone, camera,
   Wi-Fi, Bluetooth, USB-C ports with fault counters, lid sensor).
 - **Reports.** PDF / CSV / JSON export for customer devices, serial numbers always masked.

@@ -51,6 +51,8 @@ public struct SleepAnalysis: Codable, Sendable, Equatable {
     public var settings: [String: String]
     /// Processes currently preventing sleep ("sleep prevented by …").
     public var preventingNow: [String]
+    /// Periods the Mac was shut down, with the charge before and after (from the log).
+    public var offPeriods: [OffPeriod] = []
 
     public var sleeps: [Event] { events.filter { $0.kind == .sleep } }
     public var wakes: [Event] { events.filter { $0.kind == .wake } }
@@ -93,7 +95,10 @@ public struct SleepAnalysis: Codable, Sendable, Equatable {
     // MARK: Reading
 
     public static func read() -> SleepAnalysis {
-        var analysis = parse(log: Command.output("/usr/bin/pmset", ["-g", "log"]) ?? "")
+        let log = Command.output("/usr/bin/pmset", ["-g", "log"]) ?? ""
+        var analysis = parse(log: log)
+        analysis.offPeriods = OffStateDrain.fromLog(log, records: OffStateDrain.bootRecords(),
+                                                    fullChargeCapacity: BatteryReader.read()?.rawMaxCapacity)
         let current = parseSettings(Command.output("/usr/bin/pmset", ["-g"]) ?? "")
         analysis.settings = current.settings
         analysis.preventingNow = current.preventing

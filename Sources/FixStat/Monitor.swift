@@ -65,6 +65,17 @@ final class Monitor {
     var lastSSDResult: SSDStressTest.Result?
     /// Hardware checklist of this session (for reports).
     var hardwareCheck = HardwareCheck()
+    /// Result of the last battery capacity test (for reports).
+    var lastCapacityResult: CapacityResult?
+    /// Shut-down periods: measured by FixStat where available, otherwise from the power log.
+    func offPeriods(_ analysis: SleepAnalysis) -> [OffPeriod] {
+        let measured = offState?.periods ?? []
+        let fromLog = analysis.offPeriods.filter { log in
+            !measured.contains { abs($0.boot.timeIntervalSince(log.boot)) < 120 }
+        }
+        return (measured + fromLog).sorted { $0.boot < $1.boot }
+    }
+
     /// Last sleep / wake analysis (for reports).
     var lastSleepAnalysis: SleepAnalysis?
     /// Device card data (system_profiler takes about a second, so it is loaded on demand).
@@ -89,6 +100,7 @@ final class Monitor {
     @ObservationIgnored private var defaultsObserver: NSObjectProtocol?
     @ObservationIgnored private var lastInterval = 0.0
     @ObservationIgnored let history: BatteryHistoryStore
+    @ObservationIgnored private(set) var offState: OffStateRecorder?
     @ObservationIgnored private let alerts = AlertManager()
     @ObservationIgnored private var lastHistorySample = Date.distantPast
     @ObservationIgnored private var lastPrune = Date.distantPast
@@ -98,6 +110,9 @@ final class Monitor {
     init() {
         Pref.register()
         history = BatteryHistoryStore(directory: Self.dataDirectory)
+        if !CommandLine.arguments.contains("--snapshot") && !CommandLine.arguments.contains("--export") {
+            offState = OffStateRecorder(directory: Self.dataDirectory)
+        }
         loadMap()
         buildSensors()
         refresh()

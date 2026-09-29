@@ -666,6 +666,16 @@
         }
       }
     },
+    "Average power" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortalama güç"
+          }
+        }
+      }
+    },
     "Average read speed" : {
       "localizations" : {
         "tr" : {
@@ -722,6 +732,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya neredeyse boş"
+          }
+        }
+      }
+    },
+    "Battery capacity test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya kapasite testi"
           }
         }
       }
@@ -878,6 +898,16 @@
         }
       }
     },
+    "Battery too hot" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya çok ısındı"
+          }
+        }
+      }
+    },
     "Block" : {
       "localizations" : {
         "tr" : {
@@ -1020,6 +1050,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hücre %1$lld yük altında %2$@ değerine düştü (sınır %3$@)"
+          }
+        }
+      }
+    },
+    "Cell %lld sags under load: cell voltages differ by up to %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cell %1$lld sags under load: cell voltages differ by up to %2$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre %1$lld yük altında çöküyor: hücre voltajları arasında %2$@ fark var."
           }
         }
       }
@@ -1590,6 +1636,26 @@
         }
       }
     },
+    "Delivered" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verilen"
+          }
+        }
+      }
+    },
+    "Delivered charge matches the battery gauge." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verilen şarj batarya gauge'u ile uyumlu."
+          }
+        }
+      }
+    },
     "Design cap." : {
       "localizations" : {
         "tr" : {
@@ -1660,6 +1726,16 @@
         }
       }
     },
+    "Discharges the battery under a steady load from the current charge down to the chosen level and compares the charge actually delivered with what the battery gauge reports. Start fully charged; the test takes one to several hours. The Mac stays awake and the display stays on." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bataryayı sabit bir yük altında mevcut şarjdan seçilen seviyeye kadar boşaltır ve gerçekte verilen şarjı batarya gauge'unun bildirdiğiyle karşılaştırır. Tam şarjla başlayın; test bir ile birkaç saat sürer. Mac uyanık, ekran açık kalır."
+          }
+        }
+      }
+    },
     "Discharging" : {
       "localizations" : {
         "tr" : {
@@ -1700,6 +1776,16 @@
         }
       }
     },
+    "Drain while shut down" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapalıyken tüketim"
+          }
+        }
+      }
+    },
     "Duration" : {
       "localizations" : {
         "tr" : {
@@ -1716,6 +1802,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verimlilik kümeleri"
+          }
+        }
+      }
+    },
+    "Elapsed" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçen süre"
           }
         }
       }
@@ -1746,6 +1842,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kullanılan ömür"
+          }
+        }
+      }
+    },
+    "Energy" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enerji"
           }
         }
       }
@@ -2120,6 +2226,16 @@
         }
       }
     },
+    "Gauge agreement" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gauge uyumu"
+          }
+        }
+      }
+    },
     "Gauge chip" : {
       "localizations" : {
         "tr" : {
@@ -2136,6 +2252,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gauge çipi bu modelle uyuşuyor"
+          }
+        }
+      }
+    },
+    "Gauge full charge capacity" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gauge tam şarj kapasitesi"
           }
         }
       }
@@ -2230,6 +2356,16 @@
         }
       }
     },
+    "Heavy" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ağır"
+          }
+        }
+      }
+    },
     "Hibernate mode" : {
       "localizations" : {
         "tr" : {
@@ -2256,6 +2392,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uykuda yüksek batarya tüketimi: %@. Sağlıklı bir Mac genellikle saatte %%1'den az kaybeder; Power Nap'i, ağ erişimi için uyanmayı ve karanlık uyanma nedenlerini kontrol edin."
+          }
+        }
+      }
+    },
+    "High drain while shut down: %@. A Mac that is off should lose very little; suspect a leakage current on the board or a battery with high self-discharge." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapalıyken yüksek tüketim: %@. Kapalı bir Mac çok az kaybetmeli; kartta kaçak akımdan veya kendi kendine boşalması yüksek bir bataryadan şüphelenin."
           }
         }
       }
@@ -2510,6 +2656,16 @@
         }
       }
     },
+    "Largest cell difference under load" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yük altında en büyük hücre farkı"
+          }
+        }
+      }
+    },
     "Largest cell spread" : {
       "localizations" : {
         "tr" : {
@@ -2636,6 +2792,26 @@
         }
       }
     },
+    "Light load" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hafif"
+          }
+        }
+      }
+    },
+    "Load" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yük"
+          }
+        }
+      }
+    },
     "Loads the CPU and GPU for a few minutes and checks temperatures, cell voltages and power delivery. Run it after a repair with the case closed, on a desk." : {
       "localizations" : {
         "tr" : {
@@ -2692,6 +2868,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En düşük sıcaklık"
+          }
+        }
+      }
+    },
+    "Lowest voltage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En düşük voltaj"
           }
         }
       }
@@ -2786,12 +2972,52 @@
         }
       }
     },
+    "Measured capacity (extrapolated to 100 %)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ölçülen kapasite (%100'e uzatılmış)"
+          }
+        }
+      }
+    },
+    "Measured: FixStat saved the battery gauge at power off and read it after the boot (needs FixStat to open at login). From log: whole percentages from the power log, so short periods are rough." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ölçülen: FixStat kapanırken batarya gauge'unu kaydetti ve açılıştan sonra okudu (FixStat'ın oturum açılışında başlaması gerekir). Günlükten: güç günlüğündeki tam sayı yüzdeler, bu yüzden kısa süreler kabadır."
+          }
+        }
+      }
+    },
+    "Measuring the idle voltage…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boştaki voltaj ölçülüyor…"
+          }
+        }
+      }
+    },
     "Media errors" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Medya hataları"
+          }
+        }
+      }
+    },
+    "Medium" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orta"
           }
         }
       }
@@ -3102,6 +3328,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sistem günlüğünde kapanma nedeni yok. macOS her açılışta bir kayıt yazar; eski kayıtlar bir süre sonra silinir."
+          }
+        }
+      }
+    },
+    "No shutdowns with a known charge in the log yet." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günlükte şarjı bilinen bir kapanma henüz yok."
           }
         }
       }
@@ -3492,6 +3728,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paket"
+          }
+        }
+      }
+    },
+    "Pack resistance (load step)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paket direnci (yük basamağı)"
           }
         }
       }
@@ -4308,6 +4554,16 @@
         }
       }
     },
+    "Save samples (CSV)…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ölçümleri kaydet (CSV)…"
+          }
+        }
+      }
+    },
     "Scan for devices" : {
       "localizations" : {
         "tr" : {
@@ -4828,6 +5084,36 @@
         }
       }
     },
+    "Stop at" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durma seviyesi"
+          }
+        }
+      }
+    },
+    "Stop level reached" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durma seviyesine ulaşıldı"
+          }
+        }
+      }
+    },
+    "Stopped" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durduruldu"
+          }
+        }
+      }
+    },
     "Surface %@" : {
       "localizations" : {
         "tr" : {
@@ -5034,12 +5320,32 @@
         }
       }
     },
+    "The battery delivered only %@ of the capacity its gauge reports. The gauge overstates the battery (common with reset or non-genuine gauges)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya, gauge'unun bildirdiği kapasitenin yalnızca %@ kadarını verdi. Gauge bataryayı olduğundan iyi gösteriyor (sıfırlanmış veya orijinal olmayan gauge'larda sık görülür)."
+          }
+        }
+      }
+    },
     "The battery ran empty %lld times (macOS forced sleep at a few percent)." : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya %lld kez bitti (macOS birkaç yüzdede zorla uyuttu)."
+          }
+        }
+      }
+    },
+    "The charge fell by less than %@; the capacity figures are only rough." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şarj %@ kadar bile düşmedi; kapasite değerleri yalnızca kabaca doğru."
           }
         }
       }
@@ -5070,6 +5376,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ekran hiç kapanmayacak şekilde ayarlı."
+          }
+        }
+      }
+    },
+    "The gauge's remaining capacity changed differently from the charge delivered (%@). The gauge counts incorrectly or needs calibration." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gauge'un kalan kapasitesi verilen şarjdan farklı değişti (%@). Gauge yanlış sayıyor veya kalibrasyon gerekiyor."
           }
         }
       }
@@ -5194,6 +5510,16 @@
         }
       }
     },
+    "Time to stop level" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durma seviyesine kalan"
+          }
+        }
+      }
+    },
     "To read the whole SSD, turn on FixStat in Privacy & Security › Full Disk Access, then quit and reopen FixStat and start the test again." : {
       "localizations" : {
         "tr" : {
@@ -5314,6 +5640,16 @@
         }
       }
     },
+    "Unplug the power adapter to start." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlamak için güç adaptörünü çıkarın."
+          }
+        }
+      }
+    },
     "Unreadable areas" : {
       "localizations" : {
         "tr" : {
@@ -5350,6 +5686,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kullanıcı etkinliği"
+          }
+        }
+      }
+    },
+    "V" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "V"
           }
         }
       }
@@ -5510,6 +5856,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mac'i uyanık tutanlar"
+          }
+        }
+      }
+    },
+    "While shut down" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapalıyken"
           }
         }
       }
@@ -5760,6 +6116,26 @@
         }
       }
     },
+    "from log" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "günlükten"
+          }
+        }
+      }
+    },
+    "from log, power lost" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "günlükten, güç kesildi"
+          }
+        }
+      }
+    },
     "in use" : {
       "localizations" : {
         "tr" : {
@@ -5776,6 +6152,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "sol"
+          }
+        }
+      }
+    },
+    "lowest: cell %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "en düşük: hücre %lld"
           }
         }
       }
@@ -5826,6 +6212,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS'ta Mac bataryaları için orijinal parça bayrağı yoktur ve kopyalar dijital verileri taklit edebilir; bu nedenle bu, bilinen orijinal parçalarla bir tutarlılık kontrolüdür, kesin kanıt değildir."
+          }
+        }
+      }
+    },
+    "measured" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ölçülen"
+          }
+        }
+      }
+    },
+    "measured %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ölçülen %@"
+          }
+        }
+      }
+    },
+    "minutes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dakika"
           }
         }
       }
@@ -5896,6 +6312,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "açık"
+          }
+        }
+      }
+    },
+    "over %@ shut down" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ kapalı sürede"
           }
         }
       }

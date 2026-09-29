@@ -7,6 +7,7 @@ struct FixStatApp: App {
     @State private var ssdRunner: SSDTestRunner
     @State private var memoryRunner: MemoryTestRunner
     @State private var fullSSDRunner: FullSSDTestRunner
+    @State private var capacityRunner: CapacityTestRunner
 
     init() {
         let monitor = Monitor()
@@ -15,6 +16,7 @@ struct FixStatApp: App {
         _ssdRunner = State(initialValue: SSDTestRunner(monitor: monitor))
         _memoryRunner = State(initialValue: MemoryTestRunner(monitor: monitor))
         _fullSSDRunner = State(initialValue: FullSSDTestRunner(monitor: monitor))
+        _capacityRunner = State(initialValue: CapacityTestRunner(monitor: monitor))
         DispatchQueue.main.async { Snapshot.runIfRequested(monitor: monitor) }
     }
 
@@ -65,6 +67,13 @@ struct FixStatApp: App {
                 .environment(monitor)
         }
         .defaultSize(width: 620, height: 680)
+
+        Window("Battery capacity test", id: CapacityTestView.windowID) {
+            CapacityTestView()
+                .environment(monitor)
+                .environment(capacityRunner)
+        }
+        .defaultSize(width: 680, height: 680)
 
         Window("Sleep and wake", id: SleepView.windowID) {
             SleepView()
