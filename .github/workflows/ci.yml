@@ -35,6 +35,8 @@ jobs:
 
       - name: Build and package the app
         run: scripts/package-release.sh
+        env:
+          FIXSTAT_DMG_LAYOUT: "0" # no Finder window layout on CI
 
       - name: String catalog is in sync with the code
         run: |
@@ -49,5 +51,5 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: FixStat-${{ github.sha }}
-          path: build/FixStat.zip
+          path: build/FixStat.dmg
           retention-days: 14

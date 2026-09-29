@@ -123,6 +123,12 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   - windows opened from the panel must be brought to the front explicitly.
 - UI testing: use real mouse events (CGEvent); an AXPress is not user-initiated, so macOS
   does not activate the app.
+- DMG: `package-release.sh` builds it with hdiutil and lays the window out through Finder
+  (osascript; needs Automation permission for Finder once). Finder positions are icon
+  centres, but only after the window bounds are set; keep them in sync with
+  `packaging/dmg-background.svg`. `.background` and `.VolumeIcon.icns` get the hidden flag
+  and are moved out of the window (they show where Finder displays hidden files). CI sets
+  `FIXSTAT_DMG_LAYOUT=0` and uploads a DMG without the custom window.
 
 ## Battery history
 
@@ -235,7 +241,7 @@ swift build
 swift test
 .build/debug/sensordump [--json] [--raw] [--smc-all] [--hid-power] [--all] [--include-serial]
 scripts/build-app.sh            # → build/FixStat.app (ad-hoc signed)
-scripts/package-release.sh      # → build/FixStat.zip (app + packaging/INSTALL.txt) for Releases
+scripts/package-release.sh      # → build/FixStat.dmg (drag-to-Applications window + INSTALL.txt) for Releases
 scripts/make-icon.sh            # App/AppIcon.svg → App/AppIcon.icns (WebKit render + iconutil)
 open build/FixStat.app
 # Render the panel, a Settings tab or the history window to PNG (no screen recording needed;
@@ -254,8 +260,9 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.
 ├── .githooks/pre-commit        privacy check hook
 ├── scripts/privacy-scan.sh     privacy scanner (--staged / --history / files)
 ├── scripts/build-app.sh        builds build/FixStat.app
-├── scripts/package-release.sh  builds build/FixStat.zip for GitHub Releases
-├── packaging/INSTALL.txt       plain-text install notes (en + tr) shipped in the zip
+├── scripts/package-release.sh  builds build/FixStat.dmg for GitHub Releases
+├── packaging/INSTALL.txt       plain-text install notes (en + tr) shipped in the DMG
+├── packaging/dmg-background.svg  DMG window background (arrow, en + tr hint)
 ├── scripts/localize.py         catalog apply / prune / check (+ l10n_data.py)
 ├── Package.swift               SPM: CMacSensors, MacSensors, sensordump, sensormap, fixstat-diskscan, FixStat, tests
 ├── Sources/CMacSensors/        C shims: read-only AppleSMC user client, private HID event API,

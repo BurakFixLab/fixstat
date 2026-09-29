@@ -19,11 +19,13 @@
 ## 1. İndirme
 
 > **Henüz yayında değil.** İlk sürüm (v1.0) hâlâ hazırlanıyor, bu yüzden Releases sayfasında
-> henüz `FixStat.zip` yok. O zamana kadar [Kaynaktan derleme](#kaynaktan-derleme) bölümüne bakın.
+> henüz `FixStat.dmg` yok. O zamana kadar [Kaynaktan derleme](#kaynaktan-derleme) bölümüne bakın.
 
-1. [Releases](../../releases) sayfasından `FixStat.zip` dosyasını indirin.
-2. Zip dosyasına çift tıklayarak açın.
-3. **FixStat.app**'i **Uygulamalar** (Applications) klasörüne sürükleyin.
+1. [Releases](../../releases) sayfasından `FixStat.dmg` dosyasını indirin.
+2. Çift tıklayın. FixStat, bir ok ve Uygulamalar klasörünün olduğu bir pencere açılır.
+3. **FixStat**'ı **Uygulamalar** klasörünün üzerine sürükleyin, sonra disk görüntüsünü
+   çıkarın (Finder kenar çubuğunda "FixStat"ın yanındaki ⏏ düğmesi). DMG dosyası
+   sonra silinebilir.
 
 <a id="ilk-acilis"></a>
 

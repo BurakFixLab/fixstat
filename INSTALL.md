@@ -17,11 +17,12 @@
 ## 1. Download
 
 > **Not available yet.** The first release (v1.0) is still being prepared, so the Releases
-> page has no `FixStat.zip` yet. Until then, see [Building from source](#building-from-source).
+> page has no `FixStat.dmg` yet. Until then, see [Building from source](#building-from-source).
 
-1. Download `FixStat.zip` from the [Releases](../../releases) page.
-2. Double-click the zip to unpack it.
-3. Drag **FixStat.app** into your **Applications** folder.
+1. Download `FixStat.dmg` from the [Releases](../../releases) page.
+2. Double-click it. A window opens with FixStat, an arrow and the Applications folder.
+3. Drag **FixStat** onto **Applications**, then eject the disk image (the ⏏ button next to
+   "FixStat" in the Finder sidebar). The DMG can be deleted afterwards.
 
 ## 2. Open it the first time
 

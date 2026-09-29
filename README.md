@@ -73,8 +73,8 @@ app, menu bar, open at login, updating, uninstalling and troubleshooting.
 
 In short (macOS 14 Sonoma or later):
 
-1. Download `FixStat.zip` from [Releases](../../releases) and move `FixStat.app` to
-   `/Applications`.
+1. Download `FixStat.dmg` from [Releases](../../releases), open it and drag FixStat onto
+   the Applications folder in its window.
 2. FixStat is not notarized by Apple, so the first launch is blocked once: open it, then
    click **Open Anyway** in **System Settings › Privacy & Security** (on macOS 14:
    right-click › Open). Or in Terminal:

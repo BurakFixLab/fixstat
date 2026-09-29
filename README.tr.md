@@ -76,8 +76,8 @@ açılışı, menü çubuğu, oturum açılışında başlatma, güncelleme, kal
 
 Kısaca (macOS 14 Sonoma veya üstü):
 
-1. [Releases](../../releases) sayfasından `FixStat.zip`'i indirin ve `FixStat.app`'i
-   `/Applications` (Uygulamalar) klasörüne taşıyın.
+1. [Releases](../../releases) sayfasından `FixStat.dmg`'yi indirin, açın ve penceresindeki
+   FixStat'ı Uygulamalar klasörüne sürükleyin.
 2. FixStat Apple tarafından notarize edilmediği için ilk açılış bir kez engellenir:
    uygulamayı açmayı deneyin, sonra **Sistem Ayarları › Gizlilik ve Güvenlik**'te
    **Yine de Aç**'a tıklayın (macOS 14'te: sağ tık › Aç). Ya da Terminal'de:
