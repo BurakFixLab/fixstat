@@ -5,8 +5,7 @@
 #
 #   scripts/package-release.sh
 #
-# Only macOS tools are used (hdiutil, tiffutil, SetFile, Finder via osascript for the
-# window layout). The first run asks to allow controlling Finder. With
+# Only macOS tools are used (hdiutil, Finder via osascript for the window layout). The first run asks to allow controlling Finder. With
 # FIXSTAT_DMG_LAYOUT=0 (CI) the layout step is skipped and a plain DMG is built.
 set -euo pipefail
 
@@ -25,24 +24,16 @@ if [ -d "/Volumes/$volume" ]; then
     exit 1
 fi
 
-mkdir -p "$staging/.background"
+# Only these three items: no hidden helper files, so the window has nothing to scroll to
+# and nothing extra shows where Finder displays hidden files. The background picture is
+# App/DMGBackground.tiff inside the app bundle (scripts/make-artwork.sh).
+mkdir -p "$staging"
 ditto build/FixStat.app "$staging/FixStat.app"
 cp packaging/INSTALL.txt "$staging/INSTALL.txt"
 ln -s /Applications "$staging/Applications"
-cp App/AppIcon.icns "$staging/.VolumeIcon.icns"
-
-# Background at 1× and 2× in one TIFF (sharp on Retina displays).
-swiftc -O scripts/svg2png.swift -o "$work/svg2png"
-"$work/svg2png" packaging/dmg-background.svg "$work/bg.png" 640 480
-"$work/svg2png" packaging/dmg-background.svg "$work/bg@2x.png" 1280 960
-tiffutil -cathidpicheck "$work/bg.png" "$work/bg@2x.png" -out "$staging/.background/background.tiff" >/dev/null 2>&1
 
 hdiutil create -quiet -volname "$volume" -srcfolder "$staging" -fs HFS+ -format UDRW -ov "$rw"
 hdiutil attach -quiet -readwrite -noverify -noautoopen "$rw"
-SetFile -a C "/Volumes/$volume"
-# Hidden even where Finder shows hidden files is not possible, so they are also moved
-# out of the window below.
-SetFile -a V "/Volumes/$volume/.background" "/Volumes/$volume/.VolumeIcon.icns"
 
 if [ "${FIXSTAT_DMG_LAYOUT:-1}" != "0" ]; then
     # Window 640 × 480 pt (the bounds include the 28 pt title bar); positions are icon centres
@@ -59,12 +50,10 @@ tell application "Finder"
         set arrangement of options to not arranged
         set icon size of options to 112
         set text size of options to 13
-        set background picture of options to file ".background:background.tiff"
+        set background picture of options to file "FixStat.app:Contents:Resources:DMGBackground.tiff"
         set position of item "FixStat.app" of container window to {160, 170}
         set position of item "Applications" of container window to {480, 170}
         set position of item "INSTALL.txt" of container window to {320, 380}
-        set position of item ".background" of container window to {900, 900}
-        set position of item ".VolumeIcon.icns" of container window to {1000, 900}
         update without registering applications
         delay 1
         close

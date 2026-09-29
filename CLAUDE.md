@@ -126,9 +126,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 - DMG: `package-release.sh` builds it with hdiutil and lays the window out through Finder
   (osascript; needs Automation permission for Finder once). Finder positions are icon
   centres, but only after the window bounds are set; keep them in sync with
-  `packaging/dmg-background.svg`. `.background` and `.VolumeIcon.icns` get the hidden flag
-  and are moved out of the window (they show where Finder displays hidden files). CI sets
-  `FIXSTAT_DMG_LAYOUT=0` and uploads a DMG without the custom window.
+  `packaging/dmg-background.svg`. The disk image holds only FixStat.app, Applications and
+  INSTALL.txt: the background is `Contents/Resources/DMGBackground.tiff` in the app (a
+  `.background` folder shows where Finder displays hidden files, and moving it out of the
+  window made the window scroll to a white area). No custom volume icon for the same
+  reason. CI sets `FIXSTAT_DMG_LAYOUT=0` and uploads a DMG without the custom window.
 
 ## Battery history
 
@@ -242,7 +244,7 @@ swift test
 .build/debug/sensordump [--json] [--raw] [--smc-all] [--hid-power] [--all] [--include-serial]
 scripts/build-app.sh            # → build/FixStat.app (ad-hoc signed)
 scripts/package-release.sh      # → build/FixStat.dmg (drag-to-Applications window + INSTALL.txt) for Releases
-scripts/make-icon.sh            # App/AppIcon.svg → App/AppIcon.icns (WebKit render + iconutil)
+scripts/make-artwork.sh         # App/AppIcon.svg → AppIcon.icns, packaging/dmg-background.svg → App/DMGBackground.tiff
 open build/FixStat.app
 # Render the panel, a Settings tab or the history window to PNG (no screen recording needed;
 # NavigationSplitView windows such as --hardware do not render this way, use a screenshot):
@@ -274,7 +276,7 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.
 ├── Sources/FixStat/            SwiftUI menu bar app
 ├── Tests/MacSensorsTests/      swift-testing unit tests
 ├── SensorMaps/sensor-map.json  sensor naming database
-├── App/                        Info.plist, Localizable.xcstrings, AppIcon.svg / .icns
+├── App/                        Info.plist, Localizable.xcstrings, AppIcon.svg / .icns, DMGBackground.tiff
 ├── examples/                   masked sample outputs per model
 ├── docs/screenshots/{en,tr}/   README screenshots (made with --snapshot)
 └── design/                     early UI mockups (internal reference, Turkish)
