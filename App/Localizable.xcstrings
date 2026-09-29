@@ -109,6 +109,16 @@
         }
       }
     },
+    "A notification is sent when a condition lasts from 30 seconds to 3 minutes, and repeated at most every 15 minutes." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir durum 30 saniye ile 3 dakika arasında sürerse bildirim gönderilir; en fazla 15 dakikada bir tekrarlanır."
+          }
+        }
+      }
+    },
     "About FixStat" : {
       "localizations" : {
         "tr" : {
@@ -151,6 +161,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adaptörün sunduğu"
+          }
+        }
+      }
+    },
+    "Alert above" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyarı sınırı"
           }
         }
       }
@@ -301,12 +321,48 @@
         }
       }
     },
+    "Battery temperature %@ (limit %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battery temperature %1$@ (limit %2$@)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya sıcaklığı %1$@ (sınır %2$@)"
+          }
+        }
+      }
+    },
+    "Battery temperature above 45 °C" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya sıcaklığı 45 °C üstünde"
+          }
+        }
+      }
+    },
     "CPU" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "CPU"
+          }
+        }
+      }
+    },
+    "CPU / GPU temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU / GPU sıcaklığı"
           }
         }
       }
@@ -389,6 +445,32 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hücre kopmaları"
+          }
+        }
+      }
+    },
+    "Cell spread %@ on battery (limit %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cell spread %1$@ on battery (limit %2$@)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bataryada hücre farkı %1$@ (sınır %2$@)"
+          }
+        }
+      }
+    },
+    "Cell spread above the warning threshold (on battery)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre farkı uyarı eşiğinin üstünde (bataryada)"
           }
         }
       }
@@ -535,6 +617,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çip"
+          }
+        }
+      }
+    },
+    "Chip temperature %@ (limit %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chip temperature %1$@ (limit %2$@)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çip sıcaklığı %1$@ (sınır %2$@)"
           }
         }
       }
@@ -1319,6 +1417,36 @@
         }
       }
     },
+    "Notifications" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildirimler"
+          }
+        }
+      }
+    },
+    "Notifications are allowed." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildirimlere izin verildi."
+          }
+        }
+      }
+    },
+    "Notifications are turned off for FixStat. Allow them in System Settings › Notifications." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FixStat için bildirimler kapalı. Sistem Ayarları › Bildirimler'den izin verin."
+          }
+        }
+      }
+    },
     "On battery" : {
       "localizations" : {
         "tr" : {
@@ -1509,6 +1637,26 @@
         }
       }
     },
+    "Power adapter connected but not charging" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptör takılı ama şarj olmuyor"
+          }
+        }
+      }
+    },
+    "Power adapter connected but not charging at %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptör takılı ama %@ seviyesinde şarj olmuyor"
+          }
+        }
+      }
+    },
     "Power adapter · now %@" : {
       "localizations" : {
         "tr" : {
@@ -1685,6 +1833,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Göster"
+          }
+        }
+      }
+    },
+    "Show notifications" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildirimleri göster"
           }
         }
       }

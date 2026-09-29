@@ -125,6 +125,7 @@ private struct ThresholdSettings: View {
                 Text("Difference between the highest and lowest cell voltage.")
                     .foregroundStyle(.secondary)
             }
+            NotificationSettingsSection()
             Section {
                 Button("Restore defaults") {
                     warm = Pref.defaultWarm
@@ -147,7 +148,7 @@ private struct ThresholdSettings: View {
 }
 
 /// Title on the left, value and stepper on the right.
-private struct StepperRow<Control: View>: View {
+struct StepperRow<Control: View>: View {
     let title: LocalizedStringKey
     let value: String
     @ViewBuilder let control: Control
@@ -227,6 +228,57 @@ private struct ReportSettingsSection: View {
                 .lineLimit(1...3)
         } header: {
             Text("PDF report")
+        }
+    }
+}
+
+/// Notification switches (Thresholds tab).
+private struct NotificationSettingsSection: View {
+    @AppStorage(Pref.alertsEnabled) private var enabled = false
+    @AppStorage(Pref.alertChipTemperature) private var chipLimit = Pref.defaultAlertChipTemperature
+    @AppStorage(AlertManager.Kind.chipTemperature.enabledKey) private var chip = true
+    @AppStorage(AlertManager.Kind.batteryTemperature.enabledKey) private var battery = true
+    @AppStorage(AlertManager.Kind.cellImbalance.enabledKey) private var cells = true
+    @AppStorage(AlertManager.Kind.chargingStopped.enabledKey) private var charging = true
+    @State private var authorized: Bool?
+
+    var body: some View {
+        Section {
+            Toggle("Show notifications", isOn: $enabled)
+                .onChange(of: enabled) { _, on in
+                    guard on else { return }
+                    Task {
+                        _ = await AlertManager.requestAuthorization()
+                        authorized = await AlertManager.isAuthorized()
+                    }
+                }
+            if enabled, let authorized {
+                if authorized {
+                    Label("Notifications are allowed.", systemImage: "checkmark.circle")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Notifications are turned off for FixStat. Allow them in System Settings › Notifications.")
+                        .font(.caption)
+                        .foregroundStyle(TemperatureColor.hot)
+                }
+            }
+            Group {
+                Toggle("CPU / GPU temperature", isOn: $chip)
+                StepperRow(title: "Alert above", value: Format.temperature(chipLimit, digits: 0)) {
+                    Stepper("Alert above", value: $chipLimit, in: 60...110, step: 1)
+                }
+                Toggle("Battery temperature above 45 °C", isOn: $battery)
+                Toggle("Cell spread above the warning threshold (on battery)", isOn: $cells)
+                Toggle("Power adapter connected but not charging", isOn: $charging)
+            }
+            .disabled(!enabled)
+        } header: {
+            Text("Notifications")
+                .task { authorized = await AlertManager.isAuthorized() }
+        } footer: {
+            Text("A notification is sent when a condition lasts from 30 seconds to 3 minutes, and repeated at most every 15 minutes.")
+                .foregroundStyle(.secondary)
         }
     }
 }

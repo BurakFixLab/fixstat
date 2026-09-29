@@ -92,6 +92,22 @@ TR = {
         "Menü kapalıyken değerler enerji tasarrufu için en fazla 5 saniyede bir yenilenir.",
     "estimated": "tahmini",
 
+    "A notification is sent when a condition lasts from 30 seconds to 3 minutes, and repeated at most every 15 minutes.":
+        "Bir durum 30 saniye ile 3 dakika arasında sürerse bildirim gönderilir; en fazla 15 dakikada bir tekrarlanır.",
+    "Alert above": "Uyarı sınırı",
+    "Battery temperature %@ (limit %@)": "Batarya sıcaklığı %1$@ (sınır %2$@)",
+    "Battery temperature above 45 °C": "Batarya sıcaklığı 45 °C üstünde",
+    "CPU / GPU temperature": "CPU / GPU sıcaklığı",
+    "Cell spread %@ on battery (limit %@)": "Bataryada hücre farkı %1$@ (sınır %2$@)",
+    "Cell spread above the warning threshold (on battery)": "Hücre farkı uyarı eşiğinin üstünde (bataryada)",
+    "Chip temperature %@ (limit %@)": "Çip sıcaklığı %1$@ (sınır %2$@)",
+    "Notifications": "Bildirimler",
+    "Notifications are allowed.": "Bildirimlere izin verildi.",
+    "Notifications are turned off for FixStat. Allow them in System Settings › Notifications.":
+        "FixStat için bildirimler kapalı. Sistem Ayarları › Bildirimler'den izin verin.",
+    "Power adapter connected but not charging": "Adaptör takılı ama şarj olmuyor",
+    "Power adapter connected but not charging at %@": "Adaptör takılı ama %@ seviyesinde şarj olmuyor",
+    "Show notifications": "Bildirimleri göster",
     "Chip": "Çip",
     "Created with FixStat %@ — github.com/BurakFixLab/fixstat. Serial numbers are masked.":
         "FixStat %@ ile oluşturuldu — github.com/BurakFixLab/fixstat. Seri numaraları maskelenmiştir.",

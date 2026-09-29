@@ -65,6 +65,7 @@ final class Monitor {
     @ObservationIgnored private var defaultsObserver: NSObjectProtocol?
     @ObservationIgnored private var lastInterval = 0.0
     @ObservationIgnored let history: BatteryHistoryStore
+    @ObservationIgnored private let alerts = AlertManager()
     @ObservationIgnored private var lastHistorySample = Date.distantPast
     @ObservationIgnored private var lastPrune = Date.distantPast
     /// Seconds between two battery history samples.
@@ -197,7 +198,7 @@ final class Monitor {
         let defaults = UserDefaults.standard
         let now = Date()
         let historyDue = now.timeIntervalSince(lastHistorySample) >= Self.historyInterval
-        let needsBattery = panelVisible || detailsVisible || testRunning || historyDue || defaults.bool(forKey: Pref.menuBarBatteryIcon)
+        let needsBattery = panelVisible || detailsVisible || testRunning || historyDue || AlertManager.enabled || defaults.bool(forKey: Pref.menuBarBatteryIcon)
             || defaults.bool(forKey: Pref.menuBarBatteryPercent)
         if needsBattery {
             let latest = BatteryReader.read()
@@ -223,7 +224,7 @@ final class Monitor {
             if latestFans != fans { fans = latestFans }
             cpuUsage = stats.cpuUsage().map { ($0 * 1000).rounded() / 1000 }
             memory = stats.memory()
-        } else if defaults.bool(forKey: Pref.menuBarCPUTemperature) {
+        } else if defaults.bool(forKey: Pref.menuBarCPUTemperature) || AlertManager.enabled {
             // HID only: covers the CPU cluster sensors on Apple Silicon in one call.
             var latest = values
             for (uid, value) in sampler.sampleHID() {
@@ -231,6 +232,7 @@ final class Monitor {
             }
             values = latest
         }
+        alerts.evaluate(monitor: self)
     }
 
     // MARK: - Derived values

@@ -12,6 +12,10 @@ enum Pref {
     static let hotThreshold = "threshold.hot"
     static let cellImbalanceThreshold = "threshold.cellImbalance"
     static let updateInterval = "updateInterval"
+    /// Notifications master switch and the CPU/GPU alert temperature.
+    static let alertsEnabled = "alerts.enabled"
+    static let alertChipTemperature = "alerts.chipTemperatureLimit"
+    static let defaultAlertChipTemperature = 90.0
     /// Shop name and footer note printed on the PDF report.
     static let reportShopName = "report.shopName"
     static let reportNote = "report.note"
@@ -36,6 +40,8 @@ enum Pref {
             cellImbalanceThreshold: defaultCellImbalance,
             updateInterval: defaultInterval,
             hiddenSensors: "",
+            alertsEnabled: false,
+            alertChipTemperature: defaultAlertChipTemperature,
         ])
     }
 
