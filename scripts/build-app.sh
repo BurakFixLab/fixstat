@@ -47,6 +47,8 @@ MAP
 
 # swiftc adds /usr/lib/swift (the system's Swift runtime) first; the bundled copy is the fallback.
 rpaths=(-Xlinker -rpath -Xlinker @executable_path/../Frameworks)
+# CoreMedia / CoreVideo are linked explicitly: otherwise their C functions bind through
+# libswiftCoreMedia, which re-exports them only on recent macOS.
 first=1
 for target in "${targets[@]}"; do
     dir="$work/$target"
@@ -67,7 +69,8 @@ for target in "${targets[@]}"; do
     swiftc -target "$target" "${optimize[@]}" -swift-version 6 -module-name FixStat \
         -I "$dir" -I "$work/include" ${strings[@]+"${strings[@]}"} \
         Sources/FixStat/*.swift "$dir"/*.o -L "$dir" -lMacSensors \
-        -framework IOKit -framework CoreFoundation -framework Metal "${rpaths[@]}" \
+        -framework IOKit -framework CoreFoundation -framework Metal \
+        -framework CoreMedia -framework CoreVideo "${rpaths[@]}" \
         -o "$dir/FixStat"
     swiftc -target "$target" "${optimize[@]}" -swift-version 6 -module-name fixstat_diskscan \
         Sources/fixstat-diskscan/*.swift "${rpaths[@]}" -o "$dir/fixstat-diskscan"

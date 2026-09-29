@@ -116,6 +116,12 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   target to 12): x86_64 for 10.13, arm64 for 11, lipo; the Swift runtime for < 10.14.4 is
   copied to Contents/Frameworks (rpath after /usr/lib/swift); frameworks newer than 10.13
   (SwiftUI, Charts, UserNotifications, …) end up weak-linked — check with `otool -L`.
+  C functions of frameworks that have a Swift overlay can bind through the overlay: the
+  x86_64 (10.13) slice binds `CMSampleBufferGetImageBuffer` /
+  `CMVideoFormatDescriptionGetDimensions` to libswiftCoreMedia, which re-exports CoreMedia
+  only on recent macOS (the back-deploy copy does not). Fine for the SwiftUI camera test
+  (macOS 14+); an AppKit camera test must load them with dlsym from CoreMedia. Check
+  `nm -m -arch x86_64 … | grep '(from libswift'` for C symbols after adding such code.
   Building for macOS 11 changes a few SwiftUI defaults (e.g. wider menu buttons): the
   technician footer uses small controls. `swift build` / `swift test` (SwiftPM, macOS 14)
   are for development and tests only.
