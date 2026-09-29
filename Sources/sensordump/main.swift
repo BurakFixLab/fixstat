@@ -190,11 +190,15 @@ if let b = snapshot.battery {
     if let pd = b.powerDelivery {
         section("USB-C POWER DELIVERY" + (b.externalConnected == true ? "" : " (last contract, adapter not connected)"))
         var rows: [(String, String)] = []
-        if let c = pd.contract {
-            rows.append(("Contract", "profile \(c.objectPosition): \(fmt(c.voltage, unit: " mV")), requested \(fmt(c.operatingCurrent, unit: " mA"))"
-                + (c.capabilityMismatch ? " — capability mismatch" : "")))
+        if let active = pd.activeProfile {
+            rows.append(("Active profile", "\(pd.activePosition.map { "profile \($0): " } ?? "")\(fmt(active.maxVoltage, unit: " mV")) \(fmt(active.maxCurrent, unit: " mA"))"
+                + (pd.adapterSelectedIndex != nil ? " (macOS selection)" : " (port controller)")))
         }
-        for (i, pdo) in pd.sourceCapabilities.enumerated() {
+        if let c = pd.contract {
+            rows.append(("Port controller RDO", "profile \(c.objectPosition), requested \(fmt(c.operatingCurrent, unit: " mA"))"
+                + (c.capabilityMismatch ? " — capability mismatch" : "") + (pd.consistentContract == nil ? " (differs from macOS selection)" : "")))
+        }
+        for (i, pdo) in pd.offeredProfiles.enumerated() {
             let range = pdo.minVoltage.map { "\($0)–" } ?? ""
             rows.append(("Source PDO \(i + 1)", "\(pdo.kind.rawValue) \(range)\(fmt(pdo.maxVoltage, unit: " mV")) \(fmt(pdo.maxCurrent, unit: " mA"))"))
         }
@@ -205,6 +209,35 @@ if let b = snapshot.battery {
 } else {
     section("BATTERY")
     print("  no AppleSmartBattery found")
+}
+
+if let ssd = snapshot.ssd {
+    section("SSD")
+    var rows: [(String, String)] = [
+        ("Model", ssd.model ?? "-"),
+        ("Firmware", ssd.firmware ?? "-"),
+        ("Capacity", ssd.capacity.map { String(format: "%.0f GB", $0 / 1e9) } ?? "-"),
+        ("NAND", [ssd.nandVendor, ssd.nandType, ssd.bitsPerCell.map { "\($0) bits/cell" }].compactMap { $0 }.joined(separator: " · ")),
+        ("Serial", ssd.serial ?? "-"),
+    ]
+    if let h = ssd.health {
+        rows += [
+            ("Percentage used", "\(h.percentageUsed) %"),
+            ("Available spare", "\(h.availableSpare) % (threshold \(h.availableSpareThreshold) %)"),
+            ("Data written", String(format: "%.2f TB", h.bytesWritten / 1e12)),
+            ("Data read", String(format: "%.2f TB", h.bytesRead / 1e12)),
+            ("Power-on hours", String(format: "%.0f", h.powerOnHours)),
+            ("Power cycles", String(format: "%.0f", h.powerCycles)),
+            ("Unsafe shutdowns", String(format: "%.0f", h.unsafeShutdowns)),
+            ("Media errors", String(format: "%.0f", h.mediaErrors)),
+            ("Error log entries", String(format: "%.0f", h.errorLogEntries)),
+            ("Temperature", fmt(h.temperature, 0, unit: " °C")),
+            ("Critical warning", h.criticalWarning == 0 ? "none" : h.warnings.joined(separator: ", ")),
+        ]
+    } else {
+        rows.append(("SMART", "not available"))
+    }
+    keyValues(rows)
 }
 
 section("HID TEMPERATURES (\(snapshot.hidTemperatures.count))")

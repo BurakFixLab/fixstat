@@ -48,6 +48,12 @@ CFTypeRef _Nullable FSHIDClientCreate(int32_t usagePage, int32_t usage) CF_RETUR
 /// event are skipped.
 CFArrayRef _Nullable FSHIDClientCopyReadings(CFTypeRef client, int64_t eventType) CF_RETURNS_RETAINED;
 
+// MARK: - NVMe SMART (read-only)
+
+/// Reads the 512-byte NVMe SMART / Health Information log of the first NVMe
+/// device that supports it. `outLog512` must hold 512 bytes.
+kern_return_t FSNVMeReadSMARTLog(uint8_t *outLog512);
+
 CF_ASSUME_NONNULL_END
 
 #endif

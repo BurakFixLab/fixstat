@@ -258,29 +258,31 @@ private struct PowerDeliverySection: View {
         let pd = battery.powerDelivery
         let connected = battery.externalConnected == true
         DetailGroup(title: "USB-C Power Delivery") {
-            if let pd, let contract = pd.contract {
+            if let pd, let active = pd.activeProfile ?? pd.contract?.sourceObject {
                 if !connected {
                     Text("No power adapter — last contract:")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                DetailRow(title: "Contract", value: contractText(contract))
-                DetailRow(title: "Requested", value: requested(contract))
-                if contract.capabilityMismatch {
-                    Label("The Mac reported that the adapter cannot supply what it needs.",
-                          systemImage: "exclamationmark.triangle.fill")
-                        .font(.caption)
-                        .foregroundStyle(TemperatureColor.hot)
+                DetailRow(title: "Contract", value: profileText(active, position: pd.activePosition))
+                if let contract = pd.consistentContract {
+                    DetailRow(title: "Requested", value: requested(contract))
+                    if contract.capabilityMismatch {
+                        Label("The Mac reported that the adapter cannot supply what it needs.",
+                              systemImage: "exclamationmark.triangle.fill")
+                            .font(.caption)
+                            .foregroundStyle(TemperatureColor.hot)
+                    }
                 }
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Adapter offers").foregroundStyle(.secondary)
-                    ForEach(Array(pd.sourceCapabilities.enumerated()), id: \.offset) { index, pdo in
+                    ForEach(Array(pd.offeredProfiles.enumerated()), id: \.offset) { index, pdo in
                         HStack {
                             Text(verbatim: "\(index + 1).")
                                 .foregroundStyle(.secondary)
                             Text(verbatim: pdoText(pdo))
                             Spacer()
-                            if index + 1 == contract.objectPosition {
+                            if index + 1 == pd.activePosition {
                                 Text("in use").font(.caption).foregroundStyle(TemperatureColor.cool)
                             }
                         }
@@ -317,13 +319,13 @@ private struct PowerDeliverySection: View {
         }
     }
 
-    private func contractText(_ contract: PowerDeliveryContract) -> String {
+    private func profileText(_ pdo: PowerDataObject, position: Int?) -> String {
         var parts: [String] = []
-        if let v = contract.voltage { parts.append(Format.volts(millivolts: v, digits: v % 1000 == 0 ? 0 : 1)) }
-        if let offered = contract.sourceObject?.maxCurrent { parts.append(Format.amps(milliamps: offered)) }
-        if let power = contract.sourceObject?.power { parts.append(Format.watts(Double(power) / 1000)) }
-        let profile = String(localized: "profile \(contract.objectPosition)")
-        return (parts + [profile]).joined(separator: " · ")
+        if let v = pdo.maxVoltage { parts.append(Format.volts(millivolts: v, digits: v % 1000 == 0 ? 0 : 1)) }
+        if let i = pdo.maxCurrent { parts.append(Format.amps(milliamps: i)) }
+        if let power = pdo.power { parts.append(Format.watts(Double(power) / 1000)) }
+        if let position { parts.append(String(localized: "profile \(position)")) }
+        return parts.joined(separator: " · ")
     }
 
     private func requested(_ contract: PowerDeliveryContract) -> String? {

@@ -69,6 +69,18 @@ enum Format {
                                     numberFormatStyle: .number.precision(.fractionLength(digits))))
     }
 
+    /// Decimal byte count ("256 GB", "23,6 TB"), like Finder.
+    static func bytes(_ value: Double) -> String {
+        Int64(value).formatted(.byteCount(style: .decimal))
+    }
+
+    static func speed(megabytesPerSecond: Double) -> String {
+        Measurement(value: megabytesPerSecond, unit: UnitInformationStorage.megabytes)
+            .formatted(.measurement(width: .abbreviated, usage: .asProvided,
+                                    numberFormatStyle: .number.precision(.fractionLength(0))))
+            + String(localized: "/s", comment: "per second, after a data size")
+    }
+
     static func number(_ value: Double, digits: Int = 0) -> String {
         value.formatted(.number.precision(.fractionLength(digits)))
     }

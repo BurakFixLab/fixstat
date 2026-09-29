@@ -36,6 +36,13 @@ if command -v ioreg >/dev/null 2>&1; then
     add_literal "$(printf '%s' "$battery" | sed -n 's/.*"Serial"="\([^"]*\)".*/\1/p' | head -1)"
     add_literal "$(printf '%s' "$battery" | sed -n 's/.*"BatterySerialNumber" = "\([^"]*\)".*/\1/p' | head -1)"
     add_literal "$(printf '%s' "$battery" | sed -n 's/.*"SerialNumber" = "\([^"]*\)".*/\1/p' | head -1)"
+    # Internal SSD serial (lower-case hex, not caught by the generic patterns).
+    while IFS= read -r ssd; do add_literal "$ssd"; done < <(
+        ioreg -rc IONVMeBlockStorageDevice -d1 2>/dev/null | grep -o '"Serial Number"="[^"]*"' | sed 's/.*="\(.*\)"/\1/'
+        ioreg -rc IOEmbeddedNVMeBlockDevice -d1 2>/dev/null | grep -o '"Serial Number"="[^"]*"' | sed 's/.*="\(.*\)"/\1/'
+        ioreg -rc IONVMeController -d1 2>/dev/null | sed -n 's/.*"Serial Number" = "\([^"]*\)".*/\1/p'
+        ioreg -rc IONVMeController -d1 2>/dev/null | grep -o '"controller-unique-id"="[^"]*"' | sed 's/.*="\([^" ]*\).*/\1/'
+    )
 fi
 # The local account name is only flagged as part of a home path; a bare short
 # user name would match ordinary words.

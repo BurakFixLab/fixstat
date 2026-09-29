@@ -259,6 +259,12 @@ public enum BatteryReader {
         if let ports = props["PortControllerInfo"] as? [[String: Any]] {
             info.powerDelivery = PowerDeliveryInfo.parse(ports)
         }
+        if info.externalConnected == true, let details = props.dict("AdapterDetails"), details["UsbHvcMenu"] != nil {
+            var pd = info.powerDelivery ?? PowerDeliveryInfo(sourceCapabilities: [], contract: nil, capabilityMismatch: nil,
+                                                             attachCount: nil, detachCount: nil, hardResetCount: nil, portIndex: 0)
+            pd.applyAdapterDetails(details)
+            info.powerDelivery = pd
+        }
         info.gaugeStateOfCharge = data.int("StateOfCharge")
         info.permanentFailureStatus = props.int("PermanentFailureStatus")
         info.cellDisconnectCount = props.int("BatteryCellDisconnectCount")

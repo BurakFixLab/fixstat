@@ -49,6 +49,8 @@ final class Monitor {
 
     /// Result of the last post-repair test (for reports).
     var lastTestResult: StressTestResult?
+    /// Result of the last SSD write–verify test (for reports).
+    var lastSSDResult: SSDStressTest.Result?
 
     /// The battery details window refreshes the battery at the panel's rate.
     var detailsVisible = false {

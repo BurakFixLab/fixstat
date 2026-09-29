@@ -103,6 +103,51 @@ public struct PowerDeliveryInfo: Codable, Sendable, Equatable {
     public var hardResetCount: Int?
     /// 0-based index in `PortControllerInfo`.
     public var portIndex: Int
+    /// Profiles the adapter offers as seen by macOS (`AdapterDetails.UsbHvcMenu`).
+    public var adapterProfiles: [PowerDataObject] = []
+    /// 0-based index of the profile macOS selected (`AdapterDetails.UsbHvcHvcIndex`).
+    /// Authoritative for the active voltage; the port controller's request
+    /// object does not always reflect Apple's high-voltage selection.
+    public var adapterSelectedIndex: Int?
+
+    /// The profile in use: macOS' selection if known, else the port controller's contract.
+    public var activeProfile: PowerDataObject? {
+        if let index = adapterSelectedIndex, adapterProfiles.indices.contains(index) {
+            return adapterProfiles[index]
+        }
+        return contract?.sourceObject
+    }
+
+    /// 1-based position of the active profile in `offeredProfiles`.
+    public var activePosition: Int? {
+        if let index = adapterSelectedIndex, adapterProfiles.indices.contains(index) { return index + 1 }
+        return contract?.objectPosition
+    }
+
+    /// What the adapter offers: macOS' list if known, else the port controller's.
+    public var offeredProfiles: [PowerDataObject] {
+        adapterProfiles.isEmpty ? sourceCapabilities : adapterProfiles
+    }
+
+    /// The port controller's request object when it agrees with the active profile.
+    public var consistentContract: PowerDeliveryContract? {
+        guard let contract else { return nil }
+        guard let position = activePosition else { return contract }
+        return contract.objectPosition == position ? contract : nil
+    }
+
+    /// Adds macOS' adapter profile list from `AdapterDetails`.
+    mutating func applyAdapterDetails(_ details: [String: Any]) {
+        if let menu = details["UsbHvcMenu"] as? [[String: Any]] {
+            adapterProfiles = menu
+                .sorted { ($0.int("Index") ?? 0) < ($1.int("Index") ?? 0) }
+                .map { entry in
+                    PowerDataObject(kind: .fixed, maxVoltage: entry.int("MaxVoltage"), minVoltage: nil,
+                                    maxCurrent: entry.int("MaxCurrent"), maxPower: nil, raw: 0)
+                }
+        }
+        adapterSelectedIndex = details.int("UsbHvcHvcIndex")
+    }
 
     /// Picks the port with an active contract (or the first one) from the registry list.
     static func parse(_ ports: [[String: Any]]) -> PowerDeliveryInfo? {

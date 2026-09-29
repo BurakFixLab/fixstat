@@ -10,12 +10,15 @@ let usage = """
       sensormap record [--tests single,all,gpu,ssd,charger] [--duration S] [--baseline S] [--out FILE]
       sensormap report FILE...
       sensormap propose FILE... [--write PATH]
+      sensormap ssd [--gb N]
 
     record   Idle baseline, then each test (default 45 s) with cooldown in between.
              The charger test asks you to unplug and re-plug the power adapter.
              Default output: local/sensormap/<model>-<timestamp>.json (git-ignored).
     report   Prints the per-sensor temperature change for each test.
     propose  Proposes sensor-map entries for this model from recordings.
+    ssd      Write–verify stress test of the internal SSD on free space (default 4 GB).
+             Uses write endurance; at least 10 GB are always left free.
     """
 
 func fail(_ message: String) -> Never {
@@ -205,6 +208,33 @@ case "propose":
         + "\(proposal.unmatched.count) unmatched")
     for sensor in proposal.unmatched {
         log("  unmatched: \(sensor.rawLabel)" + (sensor.hidName.map { " (\($0))" } ?? ""))
+    }
+case "ssd":
+    var gigabytes = 4.0
+    var iterator = arguments.makeIterator()
+    while let argument = iterator.next() {
+        if argument == "--gb", let value = iterator.next().flatMap(Double.init) { gigabytes = value }
+        else { fail("unknown option \(argument)") }
+    }
+    let test = SSDStressTest()
+    let directory = FileManager.default.temporaryDirectory
+    log("SSD write–verify test: \(gigabytes) GB in \(directory.path.replacingOccurrences(of: NSHomeDirectory(), with: "~"))")
+    let result = test.run(bytes: Int64(gigabytes * 1_073_741_824), directory: directory) { p in
+        if p.chunk % 64 == 0 || p.chunk == p.chunkCount {
+            log("  \(p.phase.rawValue) \(p.chunk)/\(p.chunkCount)  \(Int(p.throughput)) MB/s")
+        }
+    }
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    encoder.dateEncodingStrategy = .iso8601
+    var summary = result
+    summary.timings = []
+    print(String(decoding: try encoder.encode(summary), as: UTF8.self))
+    let writes = result.timings.map(\.write).sorted()
+    let reads = result.timings.compactMap(\.read).sorted()
+    if !writes.isEmpty, !reads.isEmpty {
+        log(String(format: "chunk ms  write median %.1f max %.1f · read median %.1f max %.1f",
+                   writes[writes.count / 2] * 1000, writes.last! * 1000, reads[reads.count / 2] * 1000, reads.last! * 1000))
     }
 case "-h", "--help":
     print(usage)

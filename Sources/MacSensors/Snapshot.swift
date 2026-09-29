@@ -7,6 +7,8 @@ public struct SensorSnapshot: Encodable, Sendable {
     public var timestamp: Date
     public var system: SystemInfo
     public var battery: BatteryInfo?
+    /// Internal SSD identity and NVMe SMART health.
+    public var ssd: SSDInfo?
     /// IOHIDEventSystem temperature sensors (°C).
     public var hidTemperatures: [HIDReading]
     /// IOHIDEventSystem voltage sensors (raw, unverified), only when requested.
@@ -25,7 +27,7 @@ public struct SensorSnapshot: Encodable, Sendable {
 }
 
 public enum MacSensors {
-    public static let version = "0.1.0"
+    public static let version = "0.2.0"
 
     public struct Options: Sendable {
         public var includeSerial = false
@@ -69,6 +71,7 @@ public enum MacSensors {
             timestamp: Date(),
             system: .current(),
             battery: battery,
+            ssd: SSDInfo.read(includeSerial: options.includeSerial),
             hidTemperatures: hidTemperatures,
             hidVoltages: hidVoltages,
             hidCurrents: hidCurrents,

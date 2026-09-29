@@ -33,6 +33,9 @@ struct SensorReport: Encodable {
     let load: Load
     /// Daily battery health recorded by FixStat on this Mac (oldest first).
     let healthHistory: [BatteryHealthRecord]
+    let ssd: SSDInfo?
+    let ssdTest: SSDStressTest.Result?
+    let postRepairTest: StressTestResult?
 
     @MainActor
     init(monitor: Monitor) {
@@ -56,6 +59,11 @@ struct SensorReport: Encodable {
                     memoryUsedBytes: monitor.memory?.used,
                     memoryTotalBytes: monitor.memory?.total)
         healthHistory = monitor.history.healthRecords()
+        ssd = SSDInfo.read(includeSerial: false)
+        var ssdTest = monitor.lastSSDResult
+        ssdTest?.timings = [] // per-block timings are too long for a report
+        self.ssdTest = ssdTest
+        postRepairTest = monitor.lastTestResult
     }
 
     func json() throws -> Data {
@@ -126,6 +134,14 @@ struct SensorReport: Encodable {
         }
         for record in healthHistory {
             add("healthHistory", record.day, record.cycleCount.map { "cycles \($0)" } ?? "", record.health, "%")
+        }
+        if let h = ssd?.health {
+            add("ssd", "percentageUsed", ssd?.model ?? "", Double(h.percentageUsed), "%")
+            add("ssd", "availableSpare", "", Double(h.availableSpare), "%")
+            add("ssd", "bytesWritten", "", h.bytesWritten, "B")
+            add("ssd", "powerOnHours", "", h.powerOnHours, "h")
+            add("ssd", "unsafeShutdowns", "", h.unsafeShutdowns, "")
+            add("ssd", "mediaErrors", "", h.mediaErrors, "")
         }
         add("load", "cpu", "", load.cpuUsagePercent, "%")
         add("load", "memoryUsed", "", load.memoryUsedBytes.map(Double.init), "B")

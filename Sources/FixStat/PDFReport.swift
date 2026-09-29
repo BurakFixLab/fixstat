@@ -34,6 +34,8 @@ struct ReportSnapshot {
     let battery: BatteryInfo?
     let temperatures: [(LocalizedStringKey, Double)]
     let test: StressTestResult?
+    let ssd: SSDInfo?
+    let ssdTest: SSDStressTest.Result?
     let shopName: String
     let note: String
 
@@ -51,6 +53,8 @@ struct ReportSnapshot {
             monitor.maximum(idPrefixes: prefixes, excluding: []).map { (title, $0) }
         }
         test = monitor.lastTestResult
+        ssd = SSDInfo.read(includeSerial: false)
+        ssdTest = monitor.lastSSDResult
         let defaults = UserDefaults.standard
         shopName = defaults.string(forKey: Pref.reportShopName) ?? ""
         note = defaults.string(forKey: Pref.reportNote) ?? ""
@@ -70,6 +74,9 @@ private struct ReportPage: View {
                 chargingSection(battery)
             }
             temperatureSection
+            if let ssd = snapshot.ssd {
+                ssdSection(ssd)
+            }
             if let test = snapshot.test {
                 testSection(test)
             }
@@ -171,9 +178,9 @@ private struct ReportPage: View {
                 ReportRow(title: "Power adapter", value: [adapter.name, adapter.ratedWatts.map { Format.watts(Double($0)) }]
                     .compactMap { $0 }.joined(separator: " · "))
             }
-            if let contract = b.powerDelivery?.contract, b.externalConnected == true {
-                ReportRow(title: "Contract", value: [contract.voltage.map { Format.volts(millivolts: $0, digits: 0) },
-                                                    contract.operatingCurrent.map { Format.amps(milliamps: $0) }]
+            if let active = b.powerDelivery?.activeProfile, b.externalConnected == true {
+                ReportRow(title: "Contract", value: [active.maxVoltage.map { Format.volts(millivolts: $0, digits: 0) },
+                                                    active.maxCurrent.map { Format.amps(milliamps: $0) }]
                     .compactMap { $0 }.joined(separator: " · "))
             }
             if let life = b.lifetime {
@@ -187,6 +194,35 @@ private struct ReportPage: View {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 3) {
                 ForEach(Array(snapshot.temperatures.enumerated()), id: \.offset) { _, entry in
                     ReportRow(title: entry.0, value: Format.temperature(entry.1))
+                }
+            }
+        }
+    }
+
+    private func ssdSection(_ ssd: SSDInfo) -> some View {
+        ReportGroup(title: "SSD") {
+            ReportRow(title: "Model", value: [ssd.model, ssd.capacity.map { Format.bytes($0) }]
+                .compactMap { $0 }.joined(separator: " · "))
+            if let h = ssd.health {
+                let findings = SSDText.healthFindings(h)
+                ReportRow(title: "Health (SMART)", value: findings.isEmpty ? String(localized: "SSD health is good.") : findings.joined(separator: " "))
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 3) {
+                    ForEach(Array(SSDText.healthRows(h).prefix(8).enumerated()), id: \.offset) { _, row in
+                        HStack {
+                            Text(verbatim: row.0).foregroundStyle(.gray)
+                            Spacer()
+                            Text(verbatim: row.1)
+                        }
+                    }
+                }
+            }
+            if let test = snapshot.ssdTest {
+                let problems = test.findings.filter { $0 != .stoppedEarly }
+                ReportRow(title: "Write–verify stress test",
+                          value: (problems.isEmpty ? String(localized: "No problems found") : String(localized: "Needs attention"))
+                            + " · " + SSDText.resultRows(test).prefix(3).map(\.1).joined(separator: " · "))
+                ForEach(Array(problems.enumerated()), id: \.offset) { _, finding in
+                    Text(verbatim: "• " + SSDText.finding(finding))
                 }
             }
         }

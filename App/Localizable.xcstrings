@@ -29,6 +29,16 @@
         }
       }
     },
+    "%@ media / data integrity errors recorded." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ medya / veri bütünlüğü hatası kaydedilmiş."
+          }
+        }
+      }
+    },
     "%@ of %@" : {
       "localizations" : {
         "en" : {
@@ -82,6 +92,16 @@
         }
       }
     },
+    "%@ usable" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ kullanılabilir"
+          }
+        }
+      }
+    },
     "%@°" : {
       "comment" : "Compact temperature, e.g. 58°",
       "localizations" : {
@@ -105,6 +125,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu modelde %1$lld / %2$lld eşleşti"
+          }
+        }
+      }
+    },
+    "%lld bits per cell" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hücre başına %lld bit"
+          }
+        }
+      }
+    },
+    "%lld blocks were very slow (worst %@ ms) — possible weak NAND or retries" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld blocks were very slow (worst %2$@ ms) — possible weak NAND or retries"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld blok çok yavaştı (en kötüsü %2$@ ms) — zayıf NAND veya yeniden deneme olabilir"
+          }
+        }
+      }
+    },
+    "%lld read / write errors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld okuma / yazma hatası"
+          }
+        }
+      }
+    },
+    "/s" : {
+      "comment" : "per second, after a data size",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "/sn"
           }
         }
       }
@@ -191,6 +258,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Görünüm"
+          }
+        }
+      }
+    },
+    "Available spare" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yedek alan"
           }
         }
       }
@@ -343,6 +420,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya sıcaklığı 45 °C üstünde"
+          }
+        }
+      }
+    },
+    "Block" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blok"
           }
         }
       }
@@ -697,6 +784,42 @@
         }
       }
     },
+    "Data read" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okunan veri"
+          }
+        }
+      }
+    },
+    "Data read back did not match in %lld blocks (first at %@) — failing NAND or controller" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data read back did not match in %1$lld blocks (first at %2$@) — failing NAND or controller"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geri okunan veri %1$lld blokta uyuşmadı (ilki %2$@ konumunda) — arızalı NAND veya controller"
+          }
+        }
+      }
+    },
+    "Data written" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazılan veri"
+          }
+        }
+      }
+    },
     "Day" : {
       "localizations" : {
         "tr" : {
@@ -793,6 +916,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kasa"
+          }
+        }
+      }
+    },
+    "Endurance used" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kullanılan ömür"
+          }
+        }
+      }
+    },
+    "Error log entries" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hata kaydı"
           }
         }
       }
@@ -963,6 +1106,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sağlık"
+          }
+        }
+      }
+    },
+    "Health (SMART)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sağlık (SMART)"
           }
         }
       }
@@ -1187,6 +1340,16 @@
         }
       }
     },
+    "MB/s" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MB/sn"
+          }
+        }
+      }
+    },
     "Mac" : {
       "localizations" : {
         "tr" : {
@@ -1237,6 +1400,16 @@
         }
       }
     },
+    "Media errors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medya hataları"
+          }
+        }
+      }
+    },
     "Memory" : {
       "localizations" : {
         "tr" : {
@@ -1267,12 +1440,32 @@
         }
       }
     },
+    "Model" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model"
+          }
+        }
+      }
+    },
     "Model identifier" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Model kimliği"
+          }
+        }
+      }
+    },
+    "Most of the rated endurance is used (%lld %%)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazma ömrünün büyük kısmı kullanılmış (%%%lld)."
           }
         }
       }
@@ -1347,6 +1540,16 @@
         }
       }
     },
+    "No internal NVMe SSD found." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dahili NVMe SSD bulunamadı."
+          }
+        }
+      }
+    },
     "No power adapter" : {
       "localizations" : {
         "tr" : {
@@ -1403,6 +1606,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Şarj olmama nedeni"
+          }
+        }
+      }
+    },
+    "Not enough free space for the test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test için yeterli boş alan yok"
           }
         }
       }
@@ -1587,6 +1800,16 @@
         }
       }
     },
+    "Phase" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aşama"
+          }
+        }
+      }
+    },
     "Plug-ins / removals" : {
       "localizations" : {
         "tr" : {
@@ -1667,6 +1890,26 @@
         }
       }
     },
+    "Power cycles" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç döngüsü"
+          }
+        }
+      }
+    },
+    "Power-on hours" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışma saati"
+          }
+        }
+      }
+    },
     "Project page" : {
       "localizations" : {
         "tr" : {
@@ -1713,6 +1956,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aralık"
+          }
+        }
+      }
+    },
+    "Rated endurance used up (%lld %%)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazma ömrü tükenmiş (%%%lld)."
+          }
+        }
+      }
+    },
+    "Read" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okuma"
+          }
+        }
+      }
+    },
+    "Read speed" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okuma hızı"
+          }
+        }
+      }
+    },
+    "Reading and verifying…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okunuyor ve doğrulanıyor…"
           }
         }
       }
@@ -1777,12 +2060,72 @@
         }
       }
     },
+    "SMART data is not available for this SSD." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu SSD için SMART verisi yok."
+          }
+        }
+      }
+    },
+    "SMART error log grew by %@ entries during the test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SMART hata kaydı test sırasında %@ arttı"
+          }
+        }
+      }
+    },
+    "SMART media errors increased by %@ during the test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SMART medya hataları test sırasında %@ arttı"
+          }
+        }
+      }
+    },
+    "SSD" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD"
+          }
+        }
+      }
+    },
     "SSD (NAND)" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "SSD (NAND)"
+          }
+        }
+      }
+    },
+    "SSD health and test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD sağlığı ve testi"
+          }
+        }
+      }
+    },
+    "SSD health is good." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD sağlığı iyi."
           }
         }
       }
@@ -1867,12 +2210,62 @@
         }
       }
     },
+    "Size" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boyut"
+          }
+        }
+      }
+    },
     "Slow charging reason" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yavaş şarj nedeni"
+          }
+        }
+      }
+    },
+    "Slowest block read" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yavaş blok okuma"
+          }
+        }
+      }
+    },
+    "Slowest block write" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yavaş blok yazma"
+          }
+        }
+      }
+    },
+    "Spare blocks below threshold (%lld %%)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yedek bloklar eşiğin altında (%%%lld)."
+          }
+        }
+      }
+    },
+    "Speed per 8 MB block" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 MB blok başına hız"
           }
         }
       }
@@ -1997,12 +2390,32 @@
         }
       }
     },
+    "Tested" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test edilen"
+          }
+        }
+      }
+    },
     "The Mac reported that the adapter cannot supply what it needs." : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mac, adaptörün ihtiyacını karşılayamadığını bildirdi."
+          }
+        }
+      }
+    },
+    "The SSD reports a critical warning (code %lld)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD kritik uyarı bildiriyor (kod %lld)."
           }
         }
       }
@@ -2087,6 +2500,16 @@
         }
       }
     },
+    "Unsafe shutdowns" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güvenli olmayan kapanma"
+          }
+        }
+      }
+    },
     "Update interval" : {
       "localizations" : {
         "tr" : {
@@ -2153,6 +2576,56 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Menü kapalıyken değerler enerji tasarrufu için en fazla 5 saniyede bir yenilenir."
+          }
+        }
+      }
+    },
+    "Write" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazma"
+          }
+        }
+      }
+    },
+    "Write speed" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazma hızı"
+          }
+        }
+      }
+    },
+    "Writes a test file to free space, reads it back and compares every byte. Finds data corruption, I/O errors and stalling areas that point to failing NAND. Only free space can be tested, and the test uses some of the SSD's write endurance." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boş alana bir test dosyası yazar, geri okur ve her baytı karşılaştırır. Veri bozulmasını, G/Ç hatalarını ve takılan bölgeleri bulur; bunlar arızalı NAND'e işaret eder. Yalnızca boş alan test edilebilir ve test SSD'nin yazma ömründen bir miktar harcar."
+          }
+        }
+      }
+    },
+    "Write–verify stress test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazma–doğrulama stres testi"
+          }
+        }
+      }
+    },
+    "Writing…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazılıyor…"
           }
         }
       }

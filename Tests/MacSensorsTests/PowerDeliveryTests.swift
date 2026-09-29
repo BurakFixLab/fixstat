@@ -128,3 +128,23 @@ extension Data {
         #expect(analysis.suspects.isEmpty)
     }
 }
+
+@Suite struct AdapterProfileTests {
+    @Test func adapterSelectionWinsOverStaleRequestObject() {
+        var props = BatteryParsingTests.sample
+        props["ExternalConnected"] = true
+        props["PortControllerInfo"] = [["PortControllerActiveContractRdo": 319_074_604,
+                                        "PortControllerPortPDO": [134_320_428, 184_620, 307_500, 410_070].map { NSNumber(value: $0) }]]
+        props["AdapterDetails"] = ["FamilyCode": 1, "Watts": 94, "UsbHvcHvcIndex": 3,
+                                   "UsbHvcMenu": [["Index": 0, "MaxCurrent": 3000, "MaxVoltage": 5000],
+                                                  ["Index": 1, "MaxCurrent": 3000, "MaxVoltage": 9000],
+                                                  ["Index": 2, "MaxCurrent": 3000, "MaxVoltage": 15000],
+                                                  ["Index": 3, "MaxCurrent": 4700, "MaxVoltage": 20000]]] as [String: Any]
+        let pd = BatteryReader.parse(props, includeSerial: false).powerDelivery
+        #expect(pd?.activeProfile?.maxVoltage == 20_000)
+        #expect(pd?.activeProfile?.maxCurrent == 4_700)
+        #expect(pd?.activePosition == 4)
+        #expect(pd?.offeredProfiles.count == 4)
+        #expect(pd?.consistentContract == nil) // port controller says profile 1
+    }
+}
