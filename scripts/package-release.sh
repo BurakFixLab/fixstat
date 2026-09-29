@@ -37,7 +37,8 @@ hdiutil attach -quiet -readwrite -noverify -noautoopen "$rw"
 
 if [ "${FIXSTAT_DMG_LAYOUT:-1}" != "0" ]; then
     # Window 640 × 480 pt (the bounds include the 28 pt title bar); positions are icon centres
-    # and must match packaging/dmg-background.svg.
+    # and must match packaging/dmg-background.svg. Finder adds a margin below the lowest
+    # label: keep it about 60 pt above the bottom edge, or the window scrolls a little.
     if ! osascript <<APPLESCRIPT
 tell application "Finder"
     tell disk "$volume"
@@ -51,9 +52,9 @@ tell application "Finder"
         set icon size of options to 112
         set text size of options to 13
         set background picture of options to file "FixStat.app:Contents:Resources:DMGBackground.tiff"
-        set position of item "FixStat.app" of container window to {160, 170}
-        set position of item "Applications" of container window to {480, 170}
-        set position of item "INSTALL.txt" of container window to {320, 380}
+        set position of item "FixStat.app" of container window to {160, 150}
+        set position of item "Applications" of container window to {480, 150}
+        set position of item "INSTALL.txt" of container window to {320, 340}
         update without registering applications
         delay 1
         close

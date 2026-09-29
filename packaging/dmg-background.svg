@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 640 480">
-  <!-- DMG window background, 640 × 480 pt. Icon centres: FixStat (160,170), Applications
-       (480,170), INSTALL.txt (320,380), icon size 112 — see scripts/package-release.sh. -->
+  <!-- DMG window background, 640 × 480 pt. Icon centres: FixStat (160,150), Applications
+       (480,150), INSTALL.txt (320,340), icon size 112 — see scripts/package-release.sh.
+       Keep every icon with its label well inside the window, or the window scrolls. -->
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#f7f8fb"/>
@@ -11,7 +12,7 @@
     </marker>
   </defs>
   <rect width="640" height="480" fill="url(#bg)"/>
-  <path d="M252 170 H388" fill="none" stroke="#2c3446" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 12" marker-end="url(#head)"/>
-  <text x="320" y="280" text-anchor="middle" font-family="-apple-system, Helvetica Neue, sans-serif" font-size="15" font-weight="600" fill="#2c3446">Drag FixStat into the Applications folder</text>
-  <text x="320" y="302" text-anchor="middle" font-family="-apple-system, Helvetica Neue, sans-serif" font-size="13" fill="#5b6475">FixStat'ı Uygulamalar klasörüne sürükleyin</text>
+  <path d="M252 150 H388" fill="none" stroke="#2c3446" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 12" marker-end="url(#head)"/>
+  <text x="320" y="258" text-anchor="middle" font-family="-apple-system, Helvetica Neue, sans-serif" font-size="15" font-weight="600" fill="#2c3446">Drag FixStat into the Applications folder</text>
+  <text x="320" y="280" text-anchor="middle" font-family="-apple-system, Helvetica Neue, sans-serif" font-size="13" fill="#5b6475">FixStat'ı Uygulamalar klasörüne sürükleyin</text>
 </svg>
