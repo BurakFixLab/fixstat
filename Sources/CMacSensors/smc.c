@@ -72,7 +72,7 @@ static kern_return_t FSSMCCall(io_connect_t connection, FSSMCParam *input, FSSMC
 }
 
 kern_return_t FSSMCOpen(io_connect_t *outConnection) {
-    io_service_t service = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("AppleSMC"));
+    io_service_t service = IOServiceGetMatchingService(MACH_PORT_NULL /* default main port, all macOS versions */, IOServiceMatching("AppleSMC"));
     if (service == IO_OBJECT_NULL) return kIOReturnNotFound;
     kern_return_t kr = IOServiceOpen(service, mach_task_self(), 0, outConnection);
     IOObjectRelease(service);

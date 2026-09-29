@@ -25,7 +25,7 @@ typedef struct {
 
 static io_service_t FSFindSMARTCapableDevice(void) {
     io_iterator_t iterator = IO_OBJECT_NULL;
-    if (IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching("IOBlockStorageDevice"), &iterator) != KERN_SUCCESS) {
+    if (IOServiceGetMatchingServices(MACH_PORT_NULL /* default main port, all macOS versions */, IOServiceMatching("IOBlockStorageDevice"), &iterator) != KERN_SUCCESS) {
         return IO_OBJECT_NULL;
     }
     io_service_t found = IO_OBJECT_NULL;

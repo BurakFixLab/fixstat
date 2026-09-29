@@ -211,7 +211,7 @@ public enum PortReader {
 
     static func forEachService(matching className: String, _ body: (io_registry_entry_t, [String: Any]) -> Void) {
         var iterator: io_iterator_t = IO_OBJECT_NULL
-        guard IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching(className), &iterator) == KERN_SUCCESS
+        guard IOServiceGetMatchingServices(ioMainPort, IOServiceMatching(className), &iterator) == KERN_SUCCESS
         else { return }
         defer { IOObjectRelease(iterator) }
         while case let service = IOIteratorNext(iterator), service != IO_OBJECT_NULL {

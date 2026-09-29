@@ -35,7 +35,7 @@ public struct SystemInfo: Codable, Sendable, Equatable {
     /// Apple Silicon: device tree `product-name`. Intel: the model name from the
     /// system's machine attribute database.
     static func marketingName(model: String?) -> String? {
-        let product = IORegistryEntryFromPath(kIOMainPortDefault, "IODeviceTree:/product")
+        let product = IORegistryEntryFromPath(ioMainPort, "IODeviceTree:/product")
         if product != IO_OBJECT_NULL {
             defer { IOObjectRelease(product) }
             if let data = IORegistryEntryCreateCFProperty(product, "product-name" as CFString, kCFAllocatorDefault, 0)?

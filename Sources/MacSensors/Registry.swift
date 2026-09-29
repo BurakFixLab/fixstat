@@ -1,11 +1,15 @@
 import Foundation
 import IOKit
 
+/// The default IOKit main port (`ioMainPort`, macOS 12+; `kIOMasterPortDefault`
+/// before). Both are MACH_PORT_NULL, which works on every macOS version.
+let ioMainPort: mach_port_t = mach_port_t(MACH_PORT_NULL)
+
 /// Helpers for reading IORegistry properties.
 enum Registry {
     /// All properties of the first service matching `className`.
     static func properties(ofClass className: String) -> [String: Any]? {
-        let service = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching(className))
+        let service = IOServiceGetMatchingService(ioMainPort, IOServiceMatching(className))
         guard service != IO_OBJECT_NULL else { return nil }
         defer { IOObjectRelease(service) }
         return properties(of: service)
@@ -22,7 +26,7 @@ enum Registry {
 
     /// A single property of the device tree root's platform expert, as string.
     static func platformString(_ key: String) -> String? {
-        let service = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOPlatformExpertDevice"))
+        let service = IOServiceGetMatchingService(ioMainPort, IOServiceMatching("IOPlatformExpertDevice"))
         guard service != IO_OBJECT_NULL else { return nil }
         defer { IOObjectRelease(service) }
         guard let value = IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?

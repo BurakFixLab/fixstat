@@ -120,9 +120,11 @@ public final class BatteryHistoryStore {
             try? Data((header + "\n").utf8).write(to: url)
         }
         guard let handle = try? FileHandle(forWritingTo: url) else { return }
-        defer { try? handle.close() }
-        _ = try? handle.seekToEnd()
-        try? handle.write(contentsOf: Data((line + "\n").utf8))
+        // The pre-10.15 methods: the throwing ones need macOS 10.15.4 (the library also
+        // builds for macOS 10.13).
+        defer { handle.closeFile() }
+        handle.seekToEndOfFile()
+        handle.write(Data((line + "\n").utf8))
     }
 
     // MARK: Reading

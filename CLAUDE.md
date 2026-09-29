@@ -15,6 +15,11 @@ Personal, machine-specific notes may exist in a git-ignored `CLAUDE.local.md`.
   key-info, read-bytes and read-index commands and rejects everything else.
 - **No sudo / root.** No `powermetrics` or other root-only tools. The one approved
   exception is the optional full SSD surface scan (read-only, see Diagnostics tools).
+- **MacSensors and CMacSensors must build for macOS 10.13** (Intel) / 11 (Apple Silicon):
+  they are compiled for older macOS outside SwiftPM (which raises the deployment target
+  to 12) for tools and the planned older-macOS app. Guard newer APIs with `#available` or
+  use older equivalents: `ioMainPort` instead of `kIOMainPortDefault`, the pre-10.15
+  `FileHandle` methods, no `formatted()` / `.withoutEscapingSlashes` without a check.
 - Private APIs are allowed (no App Store, no sandbox): `IOHIDEventSystemClient` for Apple
   Silicon temperatures, the `AppleSMC` user client (read-only) for SMC keys.
 - No new dependencies (brew, SPM packages, code generators) without discussing it first.
