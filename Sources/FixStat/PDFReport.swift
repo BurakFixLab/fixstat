@@ -6,23 +6,31 @@ import SwiftUI
 enum PDFReport {
     static let pageSize = CGSize(width: 595, height: 842) // A4 in points
 
+    /// Page 1: device, battery, temperatures and tests. Page 2 (only when used):
+    /// the hardware checklist.
     @MainActor
     static func render(monitor: Monitor) -> Data? {
-        let page = ReportPage(snapshot: .init(monitor: monitor))
-            .frame(width: pageSize.width, height: pageSize.height, alignment: .top)
-            .environment(\.colorScheme, .light)
-        let renderer = ImageRenderer(content: page)
-        renderer.proposedSize = ProposedViewSize(pageSize)
-        let data = NSMutableData()
-        renderer.render { size, draw in
-            var box = CGRect(origin: .zero, size: size)
-            guard let consumer = CGDataConsumer(data: data as CFMutableData),
-                  let context = CGContext(consumer: consumer, mediaBox: &box, nil) else { return }
-            context.beginPDFPage(nil)
-            draw(context)
-            context.endPDFPage()
-            context.closePDF()
+        let snapshot = ReportSnapshot(monitor: monitor)
+        var pages = [AnyView(ReportPage(snapshot: snapshot))]
+        if !monitor.hardwareCheck.isEmpty {
+            pages.append(AnyView(HardwareCheckPage(snapshot: snapshot, check: monitor.hardwareCheck)))
         }
+        let data = NSMutableData()
+        var box = CGRect(origin: .zero, size: pageSize)
+        guard let consumer = CGDataConsumer(data: data as CFMutableData),
+              let context = CGContext(consumer: consumer, mediaBox: &box, nil) else { return nil }
+        for page in pages {
+            let renderer = ImageRenderer(content: page
+                .frame(width: pageSize.width, height: pageSize.height, alignment: .top)
+                .environment(\.colorScheme, .light))
+            renderer.proposedSize = ProposedViewSize(pageSize)
+            renderer.render { _, draw in
+                context.beginPDFPage(nil)
+                draw(context)
+                context.endPDFPage()
+            }
+        }
+        context.closePDF()
         return data.length > 0 ? data as Data : nil
     }
 }
@@ -304,6 +312,55 @@ private struct ReportPage: View {
                 .foregroundStyle(.gray)
                 .font(.system(size: 8))
         }
+    }
+}
+
+/// Second page: the hardware checklist with status, evidence and notes.
+private struct HardwareCheckPage: View {
+    let snapshot: ReportSnapshot
+    let check: HardwareCheck
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 3) {
+                    if !snapshot.shopName.isEmpty {
+                        Text(verbatim: snapshot.shopName).font(.system(size: 16, weight: .semibold))
+                    }
+                    Text("Hardware check").font(.system(size: 13, weight: .medium))
+                }
+                Spacer()
+                Text(verbatim: snapshot.system.marketingName ?? snapshot.system.model).foregroundStyle(.gray)
+            }
+            Divider()
+            Text("\(check.count(.passed)) passed · \(check.count(.failed)) failed · \(check.count(.untested)) not tested")
+                .font(.system(size: 11, weight: .semibold))
+            Grid(alignment: .topLeading, horizontalSpacing: 14, verticalSpacing: 7) {
+                ForEach(HardwareCheck.Item.allCases, id: \.self) { item in
+                    let entry = check[item]
+                    GridRow {
+                        Text(verbatim: HardwareText.title(item)).fontWeight(.medium)
+                        Text(verbatim: HardwareText.status(entry.status))
+                            .fontWeight(entry.status == .failed ? .bold : .regular)
+                            .foregroundStyle(entry.status == .untested ? .gray : .black)
+                        VStack(alignment: .leading, spacing: 2) {
+                            if let detail = entry.detail { Text(verbatim: detail) }
+                            if !entry.note.isEmpty { Text(verbatim: entry.note).italic() }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    Divider().gridCellUnsizedAxes(.horizontal)
+                }
+            }
+            Spacer(minLength: 0)
+            Text("Created with FixStat \(AboutInfo.version) — github.com/BurakFixLab/fixstat. Serial numbers are masked.")
+                .foregroundStyle(.gray)
+                .font(.system(size: 8))
+        }
+        .padding(36)
+        .font(.system(size: 10))
+        .foregroundStyle(.black)
+        .background(.white)
     }
 }
 

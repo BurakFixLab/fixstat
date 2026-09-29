@@ -49,6 +49,9 @@ also if macOS says the app *"is damaged and can't be opened"*.
 FixStat needs **no special permissions**: no administrator rights, no Accessibility or Full
 Disk Access, no network access. It only reads sensor values; it never writes to the SMC.
 
+The **hardware check** asks macOS for camera, microphone and Bluetooth access the first time
+you open those tests; they only work while the test is on screen.
+
 The one exception is the optional **full SSD test** (Tools › SSD health and test). Reading
 the whole disk surface needs your administrator password (asked each time, FixStat never
 stores it) and **Full Disk Access**: System Settings › Privacy & Security › Full Disk

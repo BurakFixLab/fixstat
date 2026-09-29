@@ -39,8 +39,13 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
   şarj devresi NTC'si olarak görünür.
 - **Batarya geçmişi.** Son 1 saatten 30 güne kadar şarj, akım ve sağlık; ayrıca süresiz
   tutulan günlük sağlık kaydı.
-- **Raporlar.** Müşteri cihazları için CSV / JSON dışa aktarma; seri numaraları her
-  zaman maskeli.
+- **Tek uygulamada tanı araçları.** Tamir sonrası stres testi, SSD sağlığı (NVMe SMART),
+  yaz–doğrula stres testi ve isteğe bağlı tam yüzey taraması, bellek testi, kernel panic
+  ve kapanma nedeni geçmişi, batarya ve adaptör orijinallik kontrolü ve donanım kontrolü
+  (klavye, trackpad yüzeyi, ekran, hoparlör, mikrofon, kamera, Wi-Fi, Bluetooth, arıza
+  sayaçlı USB-C portları, kapak sensörü).
+- **Raporlar.** Müşteri cihazları için PDF / CSV / JSON dışa aktarma; seri numaraları
+  her zaman maskeli.
 - **Sadece okuma.** FixStat SMC'ye hiçbir zaman yazmaz, fan kontrolü yoktur ve yönetici
   izni gerektirmez. Tek istisna isteğe bağlı tam SSD yüzey taramasıdır: parolanızı ve Tam
   Disk Erişimi'ni ister ve diski yalnızca okur.

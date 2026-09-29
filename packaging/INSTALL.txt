@@ -34,6 +34,8 @@ Requires macOS 14 Sonoma or later. Support for older versions is coming soon.
 
 FixStat needs no administrator rights and no special permissions. It only
 reads sensor values and never writes to the SMC. It has no network access.
+The hardware check asks for camera, microphone and Bluetooth access the
+first time you open those tests.
 Exception: the optional full SSD test asks for your administrator password
 and needs Full Disk Access (System Settings > Privacy & Security > Full Disk
 Access > FixStat on). It only reads the disk.
@@ -69,6 +71,8 @@ macOS 14 Sonoma veya üstü gerekir. Eski sürümler için destek yakında geliy
 
 FixStat yönetici yetkisi veya özel izin gerektirmez. Yalnızca sensör
 değerlerini okur, SMC'ye asla yazmaz. Ağ erişimi yoktur.
+Donanım kontrolü, ilgili testleri ilk açtığınızda kamera, mikrofon ve
+Bluetooth izni ister.
 İstisna: isteğe bağlı tam SSD testi yönetici parolanızı sorar ve Tam Disk
 Erişimi ister (Sistem Ayarları > Gizlilik ve Güvenlik > Tam Disk Erişimi >
 FixStat açık). Diski yalnızca okur.

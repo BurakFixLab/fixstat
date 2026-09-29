@@ -275,6 +275,29 @@ if snapshot.fans.isEmpty {
     print(table.render())
 }
 
+let ports = PortReader.read()
+section("PORTS (\(ports.count))")
+if ports.isEmpty {
+    print("  none published (IOPort)")
+} else {
+    var table = TextTable(["Port", "Connected", "Transports", "Power in", "Overcurrent", "Enum. fail", "Short det.",
+                           "PD hard reset", "FET fail", "I2C err", "Plug-ins"],
+                          alignments: [.left, .left, .left, .left, .right, .right, .right, .right, .right, .right, .right])
+    for p in ports {
+        let c = p.controller
+        table.add([p.id, p.connected ? "yes" : "no", p.activeTransports.joined(separator: ","),
+                   p.powerIn.map { $0 ? "yes" : "no" } ?? "", fmt(p.overcurrentCount), fmt(p.enumerationFailures),
+                   fmt(c?.shortDetect), fmt(c?.hardReset), fmt(c?.inputFETFailures), fmt(c?.i2cErrors),
+                   fmt(p.connectionCount)])
+    }
+    print(table.render())
+    for p in ports {
+        for d in p.devices {
+            print("  \(p.id): \(d.name ?? "USB device")" + (d.megabitsPerSecond.map { " (\($0) Mb/s)" } ?? ""))
+        }
+    }
+}
+
 if let voltages = snapshot.hidVoltages, let currents = snapshot.hidCurrents {
     section("HID POWER SENSORS — raw event values, units unverified (\(voltages.count) voltage, \(currents.count) current)")
     var table = TextTable(["Name", "Key", "Kind", "Raw value"], alignments: [.left, .left, .left, .right])

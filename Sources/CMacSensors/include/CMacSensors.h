@@ -3,6 +3,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/IOKitLib.h>
+#include <stdbool.h>
 #include <stdint.h>
 
 CF_ASSUME_NONNULL_BEGIN
@@ -53,6 +54,25 @@ CFArrayRef _Nullable FSHIDClientCopyReadings(CFTypeRef client, int64_t eventType
 /// Reads the 512-byte NVMe SMART / Health Information log of the first NVMe
 /// device that supports it. `outLog512` must hold 512 bytes.
 kern_return_t FSNVMeReadSMARTLog(uint8_t *outLog512);
+
+// MARK: - Multitouch (private MultitouchSupport, loaded at runtime)
+
+#define FSTouchMax 16
+
+typedef struct {
+    /// 0…1 across the trackpad, origin bottom left.
+    float x, y;
+    /// Contact size (pressure-like).
+    float size;
+    int32_t identifier;
+} FSTouch;
+
+/// Called on a framework thread for every frame with the fingers touching the surface.
+typedef void (*FSTouchCallback)(const FSTouch *touches, int count, double timestamp, void *_Nullable context);
+
+/// Starts delivering contacts of the default (built-in) trackpad. false if unavailable.
+bool FSMultitouchStart(FSTouchCallback callback, void *_Nullable context);
+void FSMultitouchStop(void);
 
 CF_ASSUME_NONNULL_END
 

@@ -1,4 +1,5 @@
 import AppKit
+import MacSensors
 import SwiftUI
 
 /// Renders the panel into a PNG without screen-recording permission:
@@ -7,9 +8,9 @@ import SwiftUI
 ///       [--dark|--light] [-AppleLanguages "(tr)"]
 ///
 /// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead,
-/// `--details` the battery details window, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
+/// `--details` the battery details window, `--hardware [keyboard|trackpad|…]` the hardware check, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
 ///
-///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf
+///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check]
 ///
 /// writes the same report as "Export report" (serials masked) and exits.
 ///
@@ -32,7 +33,13 @@ enum Snapshot {
             i + 1 < arguments.count ? Int(arguments[i + 1]) : nil
         }
         let root: AnyView
-        if arguments.contains("--details") {
+        if let i = arguments.firstIndex(of: "--hardware") {
+            let item = (i + 1 < arguments.count ? HardwareCheck.Item(rawValue: arguments[i + 1]) : nil) ?? .keyboard
+            root = AnyView(HardwareCheckView(initialItem: item)
+                .environment(monitor)
+                .frame(width: 900, height: 680)
+                .background(Color(nsColor: .windowBackgroundColor)))
+        } else if arguments.contains("--details") {
             root = AnyView(BatteryDetailsView()
                 .environment(monitor)
                 .frame(width: 720, height: 760)
@@ -81,8 +88,20 @@ enum Snapshot {
         }
     }
 
+    /// Synthetic checklist for screenshots and PDF checks (`--sample-check`).
+    static func sampleCheck() -> HardwareCheck {
+        var check = HardwareCheck()
+        check[.keyboard] = .init(status: .passed, detail: String(localized: "\(78) / \(78) keys"))
+        check[.trackpad] = .init(status: .passed, detail: String(localized: "Surface \(Format.percent(100))"))
+        check[.display] = .init(status: .failed, note: "Sample: bright spot near the lower left corner")
+        check[.speakers] = .init(status: .passed)
+        check[.camera] = .init(status: .skipped)
+        return check
+    }
+
     static func export(to url: URL, monitor: Monitor) {
         monitor.panelVisible = true
+        if CommandLine.arguments.contains("--sample-check") { monitor.hardwareCheck = sampleCheck() }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
             monitor.refresh()
             let report = SensorReport(monitor: monitor)

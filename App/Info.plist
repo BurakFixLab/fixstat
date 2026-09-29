@@ -31,6 +31,12 @@
 	<string>public.app-category.utilities</string>
 	<key>LSUIElement</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>The hardware check shows the camera image so you can test the camera.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>The hardware check shows the microphone level and records a few seconds so you can test the microphones.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>The hardware check scans for nearby Bluetooth devices to test the Bluetooth radio.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>MIT License</string>
 </dict>

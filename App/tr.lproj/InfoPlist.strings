@@ -1,0 +1,4 @@
+/* Permission prompts of the hardware check (Info.plist usage descriptions). */
+"NSCameraUsageDescription" = "Donanım kontrolü, kamerayı test edebilmeniz için kamera görüntüsünü gösterir.";
+"NSMicrophoneUsageDescription" = "Donanım kontrolü, mikrofonları test edebilmeniz için ses seviyesini gösterir ve birkaç saniye kayıt yapar.";
+"NSBluetoothAlwaysUsageDescription" = "Donanım kontrolü, Bluetooth alıcısını test etmek için yakındaki Bluetooth cihazlarını tarar.";

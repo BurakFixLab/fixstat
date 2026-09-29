@@ -38,7 +38,12 @@ battery gauge data you normally dig out of `ioreg`.
   through `PMU tdev7`.
 - **Battery history.** Charge, current and health from the last hour up to 30 days,
   plus a daily health log that is kept indefinitely.
-- **Reports.** CSV / JSON export for customer devices, serial numbers always masked.
+- **Diagnostics in one app.** Post-repair stress test, SSD health (NVMe SMART) with a
+  write–verify stress test and an optional full surface scan, memory test, kernel panic
+  and shutdown cause history, battery and power adapter originality check, and a
+  hardware check (keyboard, trackpad surface, display, speakers, microphone, camera,
+  Wi-Fi, Bluetooth, USB-C ports with fault counters, lid sensor).
+- **Reports.** PDF / CSV / JSON export for customer devices, serial numbers always masked.
 - **Read-only.** FixStat never writes to the SMC, has no fan control and needs no
   administrator rights. The only exception is the optional full SSD surface scan, which
   asks for your password and Full Disk Access and only reads the disk.

@@ -30,14 +30,14 @@ let package = Package(
             name: "sensormap",
             dependencies: ["MacSensors"]
         ),
-        // Read-only raw disk scanner, run as root through the macOS administrator
-        // prompt for the full SSD test. Shipped inside FixStat.app.
+        // Read-only raw disk scanner, run as root through sudo (askpass password dialog)
+        // for the full SSD test. Shipped inside FixStat.app.
         .executableTarget(name: "fixstat-diskscan"),
         // Menu bar app. Built into FixStat.app by scripts/build-app.sh, which also
         // compiles App/Localizable.xcstrings and bundles the sensor map.
         .executableTarget(
             name: "FixStat",
-            dependencies: ["MacSensors"]
+            dependencies: ["MacSensors", "CMacSensors"]
         ),
         .testTarget(
             name: "MacSensorsTests",

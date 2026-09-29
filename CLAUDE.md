@@ -152,6 +152,28 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 - Originality check: `SensorMaps/parts.json` (known-genuine reference values) +
   evidence rules in `PartCheck`; verdicts consistent / suspicious / unknown, never "proof".
   macOS' own condition comes from `system_profiler SPPowerDataType -json`.
+- Hardware check (`HardwareCheckView`, model `HardwareCheck`): keyboard (layout from
+  `KeyboardLayout` + legends from the current input source via `UCKeyTranslate`, ANSI/ISO
+  from `KBGetLayoutType`; key codes of new function-row keys and NX media keys are mapped
+  to the F-key positions; keys macOS consumes — F3–F6, volume — only arrive through a
+  HID-level `CGEvent` tap: active with Accessibility (blocks them during the test),
+  listen-only with Input Monitoring), trackpad (raw contacts from the private
+  MultitouchSupport framework via `dlopen` in `multitouch.c`, independent of the
+  pointer → 16×10 surface grid; clicks assigned to 3×3 zones by the pressing finger /
+  the centre of two fingers; force click / scroll / pinch, haptic pulses), display
+  (full-screen colours on the built-in screen), speakers (L/R tones, sweep), microphone
+  (level, record + play back), camera (preview, average luma), Wi-Fi (CoreWLAN; scan
+  works without Location, names hidden), Bluetooth (`system_profiler` + CoreBluetooth
+  scan), ports, lid. Tests fill in evidence and may mark passed; the technician's choice
+  always wins. Page 2 of the PDF report when anything was marked.
+- Ports (`PortReader`): `IOPort` services ("Port-USB-C@1": ConnectionActive,
+  TransportsActive, Overcurrent Count, ConnectionCount), USB enumeration failures from
+  `AppleUSBHostPort` `port-statistics`, devices below `UsbCPortNumber`, and
+  AppleSmartBattery `PortControllerInfo[n-1]` (charging = active contract; short detect,
+  PD hard reset, input FET and I²C error counters). `IOPortFeaturePowerIn.Active` stayed
+  false while charging on M1 / macOS 26.
+- Lid: `IOPMrootDomain.AppleClamshellState` polled, plus the last `pmset -g log` sleep
+  reason ("Clamshell Sleep") after a wake. No lid angle sensor on MacBookAir10,1.
 - USB-C PD: the active profile is macOS' selection (`AdapterDetails.UsbHvcMenu` /
   `UsbHvcHvcIndex`); the port controller's RDO can lag (showed 5 V while charging at 20 V).
 
@@ -181,11 +203,12 @@ swift test
 scripts/build-app.sh            # → build/FixStat.app (ad-hoc signed)
 scripts/package-release.sh      # → build/FixStat.zip (app + packaging/INSTALL.txt) for Releases
 open build/FixStat.app
-# Render the panel, a Settings tab or the history window to PNG (no screen recording needed):
+# Render the panel, a Settings tab or the history window to PNG (no screen recording needed;
+# NavigationSplitView windows such as --hardware do not render this way, use a screenshot):
 build/FixStat.app/Contents/MacOS/FixStat --snapshot out.png [--technician] [--settings 0|1|2] \
     [--history [--range 0…6] --data-dir DIR] [--dark|--light] -AppleLanguages "(tr)" [-AppleLocale en_US]
 # Write the report (same as "Export report") and exit:
-build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json
+build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check]
 ```
 
 ## Repository layout
@@ -200,8 +223,9 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json
 ├── packaging/INSTALL.txt       plain-text install notes (en + tr) shipped in the zip
 ├── scripts/localize.py         catalog apply / prune / check (+ l10n_data.py)
 ├── Package.swift               SPM: CMacSensors, MacSensors, sensordump, sensormap, fixstat-diskscan, FixStat, tests
-├── Sources/CMacSensors/        C shims: read-only AppleSMC user client, private HID event API
-├── Sources/MacSensors/         SMC, HID, battery, system info, sensor map, history store, masking
+├── Sources/CMacSensors/        C shims: read-only AppleSMC user client, private HID event API,
+│                               NVMe SMART, MultitouchSupport contacts
+├── Sources/MacSensors/         SMC, HID, battery, ports, system info, sensor map, history store, masking
 ├── Sources/sensordump/         CLI dump
 ├── Sources/sensormap/          load tests, report, map proposal
 ├── Sources/fixstat-diskscan/   read-only raw disk surface scan (full SSD test, runs as root)

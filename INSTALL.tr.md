@@ -54,6 +54,9 @@ uygulamanın *"hasarlı olduğu ve açılamayacağını"* söylerse de bunu kull
 FixStat **özel bir izin gerektirmez**: yönetici yetkisi, Erişilebilirlik veya Tam Disk Erişimi,
 ağ erişimi yoktur. Yalnızca sensör değerlerini okur; SMC'ye asla yazmaz.
 
+**Donanım kontrolü**, ilgili testleri ilk açtığınızda macOS üzerinden kamera, mikrofon ve
+Bluetooth izni ister; bunlar yalnızca test ekrandayken kullanılır.
+
 Tek istisna isteğe bağlı **tam SSD testidir** (Araçlar › SSD sağlığı ve testi). Diskin tüm
 yüzeyini okumak için yönetici parolanız (her seferinde sorulur, FixStat saklamaz) ve **Tam
 Disk Erişimi** gerekir: Sistem Ayarları › Gizlilik ve Güvenlik › Tam Disk Erişimi › FixStat'ı

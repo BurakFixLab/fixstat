@@ -90,6 +90,11 @@ enum Format {
         value.formatted(.number.precision(.fractionLength(digits)))
     }
 
+    /// Signal or level in decibels, e.g. "−47 dBm", "−12 dBFS".
+    static func decibels(_ value: Double, unit: String) -> String {
+        value.formatted(.number.precision(.fractionLength(0))) + "\u{00A0}" + unit
+    }
+
     static func rpm(_ value: Double) -> String {
         let number = value.formatted(.number.precision(.fractionLength(0)))
         return String(localized: "\(number) rpm", comment: "Fan speed")

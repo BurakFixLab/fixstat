@@ -63,6 +63,8 @@ final class Monitor {
     var lastFullSSDResult: FullSSDTestRunner.Result?
     /// Result of the last SSD write–verify test (for reports).
     var lastSSDResult: SSDStressTest.Result?
+    /// Hardware checklist of this session (for reports).
+    var hardwareCheck = HardwareCheck()
 
     /// The battery details window refreshes the battery at the panel's rate.
     var detailsVisible = false {

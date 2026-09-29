@@ -45,6 +45,11 @@ cp "$(swift build -c "$config" --show-bin-path)/fixstat-diskscan" "$app/Contents
 cp App/Info.plist "$app/Contents/Info.plist"
 cp SensorMaps/sensor-map.json "$app/Contents/Resources/sensor-map.json"
 cp SensorMaps/parts.json "$app/Contents/Resources/parts.json"
+# Permission prompts (Info.plist usage descriptions); English comes from Info.plist.
+for lproj in App/*.lproj; do
+    mkdir -p "$app/Contents/Resources/$(basename "$lproj")"
+    cp "$lproj"/*.strings "$app/Contents/Resources/$(basename "$lproj")/"
+done
 xcrun xcstringstool compile App/Localizable.xcstrings --output-directory "$app/Contents/Resources" >/dev/null
 codesign --force --sign - "$app/Contents/MacOS/fixstat-diskscan"
 codesign --force --sign - "$app"
