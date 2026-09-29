@@ -242,7 +242,7 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 swift build
 swift test
 .build/debug/sensordump [--json] [--raw] [--smc-all] [--hid-power] [--all] [--include-serial]
-scripts/build-app.sh            # → build/FixStat.app (ad-hoc signed)
+scripts/build-app.sh            # → build/FixStat.app (ad-hoc signed; release = universal arm64 + x86_64)
 scripts/package-release.sh      # → build/FixStat.dmg (drag-to-Applications window + INSTALL.txt) for Releases
 scripts/make-artwork.sh         # App/AppIcon.svg → AppIcon.icns, packaging/dmg-background.svg → App/DMGBackground.tiff
 open build/FixStat.app

@@ -6,12 +6,12 @@
 
 [English](README.md)
 
-> **Test sürümü.** FixStat şu an **macOS 14 Sonoma veya üstünü** gerektirir.
-> **macOS 10.13 High Sierra'ya kadar** eski macOS sürümleri için destek yakında geliyor.
+> **macOS 14 Sonoma veya üstü gerekir.** Apple Silicon'da (MacBook Air M1) test edildi.
+> **Intel Mac'lerde henüz test edilmedi**: FixStat çalışmalı, ancak sensör isimleri ve fan
+> değerleri eksik olabilir; geri bildirimlerinizi bekliyoruz. **macOS 10.13 High Sierra'ya
+> kadar** eski macOS sürümleri için destek geliyor.
 >
-> **Henüz indirilebilir sürüm yok.** Releases sayfasında şu an hazır bir `FixStat.app`
-> bulunmuyor; ilk sürüm (v1.0) hâlâ hazırlanıyor. O zamana kadar FixStat yalnızca
-> [kaynaktan derlenerek](#kurulum) kullanılabilir.
+> **İndirme:** [Releases](../../releases/latest) sayfasındaki `FixStat.dmg`.
 
 FixStat batarya, sıcaklık, fan ve sistem verilerini menü çubuğunda gösterir. Sensör
 isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg` içinden
@@ -125,8 +125,10 @@ biçimleri bölge ayarınızı izler.
 - **Özel (private) API'ler.** Apple Silicon'da sıcaklıklar herkese açık olmayan
   `IOHIDEventSystemClient` API'sinden okunur. FixStat'ın App Store'da olmamasının
   sebebi budur.
-- **Ağ erişimi yoktur.** Ayarlar, özel sensör isimleri ve batarya geçmişi
-  `~/Library/Application Support/FixStat/` klasöründe kalır.
+- **Veri toplamaz.** FixStat hiçbir veri toplamaz ve hiçbir yere göndermez: analiz,
+  telemetri, güncelleme kontrolü yoktur, ağ erişimi hiç yoktur. Ayarlar, özel sensör
+  isimleri ve batarya geçmişi Mac'inizde `~/Library/Application Support/FixStat/`
+  klasöründe kalır; raporlar yalnızca siz dışa aktardığınızda oluşturulur.
 - **Seri numaraları** her çıktıda ve dışa aktarmada maskelenir.
 
 ## Teşekkür

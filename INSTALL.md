@@ -2,8 +2,8 @@
 
 [Türkçe](INSTALL.tr.md)
 
-> **Test release.** FixStat currently requires **macOS 14 Sonoma or later**.
-> Support for older versions (down to macOS 10.13 High Sierra) is coming soon.
+> **Requires macOS 14 Sonoma or later.** Tested on Apple Silicon; **Intel Macs have not been
+> tested yet.** Support for older versions (down to macOS 10.13 High Sierra) is coming.
 
 - [1. Download](#1-download)
 - [2. Open it the first time](#2-open-it-the-first-time)
@@ -15,9 +15,6 @@
 - [Troubleshooting](#troubleshooting)
 
 ## 1. Download
-
-> **Not available yet.** The first release (v1.0) is still being prepared, so the Releases
-> page has no `FixStat.dmg` yet. Until then, see [Building from source](#building-from-source).
 
 1. Download `FixStat.dmg` from the [Releases](../../releases) page.
 2. Double-click it. A window opens with FixStat, an arrow and the Applications folder.

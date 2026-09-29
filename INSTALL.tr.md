@@ -2,8 +2,8 @@
 
 [English](INSTALL.md)
 
-> **Test sürümü.** FixStat şu an **macOS 14 Sonoma veya üstünü** gerektirir.
-> Eski sürümler için destek (macOS 10.13 High Sierra'ya kadar) yakında geliyor.
+> **macOS 14 Sonoma veya üstü gerekir.** Apple Silicon'da test edildi; **Intel Mac'lerde henüz
+> test edilmedi.** Eski sürümler için destek (macOS 10.13 High Sierra'ya kadar) geliyor.
 
 - [1. İndirme](#indirme)
 - [2. İlk açılış](#ilk-acilis)
@@ -17,9 +17,6 @@
 <a id="indirme"></a>
 
 ## 1. İndirme
-
-> **Henüz yayında değil.** İlk sürüm (v1.0) hâlâ hazırlanıyor, bu yüzden Releases sayfasında
-> henüz `FixStat.dmg` yok. O zamana kadar [Kaynaktan derleme](#kaynaktan-derleme) bölümüne bakın.
 
 1. [Releases](../../releases) sayfasından `FixStat.dmg` dosyasını indirin.
 2. Çift tıklayın. FixStat, bir ok ve Uygulamalar klasörünün olduğu bir pencere açılır.

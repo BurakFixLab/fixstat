@@ -6,12 +6,12 @@
 
 [Türkçe](README.tr.md)
 
-> **Test release.** FixStat currently requires **macOS 14 Sonoma or later**.
-> Support for older macOS versions, down to **macOS 10.13 High Sierra**, is coming soon.
+> **Requires macOS 14 Sonoma or later.** Tested on Apple Silicon (MacBook Air M1).
+> **Intel Macs have not been tested yet**: FixStat should run, but sensor names and fan
+> readings may be incomplete — reports are welcome. Support for older macOS versions,
+> down to **macOS 10.13 High Sierra**, is coming.
 >
-> **No download yet.** There is no ready-made `FixStat.app` on the Releases page yet —
-> the first release (v1.0) is still being prepared. Until then FixStat can only be
-> [built from source](#installation).
+> **Download:** `FixStat.dmg` on the [Releases](../../releases/latest) page.
 
 FixStat shows battery, temperature, fan and system data in the menu bar — with
 sensor names that were verified per Mac model, and a technician mode with the raw
@@ -119,8 +119,10 @@ FixStat and pick a language. Numbers and units follow your region settings.
   rejects anything else. No fan control, no root, no `powermetrics`.
 - **Private APIs.** Temperatures on Apple Silicon come from `IOHIDEventSystemClient`,
   which is not public API. This is why FixStat is not on the App Store.
-- **No network access.** Settings, custom sensor names and battery history stay in
-  `~/Library/Application Support/FixStat/`.
+- **No data collection.** FixStat collects nothing and sends nothing: no analytics, no
+  telemetry, no update checks, no network access at all. Settings, custom sensor names and
+  battery history stay on your Mac in `~/Library/Application Support/FixStat/`; reports
+  are only created when you export them.
 - **Serial numbers** are masked in every output and export.
 
 ## Acknowledgements

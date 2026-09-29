@@ -252,6 +252,7 @@ struct CapacityTestView: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
                 controls
+                loadLegend
                 if target == 0 && !busy {
                     Label("At 0 % macOS puts the Mac to sleep or turns it off by itself. The measurements are saved while the test runs; if the Mac turns off — also early, as a weak battery does — the result appears here the next time FixStat opens. Full discharges wear the battery, so use them sparingly.",
                           systemImage: "info.circle")
@@ -313,6 +314,32 @@ struct CapacityTestView: View {
                     .disabled((monitor.battery?.stateOfCharge ?? 0) <= target + 5)
             }
         }
+    }
+
+    /// What each load level corresponds to in everyday use, and what disturbs the test.
+    @ViewBuilder
+    private var loadLegend: some View {
+        Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 3) {
+            GridRow {
+                Text("Light load").fontWeight(.semibold)
+                Text("No extra load, display on — like web browsing, writing or watching videos.")
+            }
+            GridRow {
+                Text("Medium").fontWeight(.semibold)
+                Text("Half of the CPU cores busy — like heavy multitasking or photo editing.")
+            }
+            GridRow {
+                Text("Heavy").fontWeight(.semibold)
+                Text("All CPU cores and the GPU busy — like gaming, video export or 3D rendering.")
+            }
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        Label("For a reliable result, close other apps and keep the display brightness the same during the test. Other apps add load and change the power and the duration; the measured capacity stays valid, but only tests with the same load and brightness can be compared.",
+              systemImage: "info.circle")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     private var liveView: some View {

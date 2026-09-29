@@ -677,6 +677,11 @@ TR = {
     "Shutdown cause %lld: %@": "Kapanma nedeni %1$lld: %2$@",
     "Capacity test: the Mac turned off unexpectedly at %@. The battery may be faulty.": "Kapasite testi: Mac %@ seviyesinde beklenmedik şekilde kapandı. Bataryada sorun olabilir.",
     "The Mac turned off without a normal shutdown %lld times while the battery still showed charge (last time at %@). Unless these were kernel panics or a held power button, the battery may be faulty.": "Mac, batarya hâlâ şarj gösterirken %1$lld kez normal kapanma olmadan kapandı (son seferinde %2$@). Bunlar kernel panic veya basılı tutulan güç düğmesi değilse bataryada sorun olabilir.",
+    # Capacity test load legend
+    "No extra load, display on — like web browsing, writing or watching videos.": "Ek yük yok, ekran açık — internette gezinme, yazı yazma veya video izleme gibi.",
+    "Half of the CPU cores busy — like heavy multitasking or photo editing.": "CPU çekirdeklerinin yarısı dolu — yoğun çoklu iş veya fotoğraf düzenleme gibi.",
+    "All CPU cores and the GPU busy — like gaming, video export or 3D rendering.": "Tüm CPU çekirdekleri ve GPU dolu — oyun, video dışa aktarma veya 3D çizim gibi.",
+    "For a reliable result, close other apps and keep the display brightness the same during the test. Other apps add load and change the power and the duration; the measured capacity stays valid, but only tests with the same load and brightness can be compared.": "Güvenilir sonuç için diğer uygulamaları kapatın ve test boyunca ekran parlaklığını değiştirmeyin. Açık uygulamalar ek yük bindirir, gücü ve süreyi değiştirir; ölçülen kapasite yine geçerlidir ama yalnızca aynı yük ve parlaklıktaki testler karşılaştırılabilir.",
 }
 
 # key: (English, Turkish)

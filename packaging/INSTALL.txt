@@ -10,7 +10,8 @@ https://github.com/BurakFixLab/fixstat/blob/main/INSTALL.tr.md
 ENGLISH
 -------
 
-Requires macOS 14 Sonoma or later. Support for older versions is coming soon.
+Requires macOS 14 Sonoma or later. Tested on Apple Silicon; Intel Macs have
+not been tested yet. Support for older versions is coming.
 
 1. Drag FixStat.app into your Applications folder.
 
@@ -47,7 +48,8 @@ Trash. Optional: delete ~/Library/Application Support/FixStat
 TÜRKÇE
 ------
 
-macOS 14 Sonoma veya üstü gerekir. Eski sürümler için destek yakında geliyor.
+macOS 14 Sonoma veya üstü gerekir. Apple Silicon'da test edildi; Intel
+Mac'lerde henüz test edilmedi. Eski sürümler için destek geliyor.
 
 1. FixStat.app'i Uygulamalar (Applications) klasörüne sürükleyin.
 
