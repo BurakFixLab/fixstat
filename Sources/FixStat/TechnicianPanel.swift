@@ -26,6 +26,7 @@ struct TechnicianPanel: View {
                 ToolsMenu()
                 Spacer()
                 ExportMenu()
+                QuitButton()
             }
         }
         .monospacedDigit()

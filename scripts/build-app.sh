@@ -23,7 +23,7 @@ if [ "$config" = "release" ]; then
     arch_flags=(--arch arm64 --arch x86_64)
 fi
 build() {
-    swift build -c "$config" "${arch_flags[@]}" --product FixStat \
+    swift build -c "$config" ${arch_flags[@]+"${arch_flags[@]}"} --product FixStat \
         -Xswiftc -emit-localized-strings -Xswiftc -emit-localized-strings-path -Xswiftc "$strings_dir"
 }
 build
@@ -44,9 +44,9 @@ python3 scripts/localize.py check
 
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
-bin="$(swift build -c "$config" "${arch_flags[@]}" --show-bin-path)"
+bin="$(swift build -c "$config" ${arch_flags[@]+"${arch_flags[@]}"} --show-bin-path)"
 cp "$bin/FixStat" "$app/Contents/MacOS/FixStat"
-swift build -c "$config" "${arch_flags[@]}" --product fixstat-diskscan >/dev/null
+swift build -c "$config" ${arch_flags[@]+"${arch_flags[@]}"} --product fixstat-diskscan >/dev/null
 cp "$bin/fixstat-diskscan" "$app/Contents/MacOS/fixstat-diskscan"
 cp App/Info.plist "$app/Contents/Info.plist"
 cp SensorMaps/sensor-map.json "$app/Contents/Resources/sensor-map.json"
