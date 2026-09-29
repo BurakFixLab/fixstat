@@ -6,14 +6,15 @@ import SwiftUI
 enum PDFReport {
     static let pageSize = CGSize(width: 595, height: 842) // A4 in points
 
-    /// Page 1: device, battery, temperatures and tests. Page 2 (only when used):
-    /// the hardware checklist.
+    /// Page 1: device, battery, temperatures and tests. Page 2 (only when used): the
+    /// hardware checklist and the sleep / wake analysis.
     @MainActor
     static func render(monitor: Monitor) -> Data? {
         let snapshot = ReportSnapshot(monitor: monitor)
         var pages = [AnyView(ReportPage(snapshot: snapshot))]
-        if !monitor.hardwareCheck.isEmpty {
-            pages.append(AnyView(HardwareCheckPage(snapshot: snapshot, check: monitor.hardwareCheck)))
+        let check = monitor.hardwareCheck.isEmpty ? nil : monitor.hardwareCheck
+        if check != nil || monitor.lastSleepAnalysis != nil {
+            pages.append(AnyView(SecondPage(snapshot: snapshot, check: check, sleep: monitor.lastSleepAnalysis)))
         }
         let data = NSMutableData()
         var box = CGRect(origin: .zero, size: pageSize)
@@ -324,9 +325,11 @@ private struct ReportPage: View {
 }
 
 /// Second page: the hardware checklist with status, evidence and notes.
-private struct HardwareCheckPage: View {
+/// Second page: hardware checklist and sleep / wake analysis.
+private struct SecondPage: View {
     let snapshot: ReportSnapshot
-    let check: HardwareCheck
+    let check: HardwareCheck?
+    let sleep: SleepAnalysis?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -335,15 +338,30 @@ private struct HardwareCheckPage: View {
                     if !snapshot.shopName.isEmpty {
                         Text(verbatim: snapshot.shopName).font(.system(size: 16, weight: .semibold))
                     }
-                    Text("Hardware check").font(.system(size: 13, weight: .medium))
+                    Text("Mac inspection report").font(.system(size: 13, weight: .medium))
                 }
                 Spacer()
                 Text(verbatim: snapshot.system.marketingName ?? snapshot.system.model).foregroundStyle(.gray)
             }
             Divider()
+            if let check { hardware(check) }
+            if let sleep { sleepSection(sleep) }
+            Spacer(minLength: 0)
+            Text("Created with FixStat \(AboutInfo.version) — github.com/BurakFixLab/fixstat. Serial numbers are masked.")
+                .foregroundStyle(.gray)
+                .font(.system(size: 8))
+        }
+        .padding(36)
+        .font(.system(size: 10))
+        .foregroundStyle(.black)
+        .background(.white)
+    }
+
+    private func hardware(_ check: HardwareCheck) -> some View {
+        ReportGroup(title: "Hardware check") {
             Text("\(check.count(.passed)) passed · \(check.count(.failed)) failed · \(check.count(.untested)) not tested")
                 .font(.system(size: 11, weight: .semibold))
-            Grid(alignment: .topLeading, horizontalSpacing: 14, verticalSpacing: 7) {
+            Grid(alignment: .topLeading, horizontalSpacing: 14, verticalSpacing: 5) {
                 ForEach(HardwareCheck.Item.allCases, id: \.self) { item in
                     let entry = check[item]
                     GridRow {
@@ -360,15 +378,29 @@ private struct HardwareCheckPage: View {
                     Divider().gridCellUnsizedAxes(.horizontal)
                 }
             }
-            Spacer(minLength: 0)
-            Text("Created with FixStat \(AboutInfo.version) — github.com/BurakFixLab/fixstat. Serial numbers are masked.")
-                .foregroundStyle(.gray)
-                .font(.system(size: 8))
         }
-        .padding(36)
-        .font(.system(size: 10))
-        .foregroundStyle(.black)
-        .background(.white)
+    }
+
+    private func sleepSection(_ a: SleepAnalysis) -> some View {
+        ReportGroup(title: "Sleep and wake") {
+            if let from = a.from, let to = a.to {
+                ReportRow(title: "Period", value: from.formatted(date: .abbreviated, time: .omitted) + " – "
+                          + to.formatted(date: .abbreviated, time: .omitted))
+            }
+            ReportRow(title: "Sleeps · wakes · dark wakes", value: "\(a.sleeps.count) · \(a.wakes.count) · \(a.darkWakes.count)")
+            ReportRow(title: "Drain while asleep", value: a.sleepDrain.map { SleepText.drain($0.percentPerHour) })
+            ReportRow(title: "Battery ran empty", value: Format.number(Double(a.lowPowerSleeps)))
+            if let top = a.reasons(.wake, limit: 3).first {
+                ReportRow(title: "Most common wake reason", value: "\(SleepText.category(top.name) ?? top.name) (\(top.count)×)")
+            }
+            let findings = SleepText.findings(a)
+            ForEach(Array(findings.enumerated()), id: \.offset) { _, f in
+                Text(verbatim: "• " + f)
+            }
+            if findings.isEmpty {
+                Text("No sleep or wake problems found.")
+            }
+        }
     }
 }
 

@@ -66,6 +66,12 @@ struct FixStatApp: App {
         }
         .defaultSize(width: 620, height: 680)
 
+        Window("Sleep and wake", id: SleepView.windowID) {
+            SleepView()
+                .environment(monitor)
+        }
+        .defaultSize(width: 720, height: 720)
+
         Window("Hardware check", id: HardwareCheckView.windowID) {
             HardwareCheckView()
                 .environment(monitor)

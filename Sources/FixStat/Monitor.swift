@@ -65,6 +65,8 @@ final class Monitor {
     var lastSSDResult: SSDStressTest.Result?
     /// Hardware checklist of this session (for reports).
     var hardwareCheck = HardwareCheck()
+    /// Last sleep / wake analysis (for reports).
+    var lastSleepAnalysis: SleepAnalysis?
     /// Device card data (system_profiler takes about a second, so it is loaded on demand).
     var deviceInfo: DeviceInfo?
 

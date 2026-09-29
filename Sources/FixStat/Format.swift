@@ -58,6 +58,19 @@ enum Format {
         Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))
     }
 
+    /// "3 h 12 min", "45 s": days / hours / minutes / seconds, largest two units.
+    static func duration(_ seconds: Double) -> String {
+        Duration.seconds(seconds.rounded()).formatted(.units(allowed: [.days, .hours, .minutes, .seconds],
+                                                             width: .abbreviated, maximumUnitCount: 2))
+    }
+
+    /// "3.2 s"
+    static func seconds(_ value: Double) -> String {
+        Measurement(value: value, unit: UnitDuration.seconds)
+            .formatted(.measurement(width: .abbreviated, usage: .asProvided,
+                                    numberFormatStyle: .number.precision(.fractionLength(1))))
+    }
+
     /// "4:05" style minutes and seconds.
     static func minutesSeconds(_ seconds: TimeInterval) -> String {
         Duration.seconds(seconds.rounded()).formatted(.time(pattern: .minuteSecond))

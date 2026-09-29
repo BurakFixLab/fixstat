@@ -152,6 +152,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 - Originality check: `SensorMaps/parts.json` (known-genuine reference values) +
   evidence rules in `PartCheck`; verdicts consistent / suspicious / unknown, never "proof".
   macOS' own condition comes from `system_profiler SPPowerDataType -json`.
+- Sleep / wake (`SleepAnalysis`, `SleepView`): parses `pmset -g log` (about a week; lines
+  are "date +zone Domain(20 cols)\tmessage"; Sleep lines end with the time asleep, charge
+  in "(Charge:N%)") and `pmset -g` ("sleep prevented by …"). Drain while asleep = charge
+  lost between sleep and the next (dark) wake on battery, sleeps ≥ 30 min. Assertion
+  holders are ranked by their longest assertion (they overlap, so sums are meaningless).
 - Device card (`DeviceInfo`, `DeviceInfoView`): `system_profiler SPHardwareDataType -json`
   (part number `model_number`, `boot_rom_version`, `activation_lock_status`; serial masked,
   platform UUID / provisioning UDID never read), `profiles status -type enrollment`

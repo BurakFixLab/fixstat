@@ -45,6 +45,7 @@ struct ToolsMenu: View {
             Button("SSD health and test") { open(SSDView.windowID) }
             Button("Memory test") { open(MemoryView.windowID) }
             Button("Panic and shutdown history") { open(CrashHistoryView.windowID) }
+            Button("Sleep and wake") { open(SleepView.windowID) }
             Button("Post-repair test") { open(TestView.windowID) }
             Button("Hardware check") { open(HardwareCheckView.windowID) }
         } label: {

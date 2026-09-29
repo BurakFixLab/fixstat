@@ -10,7 +10,7 @@ import SwiftUI
 /// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead,
 /// `--details` the battery details window, `--hardware [keyboard|trackpad|…]` the hardware check, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
 ///
-///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check]
+///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check] [--sleep]
 ///
 /// writes the same report as "Export report" (serials masked) and exits.
 ///
@@ -102,6 +102,7 @@ enum Snapshot {
     static func export(to url: URL, monitor: Monitor) {
         monitor.panelVisible = true
         if CommandLine.arguments.contains("--sample-check") { monitor.hardwareCheck = sampleCheck() }
+        if CommandLine.arguments.contains("--sleep") { monitor.lastSleepAnalysis = SleepAnalysis.read() }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
             monitor.refresh()
             let report = SensorReport(monitor: monitor)

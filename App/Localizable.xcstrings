@@ -71,6 +71,16 @@
         }
       }
     },
+    "%@ per hour" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "saatte %@"
+          }
+        }
+      }
+    },
     "%@ reached %@ (limit %@)" : {
       "localizations" : {
         "en" : {
@@ -301,6 +311,32 @@
         }
       }
     },
+    "%lld sleep or wake failures in the log." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günlükte %lld uyku veya uyanma hatası var."
+          }
+        }
+      }
+    },
+    "%lld times, longest %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld times, longest %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld kez, en uzun %2$@"
+          }
+        }
+      }
+    },
     "%lld unreadable areas (%@) — failing NAND" : {
       "localizations" : {
         "en" : {
@@ -323,6 +359,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld×"
+          }
+        }
+      }
+    },
+    "%lld× · up to %@ ms" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld× · up to %2$@ ms"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld× · en çok %2$@ ms"
           }
         }
       }
@@ -634,12 +686,42 @@
         }
       }
     },
+    "Average wake time" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortalama uyanma süresi"
+          }
+        }
+      }
+    },
+    "Back to sleep after maintenance" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bakım sonrası yeniden uyku"
+          }
+        }
+      }
+    },
     "Battery" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya"
+          }
+        }
+      }
+    },
+    "Battery almost empty" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya neredeyse boş"
           }
         }
       }
@@ -730,6 +812,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya sorunu"
+          }
+        }
+      }
+    },
+    "Battery ran empty" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya bitti"
           }
         }
       }
@@ -1422,6 +1514,36 @@
         }
       }
     },
+    "Dark wake" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karanlık uyanma"
+          }
+        }
+      }
+    },
+    "Dark wake reasons" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karanlık uyanma nedenleri"
+          }
+        }
+      }
+    },
+    "Dark wakes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karanlık uyanmalar"
+          }
+        }
+      }
+    },
     "Data read" : {
       "localizations" : {
         "tr" : {
@@ -1558,6 +1680,26 @@
         }
       }
     },
+    "Display off after" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekranın kapanması"
+          }
+        }
+      }
+    },
+    "Drain while asleep" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uykuda tüketim"
+          }
+        }
+      }
+    },
     "Duration" : {
       "localizations" : {
         "tr" : {
@@ -1674,6 +1816,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaldı"
+          }
+        }
+      }
+    },
+    "Failure" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hata"
           }
         }
       }
@@ -1878,6 +2030,16 @@
         }
       }
     },
+    "Frequent dark wakes: about %lld per day." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sık karanlık uyanma: günde yaklaşık %lld."
+          }
+        }
+      }
+    },
     "Full in" : {
       "localizations" : {
         "tr" : {
@@ -2068,12 +2230,32 @@
         }
       }
     },
+    "Hibernate mode" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hazırda bekletme modu"
+          }
+        }
+      }
+    },
     "Hide sensors or give them your own name. Names are saved in your sensor map." : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sensörleri gizleyin veya kendi adınızı verin. İsimler sensör haritanıza kaydedilir."
+          }
+        }
+      }
+    },
+    "High battery drain while asleep: %@. A healthy Mac usually loses less than 1 %% per hour; check Power Nap, wake for network access and the dark wake reasons." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uykuda yüksek batarya tüketimi: %@. Sağlıklı bir Mac genellikle saatte %%1'den az kaybeder; Power Nap'i, ağ erişimi için uyanmayı ve karanlık uyanma nedenlerini kontrol edin."
           }
         }
       }
@@ -2198,6 +2380,16 @@
         }
       }
     },
+    "Idle sleep" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boşta uyku"
+          }
+        }
+      }
+    },
     "Input" : {
       "localizations" : {
         "tr" : {
@@ -2258,6 +2450,16 @@
         }
       }
     },
+    "Keep network connections (TCP keepalive)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ağ bağlantılarını koru (TCP keepalive)"
+          }
+        }
+      }
+    },
     "Kernel panics" : {
       "localizations" : {
         "tr" : {
@@ -2284,6 +2486,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Klavye"
+          }
+        }
+      }
+    },
+    "Keyboard or trackpad" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klavye veya trackpad"
           }
         }
       }
@@ -2384,6 +2596,16 @@
         }
       }
     },
+    "Lid opened" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapak açıldı"
+          }
+        }
+      }
+    },
     "Lid sensor" : {
       "localizations" : {
         "tr" : {
@@ -2420,6 +2642,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "CPU ve GPU'yu birkaç dakika yükler; sıcaklıkları, hücre voltajlarını ve güç beslemesini kontrol eder. Tamirden sonra, kasa kapalıyken ve masa üstünde çalıştırın."
+          }
+        }
+      }
+    },
+    "Low Power Mode" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Düşük Güç Modu"
+          }
+        }
+      }
+    },
+    "Low battery warnings" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Düşük batarya uyarıları"
           }
         }
       }
@@ -2644,6 +2886,16 @@
         }
       }
     },
+    "Most common wake reason" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En sık uyanma nedeni"
+          }
+        }
+      }
+    },
     "Most of the rated endurance is used (%lld %%)." : {
       "localizations" : {
         "tr" : {
@@ -2670,6 +2922,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dikkat edilmesi gerekenler"
+          }
+        }
+      }
+    },
+    "Network or Bluetooth" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ağ veya Bluetooth"
           }
         }
       }
@@ -2844,6 +3106,16 @@
         }
       }
     },
+    "No sleep or wake problems found." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyku veya uyanma sorunu bulunmadı."
+          }
+        }
+      }
+    },
     "No temperature sensors found" : {
       "localizations" : {
         "tr" : {
@@ -2980,6 +3252,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FixStat için bildirimler kapalı. Sistem Ayarları › Bildirimler'den izin verin."
+          }
+        }
+      }
+    },
+    "Now: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şu an: %@"
           }
         }
       }
@@ -3294,6 +3576,16 @@
         }
       }
     },
+    "Period" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dönem"
+          }
+        }
+      }
+    },
     "Permanent failure" : {
       "localizations" : {
         "tr" : {
@@ -3414,6 +3706,16 @@
         }
       }
     },
+    "Power Nap" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Power Nap"
+          }
+        }
+      }
+    },
     "Power adapter" : {
       "localizations" : {
         "tr" : {
@@ -3464,6 +3766,16 @@
         }
       }
     },
+    "Power button" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç düğmesi"
+          }
+        }
+      }
+    },
     "Power button held (forced shutdown)" : {
       "localizations" : {
         "tr" : {
@@ -3480,6 +3792,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Güç döngüsü"
+          }
+        }
+      }
+    },
+    "Power log from %@ to %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Power log from %1$@ to %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç günlüğü: %1$@ – %2$@"
           }
         }
       }
@@ -3730,6 +4058,16 @@
         }
       }
     },
+    "Recent events" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son olaylar"
+          }
+        }
+      }
+    },
     "Record 4 s" : {
       "localizations" : {
         "tr" : {
@@ -3746,6 +4084,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaydediliyor…"
+          }
+        }
+      }
+    },
+    "Refresh" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yenile"
           }
         }
       }
@@ -3990,6 +4338,16 @@
         }
       }
     },
+    "Scheduled (maintenance, Power Nap)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zamanlanmış (bakım, Power Nap)"
+          }
+        }
+      }
+    },
     "Scroll" : {
       "localizations" : {
         "tr" : {
@@ -4046,6 +4404,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Servis önerilir"
+          }
+        }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlar"
           }
         }
       }
@@ -4200,6 +4568,16 @@
         }
       }
     },
+    "Sleep" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyku"
+          }
+        }
+      }
+    },
     "Sleep / wake" : {
       "localizations" : {
         "tr" : {
@@ -4210,12 +4588,92 @@
         }
       }
     },
+    "Sleep / wake failures" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyku / uyanma hataları"
+          }
+        }
+      }
+    },
+    "Sleep after" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uykuya geçme"
+          }
+        }
+      }
+    },
+    "Sleep and wake" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyku ve uyanma"
+          }
+        }
+      }
+    },
+    "Sleep chosen by the user" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kullanıcı uyuttu"
+          }
+        }
+      }
+    },
+    "Sleep is prevented right now by: %@." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyku şu an şunlar tarafından engelleniyor: %@."
+          }
+        }
+      }
+    },
+    "Sleeps" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uykular"
+          }
+        }
+      }
+    },
+    "Sleeps · wakes · dark wakes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyku · uyanma · karanlık uyanma"
+          }
+        }
+      }
+    },
     "Slow charging reason" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yavaş şarj nedeni"
+          }
+        }
+      }
+    },
+    "Slow drivers during sleep / wake" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyku / uyanmada yavaş sürücüler"
           }
         }
       }
@@ -4306,6 +4764,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standart"
+          }
+        }
+      }
+    },
+    "Standby" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bekleme (standby)"
           }
         }
       }
@@ -4536,6 +5004,16 @@
         }
       }
     },
+    "The Mac is set never to sleep." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac hiç uyumayacak şekilde ayarlı."
+          }
+        }
+      }
+    },
     "The Mac reported that the adapter cannot supply what it needs." : {
       "localizations" : {
         "tr" : {
@@ -4556,6 +5034,16 @@
         }
       }
     },
+    "The battery ran empty %lld times (macOS forced sleep at a few percent)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya %lld kez bitti (macOS birkaç yüzdede zorla uyuttu)."
+          }
+        }
+      }
+    },
     "The disk scan did not complete." : {
       "localizations" : {
         "tr" : {
@@ -4572,6 +5060,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disk tarama yardımcısı uygulamada bulunamadı."
+          }
+        }
+      }
+    },
+    "The display is set never to turn off." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekran hiç kapanmayacak şekilde ayarlı."
           }
         }
       }
@@ -4846,6 +5344,16 @@
         }
       }
     },
+    "User activity" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kullanıcı etkinliği"
+          }
+        }
+      }
+    },
     "Version" : {
       "localizations" : {
         "tr" : {
@@ -4892,6 +5400,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kapağın kapanması bekleniyor…"
+          }
+        }
+      }
+    },
+    "Wake" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyanma"
+          }
+        }
+      }
+    },
+    "Wake for network access" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ağ erişimi için uyan"
+          }
+        }
+      }
+    },
+    "Wake reasons" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyanma nedenleri"
+          }
+        }
+      }
+    },
+    "Wakes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyanmalar"
           }
         }
       }
@@ -4952,6 +5500,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Watchdog — çoğunlukla anakart veya RAM"
+          }
+        }
+      }
+    },
+    "What keeps the Mac awake" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac'i uyanık tutanlar"
           }
         }
       }
@@ -5096,12 +5654,32 @@
         }
       }
     },
+    "adapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "adaptör"
+          }
+        }
+      }
+    },
     "average brightness %@" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "ortalama parlaklık %@"
+          }
+        }
+      }
+    },
+    "battery" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "batarya"
           }
         }
       }
@@ -5248,6 +5826,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS'ta Mac bataryaları için orijinal parça bayrağı yoktur ve kopyalar dijital verileri taklit edebilir; bu nedenle bu, bilinen orijinal parçalarla bir tutarlılık kontrolüdür, kesin kanıt değildir."
+          }
+        }
+      }
+    },
+    "never" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hiçbir zaman"
           }
         }
       }
