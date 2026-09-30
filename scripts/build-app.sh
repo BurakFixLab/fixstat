@@ -18,6 +18,11 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 config="${1:-release}"
 app="build/FixStat.app"
+# A FixStat running from this bundle keeps running the old code, and the new signature
+# makes macOS' save panel service refuse it ("Unable to display save panel"): restart it.
+if pgrep -f "$PWD/$app/Contents/MacOS/FixStat" >/dev/null 2>&1; then
+    echo "warning: FixStat is running from $app — quit and reopen it after this build" >&2
+fi
 strings_dir="$PWD/.build/strings"
 work="$PWD/.build/app-$config"
 
