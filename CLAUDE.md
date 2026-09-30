@@ -138,7 +138,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   wrappers and UI-only steps (bringing a window to the front) are closures. Reports:
   `SensorReport` (CSV / JSON) and `ReportPDF` + `ReportData` (the A4 customer report, drawn
   with AppKit text into a PDF context) are in the core and used by both interfaces.
-  Notifications and login item: stage 5b.
+  Notifications (`LegacyNotifications`): UserNotifications from 10.14, NSUserNotification
+  on 10.13, installed as `AlertManager.sender` before the core starts. "Open at login"
+  (`LegacyLoginItem`): SMAppService on macOS 13, a per-user launch agent
+  (`~/Library/LaunchAgents/io.github.burakfixlab.fixstat.login.plist`, `open -b`) before.
 - `scripts/build-app.sh` compiles with clang/swiftc directly (SwiftPM raises the deployment
   target to 12): x86_64 for 10.13, arm64 for 11, lipo; the Swift runtime for < 10.14.4 is
   copied to Contents/Frameworks (rpath after /usr/lib/swift); frameworks newer than 10.13

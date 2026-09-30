@@ -28,6 +28,8 @@ public final class LegacyApp: NSObject, NSApplicationDelegate, NSPopoverDelegate
     }
 
     public func applicationDidFinishLaunching(_ notification: Notification) {
+        // Before the core: it may post the unexpected-shutdown notice at launch.
+        LegacyNotifications.install()
         core = MonitorCore()
         panel = LegacyPanelController(core: core) { [unowned self] in showSettings() }
         panel.onResize = { [unowned self] size in popover.contentSize = size }

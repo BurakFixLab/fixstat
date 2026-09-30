@@ -105,6 +105,8 @@ final class LegacySettingsController: NSWindowController, NSWindowDelegate {
             makeNote(L("Shows raw battery data, cell voltages and every sensor with its raw key."), width: Self.formWidth),
             spacer(),
             labeled(L("Update interval"), intervalPopup()),
+            loginItemCheckbox(),
+            loginError,
             makeNote(L("While the menu is closed, values refresh at most every 5 seconds to save energy."), width: Self.formWidth),
             spacer(),
             makeSectionTitle(L("PDF report")),
@@ -188,8 +190,95 @@ final class LegacySettingsController: NSWindowController, NSWindowDelegate {
             labeled(L("Warn above"), imbalance),
             makeNote(L("Difference between the highest and lowest cell voltage."), width: Self.formWidth),
             spacer(),
+        ] + notificationRows() + [
+            spacer(),
             restore,
         ])
+    }
+
+    // MARK: Notifications
+
+    private var authorized: Bool?
+    private let authorizationLabel = makeLabel("", size: LegacyStyle.caption)
+
+    private func notificationRows() -> [NSView] {
+        let enabled = NSButton(checkboxWithTitle: L("Show notifications"), target: self, action: #selector(alertsToggled(_:)))
+        enabled.bind(.value, to: NSUserDefaultsController.shared, withKeyPath: "values.\(Pref.alertsEnabled)", options: nil)
+        let kinds: [(String, AlertManager.Kind)] = [
+            (L("CPU / GPU temperature"), .chipTemperature),
+            (L("Battery temperature above 45 °C"), .batteryTemperature),
+            (L("Cell spread above the warning threshold (on battery)"), .cellImbalance),
+            (L("Power adapter connected but not charging"), .chargingStopped),
+            (L("Mac turned off unexpectedly (possible battery problem)"), .unexpectedShutdown),
+        ]
+        let toggles = kinds.map { title, kind -> NSButton in
+            let box = NSButton(checkboxWithTitle: title, target: nil, action: nil)
+            // Unset means on, like the SwiftUI @AppStorage default.
+            box.bind(.value, to: NSUserDefaultsController.shared, withKeyPath: "values.\(kind.enabledKey)",
+                     options: [.nullPlaceholder: true])
+            return box
+        }
+        let limit = stepper(key: Pref.alertChipTemperature, step: 1, range: { 60...110 },
+                            text: { Format.temperature($0, digits: 0) })
+        updaters.append { [weak self] in
+            let on = UserDefaults.standard.bool(forKey: Pref.alertsEnabled)
+            toggles.forEach { $0.isEnabled = on }
+            self?.updateAuthorizationLabel()
+        }
+        LegacyNotifications.checkAuthorization { [weak self] allowed in
+            self?.authorized = allowed
+            self?.updateAuthorizationLabel()
+        }
+        var rows: [NSView] = [makeSectionTitle(L("Notifications")), enabled, authorizationLabel, toggles[0],
+                              labeled(L("Alert above"), limit)]
+        rows += toggles.dropFirst().map { $0 as NSView }
+        rows.append(makeNote(L("A notification is sent when a condition lasts from 30 seconds to 3 minutes, and repeated at most every 15 minutes."),
+                             width: Self.formWidth))
+        return rows
+    }
+
+    @objc private func alertsToggled(_ sender: NSButton) {
+        guard sender.state == .on else { return }
+        LegacyNotifications.requestAuthorization { [weak self] allowed in
+            self?.authorized = allowed
+            self?.updateAuthorizationLabel()
+        }
+    }
+
+    private func updateAuthorizationLabel() {
+        let on = UserDefaults.standard.bool(forKey: Pref.alertsEnabled)
+        authorizationLabel.isHidden = !on || authorized == nil
+        if authorized == true {
+            authorizationLabel.stringValue = "✓ " + L("Notifications are allowed.")
+            authorizationLabel.textColor = .secondaryLabelColor
+        } else {
+            authorizationLabel.stringValue = L("Notifications are turned off for FixStat. Allow them in System Settings › Notifications.")
+            authorizationLabel.textColor = LegacyStyle.hot
+        }
+    }
+
+    // MARK: Login item
+
+    private lazy var loginError: NSTextField = {
+        let label = makeNote("", width: Self.formWidth)
+        label.isHidden = true
+        return label
+    }()
+
+    private func loginItemCheckbox() -> NSButton {
+        let box = NSButton(checkboxWithTitle: L("Open at login"), target: self, action: #selector(loginToggled(_:)))
+        box.state = LegacyLoginItem.isEnabled ? .on : .off
+        return box
+    }
+
+    @objc private func loginToggled(_ sender: NSButton) {
+        if let error = LegacyLoginItem.set(sender.state == .on) {
+            loginError.stringValue = error
+            loginError.isHidden = false
+            sender.state = LegacyLoginItem.isEnabled ? .on : .off
+        } else {
+            loginError.isHidden = true
+        }
     }
 
     private func legendItem(_ color: NSColor?, _ title: String) -> NSView {
