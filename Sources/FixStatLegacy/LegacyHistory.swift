@@ -436,3 +436,85 @@ final class HealthChartView: TimeChartView {
         return lines
     }
 }
+
+/// A chart with a numeric x axis: lines and bars in several series, plus vertical rules.
+final class NumericChartView: TimeChartView {
+    enum Style { case line, bars }
+
+    struct Series {
+        var points: [(x: Double, y: Double)]
+        var color: NSColor
+        var style: Style
+    }
+
+    private let origin = Date(timeIntervalSinceReferenceDate: 0)
+    private var series: [Series] = []
+    private var rules: [(x: Double, color: NSColor)] = []
+    private var xRange: ClosedRange<Double> = 0...1
+    private var yRange: ClosedRange<Double> = 0...1
+    private var xText: (Double) -> String = { _ in "" }
+    private var yText: (Double) -> String = { _ in "" }
+
+    func update(series: [Series], rules: [(x: Double, color: NSColor)] = [], x: ClosedRange<Double>,
+                includesZero: Bool = true,
+                xLabel: @escaping (Double) -> String, yLabel: @escaping (Double) -> String) {
+        self.series = series
+        self.rules = rules
+        xRange = x
+        xText = xLabel
+        yText = yLabel
+        let values = series.flatMap { $0.points.map(\.y) }
+        if includesZero {
+            yRange = 0...max((values.max() ?? 1) * 1.1, 1)
+        } else {
+            let low = values.min() ?? 0, high = values.max() ?? 1
+            let pad = max((high - low) * 0.1, 0.05)
+            yRange = (low - pad)...(high + pad)
+        }
+        xDomain = date(x.lowerBound)...date(max(x.upperBound, x.lowerBound + 1))
+        needsDisplay = true
+    }
+
+    private func date(_ value: Double) -> Date { origin.addingTimeInterval(value) }
+
+    override var yDomain: ClosedRange<Double> { yRange }
+    override var yTicks: [Double] { Self.niceTicks(yRange) }
+    override func yLabel(_ value: Double) -> String { yText(value) }
+    override var xTicks: [Date] {
+        Self.niceTicks(xRange).map(date)
+    }
+    override func xLabel(_ date: Date) -> String { xText(date.timeIntervalSince(origin)) }
+    override func snap(_ date: Date) -> Date? { nil }
+
+    override func drawContent() {
+        for item in series {
+            item.color.setStroke()
+            item.color.setFill()
+            switch item.style {
+            case .line:
+                guard let first = item.points.first else { continue }
+                let path = NSBezierPath()
+                path.move(to: NSPoint(x: x(date(first.x)), y: y(first.y)))
+                for point in item.points.dropFirst() {
+                    path.line(to: NSPoint(x: x(date(point.x)), y: y(point.y)))
+                }
+                path.lineWidth = 1
+                path.stroke()
+            case .bars:
+                let span = xRange.upperBound - xRange.lowerBound
+                let width = max(1, plot.width / CGFloat(max(item.points.count, 1)) * 0.9)
+                for point in item.points where span > 0 {
+                    let top = y(point.y)
+                    NSBezierPath(rect: NSRect(x: x(date(point.x)), y: top, width: width, height: max(plot.maxY - top, 0.5))).fill()
+                }
+            }
+        }
+        for rule in rules {
+            rule.color.setStroke()
+            let path = NSBezierPath()
+            path.move(to: NSPoint(x: x(date(rule.x)), y: plot.minY))
+            path.line(to: NSPoint(x: x(date(rule.x)), y: plot.maxY))
+            path.stroke()
+        }
+    }
+}

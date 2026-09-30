@@ -6,7 +6,7 @@ import FixStatCore
 /// content as its SwiftUI counterpart as a `LegacyDocumentView`.
 final class LegacyTools {
     enum Tool: CaseIterable {
-        case deviceInfo, history, batteryDetails, memory, crashHistory, sleep, stressTest
+        case deviceInfo, history, batteryDetails, capacity, ssd, memory, crashHistory, sleep, stressTest
 
         var title: String {
             switch self {
@@ -14,6 +14,8 @@ final class LegacyTools {
             case .history: return L("Battery history")
             case .batteryDetails: return L("Battery details")
             case .crashHistory: return L("Panic and shutdown history")
+            case .capacity: return L("Battery capacity test")
+            case .ssd: return L("SSD health and test")
             case .memory: return L("Memory test")
             case .sleep: return L("Sleep and wake")
             case .stressTest: return L("Post-repair test")
@@ -73,6 +75,8 @@ final class LegacyTools {
         case .history: return keep(tool, LegacyHistory(core: core, initialRange: LegacyTools.initialRange)).window
         case .batteryDetails: return keep(tool, LegacyBatteryDetails(core: core)).window
         case .crashHistory: return keep(tool, LegacyCrashHistory(core: core)).window
+        case .capacity: return keep(tool, LegacyCapacityTest(core: core)).window
+        case .ssd: return keep(tool, LegacySSD(core: core)).window
         case .memory: return keep(tool, LegacyMemoryTest(core: core)).window
         case .sleep: return keep(tool, LegacySleep(core: core)).window
         case .stressTest: return keep(tool, LegacyStressTest(core: core)).window

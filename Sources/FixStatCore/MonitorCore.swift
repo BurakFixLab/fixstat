@@ -65,6 +65,8 @@ public final class MonitorCore {
     public var lastMemoryResult: MemoryTest.Result?
     /// Result of the last SSD write–verify test.
     public var lastSSDResult: SSDStressTest.Result?
+    /// Result of the last full SSD test.
+    public var lastFullSSDResult: FullSSDResult?
     /// Result of the last battery capacity test.
     public var lastCapacityResult: CapacityResult?
 

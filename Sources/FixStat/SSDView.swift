@@ -3,12 +3,12 @@ import MacSensors
 import SwiftUI
 import FixStatCore
 
-/// Runs the SSD write–verify test on a background thread and publishes progress.
+/// SwiftUI view of the core `SSDRunner` (write–verify test).
 @available(macOS 14.0, *)
 @MainActor
 @Observable
 final class SSDTestRunner {
-    enum State: Equatable { case idle, running, finished }
+    typealias State = SSDRunner.State
 
     private(set) var state = State.idle
     private(set) var phase = SSDStressTest.Phase.write
@@ -18,57 +18,30 @@ final class SSDTestRunner {
     private(set) var readSpeeds: [Double] = []
     private(set) var result: SSDStressTest.Result?
 
-    @ObservationIgnored private var test: SSDStressTest?
+    @ObservationIgnored private let runner: SSDRunner
     @ObservationIgnored private let monitor: Monitor
-    @ObservationIgnored private var activity: NSObjectProtocol?
 
     init(monitor: Monitor) {
         self.monitor = monitor
-    }
-
-    func start(gigabytes: Double) {
-        guard state != .running else { return }
-        let test = SSDStressTest()
-        self.test = test
-        state = .running
-        phase = .write
-        fraction = 0
-        writeSpeeds = []
-        readSpeeds = []
-        result = nil
-        activity = ProcessInfo.processInfo.beginActivity(
-            options: [.userInitiated, .idleSystemSleepDisabled], reason: "SSD stress test")
-        let bytes = Int64(gigabytes * 1_000_000_000)
-        let directory = FileManager.default.temporaryDirectory
-        Thread.detachNewThread { [weak self] in
-            let result = test.run(bytes: bytes, directory: directory) { progress in
-                Task { @MainActor in self?.update(progress) }
-            }
-            Task { @MainActor in self?.finish(result) }
+        runner = SSDRunner(monitor: monitor.core)
+        runner.onChange = { [weak self] in
+            MainActor.assumeIsolated { self?.sync() }
         }
     }
 
-    func stop() {
-        test?.cancel()
-    }
+    func start(gigabytes: Double) { runner.start(gigabytes: gigabytes) }
+    func stop() { runner.stop() }
 
-    private func update(_ progress: SSDStressTest.Progress) {
-        phase = progress.phase
-        let done = Double(progress.chunk) / Double(max(progress.chunkCount, 1))
-        fraction = progress.phase == .write ? done / 2 : 0.5 + done / 2
-        switch progress.phase {
-        case .write: writeSpeeds = writeSpeeds + [progress.throughput]
-        case .verify: readSpeeds = readSpeeds + [progress.throughput]
+    private func sync() {
+        if runner.state != state { state = runner.state }
+        if runner.phase != phase { phase = runner.phase }
+        fraction = runner.fraction
+        if runner.writeSpeeds != writeSpeeds { writeSpeeds = runner.writeSpeeds }
+        if runner.readSpeeds != readSpeeds { readSpeeds = runner.readSpeeds }
+        if runner.result != result {
+            result = runner.result
+            monitor.lastSSDResult = runner.result
         }
-    }
-
-    private func finish(_ result: SSDStressTest.Result) {
-        if let activity { ProcessInfo.processInfo.endActivity(activity) }
-        activity = nil
-        test = nil
-        self.result = result
-        monitor.lastSSDResult = result
-        state = .finished
     }
 }
 
@@ -123,7 +96,7 @@ struct SSDView: View {
     // MARK: Stress test
 
     private var stressTest: some View {
-        let available = Double(SSDStressTest.availableBytes(in: FileManager.default.temporaryDirectory)) / 1_000_000_000
+        let available = Double(SSDRunner.availableBytes) / 1_000_000_000
         return VStack(alignment: .leading, spacing: 10) {
             SectionTitle(title: "Write–verify stress test")
             Text("Writes a test file to free space, reads it back and compares every byte. Finds data corruption, I/O errors and stalling areas that point to failing NAND. Only free space can be tested, and the test uses some of the SSD's write endurance.")
@@ -167,19 +140,6 @@ struct SSDView: View {
         }
     }
 
-    static func movingAverage(_ values: [Double], window: Int) -> [Double] {
-        guard window > 1, !values.isEmpty else { return values }
-        var result: [Double] = []
-        result.reserveCapacity(values.count)
-        var sum = 0.0
-        for (index, value) in values.enumerated() {
-            sum += value
-            if index >= window { sum -= values[index - window] }
-            result.append(sum / Double(min(index + 1, window)))
-        }
-        return result
-    }
-
     private var speedChart: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
@@ -191,7 +151,7 @@ struct SSDView: View {
             .font(.caption)
             Chart {
                 // The SSD's own cache makes single write blocks spiky; show a moving average.
-                ForEach(Array(Self.movingAverage(runner.writeSpeeds, window: 8).enumerated()), id: \.offset) { index, speed in
+                ForEach(Array(SSDRunner.movingAverage(runner.writeSpeeds, window: 8).enumerated()), id: \.offset) { index, speed in
                     LineMark(x: .value("Block", index), y: .value("MB/s", speed), series: .value("Phase", "write"))
                         .foregroundStyle(TemperatureColor.hot)
                         .lineStyle(StrokeStyle(lineWidth: 1))

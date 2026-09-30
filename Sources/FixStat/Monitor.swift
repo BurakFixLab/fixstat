@@ -35,8 +35,6 @@ final class Monitor {
         didSet { core.detailsVisible = detailsVisible }
     }
 
-    /// Result of the last full SSD test (for reports).
-    var lastFullSSDResult: FullSSDTestRunner.Result?
 
     // Session results kept in the core (both interfaces read them), observed here.
     /// Hardware checklist of this session (for reports).
@@ -73,6 +71,11 @@ final class Monitor {
     var lastSSDResult: SSDStressTest.Result? {
         get { access(keyPath: \.lastSSDResult); return core.lastSSDResult }
         set { withMutation(keyPath: \.lastSSDResult) { core.lastSSDResult = newValue } }
+    }
+    /// Result of the last full SSD test (for reports).
+    var lastFullSSDResult: FullSSDResult? {
+        get { access(keyPath: \.lastFullSSDResult); return core.lastFullSSDResult }
+        set { withMutation(keyPath: \.lastFullSSDResult) { core.lastFullSSDResult = newValue } }
     }
     /// Result of the last battery capacity test (for reports).
     var lastCapacityResult: CapacityResult? {

@@ -175,7 +175,7 @@ enum LegacyAppearance {
 }
 
 /// `--legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] [--max-height N]
-/// [--tool device|history|details|crash|sleep|stress|memory [--wait SECONDS] [--range 0…6] [--start-test SECONDS]]`: renders the AppKit
+/// [--tool device|history|details|crash|sleep|stress|memory|ssd|capacity [--wait SECONDS] [--range 0…6] [--start-test SECONDS]]`: renders the AppKit
 /// panel or a Settings tab to PNG and exits (UI checks without clicking).
 enum LegacySnapshot {
     static func runIfRequested(core: MonitorCore, panel: LegacyPanelController, tools: LegacyTools,
@@ -196,7 +196,7 @@ enum LegacySnapshot {
         var fitsContent = false
         let toolNames: [String: LegacyTools.Tool] = ["device": .deviceInfo, "details": .batteryDetails,
                                                      "crash": .crashHistory, "sleep": .sleep, "history": .history,
-                                                     "stress": .stressTest, "memory": .memory]
+                                                     "stress": .stressTest, "memory": .memory, "ssd": .ssd, "capacity": .capacity]
         if let i = arguments.firstIndex(of: "--range"), i + 1 < arguments.count,
            let range = Int(arguments[i + 1]).flatMap(HistoryRange.init(rawValue:)) {
             LegacyTools.initialRange = range
