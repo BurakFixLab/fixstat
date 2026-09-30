@@ -58,6 +58,8 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
         window.onOpen = { [unowned self] in
             if let current { panes[current]?.activate() } else { select(Self.initialItem) }
             updateStatus()
+            // The note field would take the focus, and the keyboard test ignores keys typed there.
+            DispatchQueue.main.async { [weak self] in self?.window.window?.makeFirstResponder(nil) }
         }
         window.onClose = { [unowned self] in
             if let current { panes[current]?.deactivate() }
@@ -135,6 +137,8 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
         root.spacing = 0
         sidebar.heightAnchor.constraint(equalTo: root.heightAnchor).isActive = true
         detail.heightAnchor.constraint(equalTo: root.heightAnchor).isActive = true
+        // The detail column takes the rest of the window, whatever the pane contains.
+        detail.widthAnchor.constraint(equalTo: root.widthAnchor, constant: -250).isActive = true
         return root
     }
 
@@ -162,10 +166,19 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
         ])
         pane.activate()
         updateStatus()
+        window?.window?.makeFirstResponder(nil)
     }
 
     private func makePane(_ item: HardwareCheck.Item) -> LegacyCheckPane {
         switch item {
+        case .keyboard:
+            let pane = LegacyKeyboardPane(core: core)
+            pane.isFocused = { [weak self] in
+                guard let window = self?.window.window, NSApp.keyWindow === window else { return false }
+                return !(window.firstResponder is NSText)
+            }
+            return pane
+        case .trackpad: return LegacyTrackpadPane(core: core)
         case .display: return LegacyDisplayPane(core: core)
         case .wifi: return LegacyWiFiPane(core: core)
         case .bluetooth: return LegacyBluetoothPane(core: core)

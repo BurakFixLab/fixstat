@@ -39,7 +39,7 @@ let package = Package(
         // Swift 5 mode and macOS 10.13 APIs only, like FixStatLegacy.
         .target(
             name: "FixStatCore",
-            dependencies: ["MacSensors"],
+            dependencies: ["MacSensors", "CMacSensors"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         // AppKit interface for macOS 10.13 – 13. Swift 5 mode: no actor isolation checks,

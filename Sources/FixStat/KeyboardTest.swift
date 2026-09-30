@@ -22,7 +22,7 @@ struct KeyboardTestView: View {
             KeyboardDrawing(kind: kind, pressed: pressed, held: held)
                 .frame(maxWidth: 720)
             HStack {
-                Text("\(pressed.count) / \(total) keys")
+                Text(verbatim: KeyboardLayout.progress(pressed.count, of: total))
                     .font(.headline)
                 Text(verbatim: KeyLegend.layoutName)
                     .font(.caption)
@@ -50,10 +50,7 @@ struct KeyboardTestView: View {
                 Label("Keys used by macOS (e.g. F3–F6 without fn) need the Input Monitoring permission.",
                       systemImage: "info.circle")
                 Spacer()
-                Button("Allow…") {
-                    _ = CGRequestListenEventAccess()
-                    NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent")!)
-                }
+                Button("Allow…") { KeyEventTap.requestAccess() }
             }
             .font(.callout)
             .foregroundStyle(.secondary)
@@ -145,7 +142,7 @@ struct KeyboardTestView: View {
         if down {
             held.insert(code)
             if pressed.insert(code).inserted {
-                monitor.recordCheck(.keyboard, detail: String(localized: "\(pressed.count) / \(total) keys"),
+                monitor.recordCheck(.keyboard, detail: KeyboardLayout.progress(pressed.count, of: total),
                                     passed: pressed.count == total)
             }
         } else {
@@ -154,138 +151,30 @@ struct KeyboardTestView: View {
     }
 }
 
-/// Keyboard event tap at the HID level: sees keys that macOS consumes before they reach
-/// an app. Active (can block the key) with Accessibility, listen-only with Input Monitoring.
+/// SwiftUI view of the core `KeyEventTap` (mode is observed).
 @available(macOS 14.0, *)
 @MainActor
 @Observable
 final class KeyTap {
-    enum Mode { case none, listenOnly, active }
+    typealias Mode = KeyEventTap.Mode
 
     private(set) var mode = Mode.none
+    @ObservationIgnored private let tap = KeyEventTap()
+
     /// Returns true to block the event (active tap only).
-    @ObservationIgnored var handler: ((NSEvent) -> Bool)?
-    @ObservationIgnored private var port: CFMachPort?
-    @ObservationIgnored private var source: CFRunLoopSource?
+    var handler: ((NSEvent) -> Bool)? {
+        get { tap.handler }
+        set { tap.handler = newValue }
+    }
 
     func start() {
-        guard port == nil else { return }
-        let mask: CGEventMask = (1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.keyUp.rawValue)
-            | (1 << CGEventType.flagsChanged.rawValue) | (1 << 14) // NX_SYSDEFINED: media keys
-        let callback: CGEventTapCallBack = { _, type, event, info in
-            guard let info else { return Unmanaged.passUnretained(event) }
-            let tap = Unmanaged<KeyTap>.fromOpaque(info).takeUnretainedValue()
-            let block = MainActor.assumeIsolated { () -> Bool in
-                if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
-                    if let port = tap.port { CGEvent.tapEnable(tap: port, enable: true) }
-                    return false
-                }
-                guard let ns = NSEvent(cgEvent: event) else { return false }
-                return (tap.handler?(ns) ?? false) && tap.mode == .active
-            }
-            return block ? nil : Unmanaged.passUnretained(event)
-        }
-        let info = Unmanaged.passUnretained(self).toOpaque()
-        for (options, mode) in [(CGEventTapOptions.defaultTap, Mode.active), (.listenOnly, .listenOnly)] {
-            if let port = CGEvent.tapCreate(tap: .cghidEventTap, place: .headInsertEventTap, options: options,
-                                            eventsOfInterest: mask, callback: callback, userInfo: info) {
-                let source = CFMachPortCreateRunLoopSource(nil, port, 0)
-                CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
-                CGEvent.tapEnable(tap: port, enable: true)
-                self.port = port
-                self.source = source
-                self.mode = mode
-                return
-            }
-        }
+        tap.start()
+        if tap.mode != mode { mode = tap.mode }
     }
 
     func stop() {
-        if let port { CGEvent.tapEnable(tap: port, enable: false); CFMachPortInvalidate(port) }
-        if let source { CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes) }
-        port = nil
-        source = nil
-        mode = .none
-    }
-}
-
-/// Key legends and layout type from the current input source, like the Keyboard Viewer.
-@available(macOS 14.0, *)
-enum KeyLegend {
-    static var kind: KeyboardLayout.Kind {
-        KBGetLayoutType(Int16(LMGetKbdType())) == kKeyboardISO ? .iso : .ansi
-    }
-
-    static var layoutName: String {
-        guard let source = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue(),
-              let pointer = TISGetInputSourceProperty(source, kTISPropertyLocalizedName) else { return "" }
-        return Unmanaged<CFString>.fromOpaque(pointer).takeUnretainedValue() as String
-    }
-
-    /// Characters of all keys of the current layout, uppercased like the key caps.
-    static func legends() -> [Int: String] {
-        guard let source = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue(),
-              let pointer = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData) else { return [:] }
-        let data = Unmanaged<CFData>.fromOpaque(pointer).takeUnretainedValue()
-        guard let bytes = CFDataGetBytePtr(data) else { return [:] }
-        let layout = UnsafeRawPointer(bytes).assumingMemoryBound(to: UCKeyboardLayout.self)
-        let locale = Locale.current
-        var result: [Int: String] = [:]
-        for code in 0..<128 {
-            var dead: UInt32 = 0
-            var chars = [UniChar](repeating: 0, count: 4)
-            var count = 0
-            let status = UCKeyTranslate(layout, UInt16(code), UInt16(kUCKeyActionDisplay), 0, UInt32(LMGetKbdType()),
-                                        OptionBits(kUCKeyTranslateNoDeadKeysBit), &dead, 4, &count, &chars)
-            guard status == noErr, count > 0 else { continue }
-            let text = String(utf16CodeUnits: chars, count: count)
-            guard !text.unicodeScalars.contains(where: { $0.properties.generalCategory == .control }) else { continue }
-            result[code] = text.uppercased(with: locale)
-        }
-        return result
-    }
-
-    /// Newer function-row keys send their own key codes (Mission Control, Spotlight,
-    /// Dictation, Do Not Disturb, Launchpad); they are the F3–F6 / F4 positions.
-    static func physicalCode(_ code: Int) -> Int {
-        switch code {
-        case 160: 99 // Mission Control → F3
-        case 177, 131: 118 // Spotlight / Launchpad → F4
-        case 176: 96 // Dictation → F5
-        case 178: 97 // Do Not Disturb → F6
-        default: code
-        }
-    }
-
-    /// NX_KEYTYPE_* media keys → function-row positions on 2020+ MacBooks.
-    static let mediaKeyCodes: [Int: Int] = [
-        3: 122, // brightness down → F1
-        2: 120, // brightness up → F2
-        21: 97, 22: 96, // keyboard illumination (older models) → F6 / F5
-        20: 98, 18: 98, // rewind / previous → F7
-        16: 100, // play → F8
-        19: 101, 17: 101, // fast / next → F9
-        7: 109, // mute → F10
-        1: 103, // volume down → F11
-        0: 111, // volume up → F12
-    ]
-
-    /// Device-dependent modifier bits (NX_DEVICE*KEYMASK), so left and right keys differ.
-    static func isModifierDown(_ code: Int, flags: NSEvent.ModifierFlags) -> Bool? {
-        let raw = flags.rawValue
-        switch code {
-        case 59: return raw & 0x0001 != 0 // left control
-        case 62: return raw & 0x2000 != 0 // right control
-        case 56: return raw & 0x0002 != 0 // left shift
-        case 60: return raw & 0x0004 != 0 // right shift
-        case 55: return raw & 0x0008 != 0 // left command
-        case 54: return raw & 0x0010 != 0 // right command
-        case 58: return raw & 0x0020 != 0 // left option
-        case 61: return raw & 0x0040 != 0 // right option
-        case 63: return flags.contains(.function)
-        case 57: return true // caps lock: every change is a press
-        default: return nil
-        }
+        tap.stop()
+        if tap.mode != mode { mode = tap.mode }
     }
 }
 
