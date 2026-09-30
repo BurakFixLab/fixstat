@@ -209,6 +209,60 @@ public enum Format {
         return f.string(from: date)
     }
 
+    /// "30 Sep 2026": abbreviated date without time.
+    public static func date(_ date: Date) -> String {
+        if #available(macOS 12, *), !forceLegacy {
+            return date.formatted(date: .abbreviated, time: .omitted)
+        }
+        let f = DateFormatter()
+        f.dateStyle = .medium
+        f.timeStyle = .none
+        return f.string(from: date)
+    }
+
+    /// "14:05" in the user's clock style.
+    public static func time(_ date: Date) -> String {
+        if #available(macOS 12, *), !forceLegacy {
+            return date.formatted(.dateTime.hour().minute())
+        }
+        return template("jm", date)
+    }
+
+    /// "30 Sep 14:05": day, abbreviated month and time.
+    public static func dayMonthTime(_ date: Date) -> String {
+        if #available(macOS 12, *), !forceLegacy {
+            return date.formatted(.dateTime.day().month(.abbreviated).hour().minute())
+        }
+        return template("dMMMjm", date)
+    }
+
+    /// "30 Sep": day and abbreviated month (chart axes).
+    public static func dayMonth(_ date: Date) -> String {
+        if #available(macOS 12, *), !forceLegacy {
+            return date.formatted(.dateTime.day().month(.abbreviated))
+        }
+        return template("dMMM", date)
+    }
+
+    /// "2026-09-30" for file names.
+    public static func isoDay(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyy-MM-dd"
+        return f.string(from: date)
+    }
+
+    /// "1 hour", "7 days": whole days or hours, written out.
+    public static func durationWide(_ seconds: TimeInterval) -> String {
+        if #available(macOS 13, *), !forceLegacy {
+            return Duration.seconds(seconds).formatted(.units(allowed: [.days, .hours], width: .wide))
+        }
+        let f = DateComponentsFormatter()
+        f.allowedUnits = [.day, .hour]
+        f.unitsStyle = .full
+        return f.string(from: seconds) ?? ""
+    }
+
     /// "+12 %" / "−8 %": a signed whole percentage (deviation from an average).
     public static func signedPercent(_ fraction: Double) -> String {
         if #available(macOS 12, *), !forceLegacy {
@@ -233,6 +287,12 @@ public enum Format {
         f.numberFormatter.minimumFractionDigits = digits
         f.numberFormatter.maximumFractionDigits = digits
         return f.string(from: value)
+    }
+
+    private static func template(_ template: String, _ date: Date) -> String {
+        let f = DateFormatter()
+        f.setLocalizedDateFormatFromTemplate(template)
+        return f.string(from: date)
     }
 
     private static func components(_ seconds: Double, units: NSCalendar.Unit, maximum: Int) -> String {

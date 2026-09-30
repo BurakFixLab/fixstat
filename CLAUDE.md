@@ -192,6 +192,9 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 - `HistoryView`: ranges 1 h / 3 h / 6 h / 12 h / 1 d / 7 d / 30 d; raw minute samples up to
   6 h, then buckets (≤ ~360 points); reloads every minute while open; hover shows a rule and
   a value card; CSV/JSON export. The sensor report also includes the daily health history.
+  Ranges, summary, export and axis helpers are in `HistoryData` / `HistoryRange` (core);
+  the AppKit window (`LegacyHistory`) draws the charts itself (`TimeChartView`), since
+  Swift Charts needs macOS 13.
 
 ## Diagnostics tools (Tools menu)
 
@@ -317,7 +320,8 @@ build/FixStat.app/Contents/MacOS/FixStat --snapshot out.png [--technician] [--se
 # AppKit interface: panel or Settings tab to PNG (also under scripts/simulate-old-macos.sh … -- ARGS):
 build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] \
     [--max-height N] [--dark|--light]      # --max-height: as on a small screen (11" Air: 722)
-build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png --tool device|details|crash|sleep [--wait SECONDS]
+build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png --tool device|history|details|crash|sleep \
+    [--wait SECONDS] [--range 0…6]
 # Write the report (same as "Export report") and exit:
 build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check]
 ```

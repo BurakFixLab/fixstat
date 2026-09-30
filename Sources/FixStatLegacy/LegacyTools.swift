@@ -6,11 +6,12 @@ import FixStatCore
 /// content as its SwiftUI counterpart as a `LegacyDocumentView`.
 final class LegacyTools {
     enum Tool: CaseIterable {
-        case deviceInfo, batteryDetails, crashHistory, sleep
+        case deviceInfo, history, batteryDetails, crashHistory, sleep
 
         var title: String {
             switch self {
             case .deviceInfo: return L("Device info")
+            case .history: return L("Battery history")
             case .batteryDetails: return L("Battery details")
             case .crashHistory: return L("Panic and shutdown history")
             case .sleep: return L("Sleep and wake")
@@ -23,6 +24,8 @@ final class LegacyTools {
 
     private let core: MonitorCore
     private var windows: [Tool: LegacyToolWindow] = [:]
+    /// Range the history window opens with (`--range N` for snapshots).
+    static var initialRange = HistoryRange.day
 
     init(core: MonitorCore) {
         self.core = core
@@ -65,6 +68,7 @@ final class LegacyTools {
     private func makeWindow(_ tool: Tool) -> LegacyToolWindow {
         switch tool {
         case .deviceInfo: return keep(tool, LegacyDeviceInfo(core: core)).window
+        case .history: return keep(tool, LegacyHistory(core: core, initialRange: LegacyTools.initialRange)).window
         case .batteryDetails: return keep(tool, LegacyBatteryDetails(core: core)).window
         case .crashHistory: return keep(tool, LegacyCrashHistory(core: core)).window
         case .sleep: return keep(tool, LegacySleep(core: core)).window

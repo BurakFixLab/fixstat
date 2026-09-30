@@ -66,6 +66,8 @@ indirect enum Block {
     case columns([[Block]])
     case actions([DocAction])
     case progress(String)
+    /// A view kept by the window's owner (charts, controls); full width.
+    case view(NSView)
     case gap
 }
 
@@ -228,6 +230,8 @@ final class LegacyDocumentView: NSScrollView {
             spinner.controlSize = .small
             spinner.startAnimation(nil)
             return hStack([spinner, makeLabel(text, color: .secondaryLabelColor), makeSpacer()])
+        case let .view(view):
+            return view
         case .gap:
             let view = NSView()
             view.heightAnchor.constraint(equalToConstant: 2).isActive = true
@@ -314,6 +318,8 @@ final class LegacyToolWindow: NSWindowController, NSWindowDelegate {
     private var timer: Timer?
     /// Called each time the window is opened (load data, start refreshing).
     var onOpen: (() -> Void)?
+    /// Called before every reload (timer ticks included), e.g. to read new data.
+    var onReload: (() -> Void)?
     var onClose: (() -> Void)?
 
     init(title: String, contentWidth: CGFloat, height: CGFloat, content: @escaping () -> [Block]) {
@@ -335,6 +341,7 @@ final class LegacyToolWindow: NSWindowController, NSWindowDelegate {
     required init?(coder: NSCoder) { fatalError() }
 
     func reload() {
+        onReload?()
         documentView.show(content())
     }
 

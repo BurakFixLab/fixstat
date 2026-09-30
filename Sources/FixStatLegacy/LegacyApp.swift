@@ -175,7 +175,7 @@ enum LegacyAppearance {
 }
 
 /// `--legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] [--max-height N]
-/// [--tool device|details|crash|sleep [--wait SECONDS]]`: renders the AppKit
+/// [--tool device|history|details|crash|sleep [--wait SECONDS] [--range 0…6]]`: renders the AppKit
 /// panel or a Settings tab to PNG and exits (UI checks without clicking).
 enum LegacySnapshot {
     static func runIfRequested(core: MonitorCore, panel: LegacyPanelController, tools: LegacyTools,
@@ -195,7 +195,11 @@ enum LegacySnapshot {
         let window: NSWindow
         var fitsContent = false
         let toolNames: [String: LegacyTools.Tool] = ["device": .deviceInfo, "details": .batteryDetails,
-                                                     "crash": .crashHistory, "sleep": .sleep]
+                                                     "crash": .crashHistory, "sleep": .sleep, "history": .history]
+        if let i = arguments.firstIndex(of: "--range"), i + 1 < arguments.count,
+           let range = Int(arguments[i + 1]).flatMap(HistoryRange.init(rawValue:)) {
+            LegacyTools.initialRange = range
+        }
         var wait = 2.5
         if let i = arguments.firstIndex(of: "--wait"), i + 1 < arguments.count, let seconds = Double(arguments[i + 1]) {
             wait = seconds

@@ -10,41 +10,7 @@ import FixStatCore
 struct HistoryView: View {
     static let windowID = "battery-history"
 
-    enum Range: Int, CaseIterable, Identifiable {
-        case hour1, hours3, hours6, hours12, day, week, month
-
-        var id: Int { rawValue }
-
-        var duration: TimeInterval {
-            let hour: TimeInterval = 3_600
-            switch self {
-            case .hour1: return hour
-            case .hours3: return 3 * hour
-            case .hours6: return 6 * hour
-            case .hours12: return 12 * hour
-            case .day: return 24 * hour
-            case .week: return 7 * 24 * hour
-            case .month: return 30 * 24 * hour
-            }
-        }
-
-        /// Bucket size so that every range has at most ~360 points. Up to 6 h the
-        /// raw minute samples are shown.
-        var bucket: TimeInterval {
-            switch self {
-            case .hour1, .hours3, .hours6: return 60
-            case .hours12: return 120
-            case .day: return 240
-            case .week: return 1_800
-            case .month: return 7_200
-            }
-        }
-
-        /// "1 hour", "12 hours", "1 day", "7 days" in the user's language.
-        var title: String {
-            Duration.seconds(duration).formatted(.units(allowed: [.days, .hours], width: .wide))
-        }
-    }
+    typealias Range = HistoryRange
 
     @Environment(Monitor.self) private var monitor
     @State private var range: Range
@@ -59,7 +25,7 @@ struct HistoryView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Picker("Range", selection: $range) {
-                    ForEach(Range.allCases) { Text(verbatim: $0.title).tag($0) }
+                    ForEach(Range.allCases, id: \.self) { Text(verbatim: $0.title).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
@@ -97,22 +63,18 @@ struct HistoryView: View {
     }
 
     private func load() {
-        let since = Date().addingTimeInterval(-range.duration)
-        samples = BatteryHistoryStore.bucketed(monitor.history.samples(since: since), interval: range.bucket)
+        samples = HistoryData.samples(monitor.history, range: range)
         health = monitor.history.healthRecords()
     }
 
     // MARK: Summary
 
     private var summary: some View {
-        let charging = samples.filter { $0.amperage > 0 }.map { Double($0.amperage) }
-        let discharging = samples.filter { $0.amperage < 0 }.map { Double($0.amperage) }
-        let temperatures = samples.compactMap(\.temperature)
-        func mean(_ values: [Double]) -> Double? { values.isEmpty ? nil : values.reduce(0, +) / Double(values.count) }
+        let summary = HistoryData.summary(samples)
         return HStack(spacing: 8) {
-            Tile(title: "Average charge current", value: mean(charging).map { Format.milliamps(Int($0)) } ?? "–")
-            Tile(title: "Average discharge current", value: mean(discharging).map { Format.milliamps(Int($0)) } ?? "–")
-            Tile(title: "Highest temperature", value: temperatures.max().map { Format.temperature($0) } ?? "–")
+            Tile(title: "Average charge current", value: summary.charge.map { Format.milliamps(Int($0)) } ?? "–")
+            Tile(title: "Average discharge current", value: summary.discharge.map { Format.milliamps(Int($0)) } ?? "–")
+            Tile(title: "Highest temperature", value: summary.temperature.map { Format.temperature($0) } ?? "–")
         }
     }
 
@@ -182,7 +144,7 @@ struct HistoryView: View {
                         .foregroundStyle(Color.secondary.opacity(0.6))
                         .annotation(position: .top, spacing: 4,
                                     overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
-                            SampleCard(sample: sample, showsDate: range.duration > 86_400)
+                            SampleCard(sample: sample, showsDate: range.showsDate)
                         }
                     PointMark(x: .value("Time", sample.time), y: .value("Charge", sample.stateOfCharge))
                         .foregroundStyle(Color.accentColor)
@@ -243,7 +205,6 @@ struct HistoryView: View {
 
     private var healthChart: some View {
         let points = health.compactMap { record in record.date.map { ($0, record.health) } }
-        let lowest = points.map(\.1).min() ?? 80
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
                 SectionTitle(title: "Health")
@@ -274,9 +235,9 @@ struct HistoryView: View {
                     }
                 }
                 .chartOverlay { proxy in hoverOverlay(proxy) { hoverDay = $0 } }
-                .chartXScale(domain: healthDomain(points.map(\.0)))
+                .chartXScale(domain: HistoryData.healthDomain(points.map(\.0)))
                 .chartXAxis { AxisMarks(preset: .aligned) }
-                .chartYScale(domain: max(0, (lowest - 5).rounded(.down))...100)
+                .chartYScale(domain: HistoryData.healthFloor(points.map(\.1))...100)
                 .chartYAxis {
                     AxisMarks { value in
                         AxisGridLine()
@@ -298,16 +259,14 @@ private struct SampleCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(sample.time.formatted(showsDate
-                                       ? .dateTime.day().month(.abbreviated).hour().minute()
-                                       : .dateTime.hour().minute()))
+            Text(verbatim: showsDate ? Format.dayMonthTime(sample.time) : Format.time(sample.time))
                 .font(.caption.weight(.semibold))
             row("Charge", Format.percent(sample.stateOfCharge))
             row("Current", Format.milliamps(sample.amperage))
             if let temperature = sample.temperature {
                 row("Temperature", Format.temperature(temperature))
             }
-            Text(sample.isCharging ? "Charging" : (sample.externalConnected ? "On power adapter" : "On battery"))
+            Text(verbatim: HistoryData.state(sample))
                 .font(.caption2)
                 .foregroundStyle(.secondary)
         }
@@ -359,16 +318,6 @@ private struct HealthCard: View {
     }
 }
 
-/// At least the last 7 days, padded by half a day, so a short history does not
-/// zoom the axis into hours.
-@available(macOS 14.0, *)
-private func healthDomain(_ dates: [Date]) -> ClosedRange<Date> {
-    let now = Date()
-    let start = min(dates.min() ?? now, now.addingTimeInterval(-7 * 86_400)).addingTimeInterval(-43_200)
-    let end = max(dates.max() ?? now, now).addingTimeInterval(43_200)
-    return start...end
-}
-
 /// Small coloured dot + text for chart legends.
 @available(macOS 14.0, *)
 private struct LegendLabelStyle: LabelStyle {
@@ -394,37 +343,19 @@ private struct HistoryExportMenu: View {
         .fixedSize()
     }
 
-    private struct Payload: Encodable {
-        let app = "FixStat"
-        let model: String
-        let samples: [BatteryHistorySample]
-        let health: [BatteryHealthRecord]
-    }
-
     private func export(csv: Bool) {
         let samples = monitor.history.samples(since: Date().addingTimeInterval(-range.duration))
         let data: Data
         if csv {
-            let iso = ISO8601DateFormatter()
-            let header = "time,stateOfCharge,health,amperage,voltage,temperature,isCharging,externalConnected"
-            let rows = samples.map { sample -> String in
-                var fields = BatteryHistoryStore.csvLine(sample).split(separator: ",", omittingEmptySubsequences: false)
-                fields[0] = Substring(iso.string(from: sample.time))
-                return fields.joined(separator: ",")
-            }
-            data = Data(([header] + rows).joined(separator: "\n").appending("\n").utf8)
+            data = HistoryData.csv(samples)
         } else {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-            encoder.dateEncodingStrategy = .iso8601
-            guard let json = try? encoder.encode(Payload(model: monitor.system.model, samples: samples,
-                                                        health: monitor.history.healthRecords())) else { return }
+            guard let json = HistoryData.json(model: monitor.system.model, samples: samples,
+                                              health: monitor.history.healthRecords()) else { return }
             data = json
         }
         let panel = NSSavePanel()
         panel.allowedContentTypes = [csv ? .commaSeparatedText : .json]
-        let date = Date().formatted(.iso8601.year().month().day())
-        panel.nameFieldStringValue = "FixStat-battery-history-\(monitor.system.model)-\(date).\(csv ? "csv" : "json")"
+        panel.nameFieldStringValue = HistoryData.fileName(model: monitor.system.model, csv: csv)
         guard panel.runModal() == .OK, let url = panel.url else { return }
         do {
             try data.write(to: url)
