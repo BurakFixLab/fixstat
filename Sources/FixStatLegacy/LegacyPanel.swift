@@ -12,12 +12,19 @@ final class LegacyPanelController: NSViewController {
     private let openSettings: () -> Void
     /// Called after the content changed size (the popover follows it).
     var onResize: ((NSSize) -> Void)?
+    /// Tallest the panel may be (the screen below the menu bar). The technician panel is
+    /// taller than the 768 px screen of an 11" MacBook Air; the sensor list gives way.
+    var maxHeight: CGFloat? {
+        didSet { if maxHeight != oldValue { structureKey = "" } }
+    }
 
     private let root = NSStackView()
     private var updaters: [() -> Void] = []
     private var structureKey = ""
     private var showAll = false
     private var showUnmatched = false
+    /// Height of the scrolling sensor list, shortened when the panel does not fit.
+    private var listHeight: NSLayoutConstraint?
 
     private let rowHeight: CGFloat = 22
     private let techRowHeight: CGFloat = 29
@@ -87,6 +94,7 @@ final class LegacyPanelController: NSViewController {
 
     private func rebuild() {
         updaters = []
+        listHeight = nil
         for view in root.arrangedSubviews {
             root.removeArrangedSubview(view)
             view.removeFromSuperview()
@@ -97,6 +105,13 @@ final class LegacyPanelController: NSViewController {
             section.widthAnchor.constraint(equalTo: root.widthAnchor).isActive = true
         }
         view.layoutSubtreeIfNeeded()
+        if let maxHeight, let listHeight {
+            let overflow = view.fittingSize.height - maxHeight
+            if overflow > 0 {
+                listHeight.constant = max(3 * techRowHeight, listHeight.constant - overflow)
+                view.layoutSubtreeIfNeeded()
+            }
+        }
         onResize?(view.fittingSize)
     }
 
@@ -442,8 +457,10 @@ final class LegacyPanelController: NSViewController {
             document.widthAnchor.constraint(equalTo: scroll.contentView.widthAnchor),
             document.topAnchor.constraint(equalTo: scroll.contentView.topAnchor),
             document.leadingAnchor.constraint(equalTo: scroll.contentView.leadingAnchor),
-            scroll.heightAnchor.constraint(equalToConstant: max(height, 1)),
         ])
+        let heightConstraint = scroll.heightAnchor.constraint(equalToConstant: max(height, 1))
+        heightConstraint.isActive = true
+        listHeight = heightConstraint
         return scroll
     }
 

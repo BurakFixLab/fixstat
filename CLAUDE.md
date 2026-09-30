@@ -123,7 +123,9 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   technician panels built from NSStackViews that are rebuilt only when their structure
   changes and otherwise updated in place from `MonitorCore.onUpdate`;
   `LegacySettingsController` (General / Thresholds / Sensors, controls bound to
-  UserDefaults, so both interfaces share preferences). Battery icon: SF Symbol on 11+,
+  UserDefaults, so both interfaces share preferences). The technician panel is taller
+  than the 768 px screen of an 11" MacBook Air: the popover would be squeezed and clip
+  labels, so the sensor list is shortened to the screen's visible height (`maxHeight`). Battery icon: SF Symbol on 11+,
   drawn by hand before. Tool windows, export, notifications and login item: stages 4–5.
 - `scripts/build-app.sh` compiles with clang/swiftc directly (SwiftPM raises the deployment
   target to 12): x86_64 for 10.13, arm64 for 11, lipo; the Swift runtime for < 10.14.4 is
@@ -307,7 +309,8 @@ open build/FixStat.app
 build/FixStat.app/Contents/MacOS/FixStat --snapshot out.png [--technician] [--settings 0|1|2] \
     [--history [--range 0…6] --data-dir DIR] [--dark|--light] -AppleLanguages "(tr)" [-AppleLocale en_US]
 # AppKit interface: panel or Settings tab to PNG (also under scripts/simulate-old-macos.sh … -- ARGS):
-build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] [--dark|--light]
+build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] \
+    [--max-height N] [--dark|--light]      # --max-height: as on a small screen (11" Air: 722)
 # Write the report (same as "Export report") and exit:
 build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check]
 ```

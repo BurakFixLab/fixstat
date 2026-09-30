@@ -103,6 +103,10 @@ public final class LegacyApp: NSObject, NSApplicationDelegate, NSPopoverDelegate
         if popover.isShown {
             popover.performClose(sender)
         } else if let button = statusItem?.button {
+            if let screen = button.window?.screen ?? NSScreen.main {
+                // Room below the menu bar, minus the popover's arrow and a small gap.
+                panel.maxHeight = screen.visibleFrame.height - 24
+            }
             panel.update()
             NSApp.activate(ignoringOtherApps: true)
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
@@ -166,7 +170,7 @@ enum LegacyAppearance {
     }
 }
 
-/// `--legacy-ui --snapshot out.png [--technician] [--settings 0|1|2]`: renders the AppKit
+/// `--legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] [--max-height N]`: renders the AppKit
 /// panel or a Settings tab to PNG and exits (UI checks without clicking).
 enum LegacySnapshot {
     static func runIfRequested(core: MonitorCore, panel: LegacyPanelController,
@@ -175,6 +179,10 @@ enum LegacySnapshot {
         guard let index = arguments.firstIndex(of: "--snapshot"), index + 1 < arguments.count else { return false }
         let url = URL(fileURLWithPath: arguments[index + 1])
         UserDefaults.standard.set(arguments.contains("--technician"), forKey: Pref.technicianMode)
+        // `--max-height N`: as on a smaller screen (11" MacBook Air: 768 px).
+        if let i = arguments.firstIndex(of: "--max-height"), i + 1 < arguments.count, let height = Double(arguments[i + 1]) {
+            panel.maxHeight = CGFloat(height)
+        }
         core.panelVisible = true
 
         // The captured view draws its own window background (light or dark).
