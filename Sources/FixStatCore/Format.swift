@@ -209,6 +209,17 @@ public enum Format {
         return f.string(from: date)
     }
 
+    /// "30 September 2026 at 15:33": long date, short time (report header).
+    public static func dateTimeLong(_ date: Date) -> String {
+        if #available(macOS 12, *), !forceLegacy {
+            return date.formatted(date: .long, time: .shortened)
+        }
+        let f = DateFormatter()
+        f.dateStyle = .long
+        f.timeStyle = .short
+        return f.string(from: date)
+    }
+
     /// "30 Sep 2026": abbreviated date without time.
     public static func date(_ date: Date) -> String {
         if #available(macOS 12, *), !forceLegacy {

@@ -123,7 +123,7 @@ enum Snapshot {
         if CommandLine.arguments.contains("--sample-capacity") { monitor.lastCapacityResult = sampleCapacity() }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
             monitor.refresh()
-            let report = SensorReport(monitor: monitor)
+            let report = SensorReport(monitor: monitor.core)
             do {
                 let data: Data
                 switch url.pathExtension.lowercased() {

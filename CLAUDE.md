@@ -135,8 +135,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   Test runners are core classes (`StressTestRunner`, `MemoryRunner`, `SSDRunner`,
   `FullSSDRunner`, `CapacityRunner`: main thread, `onChange` callbacks, GCD for the
   background work, pre-10.15 `FileHandle` methods); the SwiftUI runners are thin observed
-  wrappers and UI-only steps (bringing a window to the front) are closures. Export,
-  notifications and login item: stage 5.
+  wrappers and UI-only steps (bringing a window to the front) are closures. Reports:
+  `SensorReport` (CSV / JSON) and `ReportPDF` + `ReportData` (the A4 customer report, drawn
+  with AppKit text into a PDF context) are in the core and used by both interfaces.
+  Notifications and login item: stage 5b.
 - `scripts/build-app.sh` compiles with clang/swiftc directly (SwiftPM raises the deployment
   target to 12): x86_64 for 10.13, arm64 for 11, lipo; the Swift runtime for < 10.14.4 is
   copied to Contents/Frameworks (rpath after /usr/lib/swift); frameworks newer than 10.13
@@ -332,7 +334,8 @@ build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png [--techn
     [--max-height N] [--dark|--light]      # --max-height: as on a small screen (11" Air: 722)
 build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png --tool device|history|details|crash|sleep|hardware \
     [--item keyboard…lid] [--wait SECONDS] [--range 0…6] [--start-test SECONDS]   # also stress|memory|ssd|capacity
-# Write the report (same as "Export report") and exit:
+# Write the report (same as "Export report") and exit (also with --legacy-ui; under the
+# Rosetta simulation give it time: SIM_WAIT=40 scripts/simulate-old-macos.sh … -- ARGS):
 build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check]
 ```
 

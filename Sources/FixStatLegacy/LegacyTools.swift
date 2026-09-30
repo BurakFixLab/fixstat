@@ -123,6 +123,7 @@ final class LegacyDeviceInfo {
     private var panics: [PanicReport]?
     private var copied = false
     private(set) var window: LegacyToolWindow!
+    private lazy var exportButton = LegacyExport.menuButton(core: core)
 
     init(core: MonitorCore) {
         self.core = core
@@ -161,12 +162,12 @@ final class LegacyDeviceInfo {
             .list(DeviceText.security(info).map { .status("\($0.0): \($0.1)", $0.2 ? .bad : .good) }),
             .section(L("Health summary")),
             .list(health.map { .status("\($0.0): \($0.1)", $0.2 ? .bad : .good) }),
-        ] + [.actions([DocAction(title: copied ? L("Copied") : L("Copy as text")) { [unowned self] in
+        ] + [.view(hStack([ActionButton(title: copied ? L("Copied") : L("Copy as text")) { [unowned self] in
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(DeviceText.plainText(info, ssd: ssd, health: healthRows), forType: .string)
                 copied = true
                 window.reload()
-            }])]
+            }, makeSpacer(), exportButton]))]
     }
 }
 

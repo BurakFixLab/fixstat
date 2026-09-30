@@ -518,3 +518,31 @@ final class NumericChartView: TimeChartView {
         }
     }
 }
+
+/// "Export report" pull-down: PDF (customer report), CSV and JSON (sensor report).
+enum LegacyExport {
+    static func menuButton(core: MonitorCore, small: Bool = false, willOpen: (() -> Void)? = nil) -> NSView {
+        let button = NSPopUpButton(frame: .zero, pullsDown: true)
+        button.addItem(withTitle: L("Export report"))
+        let model = core.system.model
+        button.menu?.addItem(LegacyMenuItem(title: L("PDF…")) {
+            willOpen?()
+            guard let data = ReportPDF.render(ReportData(monitor: core)) else { return }
+            LegacySave.run(data, name: SensorReport.fileName(model: model, fileExtension: "pdf"), fileExtension: "pdf")
+        })
+        for csv in [true, false] {
+            button.menu?.addItem(LegacyMenuItem(title: csv ? L("CSV…") : L("JSON…")) {
+                willOpen?()
+                let report = SensorReport(monitor: core)
+                let ext = csv ? "csv" : "json"
+                guard let data = csv ? report.csv() : try? report.json() else { return }
+                LegacySave.run(data, name: SensorReport.fileName(model: model, fileExtension: ext), fileExtension: ext)
+            })
+        }
+        if small {
+            button.controlSize = .small
+            button.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+        }
+        return button
+    }
+}

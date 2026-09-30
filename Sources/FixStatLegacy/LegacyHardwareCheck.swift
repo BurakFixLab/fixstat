@@ -87,13 +87,17 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
         resetButton.bezelStyle = .rounded
         resetButton.target = self
         resetButton.action = #selector(reset)
-        let sidebarFooter = vStack([summary, resetButton], spacing: 8)
+        let sidebarFooter = vStack([summary, hStack([resetButton, makeSpacer(), LegacyExport.menuButton(core: core)])], spacing: 8)
         let sidebar = NSStackView(views: [scroll, sidebarFooter])
         sidebar.orientation = .vertical
         sidebar.alignment = .leading
         sidebar.edgeInsets = NSEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
         scroll.widthAnchor.constraint(equalTo: sidebar.widthAnchor).isActive = true
         sidebarFooter.edgeInsets = NSEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+        sidebarFooter.widthAnchor.constraint(equalTo: sidebar.widthAnchor).isActive = true
+        for view in sidebarFooter.arrangedSubviews {
+            view.widthAnchor.constraint(equalTo: sidebarFooter.widthAnchor, constant: -24).isActive = true
+        }
         sidebar.widthAnchor.constraint(equalToConstant: 250).isActive = true
 
         instructions.font = .systemFont(ofSize: LegacyStyle.body)

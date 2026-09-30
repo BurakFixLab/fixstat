@@ -181,6 +181,28 @@ enum LegacySnapshot {
     static func runIfRequested(core: MonitorCore, panel: LegacyPanelController, tools: LegacyTools,
                                settings: () -> LegacySettingsController) -> Bool {
         let arguments = CommandLine.arguments
+        // `--export report.pdf|csv|json`: the same report as "Export report", then exit.
+        if let index = arguments.firstIndex(of: "--export"), index + 1 < arguments.count {
+            let url = URL(fileURLWithPath: arguments[index + 1])
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                core.refresh()
+                let data: Data?
+                switch url.pathExtension.lowercased() {
+                case "pdf": data = ReportPDF.render(ReportData(monitor: core))
+                case "csv": data = SensorReport(monitor: core).csv()
+                default: data = try? SensorReport(monitor: core).json()
+                }
+                do {
+                    try (data ?? Data()).write(to: url)
+                    exit(0)
+                } catch {
+                    FileHandle.standardError.write(Data("export failed: \(error)\n".utf8))
+                    exit(1)
+                }
+            }
+            core.panelVisible = true
+            return true
+        }
         guard let index = arguments.firstIndex(of: "--snapshot"), index + 1 < arguments.count else { return false }
         let url = URL(fileURLWithPath: arguments[index + 1])
         UserDefaults.standard.set(arguments.contains("--technician"), forKey: Pref.technicianMode)

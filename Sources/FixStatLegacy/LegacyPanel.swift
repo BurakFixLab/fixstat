@@ -266,7 +266,12 @@ final class LegacyPanelController: NSViewController {
         if let tools {
             buttons.append(tools.makeMenuButton(small: small) { [weak self] in self?.closePanel?() })
         }
-        return hStack(buttons + [makeSpacer(), quit], spacing: 6)
+        var trailing: [NSView] = [quit]
+        // The technician panel also exports the report, like the SwiftUI one.
+        if small {
+            trailing.insert(LegacyExport.menuButton(core: core, small: true) { [weak self] in self?.closePanel?() }, at: 0)
+        }
+        return hStack(buttons + [makeSpacer()] + trailing, spacing: 6)
     }
 
     // MARK: - Technician panel

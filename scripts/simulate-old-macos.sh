@@ -7,6 +7,7 @@
 #   scripts/simulate-old-macos.sh [APP] [-- ARGS…]     (default build/FixStat.app, --legacy-ui)
 #
 # Prints "still running after 6 s" when the app survived its launch, or dyld's error.
+# SIM_WAIT=SECONDS changes the 6 s (the run ends earlier when the app exits by itself).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 app="${1:-build/FixStat.app}"
@@ -33,9 +34,14 @@ done
 codesign --force --sign - "$work/FixStat.app" >/dev/null 2>&1
 arch -x86_64 "$binary" "${args[@]}" > "$work/out.txt" 2>&1 &
 pid=$!
-sleep 6
+# SIM_WAIT=SECONDS for runs that take longer (e.g. --export report.pdf under Rosetta).
+wait_seconds="${SIM_WAIT:-6}"
+for _ in $(seq 1 "$wait_seconds"); do
+    kill -0 "$pid" 2>/dev/null || break
+    sleep 1
+done
 if kill -0 "$pid" 2>/dev/null; then
-    echo "still running after 6 s"
+    echo "still running after $wait_seconds s"
     kill "$pid"
 else
     wait "$pid" || true
