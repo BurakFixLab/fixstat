@@ -59,4 +59,36 @@ public enum DeviceText {
         lines += health.map { "\($0.0): \($0.1)" }
         return lines.joined(separator: "\n")
     }
+
+    /// Health summary of the device card: (title, value, needs attention).
+    public static func healthRows(battery: BatteryInfo?, model: String, reference: PartsReference, ssd: SSDInfo?,
+                                  panics: [PanicReport]?, hardwareCheck: HardwareCheck) -> [(String, String, Bool)] {
+        var rows: [(String, String, Bool)] = []
+        if let b = battery {
+            let check = PartCheck.battery(b, model: model, reference: reference)
+            var parts = [b.healthPercent.map { Format.percent($0, digits: 1) },
+                         b.cycleCount.map { L("%lld cycles", $0) }].compactMap { $0 }
+            parts.append(PartText.verdict(check.verdict))
+            rows.append((L("Battery"), parts.joined(separator: " · "),
+                         (b.healthPercent ?? 100) < 80 || check.verdict == .suspicious))
+        }
+        if let h = ssd?.health {
+            let findings = SSDText.healthFindings(h)
+            rows.append((L("SSD"), findings.isEmpty
+                         ? L("SSD health is good.") + " " + L("%lld %% used", h.percentageUsed)
+                         : findings.joined(separator: " "), !findings.isEmpty))
+        }
+        if let panics {
+            let recent = panics.filter { $0.date > Date().addingTimeInterval(-30 * 86_400) }
+            rows.append((L("Kernel panics (30 days)"),
+                         recent.isEmpty ? L("none") : Format.number(Double(recent.count)), !recent.isEmpty))
+        }
+        if !hardwareCheck.isEmpty {
+            rows.append((L("Hardware check"),
+                         L("%lld passed · %lld failed · %lld not tested", hardwareCheck.count(.passed),
+                           hardwareCheck.count(.failed), hardwareCheck.count(.untested)),
+                         hardwareCheck.hasFailures))
+        }
+        return rows
+    }
 }

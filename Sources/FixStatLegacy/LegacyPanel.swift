@@ -10,6 +10,10 @@ import FixStatCore
 final class LegacyPanelController: NSViewController {
     private let core: MonitorCore
     private let openSettings: () -> Void
+    /// Tools menu; nil hides it.
+    var tools: LegacyTools?
+    /// Closes the popover before a tool window opens.
+    var closePanel: (() -> Void)?
     /// Called after the content changed size (the popover follows it).
     var onResize: ((NSSize) -> Void)?
     /// Tallest the panel may be (the screen below the menu bar). The technician panel is
@@ -258,7 +262,11 @@ final class LegacyPanelController: NSViewController {
                 button.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
             }
         }
-        return hStack([settings, makeSpacer(), quit], spacing: 6)
+        var buttons: [NSView] = [settings]
+        if let tools {
+            buttons.append(tools.makeMenuButton(small: small) { [weak self] in self?.closePanel?() })
+        }
+        return hStack(buttons + [makeSpacer(), quit], spacing: 6)
     }
 
     // MARK: - Technician panel

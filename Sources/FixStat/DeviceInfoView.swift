@@ -88,33 +88,8 @@ struct DeviceInfoView: View {
 
     /// (title, value, needs attention)
     private var healthRows: [(String, String, Bool)] {
-        var rows: [(String, String, Bool)] = []
-        if let b = monitor.battery {
-            let check = PartCheck.battery(b, model: monitor.system.model, reference: monitor.partsReference)
-            var parts = [b.healthPercent.map { Format.percent($0, digits: 1) },
-                         b.cycleCount.map { String(localized: "\($0) cycles") }].compactMap { $0 }
-            parts.append(PartText.verdict(check.verdict))
-            rows.append((String(localized: "Battery"), parts.joined(separator: " · "),
-                         (b.healthPercent ?? 100) < 80 || check.verdict == .suspicious))
-        }
-        if let h = ssd?.health {
-            let findings = SSDText.healthFindings(h)
-            rows.append((String(localized: "SSD"), findings.isEmpty
-                         ? String(localized: "SSD health is good.") + " " + String(localized: "\(h.percentageUsed) % used")
-                         : findings.joined(separator: " "), !findings.isEmpty))
-        }
-        if let panics {
-            let recent = panics.filter { $0.date > Date().addingTimeInterval(-30 * 86_400) }
-            rows.append((String(localized: "Kernel panics (30 days)"),
-                         recent.isEmpty ? String(localized: "none") : Format.number(Double(recent.count)), !recent.isEmpty))
-        }
-        let check = monitor.hardwareCheck
-        if !check.isEmpty {
-            rows.append((String(localized: "Hardware check"),
-                         String(localized: "\(check.count(.passed)) passed · \(check.count(.failed)) failed · \(check.count(.untested)) not tested"),
-                         check.hasFailures))
-        }
-        return rows
+        DeviceText.healthRows(battery: monitor.battery, model: monitor.system.model, reference: monitor.partsReference,
+                              ssd: ssd, panics: panics, hardwareCheck: monitor.hardwareCheck)
     }
 }
 

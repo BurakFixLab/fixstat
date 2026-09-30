@@ -132,11 +132,3 @@ struct CrashHistoryView: View {
         }
     }
 }
-
-/// Panics and shutdown causes found by the last scan (for reports).
-@available(macOS 14.0, *)
-struct CrashScan {
-    let panics: [PanicReport]
-    let shutdowns: [ShutdownEvent]
-    var date = Date()
-}

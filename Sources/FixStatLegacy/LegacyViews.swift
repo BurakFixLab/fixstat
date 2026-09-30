@@ -96,6 +96,8 @@ func vStack(_ views: [NSView], spacing: CGFloat = 6) -> NSStackView {
     stack.orientation = .vertical
     stack.alignment = .leading
     stack.spacing = spacing
+    // Keep the content together instead of spreading it over extra height.
+    stack.setHuggingPriority(.defaultHigh, for: .vertical)
     return stack
 }
 

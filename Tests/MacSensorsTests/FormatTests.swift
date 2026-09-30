@@ -26,12 +26,17 @@ import Testing
         case "speed": Format.speed(megabytesPerSecond: 2250)
         case "number": Format.number(4382.5, digits: 1)
         case "gigabytes": Format.gigabytes(8_589_934_592)
+        case "date": Format.dateTime(Date(timeIntervalSince1970: 1_790_000_000))
+        case "signed +": Format.signedPercent(0.123)
+        case "signed −": Format.signedPercent(-0.08)
+        case "signed 0": Format.signedPercent(0.001)
         default: ""
         }
     }
 
     @Test(arguments: ["percent", "temperature", "mAh", "mA", "mA negative", "volts", "amps", "mV", "watts", "Wh",
-                      "minutes", "duration", "seconds", "min:sec", "bytes", "memory", "speed", "number", "gigabytes"])
+                      "minutes", "duration", "seconds", "min:sec", "bytes", "memory", "speed", "number", "gigabytes",
+                      "date", "signed +", "signed −", "signed 0"])
     func sameOutput(name: String) {
         Format.forceLegacy = false
         let modern = Self.format(name)

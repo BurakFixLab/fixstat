@@ -198,6 +198,31 @@ public enum Format {
         L("%@ rpm", number(value))
     }
 
+    /// "30 Sep 2026 at 10:48" style: abbreviated date, short time.
+    public static func dateTime(_ date: Date) -> String {
+        if #available(macOS 12, *), !forceLegacy {
+            return date.formatted(date: .abbreviated, time: .shortened)
+        }
+        let f = DateFormatter()
+        f.dateStyle = .medium
+        f.timeStyle = .short
+        return f.string(from: date)
+    }
+
+    /// "+12 %" / "−8 %": a signed whole percentage (deviation from an average).
+    public static func signedPercent(_ fraction: Double) -> String {
+        if #available(macOS 12, *), !forceLegacy {
+            return (fraction * 100).formatted(.number.precision(.fractionLength(0)).sign(strategy: .always(includingZero: false)))
+                .appending(" %")
+        }
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        f.maximumFractionDigits = 0
+        let value = (fraction * 100).rounded()
+        if value > 0 { f.positivePrefix = f.plusSign }
+        return (f.string(from: NSNumber(value: value == 0 ? 0 : value)) ?? "") + " %"
+    }
+
     // MARK: Fallbacks for macOS 10.13 – 11
 
     private static func measurement<U: Unit>(_ value: Measurement<U>, digits: Int,

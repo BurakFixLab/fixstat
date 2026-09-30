@@ -83,17 +83,6 @@ private struct DetailRow: View {
     }
 }
 
-@available(macOS 14.0, *)
-private func hex(_ value: Int?) -> String? {
-    value.map { $0 == 0 ? "0" : String(format: "0x%X", $0) }
-}
-
-@available(macOS 14.0, *)
-private func signedPercent(_ fraction: Double) -> String {
-    (fraction * 100).formatted(.number.precision(.fractionLength(0)).sign(strategy: .always(includingZero: false)))
-        .appending(" %")
-}
-
 // MARK: - Originality
 
 @available(macOS 14.0, *)
@@ -199,7 +188,7 @@ private struct CellsSection: View {
                             .foregroundStyle(cell.lowCapacity ? TemperatureColor.hot : .primary)
                         Text(cell.resistance.map { Format.number(Double($0)) } ?? "–")
                             .foregroundStyle(cell.highResistance ? TemperatureColor.hot : .primary)
-                        Text(deviationText(cell))
+                        Text(BatteryDetailText.deviation(cell))
                             .foregroundStyle(cell.isSuspect ? TemperatureColor.hot : .secondary)
                     }
                     .font(.callout.monospaced())
@@ -212,7 +201,7 @@ private struct CellsSection: View {
             } else {
                 ForEach(analysis.suspects, id: \.number) { cell in
                     Label {
-                        Text(finding(cell))
+                        Text(BatteryDetailText.finding(cell))
                     } icon: {
                         Image(systemName: "exclamationmark.triangle.fill")
                     }
@@ -225,23 +214,6 @@ private struct CellsSection: View {
         }
     }
 
-    private func deviationText(_ cell: CellAnalysis.Cell) -> String {
-        [cell.resistanceDeviation.map { "R " + signedPercent($0) },
-         cell.qmaxDeviation.map { "Q " + signedPercent($0) }]
-            .compactMap { $0 }
-            .joined(separator: "  ")
-    }
-
-    private func finding(_ cell: CellAnalysis.Cell) -> String {
-        var parts: [String] = []
-        if cell.highResistance, let dev = cell.resistanceDeviation {
-            parts.append(String(localized: "resistance \(signedPercent(dev)) vs. average"))
-        }
-        if cell.lowCapacity, let dev = cell.qmaxDeviation {
-            parts.append(String(localized: "Qmax \(signedPercent(dev)) vs. average"))
-        }
-        return String(localized: "Cell \(cell.number): \(parts.joined(separator: ", "))")
-    }
 }
 
 // MARK: - Pack
@@ -254,11 +226,11 @@ private struct PackSection: View {
         DetailGroup(title: "Pack") {
             DetailRow(title: "Gauge", value: battery.gaugeDeviceName)
             DetailRow(title: "Chemistry ID", value: battery.identity?.chemistryID.map { String($0) })
-            DetailRow(title: "Manufacturer data", value: manufacturer)
-            DetailRow(title: "Cycles", value: cycles)
+            DetailRow(title: "Manufacturer data", value: BatteryDetailText.manufacturer(battery))
+            DetailRow(title: "Cycles", value: BatteryDetailText.cycles(battery))
             DetailRow(title: "Health", value: battery.healthPercent.map { Format.percent($0, digits: 1) })
             DetailRow(title: "Nominal health", value: battery.nominalHealthPercent.map { Format.percent($0, digits: 1) })
-            DetailRow(title: "Permanent failure", value: hex(battery.permanentFailureStatus),
+            DetailRow(title: "Permanent failure", value: BatteryDetailText.hex(battery.permanentFailureStatus),
                       highlight: (battery.permanentFailureStatus ?? 0) != 0)
             DetailRow(title: "Cell disconnects", value: battery.cellDisconnectCount.map { Format.number(Double($0)) },
                       highlight: (battery.cellDisconnectCount ?? 0) != 0)
@@ -267,16 +239,6 @@ private struct PackSection: View {
         }
     }
 
-    private var manufacturer: String? {
-        guard let strings = battery.identity?.manufacturerStrings, !strings.isEmpty else { return nil }
-        return strings.joined(separator: " · ")
-    }
-
-    private var cycles: String? {
-        guard let count = battery.cycleCount else { return nil }
-        guard let design = battery.designCycleCount else { return Format.number(Double(count)) }
-        return String(localized: "\(Format.number(Double(count))) of \(Format.number(Double(design)))")
-    }
 }
 
 // MARK: - Lifetime
@@ -287,9 +249,7 @@ private struct LifetimeSection: View {
 
     var body: some View {
         DetailGroup(title: "Lifetime (gauge)") {
-            DetailRow(title: "Operating time", value: lifetime?.totalOperatingTime.map {
-                String(localized: "\(Format.number(Double($0))) h", comment: "Hours as reported by the gauge")
-            })
+            DetailRow(title: "Operating time", value: lifetime?.totalOperatingTime.map(BatteryDetailText.hours))
             DetailRow(title: "Highest temperature", value: lifetime?.maximumTemperature.map { Format.temperature($0) })
             DetailRow(title: "Average temperature", value: lifetime?.averageTemperature.map { Format.temperature($0) })
             DetailRow(title: "Lowest temperature", value: lifetime?.minimumTemperature.map { Format.temperature($0) })
@@ -315,11 +275,11 @@ private struct ChargingSection: View {
             DetailRow(title: "Battery current", value: battery.amperage.map { Format.milliamps($0) })
             DetailRow(title: "Charger target current", value: charger?.chargingCurrent.map { Format.milliamps($0, signed: false) })
             DetailRow(title: "Charger target voltage", value: charger?.chargingVoltage.map { Format.volts(millivolts: $0, digits: 3) })
-            DetailRow(title: "Input", value: input(telemetry))
-            DetailRow(title: "Not charging reason", value: notCharging(charger?.notChargingReason))
-            DetailRow(title: "Slow charging reason", value: hex(charger?.slowChargingReason),
+            DetailRow(title: "Input", value: BatteryDetailText.input(telemetry))
+            DetailRow(title: "Not charging reason", value: BatteryDetailText.notCharging(charger?.notChargingReason))
+            DetailRow(title: "Slow charging reason", value: BatteryDetailText.hex(charger?.slowChargingReason),
                       highlight: (charger?.slowChargingReason ?? 0) != 0)
-            DetailRow(title: "Charger inhibit reason", value: hex(charger?.chargerInhibitReason),
+            DetailRow(title: "Charger inhibit reason", value: BatteryDetailText.hex(charger?.chargerInhibitReason),
                       highlight: (charger?.chargerInhibitReason ?? 0) != 0)
             DetailRow(title: "Thermally limited", value: charger?.timeChargingThermallyLimited.map { Format.number(Double($0)) },
                       highlight: (charger?.timeChargingThermallyLimited ?? 0) != 0)
@@ -329,18 +289,6 @@ private struct ChargingSection: View {
         }
     }
 
-    private func input(_ telemetry: PowerTelemetry?) -> String? {
-        guard let power = telemetry?.systemPowerIn, power > 0 else { return nil }
-        var parts = [Format.watts(Double(power) / 1000, digits: 1)]
-        if let v = telemetry?.systemVoltageIn { parts.append(Format.volts(millivolts: v)) }
-        if let i = telemetry?.systemCurrentIn { parts.append(Format.milliamps(i, signed: false)) }
-        return parts.joined(separator: " · ")
-    }
-
-    private func notCharging(_ value: Int?) -> String? {
-        guard let value else { return nil }
-        return value == 0 ? String(localized: "none") : hex(value)
-    }
 }
 
 // MARK: - USB-C Power Delivery
@@ -359,9 +307,9 @@ private struct PowerDeliverySection: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                DetailRow(title: "Contract", value: profileText(active, position: pd.activePosition))
+                DetailRow(title: "Contract", value: BatteryDetailText.profile(active, position: pd.activePosition))
                 if let contract = pd.consistentContract {
-                    DetailRow(title: "Requested", value: requested(contract))
+                    DetailRow(title: "Requested", value: BatteryDetailText.requested(contract))
                     if contract.capabilityMismatch {
                         Label("The Mac reported that the adapter cannot supply what it needs.",
                               systemImage: "exclamationmark.triangle.fill")
@@ -375,7 +323,7 @@ private struct PowerDeliverySection: View {
                         HStack {
                             Text(verbatim: "\(index + 1).")
                                 .foregroundStyle(.secondary)
-                            Text(verbatim: pdoText(pdo))
+                            Text(verbatim: BatteryDetailText.pdo(pdo))
                             Spacer()
                             if index + 1 == pd.activePosition {
                                 Text("in use").font(.caption).foregroundStyle(TemperatureColor.cool)
@@ -385,7 +333,7 @@ private struct PowerDeliverySection: View {
                     }
                 }
                 .font(.callout)
-                DetailRow(title: "Plug-ins / removals", value: counts(pd))
+                DetailRow(title: "Plug-ins / removals", value: BatteryDetailText.counts(pd))
                 DetailRow(title: "Hard resets", value: pd.hardResetCount.map { Format.number(Double($0)) })
             } else {
                 Text("No USB-C Power Delivery contract.")
@@ -393,46 +341,5 @@ private struct PowerDeliverySection: View {
                     .foregroundStyle(.secondary)
             }
         }
-    }
-
-    private func pdoText(_ pdo: PowerDataObject) -> String {
-        switch pdo.kind {
-        case .fixed:
-            return [pdo.maxVoltage.map { Format.volts(millivolts: $0, digits: 0) },
-                    pdo.maxCurrent.map { Format.amps(milliamps: $0) }].compactMap { $0 }.joined(separator: " · ")
-        case .pps, .variable:
-            let range = [pdo.minVoltage, pdo.maxVoltage].compactMap { $0 }
-                .map { Format.volts(millivolts: $0, digits: 1) }.joined(separator: "–")
-            let kind = pdo.kind == .pps ? "PPS " : ""
-            return kind + [range, pdo.maxCurrent.map { Format.amps(milliamps: $0) }].compactMap { $0 }.joined(separator: " · ")
-        case .battery:
-            return [pdo.minVoltage, pdo.maxVoltage].compactMap { $0 }
-                .map { Format.volts(millivolts: $0, digits: 1) }.joined(separator: "–")
-                + (pdo.maxPower.map { " · " + Format.watts(Double($0) / 1000) } ?? "")
-        case .unknown:
-            return String(format: "0x%08X", pdo.raw)
-        }
-    }
-
-    private func profileText(_ pdo: PowerDataObject, position: Int?) -> String {
-        var parts: [String] = []
-        if let v = pdo.maxVoltage { parts.append(Format.volts(millivolts: v, digits: v % 1000 == 0 ? 0 : 1)) }
-        if let i = pdo.maxCurrent { parts.append(Format.amps(milliamps: i)) }
-        if let power = pdo.power { parts.append(Format.watts(Double(power) / 1000)) }
-        if let position { parts.append(String(localized: "profile \(position)")) }
-        return parts.joined(separator: " · ")
-    }
-
-    private func requested(_ contract: PowerDeliveryContract) -> String? {
-        guard let current = contract.operatingCurrent else { return nil }
-        var text = Format.amps(milliamps: current)
-        if let power = contract.power { text += " · " + Format.watts(Double(power) / 1000) }
-        return text
-    }
-
-    private func counts(_ pd: PowerDeliveryInfo) -> String? {
-        guard let attach = pd.attachCount else { return nil }
-        let detach = pd.detachCount.map { Format.number(Double($0)) } ?? "–"
-        return "\(Format.number(Double(attach))) / \(detach)"
     }
 }

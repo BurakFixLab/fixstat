@@ -50,6 +50,16 @@ public final class MonitorCore {
         didSet { scheduleTimer() }
     }
 
+    // Session results (for reports), shared by both interfaces.
+    /// Hardware checklist of this session.
+    public var hardwareCheck = HardwareCheck()
+    /// Device card data (system_profiler takes about a second, so it is loaded on demand).
+    public var deviceInfo: DeviceInfo?
+    /// Last panic / shutdown cause scan.
+    public var lastCrashScan: CrashScan?
+    /// Last sleep / wake analysis.
+    public var lastSleepAnalysis: SleepAnalysis?
+
     public let history: BatteryHistoryStore
     public private(set) var offState: OffStateRecorder?
     private var sampler: TemperatureSampler?

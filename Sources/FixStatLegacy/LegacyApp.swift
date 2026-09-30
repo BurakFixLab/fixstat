@@ -15,6 +15,7 @@ public final class LegacyApp: NSObject, NSApplicationDelegate, NSPopoverDelegate
     private let popover = NSPopover()
     private var panel: LegacyPanelController!
     private var settings: LegacySettingsController?
+    private var tools: LegacyTools!
     private var defaultsObserver: NSObjectProtocol?
     private var popoverMonitor: Any?
 
@@ -30,13 +31,16 @@ public final class LegacyApp: NSObject, NSApplicationDelegate, NSPopoverDelegate
         core = MonitorCore()
         panel = LegacyPanelController(core: core) { [unowned self] in showSettings() }
         panel.onResize = { [unowned self] size in popover.contentSize = size }
+        tools = LegacyTools(core: core)
+        panel.tools = tools
+        panel.closePanel = { [unowned self] in popover.performClose(nil) }
         popover.contentViewController = panel
         popover.behavior = .transient
         popover.animates = false
         popover.delegate = self
 
         LegacyAppearance.apply()
-        if LegacySnapshot.runIfRequested(core: core, panel: panel, settings: { [unowned self] in makeSettings() }) {
+        if LegacySnapshot.runIfRequested(core: core, panel: panel, tools: tools, settings: { [unowned self] in makeSettings() }) {
             return
         }
 
@@ -170,10 +174,11 @@ enum LegacyAppearance {
     }
 }
 
-/// `--legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] [--max-height N]`: renders the AppKit
+/// `--legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] [--max-height N]
+/// [--tool device|details|crash|sleep [--wait SECONDS]]`: renders the AppKit
 /// panel or a Settings tab to PNG and exits (UI checks without clicking).
 enum LegacySnapshot {
-    static func runIfRequested(core: MonitorCore, panel: LegacyPanelController,
+    static func runIfRequested(core: MonitorCore, panel: LegacyPanelController, tools: LegacyTools,
                                settings: () -> LegacySettingsController) -> Bool {
         let arguments = CommandLine.arguments
         guard let index = arguments.firstIndex(of: "--snapshot"), index + 1 < arguments.count else { return false }
@@ -189,7 +194,20 @@ enum LegacySnapshot {
         let capture: NSView
         let window: NSWindow
         var fitsContent = false
-        if let i = arguments.firstIndex(of: "--settings"), i + 1 < arguments.count, let tab = Int(arguments[i + 1]) {
+        let toolNames: [String: LegacyTools.Tool] = ["device": .deviceInfo, "details": .batteryDetails,
+                                                     "crash": .crashHistory, "sleep": .sleep]
+        var wait = 2.5
+        if let i = arguments.firstIndex(of: "--wait"), i + 1 < arguments.count, let seconds = Double(arguments[i + 1]) {
+            wait = seconds
+        }
+        if let i = arguments.firstIndex(of: "--tool"), i + 1 < arguments.count, let tool = toolNames[arguments[i + 1]] {
+            let toolWindow = tools.window(tool)
+            toolWindow.onOpen?()
+            toolWindow.reload()
+            guard let w = toolWindow.window, let frame = w.contentView?.superview else { exit(1) }
+            window = w
+            capture = frame
+        } else if let i = arguments.firstIndex(of: "--settings"), i + 1 < arguments.count, let tab = Int(arguments[i + 1]) {
             let controller = settings()
             controller.select(tab: tab)
             guard let settingsWindow = controller.window, let frame = settingsWindow.contentView?.superview else { exit(1) }
@@ -213,7 +231,7 @@ enum LegacySnapshot {
         window.orderFrontRegardless()
 
         // Wait for a second refresh (CPU usage needs a delta).
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
             core.refresh()
             panel.update()
             if fitsContent { window.setContentSize(panel.view.fittingSize) }

@@ -44,20 +44,34 @@ final class Monitor {
     var lastTestResult: StressTestResult?
     /// Result of the last memory test (for reports).
     var lastMemoryResult: MemoryTest.Result?
-    /// Last panic / shutdown cause scan (for reports).
-    var lastCrashScan: CrashScan?
     /// Result of the last full SSD test (for reports).
     var lastFullSSDResult: FullSSDTestRunner.Result?
     /// Result of the last SSD write–verify test (for reports).
     var lastSSDResult: SSDStressTest.Result?
-    /// Hardware checklist of this session (for reports).
-    var hardwareCheck = HardwareCheck()
     /// Result of the last battery capacity test (for reports).
     var lastCapacityResult: CapacityResult?
-    /// Last sleep / wake analysis (for reports).
-    var lastSleepAnalysis: SleepAnalysis?
+
+    // Session results kept in the core (both interfaces read them), observed here.
+    /// Hardware checklist of this session (for reports).
+    var hardwareCheck: HardwareCheck {
+        get { access(keyPath: \.hardwareCheck); return core.hardwareCheck }
+        set { withMutation(keyPath: \.hardwareCheck) { core.hardwareCheck = newValue } }
+    }
     /// Device card data (system_profiler takes about a second, so it is loaded on demand).
-    var deviceInfo: DeviceInfo?
+    var deviceInfo: DeviceInfo? {
+        get { access(keyPath: \.deviceInfo); return core.deviceInfo }
+        set { withMutation(keyPath: \.deviceInfo) { core.deviceInfo = newValue } }
+    }
+    /// Last panic / shutdown cause scan (for reports).
+    var lastCrashScan: CrashScan? {
+        get { access(keyPath: \.lastCrashScan); return core.lastCrashScan }
+        set { withMutation(keyPath: \.lastCrashScan) { core.lastCrashScan = newValue } }
+    }
+    /// Last sleep / wake analysis (for reports).
+    var lastSleepAnalysis: SleepAnalysis? {
+        get { access(keyPath: \.lastSleepAnalysis); return core.lastSleepAnalysis }
+        set { withMutation(keyPath: \.lastSleepAnalysis) { core.lastSleepAnalysis = newValue } }
+    }
 
     @ObservationIgnored private var defaultsObserver: NSObjectProtocol?
 

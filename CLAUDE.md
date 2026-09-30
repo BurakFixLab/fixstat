@@ -126,7 +126,13 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   UserDefaults, so both interfaces share preferences). The technician panel is taller
   than the 768 px screen of an 11" MacBook Air: the popover would be squeezed and clip
   labels, so the sensor list is shortened to the screen's visible height (`maxHeight`). Battery icon: SF Symbol on 11+,
-  drawn by hand before. Tool windows, export, notifications and login item: stages 4–5.
+  drawn by hand before. Tool windows (`LegacyTools`) describe their content as `Block`s
+  (sections, rows, tables, findings, tiles, actions) that `LegacyDocumentView` renders as
+  a scrolling document; their texts come from core helpers (`DeviceText`,
+  `BatteryDetailText`, `SleepText`, …) shared with the SwiftUI windows. Session results
+  (hardware check, device card, crash scan, sleep analysis) live in `MonitorCore`; the
+  SwiftUI `Monitor` exposes them as observed computed properties. Export,
+  notifications and login item: stage 5.
 - `scripts/build-app.sh` compiles with clang/swiftc directly (SwiftPM raises the deployment
   target to 12): x86_64 for 10.13, arm64 for 11, lipo; the Swift runtime for < 10.14.4 is
   copied to Contents/Frameworks (rpath after /usr/lib/swift); frameworks newer than 10.13
@@ -311,6 +317,7 @@ build/FixStat.app/Contents/MacOS/FixStat --snapshot out.png [--technician] [--se
 # AppKit interface: panel or Settings tab to PNG (also under scripts/simulate-old-macos.sh … -- ARGS):
 build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] \
     [--max-height N] [--dark|--light]      # --max-height: as on a small screen (11" Air: 722)
+build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png --tool device|details|crash|sleep [--wait SECONDS]
 # Write the report (same as "Export report") and exit:
 build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check]
 ```
