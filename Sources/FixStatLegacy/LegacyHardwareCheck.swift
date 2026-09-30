@@ -180,11 +180,14 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
             return pane
         case .trackpad: return LegacyTrackpadPane(core: core)
         case .display: return LegacyDisplayPane(core: core)
+        case .ambientLight: return LegacyAmbientLightPane(core: core)
+        case .speakers: return LegacySpeakerPane(core: core)
+        case .microphone: return LegacyMicrophonePane(core: core)
+        case .camera: return LegacyCameraPane(core: core)
         case .wifi: return LegacyWiFiPane(core: core)
         case .bluetooth: return LegacyBluetoothPane(core: core)
         case .ports: return LegacyPortsPane(core: core)
         case .lid: return LegacyLidPane(core: core)
-        default: return BlockPane(core: core)
         }
     }
 

@@ -142,11 +142,12 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   copied to Contents/Frameworks (rpath after /usr/lib/swift); frameworks newer than 10.13
   (SwiftUI, Charts, UserNotifications, …) end up weak-linked — check with `otool -L`.
   C functions of frameworks that have a Swift overlay can bind through the overlay: the
-  x86_64 (10.13) slice binds `CMSampleBufferGetImageBuffer` /
+  x86_64 (10.13) slice bound `CMSampleBufferGetImageBuffer` /
   `CMVideoFormatDescriptionGetDimensions` to libswiftCoreMedia, which re-exports CoreMedia
-  only on recent macOS (the back-deploy copy does not). Fine for the SwiftUI camera test
-  (macOS 14+); an AppKit camera test must load them with dlsym from CoreMedia. Check
-  `nm -m -arch x86_64 … | grep '(from libswift'` for C symbols after adding such code.
+  only on recent macOS (the back-deploy copy does not). `CameraCapture` therefore looks
+  them up with dlsym (`CoreMediaFunctions`). Check
+  `nm -m -arch x86_64 … | grep '(from libswift' | grep -v ' _$s'` for C symbols after adding
+  such code (currently none).
   Building for macOS 11 changes a few SwiftUI defaults (e.g. wider menu buttons): the
   technician footer uses small controls. `swift build` / `swift test` (SwiftPM, macOS 14)
   are for development and tests only.
@@ -266,6 +267,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   works without Location, names hidden), Bluetooth (`system_profiler` + CoreBluetooth
   scan), ports, lid. Tests fill in evidence and may mark passed; the technician's choice
   always wins. Page 2 of the PDF report when anything was marked.
+  The logic behind the tests is in FixStatCore (`KeyEventTap`, `KeyLegend`,
+  `TrackpadRecorder`, `TonePlayer` — a pre-rendered buffer, since AVAudioSourceNode needs
+  10.15 —, `MicrophoneLevel`, `CameraCapture`, `LightTestRunner`, `WiFiLink`,
+  `BluetoothScan`, `PortHistory`, `LidWatcher`); camera / microphone permission exists
+  from 10.14 (`MediaPermission`). Both interfaces show the same test panes.
 - Ambient light (`AmbientLightSensor`, `als.c`; test logic `LightCheck`, UI
   `AmbientLightTest.swift`): Apple Silicon lux from the SPU ALS HID service (usage page
   0xFF00 / usage 4, no Product name, event type 12, field 12 << 16); Intel raw channels from
@@ -324,8 +330,8 @@ build/FixStat.app/Contents/MacOS/FixStat --snapshot out.png [--technician] [--se
 # AppKit interface: panel or Settings tab to PNG (also under scripts/simulate-old-macos.sh … -- ARGS):
 build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] \
     [--max-height N] [--dark|--light]      # --max-height: as on a small screen (11" Air: 722)
-build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png --tool device|history|details|crash|sleep \
-    [--wait SECONDS] [--range 0…6] [--start-test SECONDS]   # also stress|memory|ssd|capacity
+build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png --tool device|history|details|crash|sleep|hardware \
+    [--item keyboard…lid] [--wait SECONDS] [--range 0…6] [--start-test SECONDS]   # also stress|memory|ssd|capacity
 # Write the report (same as "Export report") and exit:
 build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check]
 ```
