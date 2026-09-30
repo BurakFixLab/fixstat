@@ -236,6 +236,14 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   works without Location, names hidden), Bluetooth (`system_profiler` + CoreBluetooth
   scan), ports, lid. Tests fill in evidence and may mark passed; the technician's choice
   always wins. Page 2 of the PDF report when anything was marked.
+- Ambient light (`AmbientLightSensor`, `als.c`; test logic `LightCheck`, UI
+  `AmbientLightTest.swift`): Apple Silicon lux from the SPU ALS HID service (usage page
+  0xFF00 / usage 4, no Product name, event type 12, field 12 << 16); Intel raw channels from
+  AppleLMUController selector 0. Guided steps normal → covered → flashlight; the camera's
+  average brightness confirms the flashlight, so "no light" (repeat) is told apart from
+  "reads dark" (fail). "Automatic brightness" is readable only from the old
+  com.apple.iokit.AmbientLightSensor preference; on recent macOS it lives in root-owned
+  CoreBrightness preferences and is not shown.
 - Ports (`PortReader`): `IOPort` services ("Port-USB-C@1": ConnectionActive,
   TransportsActive, Overcurrent Count, ConnectionCount), USB enumeration failures from
   `AppleUSBHostPort` `port-statistics`, devices below `UsbCPortNumber`, and

@@ -30,7 +30,7 @@ struct HardwareCheckView: View {
                 .padding(.vertical, 2)
             }
             .safeAreaInset(edge: .bottom) { summary }
-            .navigationSplitViewColumnWidth(min: 210, ideal: 220, max: 260)
+            .navigationSplitViewColumnWidth(min: 240, ideal: 250, max: 300)
         } detail: {
             if let selection {
                 CheckDetail(item: selection)
@@ -51,6 +51,7 @@ struct HardwareCheckView: View {
             HStack {
                 Button("Reset") { monitor.hardwareCheck = HardwareCheck() }
                     .disabled(check.isEmpty)
+                    .fixedSize()
                 Spacer()
                 ExportMenu()
             }
@@ -94,6 +95,7 @@ private struct CheckDetail: View {
                 case .keyboard: KeyboardTestView()
                 case .trackpad: TrackpadTestView()
                 case .display: DisplayTestView()
+                case .ambientLight: AmbientLightTestView()
                 case .speakers: SpeakerTestView()
                 case .microphone: MicrophoneTestView()
                 case .camera: CameraTestView()
@@ -156,12 +158,12 @@ private struct ResultBar: View {
 
 @available(macOS 14.0, *)
 extension Monitor {
-    /// Stores measured evidence; marks the item passed if `passed` and nothing was
-    /// marked yet (the technician's own choice is never overridden).
-    func recordCheck(_ item: HardwareCheck.Item, detail: String, passed: Bool = false) {
+    /// Stores measured evidence; marks the item passed (or failed, for a clear measured fault)
+    /// if nothing was marked yet (the technician's own choice is never overridden).
+    func recordCheck(_ item: HardwareCheck.Item, detail: String, passed: Bool = false, failed: Bool = false) {
         hardwareCheck[item].detail = detail
-        if passed, hardwareCheck[item].status == .untested {
-            hardwareCheck[item].status = .passed
+        if passed || failed, hardwareCheck[item].status == .untested {
+            hardwareCheck[item].status = passed ? .passed : .failed
             hardwareCheck[item].date = Date()
         }
     }
@@ -174,6 +176,7 @@ enum HardwareText {
         case .keyboard: String(localized: "Keyboard")
         case .trackpad: String(localized: "Trackpad")
         case .display: String(localized: "Display")
+        case .ambientLight: String(localized: "Ambient light sensor")
         case .speakers: String(localized: "Speakers")
         case .microphone: String(localized: "Microphone")
         case .camera: String(localized: "Camera")
@@ -189,6 +192,7 @@ enum HardwareText {
         case .keyboard: "keyboard"
         case .trackpad: "rectangle.and.hand.point.up.left"
         case .display: "display"
+        case .ambientLight: "sun.max"
         case .speakers: "speaker.wave.2"
         case .microphone: "mic"
         case .camera: "camera"
@@ -207,6 +211,8 @@ enum HardwareText {
             String(localized: "Run a finger over the whole trackpad surface; the pointer can be anywhere. Cells that stay empty did not register touches. Then click once in each of the nine zones and secondary-click (two fingers) in each zone, keeping the pointer in this window. Also force click, scroll and pinch.")
         case .display:
             String(localized: "Shows solid colours full screen on the built-in display to spot dead or stuck pixels, lines, stains and backlight bleed. Click or press → for the next colour, ← to go back, esc to end.")
+        case .ambientLight:
+            String(localized: "Checks the ambient light sensor next to the camera in three steps: normal light, covered with a finger, and a flashlight on it. The camera confirms that the light really reached the sensor, so a missing flashlight is not taken for a broken sensor.")
         case .speakers:
             String(localized: "Plays test tones on the left and right speaker. The sweep runs from low to high frequencies and reveals rattling or distorted speakers.")
         case .microphone:

@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ (raw)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (ham)"
+          }
+        }
+      }
+    },
     "%@ / %@" : {
       "comment" : "Memory used / total",
       "localizations" : {
@@ -353,6 +363,16 @@
         }
       }
     },
+    "%lld. " : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld. "
+          }
+        }
+      }
+    },
     "%lld×" : {
       "localizations" : {
         "tr" : {
@@ -616,6 +636,16 @@
         }
       }
     },
+    "Ambient light sensor" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortam ışığı sensörü"
+          }
+        }
+      }
+    },
     "Appearance" : {
       "localizations" : {
         "tr" : {
@@ -642,6 +672,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Otomatik kayıt (DEP)"
+          }
+        }
+      }
+    },
+    "Automatic brightness: off" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otomatik parlaklık: kapalı"
+          }
+        }
+      }
+    },
+    "Automatic brightness: on" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otomatik parlaklık: açık"
           }
         }
       }
@@ -1338,6 +1388,16 @@
         }
       }
     },
+    "Checks the ambient light sensor next to the camera in three steps: normal light, covered with a finger, and a flashlight on it. The camera confirms that the light really reached the sensor, so a missing flashlight is not taken for a broken sensor." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kameranın yanındaki ortam ışığı sensörünü üç adımda kontrol eder: normal ışık, parmakla kapatma ve üzerine fener tutma. Kamera, ışığın gerçekten sensöre ulaştığını doğrular; böylece fenerin tutulmaması sensör arızası sanılmaz."
+          }
+        }
+      }
+    },
     "Chemistry ID" : {
       "localizations" : {
         "tr" : {
@@ -1556,6 +1616,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Test için bellek ayrılamadı."
+          }
+        }
+      }
+    },
+    "Cover the sensor" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensörü kapatma"
+          }
+        }
+      }
+    },
+    "Cover the sensor next to the camera with a finger." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kameranın yanındaki sensörü parmağınızla kapatın."
+          }
+        }
+      }
+    },
+    "Covering the sensor does not lower the value: it reads bright all the time (display always bright, keyboard light stays off)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensörü kapatmak değeri düşürmüyor: sürekli aydınlık okuyor (ekran hep parlak, klavye ışığı yanmıyor)."
           }
         }
       }
@@ -2126,6 +2216,16 @@
         }
       }
     },
+    "Flashlight" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fener"
+          }
+        }
+      }
+    },
     "Flipped bits" : {
       "localizations" : {
         "tr" : {
@@ -2662,6 +2762,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ağ bağlantılarını koru (TCP keepalive)"
+          }
+        }
+      }
+    },
+    "Keep the sensor uncovered in normal room light…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensörü normal oda ışığında açık bırakın…"
           }
         }
       }
@@ -3262,6 +3372,16 @@
         }
       }
     },
+    "No ambient light sensor found. On MacBooks this points to the camera board or the display cable." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortam ışığı sensörü bulunamadı. MacBook'larda bu, kamera kartına veya ekran kablosuna işaret eder."
+          }
+        }
+      }
+    },
     "No battery" : {
       "localizations" : {
         "tr" : {
@@ -3458,6 +3578,32 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Normal"
+          }
+        }
+      }
+    },
+    "Normal %@ · covered %@ · flashlight %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normal %1$@ · covered %2$@ · flashlight %3$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normal %1$@ · kapalı %2$@ · fener %3$@"
+          }
+        }
+      }
+    },
+    "Normal light" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normal ışık"
           }
         }
       }
@@ -4484,6 +4630,16 @@
         }
       }
     },
+    "Restart" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden başlat"
+          }
+        }
+      }
+    },
     "Restore defaults" : {
       "localizations" : {
         "tr" : {
@@ -4760,6 +4916,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayarlar…"
+          }
+        }
+      }
+    },
+    "Shine a phone flashlight at the sensor next to the camera." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kameranın yanındaki sensöre telefon feneri tutun."
           }
         }
       }
@@ -5472,6 +5638,16 @@
         }
       }
     },
+    "The ambient light sensor responds correctly." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortam ışığı sensörü doğru tepki veriyor."
+          }
+        }
+      }
+    },
     "The battery delivered only %@ of the capacity its gauge reports. The gauge overstates the battery (common with reset or non-genuine gauges)." : {
       "localizations" : {
         "tr" : {
@@ -5488,6 +5664,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya %lld kez bitti (macOS birkaç yüzdede zorla uyuttu)."
+          }
+        }
+      }
+    },
+    "The camera could not confirm the light. Was the flashlight on the sensor?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamera ışığı doğrulayamadı. Fener sensörün üzerinde miydi?"
+          }
+        }
+      }
+    },
+    "The camera did not see the light either. Hold the flashlight closer to the camera and try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamera da ışığı görmedi. Feneri kameraya daha yakın tutup tekrar deneyin."
           }
         }
       }
@@ -5532,6 +5728,26 @@
         }
       }
     },
+    "The flashlight reached the sensor but the value stayed low: it reads dark (display dims by itself)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fener sensöre ulaştı ama değer düşük kaldı: karanlık okuyor (ekran kendi kendine kararır)."
+          }
+        }
+      }
+    },
+    "The flashlight was not seen. Hold it closer to the camera." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fener görülmedi. Kameraya daha yakın tutun."
+          }
+        }
+      }
+    },
     "The gauge's remaining capacity changed differently from the charge delivered (%@). The gauge counts incorrectly or needs calibration." : {
       "localizations" : {
         "tr" : {
@@ -5558,6 +5774,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dahili SSD belirlenemedi."
+          }
+        }
+      }
+    },
+    "The reading jumps in steady light — screen brightness would flicker by itself." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sabit ışıkta değer zıplıyor; ekran parlaklığı kendi kendine inip çıkar."
+          }
+        }
+      }
+    },
+    "The sensor saw the flashlight but the camera stayed dark — check the camera as well." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensör feneri gördü ama kamera karanlık kaldı; kamerayı da kontrol edin."
+          }
+        }
+      }
+    },
+    "The value never changes: the sensor reading is frozen." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değer hiç değişmiyor: sensör okuması donmuş."
           }
         }
       }
@@ -5718,6 +5964,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bağlantı"
+          }
+        }
+      }
+    },
+    "Try again" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekrar dene"
           }
         }
       }
@@ -6052,6 +6308,16 @@
         }
       }
     },
+    "Without camera access the flashlight is confirmed by hand." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamera izni olmadan fener elle onaylanır."
+          }
+        }
+      }
+    },
     "Write" : {
       "localizations" : {
         "tr" : {
@@ -6148,6 +6414,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Evet"
+          }
+        }
+      }
+    },
+    "Yes, the light was on the sensor" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evet, ışık sensörün üzerindeydi"
           }
         }
       }

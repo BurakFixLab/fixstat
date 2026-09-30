@@ -74,6 +74,14 @@ typedef void (*FSTouchCallback)(const FSTouch *touches, int count, double timest
 bool FSMultitouchStart(FSTouchCallback callback, void *_Nullable context);
 void FSMultitouchStop(void);
 
+// MARK: - Ambient light sensor (read-only)
+
+/// Apple Silicon (HID event system): current level in lux. false if there is no sensor.
+bool FSAmbientLightLux(double *outLux);
+
+/// Intel (AppleLMUController): the two raw channel values. false if not available.
+bool FSLMUReadChannels(uint64_t *outLeft, uint64_t *outRight);
+
 CF_ASSUME_NONNULL_END
 
 #endif
