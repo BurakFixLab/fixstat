@@ -68,6 +68,12 @@ func makeLabel(_ text: String, size: CGFloat = LegacyStyle.body, weight: NSFont.
     return label
 }
 
+/// A label that keeps its full width in a row.
+func fixed(_ label: NSTextField) -> NSTextField {
+    label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+    return label
+}
+
 /// Wrapping, secondary text.
 func makeNote(_ text: String, width: CGFloat) -> NSTextField {
     let label = NSTextField(wrappingLabelWithString: text)

@@ -59,6 +59,14 @@ public final class MonitorCore {
     public var lastCrashScan: CrashScan?
     /// Last sleep / wake analysis.
     public var lastSleepAnalysis: SleepAnalysis?
+    /// Result of the last post-repair test.
+    public var lastTestResult: StressTestResult?
+    /// Result of the last memory test.
+    public var lastMemoryResult: MemoryTest.Result?
+    /// Result of the last SSD write–verify test.
+    public var lastSSDResult: SSDStressTest.Result?
+    /// Result of the last battery capacity test.
+    public var lastCapacityResult: CapacityResult?
 
     public let history: BatteryHistoryStore
     public private(set) var offState: OffStateRecorder?

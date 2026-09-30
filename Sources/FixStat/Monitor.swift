@@ -30,26 +30,13 @@ final class Monitor {
         didSet { core.panelVisible = panelVisible }
     }
 
-    /// While a stress test runs, the test drives full refreshes itself.
-    var testRunning = false {
-        didSet { core.testRunning = testRunning }
-    }
-
     /// The battery details window refreshes the battery at the panel's rate.
     var detailsVisible = false {
         didSet { core.detailsVisible = detailsVisible }
     }
 
-    /// Result of the last post-repair test (for reports).
-    var lastTestResult: StressTestResult?
-    /// Result of the last memory test (for reports).
-    var lastMemoryResult: MemoryTest.Result?
     /// Result of the last full SSD test (for reports).
     var lastFullSSDResult: FullSSDTestRunner.Result?
-    /// Result of the last SSD write–verify test (for reports).
-    var lastSSDResult: SSDStressTest.Result?
-    /// Result of the last battery capacity test (for reports).
-    var lastCapacityResult: CapacityResult?
 
     // Session results kept in the core (both interfaces read them), observed here.
     /// Hardware checklist of this session (for reports).
@@ -71,6 +58,26 @@ final class Monitor {
     var lastSleepAnalysis: SleepAnalysis? {
         get { access(keyPath: \.lastSleepAnalysis); return core.lastSleepAnalysis }
         set { withMutation(keyPath: \.lastSleepAnalysis) { core.lastSleepAnalysis = newValue } }
+    }
+    /// Result of the last post-repair test (for reports).
+    var lastTestResult: StressTestResult? {
+        get { access(keyPath: \.lastTestResult); return core.lastTestResult }
+        set { withMutation(keyPath: \.lastTestResult) { core.lastTestResult = newValue } }
+    }
+    /// Result of the last memory test (for reports).
+    var lastMemoryResult: MemoryTest.Result? {
+        get { access(keyPath: \.lastMemoryResult); return core.lastMemoryResult }
+        set { withMutation(keyPath: \.lastMemoryResult) { core.lastMemoryResult = newValue } }
+    }
+    /// Result of the last SSD write–verify test (for reports).
+    var lastSSDResult: SSDStressTest.Result? {
+        get { access(keyPath: \.lastSSDResult); return core.lastSSDResult }
+        set { withMutation(keyPath: \.lastSSDResult) { core.lastSSDResult = newValue } }
+    }
+    /// Result of the last battery capacity test (for reports).
+    var lastCapacityResult: CapacityResult? {
+        get { access(keyPath: \.lastCapacityResult); return core.lastCapacityResult }
+        set { withMutation(keyPath: \.lastCapacityResult) { core.lastCapacityResult = newValue } }
     }
 
     @ObservationIgnored private var defaultsObserver: NSObjectProtocol?

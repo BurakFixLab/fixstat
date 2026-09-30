@@ -2,56 +2,40 @@ import MacSensors
 import SwiftUI
 import FixStatCore
 
-/// Runs the memory test on a background thread.
+/// SwiftUI view of the core `MemoryRunner`.
 @available(macOS 14.0, *)
 @MainActor
 @Observable
 final class MemoryTestRunner {
-    enum State: Equatable { case idle, running, finished }
+    typealias State = MemoryRunner.State
 
     private(set) var state = State.idle
     private(set) var fraction = 0.0
     private(set) var pattern: MemoryTest.Pattern?
     private(set) var result: MemoryTest.Result?
 
-    @ObservationIgnored private var test: MemoryTest?
+    @ObservationIgnored private let runner: MemoryRunner
     @ObservationIgnored private let monitor: Monitor
-    @ObservationIgnored private var activity: NSObjectProtocol?
 
     init(monitor: Monitor) {
         self.monitor = monitor
-    }
-
-    func start(bytes: UInt64, rounds: Int) {
-        guard state != .running else { return }
-        let test = MemoryTest()
-        self.test = test
-        state = .running
-        fraction = 0
-        pattern = nil
-        result = nil
-        activity = ProcessInfo.processInfo.beginActivity(options: [.userInitiated, .idleSystemSleepDisabled],
-                                                         reason: "Memory test")
-        Thread.detachNewThread { [weak self] in
-            let result = test.run(bytes: bytes, rounds: rounds) { progress in
-                Task { @MainActor in
-                    self?.fraction = progress.fraction
-                    self?.pattern = progress.pattern
-                }
-            }
-            Task { @MainActor in self?.finish(result) }
+        runner = MemoryRunner(monitor: monitor.core)
+        runner.onChange = { [weak self] in
+            MainActor.assumeIsolated { self?.sync() }
         }
     }
 
-    func stop() { test?.cancel() }
+    func start(bytes: UInt64, rounds: Int) { runner.start(bytes: bytes, rounds: rounds) }
+    func stop() { runner.stop() }
 
-    private func finish(_ result: MemoryTest.Result) {
-        if let activity { ProcessInfo.processInfo.endActivity(activity) }
-        activity = nil
-        test = nil
-        self.result = result
-        monitor.lastMemoryResult = result
-        state = .finished
+    private func sync() {
+        if runner.state != state { state = runner.state }
+        fraction = runner.fraction
+        if runner.pattern != pattern { pattern = runner.pattern }
+        if runner.result != result {
+            result = runner.result
+            monitor.lastMemoryResult = runner.result
+        }
     }
 }
 
