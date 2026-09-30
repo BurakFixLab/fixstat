@@ -30,15 +30,23 @@ public struct TrackpadProgress: Equatable {
     }
 
     public static func cell(x: Float, y: Float) -> Int {
-        let column = min(columns - 1, max(0, Int(x * Float(columns))))
-        let row = min(rows - 1, max(0, Int((1 - y) * Float(rows)))) // y origin is at the bottom
+        let column = index(x, count: columns)
+        let row = index(1 - y, count: rows) // y origin is at the bottom
         return row * columns + column
     }
 
     public static func zone(x: Float, y: Float) -> Int {
-        let column = min(zoneColumns - 1, max(0, Int(x * Float(zoneColumns))))
-        let row = min(zoneRows - 1, max(0, Int((1 - y) * Float(zoneRows))))
+        let column = index(x, count: zoneColumns)
+        let row = index(1 - y, count: zoneRows)
         return row * zoneColumns + column
+    }
+
+    /// 0…count-1 for a position 0…1; clamped before the conversion, so a NaN or an
+    /// out-of-range value from the framework cannot trap in Int().
+    private static func index(_ position: Float, count: Int) -> Int {
+        guard position.isFinite else { return 0 }
+        let clamped = min(max(position, 0), 0.9999)
+        return min(count - 1, Int(clamped * Float(count)))
     }
 
     public init() {}

@@ -60,7 +60,9 @@ final class LegacySpeakerPane: BlockPane {
 final class LegacyMicrophonePane: BlockPane {
     private let meter = MicrophoneLevel()
     private let bar = LevelBar(height: 12)
+    private let levelLabel = makeLabel("", color: .secondaryLabelColor)
     private var lastPeak: Float = -120
+    private var evidencePending = false
     private var structure = ""
 
     override init(core: MonitorCore) {
@@ -68,17 +70,34 @@ final class LegacyMicrophonePane: BlockPane {
         bar.color = LegacyStyle.cool
         meter.onChange = { [weak self] in
             guard let self else { return }
-            bar.fraction = (Double(meter.level) + 60) / 60
+            // The level changes many times a second: update it in place.
+            updateLevel()
             if meter.peak > -120, meter.peak != lastPeak {
                 lastPeak = meter.peak
-                core.recordCheck(.microphone, detail: meter.detail)
+                recordEvidence()
             }
-            // The level changes many times a second: rebuild only when the text or buttons change.
-            let key = "\(meter.permission)\(meter.recording)\(meter.playingBack)\(meter.hasRecording)\(Int(meter.peak))\(Int(meter.level))"
+            let key = "\(meter.permission)\(meter.recording)\(meter.playingBack)\(meter.hasRecording)"
             if key != structure {
                 structure = key
                 refresh()
             }
+        }
+    }
+
+    private func updateLevel() {
+        bar.fraction = (Double(meter.level) + 60) / 60
+        levelLabel.stringValue = L("Level %@ · peak %@", Format.decibels(Double(meter.level), unit: "dBFS"),
+                                   Format.decibels(Double(meter.peak), unit: "dBFS"))
+    }
+
+    /// At most twice a second through the checklist.
+    private func recordEvidence() {
+        guard !evidencePending else { return }
+        evidencePending = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self else { return }
+            evidencePending = false
+            core.recordCheck(.microphone, detail: meter.detail)
         }
     }
 
@@ -101,10 +120,9 @@ final class LegacyMicrophonePane: BlockPane {
             blocks.append(.actions([DocAction(title: L("Open System Settings")) { MediaPermission.openSettings("Privacy_Microphone") }]))
             return blocks
         }
-        bar.widthAnchor.constraint(lessThanOrEqualToConstant: 480).isActive = true
+        updateLevel()
         blocks.append(.view(bar))
-        blocks.append(.secondary(L("Level %@ · peak %@", Format.decibels(Double(meter.level), unit: "dBFS"),
-                                   Format.decibels(Double(meter.peak), unit: "dBFS"))))
+        blocks.append(.view(levelLabel))
         let record = ActionButton(title: meter.recording ? L("Recording…") : L("Record 4 s")) { [unowned self] in
             meter.record(seconds: 4)
         }
@@ -195,11 +213,14 @@ final class LegacyAmbientLightPane: BlockPane {
     private let runner = LightTestRunner()
     private var lastResult = 0
     private var reportedMissing = false
+    private var structure = ""
+    private let readingLabel = makeLabel("–", size: 28, weight: .semibold)
 
     override init(core: MonitorCore) {
         super.init(core: core)
         runner.onChange = { [weak self] in
             guard let self else { return }
+            readingLabel.stringValue = runner.reading.map { LightText.value($0) } ?? "–"
             if runner.available == false, !reportedMissing {
                 reportedMissing = true
                 core.recordCheck(.ambientLight, detail: LightText.finding(.notFound), failed: true)
@@ -209,7 +230,15 @@ final class LegacyAmbientLightPane: BlockPane {
                 core.recordCheck(.ambientLight, detail: runner.detail ?? "", passed: result.verdict == .passed,
                                  failed: result.verdict == .failed)
             }
-            refresh()
+            // Rebuild only when the steps, prompt or result change (the reading ticks 4 × a second).
+            let key = [String(describing: runner.available), "\(runner.phase)", runner.prompt ?? "", "\(runner.resultID)",
+                       "\(runner.cameraPermissionDenied)", runner.roomMean.map { LightText.value($0) } ?? "",
+                       runner.coveredMin.map { LightText.value($0) } ?? "", runner.brightMax.map { LightText.value($0) } ?? ""]
+                .joined(separator: "|")
+            if key != structure {
+                structure = key
+                refresh()
+            }
         }
     }
 
@@ -227,7 +256,8 @@ final class LegacyAmbientLightPane: BlockPane {
             return [.status(L("No ambient light sensor found. On MacBooks this points to the camera board or the display cable."), .bad)]
         }
         var blocks: [Block] = []
-        var top: [NSView] = [makeLabel(runner.reading.map { LightText.value($0) } ?? "–", size: 28, weight: .semibold)]
+        readingLabel.stringValue = runner.reading.map { LightText.value($0) } ?? "–"
+        var top: [NSView] = [readingLabel]
         if let auto = AmbientLightSensor.automaticBrightnessEnabled {
             top.append(makeLabel(auto ? L("Automatic brightness: on") : L("Automatic brightness: off"), color: .secondaryLabelColor))
         }

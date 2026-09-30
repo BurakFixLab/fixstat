@@ -46,6 +46,7 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
     private let note = NSTextField(string: "")
     private var panes: [HardwareCheck.Item: LegacyCheckPane] = [:]
     private var current: HardwareCheck.Item?
+    private var shownStatuses: [HardwareCheck.Status] = []
     private let items = HardwareCheck.Item.allCases
     /// Item selected on first opening (`--item NAME` for snapshots).
     static var initialItem = HardwareCheck.Item.keyboard
@@ -202,9 +203,14 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
         summary.stringValue = L("%lld passed · %lld failed · %lld not tested",
                                 check.count(.passed), check.count(.failed), check.count(.untested))
         resetButton.isEnabled = !check.isEmpty
-        table.reloadData()
-        if let current, let row = items.firstIndex(of: current) {
-            table.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+        // Tests report evidence many times a second; the list only changes with a status.
+        let statuses = items.map { check[$0].status }
+        if statuses != shownStatuses {
+            shownStatuses = statuses
+            table.reloadData()
+            if let current, let row = items.firstIndex(of: current) {
+                table.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+            }
         }
         guard let current else { return }
         let entry = check[current]

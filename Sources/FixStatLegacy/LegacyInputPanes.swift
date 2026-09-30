@@ -220,6 +220,14 @@ final class LegacyTrackpadPane: BlockPane {
     private let recorder = TrackpadRecorder()
     private let surface = TrackpadSurfaceView()
     private var lastProgress = TrackpadProgress()
+    private var shownAvailable: Bool??
+    private var evidencePending = false
+    // Updated in place: rebuilding the pane for every touched cell stalled older Macs.
+    private let zonesLabel = makeLabel("")
+    private let forceLabel = makeLabel("")
+    private let scrollLabel = makeLabel("")
+    private let pinchLabel = makeLabel("")
+    private let surfaceLabel = makeLabel("")
 
     override init(core: MonitorCore) {
         super.init(core: core)
@@ -229,11 +237,11 @@ final class LegacyTrackpadPane: BlockPane {
             guard let self else { return }
             surface.progress = recorder.progress
             surface.fingers = recorder.fingers
-            if recorder.progress != lastProgress {
-                lastProgress = recorder.progress
-                core.recordCheck(.trackpad, detail: recorder.progress.detail, passed: recorder.progress.complete)
-                refresh()
-            }
+            if recorder.available != shownAvailable ?? nil { refresh() }
+            guard recorder.progress != lastProgress else { return }
+            lastProgress = recorder.progress
+            updateLabels()
+            recordEvidence()
         }
     }
 
@@ -246,29 +254,43 @@ final class LegacyTrackpadPane: BlockPane {
         recorder.stop()
     }
 
-    override func blocks() -> [Block] {
+    /// At most twice a second: the evidence goes through the checklist and its list.
+    private func recordEvidence() {
+        guard !evidencePending else { return }
+        evidencePending = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self else { return }
+            evidencePending = false
+            core.recordCheck(.trackpad, detail: recorder.progress.detail, passed: recorder.progress.complete)
+        }
+    }
+
+    private func updateLabels() {
         let progress = recorder.progress
-        surface.progress = progress
+        zonesLabel.stringValue = L("Click zones: left %lld / %lld · right %lld / %lld", progress.leftZones.count,
+                                   TrackpadProgress.zoneCount, progress.rightZones.count, TrackpadProgress.zoneCount)
+        for (label, title, done) in [(forceLabel, L("Force click"), progress.forceClick), (scrollLabel, L("Scroll"), progress.scroll),
+                                     (pinchLabel, L("Pinch"), progress.pinch)] {
+            label.stringValue = (done ? "✓ " : "○ ") + title
+            label.textColor = done ? LegacyStyle.cool : .secondaryLabelColor
+        }
+        surfaceLabel.stringValue = L("Surface %@ · up to %lld fingers", Format.percent(progress.coverage * 100), progress.maxTouches)
+    }
+
+    override func blocks() -> [Block] {
+        shownAvailable = recorder.available
+        surface.progress = recorder.progress
+        updateLabels()
         var blocks: [Block] = []
         if recorder.available == false {
             blocks.append(.status(L("Raw trackpad data is not available on this Mac; only clicks and gestures are checked."), .bad))
         }
         blocks.append(.view(surface))
-        func check(_ title: String, _ done: Bool) -> NSView {
-            makeLabel((done ? "✓ " : "○ ") + title, color: done ? LegacyStyle.cool : .secondaryLabelColor)
-        }
-        blocks.append(.view(hStack([
-            makeLabel(L("Click zones: left %lld / %lld · right %lld / %lld", progress.leftZones.count, TrackpadProgress.zoneCount,
-                        progress.rightZones.count, TrackpadProgress.zoneCount)),
-            check(L("Force click"), progress.forceClick), check(L("Scroll"), progress.scroll), check(L("Pinch"), progress.pinch),
-            makeSpacer(),
-        ], spacing: 14)))
+        blocks.append(.view(hStack([zonesLabel, forceLabel, scrollLabel, pinchLabel, makeSpacer()], spacing: 14)))
         let haptic = ActionButton(title: L("Haptic feedback")) { TrackpadRecorder.pulse() }
         haptic.toolTip = L("Keep a finger resting on the trackpad: three taps should be felt.")
-        blocks.append(.view(hStack([
-            makeLabel(L("Surface %@ · up to %lld fingers", Format.percent(progress.coverage * 100), progress.maxTouches)),
-            makeSpacer(), haptic, ActionButton(title: L("Reset")) { [unowned self] in recorder.reset() },
-        ])))
+        blocks.append(.view(hStack([surfaceLabel, makeSpacer(), haptic,
+                                    ActionButton(title: L("Reset")) { [unowned self] in recorder.reset() }])))
         return blocks
     }
 }
