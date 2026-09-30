@@ -53,6 +53,8 @@ public final class MonitorCore {
     // Session results (for reports), shared by both interfaces.
     /// Hardware checklist of this session.
     public var hardwareCheck = HardwareCheck()
+    /// Called after `recordCheck` changed the checklist (the AppKit window updates its list).
+    public var onHardwareCheckChange: (() -> Void)?
     /// Device card data (system_profiler takes about a second, so it is loaded on demand).
     public var deviceInfo: DeviceInfo?
     /// Last panic / shutdown cause scan.
@@ -303,5 +305,18 @@ public final class MonitorCore {
             }
             .compactMap { value(of: $0, in: values) }
             .max()
+    }
+}
+
+extension MonitorCore {
+    /// Stores measured evidence; marks the item passed (or failed, for a clear measured fault)
+    /// if nothing was marked yet (the technician's own choice is never overridden).
+    public func recordCheck(_ item: HardwareCheck.Item, detail: String, passed: Bool = false, failed: Bool = false) {
+        hardwareCheck[item].detail = detail
+        if passed || failed, hardwareCheck[item].status == .untested {
+            hardwareCheck[item].status = passed ? .passed : .failed
+            hardwareCheck[item].date = Date()
+        }
+        onHardwareCheckChange?()
     }
 }

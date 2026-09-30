@@ -34,6 +34,7 @@ import Testing
         case "time": Format.time(Date(timeIntervalSince1970: 1_790_000_000))
         case "day month time": Format.dayMonthTime(Date(timeIntervalSince1970: 1_790_000_000))
         case "day month": Format.dayMonth(Date(timeIntervalSince1970: 1_790_000_000))
+        case "time seconds": Format.timeWithSeconds(Date(timeIntervalSince1970: 1_790_000_000))
         case "1 hour": Format.durationWide(3_600)
         case "7 days": Format.durationWide(7 * 86_400)
         default: ""
@@ -43,7 +44,7 @@ import Testing
     @Test(arguments: ["percent", "temperature", "mAh", "mA", "mA negative", "volts", "amps", "mV", "watts", "Wh",
                       "minutes", "duration", "seconds", "min:sec", "bytes", "memory", "speed", "number", "gigabytes",
                       "date", "signed +", "signed −", "signed 0",
-                      "day", "time", "day month time", "day month", "1 hour", "7 days"])
+                      "day", "time", "day month time", "day month", "time seconds", "1 hour", "7 days"])
     func sameOutput(name: String) {
         Format.forceLegacy = false
         let modern = Self.format(name)

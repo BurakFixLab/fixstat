@@ -10,8 +10,8 @@ struct DisplayTestView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            if let screen = DisplayPattern.builtInScreen() {
-                Text(verbatim: DisplayPattern.describe(screen))
+            if let screen = DisplayInfo.builtInScreen() {
+                Text(verbatim: DisplayInfo.describe(screen))
                     .font(.headline)
             }
             HStack(spacing: 6) {
@@ -30,9 +30,9 @@ struct DisplayTestView: View {
             Button("Start full-screen test") {
                 DisplayTestWindow.show { index in
                     shown.insert(index)
-                    if let screen = DisplayPattern.builtInScreen() {
-                        monitor.recordCheck(.display, detail: DisplayPattern.describe(screen)
-                            + " · " + String(localized: "\(shown.count) / \(DisplayPattern.allCases.count) patterns shown"))
+                    if let screen = DisplayInfo.builtInScreen() {
+                        monitor.recordCheck(.display, detail: DisplayInfo.describe(screen)
+                            + " · " + DisplayInfo.patternsShown(shown.count))
                     }
                 }
             }
@@ -56,28 +56,6 @@ enum DisplayPattern: Int, CaseIterable {
         case .gradient: AnyShapeStyle(LinearGradient(colors: [.black, .white], startPoint: .leading, endPoint: .trailing))
         }
     }
-
-    @MainActor
-    static func builtInScreen() -> NSScreen? {
-        NSScreen.screens.first { screen in
-            (screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)
-                .map { CGDisplayIsBuiltin($0.uint32Value) != 0 } ?? false
-        } ?? NSScreen.main
-    }
-
-    /// "Built-in Retina Display · 2560 × 1600 · 60 Hz"
-    @MainActor
-    static func describe(_ screen: NSScreen) -> String {
-        var parts = [screen.localizedName]
-        if let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber,
-           let mode = CGDisplayCopyDisplayMode(number.uint32Value) {
-            parts.append("\(mode.pixelWidth) × \(mode.pixelHeight)")
-        }
-        if screen.maximumFramesPerSecond > 0 {
-            parts.append(Format.number(Double(screen.maximumFramesPerSecond)) + "\u{00A0}Hz")
-        }
-        return parts.joined(separator: " · ")
-    }
 }
 
 /// Borderless full-screen window on the built-in display cycling through the patterns.
@@ -90,7 +68,7 @@ final class DisplayTestWindow: NSWindow {
     private var host: NSHostingView<PatternView>?
 
     static func show(onShow: @escaping (Int) -> Void) {
-        guard current == nil, let screen = DisplayPattern.builtInScreen() else { return }
+        guard current == nil, let screen = DisplayInfo.builtInScreen() else { return }
         let window = DisplayTestWindow(contentRect: screen.frame, styleMask: [.borderless], backing: .buffered,
                                        defer: false, screen: screen)
         window.level = .screenSaver

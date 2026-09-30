@@ -10,7 +10,7 @@ struct PortsTestView: View {
     @Environment(Monitor.self) private var monitor
     @State private var ports: [PortStatus] = []
     /// Per port: data transports and power seen during this session.
-    @State private var seen: [String: Set<String>] = [:]
+    @State private var history = PortHistory()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -33,26 +33,12 @@ struct PortsTestView: View {
 
     private func update(_ current: [PortStatus]) {
         ports = current
-        var changed = false
-        for port in current {
-            var set = seen[port.id] ?? []
-            let before = set
-            set.formUnion(port.activeTransports.filter { $0 != "CC" })
-            if port.powerIn == true { set.insert("power") }
-            if !port.devices.isEmpty { set.insert("USB") }
-            if set != before { seen[port.id] = set; changed = true }
-        }
-        guard changed else { return }
-        let detail = current.map { port in
-            "\(PortText.name(port)): " + PortText.seenSummary(seen[port.id] ?? [])
-        }.joined(separator: " · ")
-        let usbC = current.filter { $0.type == "USB-C" }
-        let allData = !usbC.isEmpty && usbC.allSatisfy { !(seen[$0.id] ?? []).subtracting(["power"]).isEmpty }
-        monitor.recordCheck(.ports, detail: detail, passed: allData)
+        guard history.update(current) else { return }
+        monitor.recordCheck(.ports, detail: history.detail(current), passed: history.allDataTested(current))
     }
 
     private func portCard(_ port: PortStatus) -> some View {
-        let history = seen[port.id] ?? []
+        let history = self.history.seen[port.id] ?? []
         return VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Image(systemName: port.connected ? "cable.connector" : "cable.connector.slash")
@@ -113,46 +99,12 @@ struct PortsTestView: View {
     }
 }
 
-@available(macOS 14.0, *)
-enum PortText {
-    static func name(_ port: PortStatus) -> String {
-        "\(port.type) \(port.number)"
-    }
-
-    static func transport(_ t: String) -> String {
-        switch t {
-        case "CC": String(localized: "cable detected")
-        case "USB2": "USB 2"
-        case "USB3": "USB 3"
-        case "CIO": "Thunderbolt / USB4"
-        case "DisplayPort": "DisplayPort"
-        default: t
-        }
-    }
-
-    static func seenSummary(_ seen: Set<String>) -> String {
-        guard !seen.isEmpty else { return String(localized: "nothing yet") }
-        let order = ["USB2", "USB3", "USB", "CIO", "DisplayPort", "power"]
-        var parts: [String] = []
-        for key in order where seen.contains(key) {
-            if key == "USB", seen.contains("USB2") || seen.contains("USB3") { continue }
-            parts.append(key == "power" ? String(localized: "charging") : key == "USB" ? "USB" : transport(key))
-        }
-        return parts.joined(separator: ", ")
-    }
-
-    static func speed(_ megabits: Int) -> String {
-        megabits >= 1000 ? Format.number(Double(megabits) / 1000) + "\u{00A0}Gb/s"
-            : Format.number(Double(megabits)) + "\u{00A0}Mb/s"
-    }
-}
-
 // MARK: - Lid
 
 @available(macOS 14.0, *)
 struct LidTestView: View {
     @Environment(Monitor.self) private var monitor
-    @State private var watcher = LidWatcher()
+    @State private var watcher = LidWatcherModel()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -178,59 +130,31 @@ struct LidTestView: View {
     }
 }
 
-/// Polls `AppleClamshellState` and checks the sleep reason after a wake: closing the
-/// lid normally puts the Mac to sleep before a poll can see it.
+/// SwiftUI view of the core `LidWatcher`.
 @available(macOS 14.0, *)
 @MainActor
 @Observable
-final class LidWatcher {
+final class LidWatcherModel {
     private(set) var closed: Bool?
     private(set) var detected: String?
 
-    @ObservationIgnored private var timer: Timer?
-    @ObservationIgnored private var observers: [NSObjectProtocol] = []
-    @ObservationIgnored private var closedAtSleep = false
+    @ObservationIgnored private let watcher = FixStatCore.LidWatcher()
+
+    init() {
+        watcher.onChange = { [weak self] in
+            MainActor.assumeIsolated { self?.sync() }
+        }
+    }
 
     func start() {
-        guard timer == nil else { return }
-        closed = LidSensor.isClosed()
-        let timer = Timer(timeInterval: 0.3, repeats: true) { [weak self] _ in
-            MainActor.assumeIsolated { self?.poll() }
-        }
-        RunLoop.main.add(timer, forMode: .common)
-        self.timer = timer
-        let center = NSWorkspace.shared.notificationCenter
-        observers.append(center.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated { self?.closedAtSleep = LidSensor.isClosed() == true }
-        })
-        observers.append(center.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated { self?.checkAfterWake() }
-        })
+        watcher.start()
+        sync()
     }
 
-    func stop() {
-        timer?.invalidate()
-        timer = nil
-        observers.forEach(NSWorkspace.shared.notificationCenter.removeObserver)
-        observers = []
-    }
+    func stop() { watcher.stop() }
 
-    private func poll() {
-        let now = LidSensor.isClosed()
-        if now == true, closed == false, detected == nil {
-            detected = String(localized: "Lid closing detected at \(Date().formatted(date: .omitted, time: .standard))")
-        }
-        closed = now
-    }
-
-    private func checkAfterWake() {
-        let wasClosed = closedAtSleep
-        Task {
-            let reason = await Task.detached { LidSensor.lastSleepReason(within: 3600) }.value
-            if wasClosed || reason?.localizedCaseInsensitiveContains("clamshell") == true {
-                detected = String(localized: "Lid close and open detected (woke at \(Date().formatted(date: .omitted, time: .standard)))")
-            }
-            closed = LidSensor.isClosed()
-        }
+    private func sync() {
+        if watcher.closed != closed { closed = watcher.closed }
+        if watcher.detected != detected { detected = watcher.detected }
     }
 }

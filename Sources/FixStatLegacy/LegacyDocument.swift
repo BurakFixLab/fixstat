@@ -77,7 +77,7 @@ final class LegacyDocumentView: NSScrollView {
     private let contentWidth: CGFloat
     private static let padding: CGFloat = 20
 
-    init(contentWidth: CGFloat) {
+    init(contentWidth: CGFloat, padding: CGFloat = LegacyDocumentView.padding) {
         self.contentWidth = contentWidth
         super.init(frame: .zero)
         let document = FlippedView()
@@ -90,7 +90,7 @@ final class LegacyDocumentView: NSScrollView {
         documentView = document
         hasVerticalScroller = true
         drawsBackground = false
-        let p = Self.padding
+        let p = padding
         NSLayoutConstraint.activate([
             stack.leadingAnchor.constraint(equalTo: document.leadingAnchor, constant: p),
             stack.topAnchor.constraint(equalTo: document.topAnchor, constant: p),
@@ -313,7 +313,7 @@ final class LegacyDocumentView: NSScrollView {
 
 /// A tool window showing a `LegacyDocumentView`; `content` is called on every reload.
 final class LegacyToolWindow: NSWindowController, NSWindowDelegate {
-    private let documentView: LegacyDocumentView
+    private let documentView: LegacyDocumentView?
     private let content: () -> [Block]
     private var timer: Timer?
     /// Called each time the window is opened (load data, start refreshing).
@@ -338,11 +338,26 @@ final class LegacyToolWindow: NSWindowController, NSWindowDelegate {
         window.center()
     }
 
+    /// A window with its own content view instead of blocks.
+    init(title: String, view: NSView, size: NSSize) {
+        content = { [] }
+        documentView = nil
+        let window = NSWindow(contentRect: NSRect(origin: .zero, size: size),
+                              styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
+        window.title = title
+        window.isReleasedWhenClosed = false
+        window.contentMinSize = NSSize(width: size.width, height: 500)
+        window.contentView = view
+        super.init(window: window)
+        window.delegate = self
+        window.center()
+    }
+
     required init?(coder: NSCoder) { fatalError() }
 
     func reload() {
         onReload?()
-        documentView.show(content())
+        documentView?.show(content())
     }
 
     /// Reloads every `interval` seconds while the window is open.

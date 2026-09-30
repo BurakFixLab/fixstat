@@ -17,18 +17,7 @@ struct WiFiTestView: View {
         VStack(alignment: .leading, spacing: 12) {
             if let link {
                 Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 4) {
-                    row("Interface", [link.interface, link.powerOn ? String(localized: "on") : String(localized: "off")]
-                        .joined(separator: " · "))
-                    if link.connected {
-                        row("Signal", Format.decibels(Double(link.rssi), unit: "dBm")
-                            + " · " + String(localized: "noise \(Format.decibels(Double(link.noise), unit: "dBm"))"))
-                        row("Signal-to-noise", Format.decibels(Double(link.rssi - link.noise), unit: "dB"))
-                        row("Transmit rate", Format.number(link.transmitRate) + "\u{00A0}Mb/s")
-                        if let channel = link.channel { row("Channel", channel) }
-                        if let phy = link.phyMode { row("Standard", phy) }
-                    } else {
-                        row("Signal", String(localized: "not connected"))
-                    }
+                    ForEach(Array(link.rows.enumerated()), id: \.offset) { _, r in row(r.0, r.1) }
                 }
                 .font(.callout)
             } else {
@@ -42,7 +31,7 @@ struct WiFiTestView: View {
                 }
                 .disabled(scanning || link?.powerOn != true)
                 if let scan {
-                    Text(scanSummary(scan)).font(.callout)
+                    Text(verbatim: scan.summary).font(.callout)
                 }
             }
         }
@@ -54,20 +43,11 @@ struct WiFiTestView: View {
         }
     }
 
-    private func row(_ title: LocalizedStringKey, _ value: String) -> some View {
+    private func row(_ title: String, _ value: String) -> some View {
         GridRow {
-            Text(title).foregroundStyle(.secondary)
+            Text(verbatim: title).foregroundStyle(.secondary)
             Text(verbatim: value)
         }
-    }
-
-    private func scanSummary(_ scan: WiFiScan) -> String {
-        var parts = [String(localized: "\(scan.count) networks")]
-        if let strongest = scan.strongest {
-            parts.append(String(localized: "strongest \(Format.decibels(Double(strongest), unit: "dBm"))"))
-        }
-        if !scan.bands.isEmpty { parts.append(scan.bands.joined(separator: ", ")) }
-        return parts.joined(separator: " · ")
     }
 
     private func runScan() {
@@ -77,79 +57,8 @@ struct WiFiTestView: View {
             scan = result
             scanning = false
             if let result {
-                monitor.recordCheck(.wifi, detail: scanSummary(result), passed: result.count > 0 && link?.connected == true)
+                monitor.recordCheck(.wifi, detail: result.summary, passed: result.count > 0 && link?.connected == true)
             }
-        }
-    }
-}
-
-@available(macOS 14.0, *)
-struct WiFiLink {
-    let interface: String
-    let powerOn: Bool
-    let connected: Bool
-    let rssi: Int
-    let noise: Int
-    let transmitRate: Double
-    let channel: String?
-    let phyMode: String?
-
-    static func read() -> WiFiLink? {
-        guard let i = CWWiFiClient.shared().interface() else { return nil }
-        let rssi = i.rssiValue()
-        let channel = i.wlanChannel().map { c in
-            "\(c.channelNumber) · \(WiFiScan.band(c.channelBand) ?? "") · \(width(c.channelWidth))"
-        }
-        return WiFiLink(interface: i.interfaceName ?? "Wi-Fi", powerOn: i.powerOn(), connected: rssi != 0,
-                        rssi: rssi, noise: i.noiseMeasurement(), transmitRate: i.transmitRate(),
-                        channel: channel, phyMode: phy(i.activePHYMode()))
-    }
-
-    private static func width(_ w: CWChannelWidth) -> String {
-        switch w {
-        case .width20MHz: "20 MHz"
-        case .width40MHz: "40 MHz"
-        case .width80MHz: "80 MHz"
-        case .width160MHz: "160 MHz"
-        default: "–"
-        }
-    }
-
-    private static func phy(_ mode: CWPHYMode) -> String? {
-        switch mode {
-        case .mode11a: "802.11a"
-        case .mode11b: "802.11b"
-        case .mode11g: "802.11g"
-        case .mode11n: "802.11n (Wi-Fi 4)"
-        case .mode11ac: "802.11ac (Wi-Fi 5)"
-        case .mode11ax: "802.11ax (Wi-Fi 6)"
-        default: nil
-        }
-    }
-}
-
-/// Nearby networks. Without Location permission macOS hides the names, which are
-/// not needed here: the count and signal strengths test the radio and antennas.
-@available(macOS 14.0, *)
-struct WiFiScan: Sendable {
-    let count: Int
-    let strongest: Int?
-    let bands: [String]
-
-    static func run() -> WiFiScan? {
-        guard let i = CWWiFiClient.shared().interface(),
-              let networks = try? i.scanForNetworks(withName: nil) else { return nil }
-        let bands = Set(networks.compactMap { $0.wlanChannel?.channelBand })
-        return WiFiScan(count: networks.count, strongest: networks.map(\.rssiValue).max(),
-                        bands: bands.sorted { $0.rawValue < $1.rawValue }.compactMap(band))
-    }
-
-    static func band(_ band: CWChannelBand) -> String? {
-        switch band {
-        case .band2GHz: "2.4 GHz"
-        case .band5GHz: "5 GHz"
-        case .band6GHz: "6 GHz"
-        default: nil
         }
     }
 }
@@ -166,11 +75,7 @@ struct BluetoothTestView: View {
         VStack(alignment: .leading, spacing: 12) {
             if let controller {
                 Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 4) {
-                    row("State", controller.on ? String(localized: "on") : String(localized: "off"))
-                    if let chip = controller.chipset { row("Chipset", chip) }
-                    if let firmware = controller.firmware { row("Firmware", firmware) }
-                    if let transport = controller.transport { row("Transport", transport) }
-                    row("Paired devices", String(localized: "\(controller.connected) connected, \(controller.notConnected) not connected"))
+                    ForEach(Array(controller.rows.enumerated()), id: \.offset) { _, r in row(r.0, r.1) }
                 }
                 .font(.callout)
             } else {
@@ -205,121 +110,46 @@ struct BluetoothTestView: View {
         }
     }
 
-    private var summary: String {
-        var parts = [String(localized: "\(scanner.devices) devices nearby")]
-        if let strongest = scanner.strongest {
-            parts.append(String(localized: "strongest \(Format.decibels(Double(strongest), unit: "dBm"))"))
-        }
-        return parts.joined(separator: " · ")
-    }
+    private var summary: String { scanner.summary }
 
-    private func row(_ title: LocalizedStringKey, _ value: String) -> some View {
+    private func row(_ title: String, _ value: String) -> some View {
         GridRow {
-            Text(title).foregroundStyle(.secondary)
+            Text(verbatim: title).foregroundStyle(.secondary)
             Text(verbatim: value)
         }
     }
 }
 
-/// Controller facts from `system_profiler SPBluetoothDataType -json` (no permission
-/// needed; the controller address is not read).
-@available(macOS 14.0, *)
-struct BluetoothController: Sendable {
-    let on: Bool
-    let chipset: String?
-    let firmware: String?
-    let transport: String?
-    let connected: Int
-    let notConnected: Int
-
-    static func read() -> BluetoothController? {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/sbin/system_profiler")
-        process.arguments = ["SPBluetoothDataType", "-json"]
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = FileHandle.nullDevice
-        do { try process.run() } catch { return nil }
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        process.waitUntilExit()
-        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let root = (json["SPBluetoothDataType"] as? [[String: Any]])?.first,
-              let c = root["controller_properties"] as? [String: Any] else { return nil }
-        let connected = (root["device_connected"] as? [Any])?.count ?? 0
-        let notConnected = (root["device_not_connected"] as? [Any])?.count ?? 0
-        return BluetoothController(on: (c["controller_state"] as? String) == "attrib_on",
-                                   chipset: c["controller_chipset"] as? String,
-                                   firmware: c["controller_firmwareVersion"] as? String,
-                                   transport: c["controller_transport"] as? String,
-                                   connected: connected, notConnected: notConnected)
-    }
-}
-
-/// Counts advertising Bluetooth LE devices nearby.
+/// SwiftUI view of the core `BluetoothScan`.
 @available(macOS 14.0, *)
 @MainActor
 @Observable
-final class BluetoothScanner: NSObject, CBCentralManagerDelegate {
-    enum State { case idle, scanning, finished, unauthorized, off }
+final class BluetoothScanner {
+    typealias State = BluetoothScan.State
 
     private(set) var state = State.idle
     private(set) var devices = 0
     private(set) var strongest: Int?
 
-    @ObservationIgnored private var manager: CBCentralManager?
-    @ObservationIgnored private var seen: Set<UUID> = []
-    @ObservationIgnored private var duration = 10.0
-    @ObservationIgnored private var stopTask: Task<Void, Never>?
+    @ObservationIgnored private let scan = BluetoothScan()
 
-    func scan(seconds: Double) {
-        duration = seconds
-        seen = []
-        devices = 0
-        strongest = nil
-        state = .scanning
-        if let manager, manager.state == .poweredOn {
-            begin()
-        } else if manager == nil {
-            manager = CBCentralManager(delegate: self, queue: .main) // asks for permission the first time
+    init() {
+        scan.onChange = { [weak self] in
+            MainActor.assumeIsolated { self?.sync() }
         }
     }
 
-    private func begin() {
-        manager?.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
-        stopTask?.cancel()
-        stopTask = Task { [weak self, duration] in
-            try? await Task.sleep(for: .seconds(duration))
-            guard !Task.isCancelled else { return }
-            self?.manager?.stopScan()
-            self?.state = .finished
-        }
-    }
+    var summary: String { scan.summary }
 
+    func scan(seconds: Double) { scan.scan(seconds: seconds) }
     func stop() {
-        stopTask?.cancel()
-        manager?.stopScan()
-        if state == .scanning { state = .idle }
+        scan.stop()
+        sync()
     }
 
-    nonisolated func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        let value = central.state
-        MainActor.assumeIsolated {
-            switch value {
-            case .poweredOn: if state == .scanning { begin() }
-            case .unauthorized: state = .unauthorized
-            case .poweredOff: state = .off
-            default: break
-            }
-        }
-    }
-
-    nonisolated func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
-                                    advertisementData: [String: Any], rssi RSSI: NSNumber) {
-        let id = peripheral.identifier
-        let rssi = RSSI.intValue
-        MainActor.assumeIsolated {
-            if seen.insert(id).inserted { devices = seen.count }
-            if rssi < 0 && rssi > (strongest ?? -200) { strongest = rssi }
-        }
+    private func sync() {
+        if scan.state != state { state = scan.state }
+        if scan.devices != devices { devices = scan.devices }
+        if scan.strongest != strongest { strongest = scan.strongest }
     }
 }

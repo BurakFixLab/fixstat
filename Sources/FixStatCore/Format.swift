@@ -228,6 +228,17 @@ public enum Format {
         return template("jm", date)
     }
 
+    /// "14:05:32": time with seconds.
+    public static func timeWithSeconds(_ date: Date) -> String {
+        if #available(macOS 12, *), !forceLegacy {
+            return date.formatted(date: .omitted, time: .standard)
+        }
+        let f = DateFormatter()
+        f.dateStyle = .none
+        f.timeStyle = .medium
+        return f.string(from: date)
+    }
+
     /// "30 Sep 14:05": day, abbreviated month and time.
     public static func dayMonthTime(_ date: Date) -> String {
         if #available(macOS 12, *), !forceLegacy {
