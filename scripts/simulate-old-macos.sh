@@ -19,6 +19,13 @@ work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 cp -R "$app" "$work/FixStat.app"
 binary="$work/FixStat.app/Contents/MacOS/FixStat"
+# The copy runs under Rosetta, which macOS 26 announces ("Intel app"). Give it its own name
+# and bundle id, so that notice names the test copy and it keeps its own preferences.
+plist="$work/FixStat.app/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier io.github.burakfixlab.fixstat.rosetta-test" "$plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleName FixStat Rosetta test" "$plist"
+/usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string FixStat Rosetta test" "$plist" 2>/dev/null \
+    || /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName FixStat Rosetta test" "$plist"
 # Every weak-linked library: absent on macOS 10.13 – 11 or newer than the deployment target.
 for lib in $(otool -arch x86_64 -l "$binary" | awk '/LC_LOAD_WEAK_DYLIB/{getline; getline; print $2}'); do
     install_name_tool -change "$lib" "/nonexistent/$(basename "$lib")" "$binary" 2>/dev/null
