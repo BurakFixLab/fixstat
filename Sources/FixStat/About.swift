@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import FixStatCore
 
 /// Version information and the standard About panel.
 @available(macOS 14.0, *)

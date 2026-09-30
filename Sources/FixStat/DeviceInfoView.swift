@@ -1,6 +1,7 @@
 import AppKit
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Device card: identity, configuration, ownership / security and a health summary.
 @available(macOS 14.0, *)
@@ -131,66 +132,5 @@ private struct SecurityRow: View {
             Text(verbatim: value).foregroundStyle(attention ? AnyShapeStyle(TemperatureColor.hot) : AnyShapeStyle(.primary))
         }
         .font(.callout)
-    }
-}
-
-@available(macOS 14.0, *)
-enum DeviceText {
-    static func configuration(_ info: DeviceInfo, ssd: SSDInfo?) -> [(String, String)] {
-        var rows: [(String, String)] = [(String(localized: "Chip"), info.system.chip)]
-        if let p = info.performanceCores, let e = info.efficiencyCores {
-            rows.append((String(localized: "CPU cores"),
-                         String(localized: "\(p + e) (\(p) performance, \(e) efficiency)")))
-        }
-        if let gpu = info.gpuCores { rows.append((String(localized: "GPU cores"), Format.number(Double(gpu)))) }
-        if let memory = info.memoryBytes { rows.append((String(localized: "Memory"), Format.memory(memory))) }
-        if let ssd {
-            rows.append((String(localized: "SSD"), [ssd.capacity.map { Format.bytes($0) }, ssd.model]
-                .compactMap { $0 }.joined(separator: " · ")))
-        }
-        if let firmware = info.firmwareVersion { rows.append((String(localized: "Firmware (iBoot)"), firmware)) }
-        rows.append((String(localized: "macOS"), info.system.osVersion))
-        return rows
-    }
-
-    /// (title, value, needs attention)
-    static func security(_ info: DeviceInfo) -> [(String, String, Bool)] {
-        [
-            (String(localized: "Activation Lock (Find My)"), state(info.activationLock,
-                on: String(localized: "On — the owner must turn it off"), off: String(localized: "Off")),
-             info.activationLock == .on),
-            (String(localized: "MDM enrollment"), state(info.mdmEnrolled,
-                on: String(localized: "Enrolled — managed by an organisation"), off: String(localized: "Not enrolled")),
-             info.mdmEnrolled == .on),
-            (String(localized: "Automated enrollment (DEP)"), state(info.depEnrolled,
-                on: String(localized: "Yes"), off: String(localized: "No")), info.depEnrolled == .on),
-            (String(localized: "System Integrity Protection"), state(info.sipEnabled,
-                on: String(localized: "On"), off: String(localized: "Off — modified system")), info.sipEnabled == .off),
-            (String(localized: "FileVault"), state(info.fileVault,
-                on: String(localized: "On — the user password is needed to reach the data"), off: String(localized: "Off")),
-             false),
-        ]
-    }
-
-    static func state(_ s: DeviceInfo.SecurityState, on: String, off: String) -> String {
-        switch s {
-        case .on: on
-        case .off: off
-        case .unknown: String(localized: "unknown")
-        }
-    }
-
-    /// For pasting into a work order.
-    static func plainText(_ info: DeviceInfo, ssd: SSDInfo?, health: [(String, String, Bool)]) -> String {
-        var lines = [info.system.marketingName ?? info.system.model,
-                     [info.system.model, info.system.boardTarget, info.partNumber].compactMap { $0 }.joined(separator: " · ")]
-        if let serial = info.serial { lines.append(String(localized: "Serial \(serial)")) }
-        lines.append("")
-        lines += configuration(info, ssd: ssd).map { "\($0.0): \($0.1)" }
-        lines.append("")
-        lines += security(info).map { "\($0.0): \($0.1)" }
-        lines.append("")
-        lines += health.map { "\($0.0): \($0.1)" }
-        return lines.joined(separator: "\n")
     }
 }

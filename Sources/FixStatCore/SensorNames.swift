@@ -7,21 +7,20 @@ import MacSensors
 /// "sensor.cpu.pcluster.n" (a format with one integer, e.g. "Performance
 /// cluster %lld"), `board.charger` looks up "sensor.board.charger".
 /// A user-defined name wins; unmapped sensors show their raw name.
-@available(macOS 14.0, *)
-enum SensorNames {
-    static func name(for sensor: DisplaySensor) -> String {
+public enum SensorNames {
+    public static func name(for sensor: DisplaySensor) -> String {
         if let custom = sensor.resolved?.name, !custom.isEmpty { return custom }
         if let id = sensor.resolved?.id, let name = localizedName(id: id) { return name }
         return sensor.descriptor.hidName ?? sensor.descriptor.rawLabel
     }
 
     /// The name from the string catalog without any user override.
-    static func defaultName(for sensor: DisplaySensor) -> String {
+    public static func defaultName(for sensor: DisplaySensor) -> String {
         sensor.resolved.flatMap { localizedName(id: $0.id) }
             ?? sensor.descriptor.hidName ?? sensor.descriptor.rawLabel
     }
 
-    static func localizedName(id: String) -> String? {
+    public static func localizedName(id: String) -> String? {
         let parts = id.split(separator: ".")
         let missing = "\u{0}"
         if parts.count > 1, let last = parts.last, let index = Int(last) {

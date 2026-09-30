@@ -66,14 +66,19 @@ for target in "${targets[@]}"; do
         strings=(-emit-localized-strings -emit-localized-strings-path "$strings_dir")
         first=0
     fi
-    # AppKit interface (macOS 10.13 – 13): Swift 5 mode, no actor isolation checks.
+    # Shared app logic and the AppKit interface (macOS 10.13 – 13): Swift 5 mode, no actor
+    # isolation checks. Their L("…") strings are collected by extract-strings.py below.
     swiftc -target "$target" "${optimize[@]}" -swift-version 5 -parse-as-library \
-        -module-name FixStatLegacy -I "$dir" -I "$work/include" ${strings[@]+"${strings[@]}"} \
+        -module-name FixStatCore -I "$dir" -I "$work/include" \
+        -emit-module -emit-module-path "$dir/FixStatCore.swiftmodule" \
+        -emit-library -static -o "$dir/libFixStatCore.a" Sources/FixStatCore/*.swift
+    swiftc -target "$target" "${optimize[@]}" -swift-version 5 -parse-as-library \
+        -module-name FixStatLegacy -I "$dir" -I "$work/include" \
         -emit-module -emit-module-path "$dir/FixStatLegacy.swiftmodule" \
         -emit-library -static -o "$dir/libFixStatLegacy.a" Sources/FixStatLegacy/*.swift
     swiftc -target "$target" "${optimize[@]}" -swift-version 6 -module-name FixStat \
         -I "$dir" -I "$work/include" ${strings[@]+"${strings[@]}"} \
-        Sources/FixStat/*.swift "$dir"/*.o -L "$dir" -lFixStatLegacy -lMacSensors \
+        Sources/FixStat/*.swift "$dir"/*.o -L "$dir" -lFixStatLegacy -lFixStatCore -lMacSensors \
         -framework IOKit -framework CoreFoundation -framework Metal \
         -framework CoreMedia -framework CoreVideo "${rpaths[@]}" \
         -o "$dir/FixStat"
@@ -81,6 +86,7 @@ for target in "${targets[@]}"; do
         Sources/fixstat-diskscan/*.swift "${rpaths[@]}" -o "$dir/fixstat-diskscan"
 done
 
+python3 scripts/extract-strings.py "$strings_dir"
 xcrun xcstringstool sync App/Localizable.xcstrings --stringsdata "$strings_dir"/*.stringsdata
 python3 scripts/localize.py check
 

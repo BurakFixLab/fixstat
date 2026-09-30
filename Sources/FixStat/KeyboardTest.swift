@@ -2,6 +2,7 @@ import AppKit
 import Carbon
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Keyboard test: draws the built-in keyboard and marks every key that registered.
 @available(macOS 14.0, *)

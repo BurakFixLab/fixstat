@@ -17,7 +17,9 @@ that are not verified yet, and **translations**.
   check them yourself.
 - **No new dependencies** without discussing it in an issue first.
 - **User-visible text** comes from the string catalog (see below); numbers and units are
-  formatted with `FormatStyle` / `Measurement`, never with hand-written format strings.
+  formatted through `Format` (`FormatStyle` / `Measurement`), never with hand-written format
+  strings. Code in `Sources/FixStatCore` and `Sources/FixStatLegacy` runs on macOS 10.13 and
+  uses `L("…")` instead of `String(localized:)`.
 
 ## Adding a Mac model
 
@@ -130,6 +132,8 @@ directly in the catalog.
 | `Sources/MacSensors` | Battery (IORegistry), SMC and HID readers, sensor map, history store |
 | `Sources/sensordump` | CLI dump |
 | `Sources/sensormap` | Load tests, report, map proposal |
-| `Sources/FixStat` | SwiftUI menu bar app |
+| `Sources/FixStatCore` | Shared by both interfaces: polling (`MonitorCore`), preferences, alerts, texts, formatting |
+| `Sources/FixStat` | SwiftUI menu bar app (macOS 14+) |
+| `Sources/FixStatLegacy` | AppKit interface for macOS 10.13 – 13 (in progress) |
 | `SensorMaps/sensor-map.json` | Sensor naming database |
 | `App/` | Info.plist and string catalog |

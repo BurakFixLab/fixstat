@@ -1,6 +1,7 @@
 import AppKit
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Renders the panel into a PNG without screen-recording permission:
 ///

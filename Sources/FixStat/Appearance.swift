@@ -1,4 +1,5 @@
 import AppKit
+import FixStatCore
 
 /// Light / dark mode preference for all FixStat windows (panel, settings, history).
 /// The status item itself always follows the menu bar.

@@ -1,5 +1,6 @@
 import AppKit
 import MacSensors
+import FixStatCore
 
 /// AppKit interface for macOS 10.13 – 13 (and `--legacy-ui`). Everything in this module
 /// must work on macOS 10.13 – 11: no SwiftUI, no Combine, no FormatStyle, and nothing that

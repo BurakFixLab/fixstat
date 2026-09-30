@@ -4,30 +4,29 @@ import MacSensors
 /// Checks at launch whether the Mac lost power without a normal shutdown while the
 /// battery still showed charge — typical for a weak cell or a failing battery — and
 /// posts a notification once per boot.
-@available(macOS 14.0, *)
-enum UnexpectedShutdown {
-    struct Finding: Sendable {
-        let boot: Date
-        let chargeBefore: Double?
-        let causeCode: Int?
+public enum UnexpectedShutdown {
+    public struct Finding {
+        public let boot: Date
+        public let chargeBefore: Double?
+        public let causeCode: Int?
     }
 
     /// Shutdown cause codes that point at the battery.
-    static let batteryCauses: Set<Int> = [-60, -79, -103, -104]
+    public static let batteryCauses: Set<Int> = [-60, -79, -103, -104]
 
-    static let notifiedKey = "unexpectedShutdown.notifiedBoot"
+    public static let notifiedKey = "unexpectedShutdown.notifiedBoot"
 
-    @MainActor
-    static func checkAtLaunch() {
-        Task.detached(priority: .utility) {
+    /// Runs the check in the background; the notification is posted on the main thread.
+    public static func checkAtLaunch() {
+        DispatchQueue.global(qos: .utility).async {
             guard let finding = detect(now: Date()) else { return }
-            await MainActor.run { notify(finding) }
+            DispatchQueue.main.async { notify(finding) }
         }
     }
 
     /// Only for a boot in the last hour (FixStat opening at login), so old events are
     /// not reported again and again.
-    static func detect(now: Date) -> Finding? {
+    public static func detect(now: Date) -> Finding? {
         let records = OffStateDrain.bootRecords()
         guard let index = records.lastIndex(where: \.isBoot) else { return nil }
         let boot = records[index].date
@@ -51,14 +50,13 @@ enum UnexpectedShutdown {
         return Finding(boot: boot, chargeBefore: charge, causeCode: cause)
     }
 
-    @MainActor
-    static func notify(_ finding: Finding) {
+    public static func notify(_ finding: Finding) {
         UserDefaults.standard.set(finding.boot.timeIntervalSince1970, forKey: notifiedKey)
         var body = finding.chargeBefore.map {
-            String(localized: "The Mac turned off unexpectedly while the battery showed \(Format.percent($0)). The battery may be faulty.")
-        } ?? String(localized: "The Mac turned off unexpectedly. The battery may be faulty.")
+            L("The Mac turned off unexpectedly while the battery showed %@. The battery may be faulty.", Format.percent($0))
+        } ?? L("The Mac turned off unexpectedly. The battery may be faulty.")
         if let code = finding.causeCode {
-            body += " " + String(localized: "Shutdown cause \(code): \(CrashText.shutdownMeaning(ShutdownEvent.meanings[code]))")
+            body += " " + L("Shutdown cause %lld: %@", code, CrashText.shutdownMeaning(ShutdownEvent.meanings[code]))
         }
         AlertManager.postOnce(.unexpectedShutdown, body: body)
     }

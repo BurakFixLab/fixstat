@@ -35,20 +35,27 @@ let package = Package(
         .executableTarget(name: "fixstat-diskscan"),
         // Menu bar app. Built into FixStat.app by scripts/build-app.sh, which also
         // compiles App/Localizable.xcstrings and bundles the sensor map.
+        // UI-independent app logic shared by both interfaces (formatting, texts, monitoring).
+        // Swift 5 mode and macOS 10.13 APIs only, like FixStatLegacy.
+        .target(
+            name: "FixStatCore",
+            dependencies: ["MacSensors"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
         // AppKit interface for macOS 10.13 – 13. Swift 5 mode: no actor isolation checks,
         // which would call the Swift concurrency runtime missing before macOS 12.
         .target(
             name: "FixStatLegacy",
-            dependencies: ["MacSensors"],
+            dependencies: ["MacSensors", "FixStatCore"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .executableTarget(
             name: "FixStat",
-            dependencies: ["MacSensors", "CMacSensors", "FixStatLegacy"]
+            dependencies: ["MacSensors", "CMacSensors", "FixStatCore", "FixStatLegacy"]
         ),
         .testTarget(
             name: "MacSensorsTests",
-            dependencies: ["MacSensors"]
+            dependencies: ["MacSensors", "FixStatCore"]
         ),
     ]
 )

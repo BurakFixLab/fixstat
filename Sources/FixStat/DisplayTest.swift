@@ -1,6 +1,7 @@
 import AppKit
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 @available(macOS 14.0, *)
 struct DisplayTestView: View {

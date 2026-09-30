@@ -4,27 +4,29 @@ import MacSensors
 /// Measures the battery drain while the Mac is shut down: saves the gauge's remaining
 /// capacity when macOS announces a power off and compares it when FixStat starts again
 /// after the next boot (FixStat must open at login for this).
-@available(macOS 14.0, *)
-@MainActor
-final class OffStateRecorder {
+public final class OffStateRecorder {
     private let directory: URL
     private var observer: NSObjectProtocol?
 
     private var markURL: URL { directory.appendingPathComponent("power-off.json") }
     private var periodsURL: URL { directory.appendingPathComponent("off-periods.json") }
 
-    init(directory: URL) {
+    public init(directory: URL) {
         self.directory = directory
         completePendingMark()
         observer = NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.willPowerOffNotification, object: nil, queue: .main
         ) { [weak self] _ in
-            MainActor.assumeIsolated { self?.saveMark() }
+            self?.saveMark()
         }
     }
 
+    deinit {
+        if let observer { NSWorkspace.shared.notificationCenter.removeObserver(observer) }
+    }
+
     /// Periods measured so far, oldest first.
-    var periods: [OffPeriod] {
+    public var periods: [OffPeriod] {
         guard let data = try? Data(contentsOf: periodsURL) else { return [] }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601

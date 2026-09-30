@@ -2,6 +2,7 @@ import AppKit
 import Charts
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Full SSD test: read-only surface scan of the whole disk (root, through the
 /// macOS administrator prompt), then the write–verify test on free space.

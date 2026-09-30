@@ -1,6 +1,7 @@
 @preconcurrency import AVFoundation
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 @available(macOS 14.0, *)
 struct CameraTestView: View {

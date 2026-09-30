@@ -1,6 +1,7 @@
 import Foundation
 import MacSensors
 import Observation
+import FixStatCore
 
 /// Runs the post-repair stress test: applies CPU / GPU load for a fixed time and
 /// samples temperatures and battery values every second.

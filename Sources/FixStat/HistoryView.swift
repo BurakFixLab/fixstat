@@ -3,6 +3,7 @@ import Charts
 import MacSensors
 import SwiftUI
 import UniformTypeIdentifiers
+import FixStatCore
 
 /// Battery history window: charge, current and long-term health.
 @available(macOS 14.0, *)

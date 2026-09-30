@@ -1,6 +1,7 @@
 import AppKit
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 // MARK: - Ports
 

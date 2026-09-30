@@ -1,6 +1,7 @@
 import Charts
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Post-repair stress test window.
 @available(macOS 14.0, *)
@@ -152,51 +153,5 @@ struct ResultView: View {
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
-    }
-}
-
-/// Localized texts for test results (shared by the window and the PDF report).
-@available(macOS 14.0, *)
-enum TestText {
-    static func finding(_ finding: StressTestResult.Finding) -> String {
-        switch finding {
-        case let .highChipTemperature(group, celsius, limit):
-            let name = group == "gpu" ? "GPU" : "CPU"
-            return String(localized: "\(name) reached \(Format.temperature(celsius)) (limit \(Format.temperature(limit, digits: 0)))")
-        case let .highBatteryTemperature(celsius, limit):
-            return String(localized: "Battery reached \(Format.temperature(celsius)) (limit \(Format.temperature(limit, digits: 0)))")
-        case let .cellVoltageSag(cell, millivolts, limit):
-            return String(localized: "Cell \(cell) dropped to \(Format.volts(millivolts: millivolts, digits: 3)) under load (limit \(Format.volts(millivolts: limit, digits: 1)))")
-        case let .cellImbalance(millivolts, limit):
-            return String(localized: "Cell spread reached \(Format.millivolts(millivolts)) under load (limit \(Format.millivolts(limit)))")
-        case let .adapterDeficit(average):
-            return String(localized: "On the power adapter the battery was still discharging (average \(Format.milliamps(average))) — adapter, cable or charging circuit may be weak")
-        case .stoppedEarly:
-            return String(localized: "Test was stopped before the planned duration")
-        }
-    }
-
-    static func summaryRows(_ r: StressTestResult) -> [(String, String)] {
-        var rows: [(String, String)] = [
-            (String(localized: "Duration"), Format.minutesSeconds(r.duration)),
-            (String(localized: "Highest CPU temperature"), r.maxCPU.map { Format.temperature($0) } ?? "–"),
-            (String(localized: "Highest GPU temperature"), r.maxGPU.map { Format.temperature($0) } ?? "–"),
-            (String(localized: "Highest SSD temperature"), r.maxSSD.map { Format.temperature($0) } ?? "–"),
-            (String(localized: "Highest battery temperature"), r.maxBattery.map { Format.temperature($0) } ?? "–"),
-            (String(localized: "Time at or above hot threshold"), Format.minutesSeconds(r.secondsAboveHot)),
-        ]
-        if let v = r.minCellVoltage {
-            rows.append((String(localized: "Lowest cell voltage"), Format.volts(millivolts: v, digits: 3)))
-        }
-        if let s = r.maxCellSpread {
-            rows.append((String(localized: "Largest cell spread"), Format.millivolts(s)))
-        }
-        if let a = r.socStart, let b = r.socEnd {
-            rows.append((String(localized: "Battery charge"), "\(Format.percent(a)) → \(Format.percent(b))"))
-        }
-        if let c = r.averageCurrent {
-            rows.append((String(localized: "Average battery current"), Format.milliamps(c)))
-        }
-        return rows
     }
 }

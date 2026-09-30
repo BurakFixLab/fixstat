@@ -1,4 +1,5 @@
 import SwiftUI
+import FixStatCore
 
 @available(macOS 14.0, *)
 struct FixStatApp: App {

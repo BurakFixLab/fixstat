@@ -2,6 +2,7 @@ import AppKit
 import MacSensors
 import SwiftUI
 import UniformTypeIdentifiers
+import FixStatCore
 
 /// A sensor report for customer devices. Serial numbers are always masked.
 @available(macOS 14.0, *)

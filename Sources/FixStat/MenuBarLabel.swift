@@ -1,4 +1,5 @@
 import SwiftUI
+import FixStatCore
 
 /// Status item content: battery icon, percentage and CPU temperature, each optional.
 @available(macOS 14.0, *)

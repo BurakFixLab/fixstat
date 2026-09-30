@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import FixStatCore
 
 /// Watches the MenuBarExtra panel window from inside its content.
 ///

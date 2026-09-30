@@ -1,5 +1,6 @@
 import AppKit
 import FixStatLegacy
+import FixStatCore
 
 // Entry point. macOS 14 and later get the SwiftUI interface; older systems (down to
 // macOS 10.13 on Intel, 11 on Apple Silicon) get the AppKit interface. Both use the same

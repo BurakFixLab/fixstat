@@ -1,6 +1,7 @@
 import MacSensors
 import ServiceManagement
 import SwiftUI
+import FixStatCore
 
 @available(macOS 14.0, *)
 struct SettingsView: View {

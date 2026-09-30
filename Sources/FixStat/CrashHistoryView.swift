@@ -1,6 +1,7 @@
 import AppKit
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Kernel panics and previous shutdown causes.
 @available(macOS 14.0, *)
@@ -138,50 +139,4 @@ struct CrashScan {
     let panics: [PanicReport]
     let shutdowns: [ShutdownEvent]
     var date = Date()
-}
-
-@available(macOS 14.0, *)
-enum CrashText {
-    static func shutdownMeaning(_ id: String?) -> String {
-        switch id {
-        case "normal": String(localized: "Normal shutdown")
-        case "hardShutdown": String(localized: "Power button held (forced shutdown)")
-        case "powerLoss": String(localized: "Power lost")
-        case "overTemperature": String(localized: "Temperature limit exceeded (several sensors)")
-        case "batteryEmpty": String(localized: "Battery empty")
-        case "smcWatchdog": String(localized: "SMC / power management watchdog")
-        case "watchdog": String(localized: "Watchdog — often logic board or RAM")
-        case "memoryTemperature": String(localized: "Memory temperature limit exceeded")
-        case "batteryTemperature": String(localized: "Battery temperature limit exceeded")
-        case "adapterCommunication": String(localized: "Communication problem with the power adapter")
-        case "adapterCurrent": String(localized: "Wrong current from the power adapter")
-        case "batteryCurrent": String(localized: "Wrong current from the battery")
-        case "proximityTemperature": String(localized: "Proximity sensor temperature exceeded")
-        case "cpuTemperature": String(localized: "CPU temperature limit exceeded")
-        case "powerSupplyTemperature": String(localized: "Power supply temperature exceeded")
-        case "batteryCellVoltage": String(localized: "Battery cell under-voltage")
-        case "battery": String(localized: "Battery problem")
-        case "pmuForced": String(localized: "Forced shutdown by the PMU")
-        case "unknownCritical": String(localized: "Unknown critical shutdown — often logic board")
-        default: String(localized: "Unknown code")
-        }
-    }
-
-    static func area(_ id: String) -> String {
-        switch id {
-        case "smc": String(localized: "SMC")
-        case "aop": String(localized: "Always-On Processor")
-        case "thermal": String(localized: "Thermal monitor")
-        case "sleepwake": String(localized: "Sleep / wake")
-        case "watchdog": String(localized: "Watchdog")
-        case "ssd": String(localized: "SSD controller")
-        case "display": String(localized: "Display")
-        case "gpu": String(localized: "GPU")
-        case "i2c": String(localized: "I2C bus")
-        case "power": String(localized: "Power management")
-        case "usb": String(localized: "USB-C / ports")
-        case "wireless": String(localized: "Wi-Fi / Bluetooth")
-        default: id
-        }
-    }
 }

@@ -1,5 +1,6 @@
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Battery and charging diagnostics: cells, pack, lifetime data, charger and USB-C PD.
 @available(macOS 14.0, *)
@@ -168,51 +169,6 @@ private struct PartCheckColumn: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .topLeading)
-    }
-}
-
-/// Localized texts for the originality check (window and PDF report).
-@available(macOS 14.0, *)
-enum PartText {
-    static func verdict(_ verdict: PartCheck.Verdict) -> String {
-        switch verdict {
-        case .consistent: String(localized: "Consistent with a genuine part")
-        case .suspicious: String(localized: "Suspicious — check the part")
-        case .unknown: String(localized: "Not enough reference data to decide")
-        }
-    }
-
-    static func item(_ id: String) -> String {
-        switch id {
-        case "ref.gauge": String(localized: "Gauge chip matches this model")
-        case "ref.chemistry": String(localized: "Chemistry ID matches this model")
-        case "ref.designCapacity": String(localized: "Design capacity matches this model")
-        case "ref.cellCount": String(localized: "Cell count matches this model")
-        case "ref.cellVendor": String(localized: "Cell maker seen in genuine packs of this model")
-        case "noReference": String(localized: "No reference data for this model yet")
-        case "gauge": String(localized: "Gauge chip")
-        case "manufacturerData": String(localized: "Manufacturer data present")
-        case "gaugeData": String(localized: "Gauge learning data present (Qmax, resistance, lifetime)")
-        case "serial": String(localized: "Pack serial number present")
-        case "cycleReset": String(localized: "Very low cycle count despite long operating time (reset or new pack?)")
-        case "adapter.manufacturer": String(localized: "Manufacturer reported as Apple")
-        case "adapter.nameWatts": String(localized: "Rated power matches the name")
-        case "adapter.serial": String(localized: "Adapter serial number present")
-        case "ref.adapter.id": String(localized: "Adapter ID matches a known Apple adapter")
-        case "ref.adapter.firmware": String(localized: "Firmware seen in genuine adapters")
-        case "ref.adapter.profiles": String(localized: "Power profiles match the genuine adapter")
-        case "adapter.noReference": String(localized: "No reference data for this adapter yet")
-        default: id
-        }
-    }
-
-    static func condition(_ value: String) -> String {
-        switch value.lowercased() {
-        case "good", "normal": String(localized: "Normal")
-        case "check battery": String(localized: "Check battery")
-        case "service recommended": String(localized: "Service recommended")
-        default: value
-        }
     }
 }
 

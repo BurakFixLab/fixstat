@@ -131,9 +131,17 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   Building for macOS 11 changes a few SwiftUI defaults (e.g. wider menu buttons): the
   technician footer uses small controls. `swift build` / `swift test` (SwiftPM, macOS 14)
   are for development and tests only.
-- `Monitor` (@MainActor @Observable) polls battery (IORegistry), HID + selected SMC keys and
-  CPU/memory. It assigns whole Equatable values (no in-place mutation) to limit view
-  updates. Panel open → full refresh at the chosen interval; closed → only battery + HID
+- `Sources/FixStatCore` holds everything both interfaces share, under the same rules as
+  the AppKit module (Swift 5 mode, no actors, 10.13): `MonitorCore`, `Pref`,
+  `AlertManager` (rules; delivery through `AlertManager.sender`), `OffStateRecorder`,
+  `UnexpectedShutdown`, `DisplaySensor` / `SensorNames`, `Format` and the `*Text` helpers
+  (`BatteryText`, `SSDText`, `SleepText`, …). Guard newer Foundation APIs too
+  (`UnitInformationStorage` is 10.15+). The x86_64 slice of `build-app.sh` is the check.
+- `MonitorCore` polls battery (IORegistry), HID + selected SMC keys and CPU/memory with a
+  block timer on the main run loop and calls `onUpdate` after each refresh. The SwiftUI
+  `Monitor` (@MainActor @Observable) is a thin wrapper: it copies the core's values,
+  assigning only what changed (whole Equatable values) to limit view updates, and keeps
+  the session's test results for reports. Panel open → full refresh at the chosen interval; closed → only battery + HID
   (menu bar CPU temperature), at most every 5 s, timer tolerance 20 %. Battery history is
   recorded every 60 s regardless.
 - Menu bar CPU temperature = hottest `cpu` group sensor.
@@ -267,7 +275,12 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 - Turkish values and sensor names live in `scripts/l10n_data.py`; `scripts/localize.py
   apply` writes them, `prune` removes stale keys, `check` fails on missing values, stale
   keys, mismatched specifiers or sensor ids without a key. `build-app.sh` runs `check`.
-- Numbers, percentages, durations and units via `FormatStyle` / `Measurement`, never
+- Code that also runs before macOS 12 (FixStatCore, FixStatLegacy) uses `L("key", args…)`
+  instead of `String(localized:)`, with the key exactly as the compiler would extract it
+  (`%@` for strings, `%lld` for Int; no interpolation inside `L()`).
+  `scripts/extract-strings.py` adds those keys to the catalog sync.
+- Numbers, percentages, durations and units via `Format` (FormatStyle / `Measurement`,
+  with NumberFormatter / MeasurementFormatter fallbacks before macOS 12), never
   hand-written format strings. Formatting follows the user's region, not the UI
   language; check English formatting with `-AppleLocale en_US`.
 - CLI output (`sensordump`, `sensormap`) is English only.
@@ -302,7 +315,8 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.
 ├── packaging/INSTALL.txt       plain-text install notes (en + tr) shipped in the DMG
 ├── packaging/dmg-background.svg  DMG window background (arrow, en + tr hint)
 ├── scripts/localize.py         catalog apply / prune / check (+ l10n_data.py)
-├── Package.swift               SPM: CMacSensors, MacSensors, sensordump, sensormap, fixstat-diskscan, FixStat, tests
+├── Package.swift               SPM: CMacSensors, MacSensors, sensordump, sensormap, fixstat-diskscan,
+│                               FixStatCore, FixStatLegacy, FixStat, tests
 ├── Sources/CMacSensors/        C shims: read-only AppleSMC user client, private HID event API,
 │                               NVMe SMART, MultitouchSupport contacts
 ├── Sources/MacSensors/         SMC, HID, battery, ports, system info, sensor map, history store, masking
@@ -310,6 +324,7 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.
 ├── Sources/sensormap/          load tests, report, map proposal
 ├── Sources/fixstat-diskscan/   read-only raw disk surface scan (full SSD test, runs as root)
 ├── Sources/FixStat/            SwiftUI menu bar app (macOS 14+) and main.swift
+├── Sources/FixStatCore/        shared by both interfaces: MonitorCore, Pref, alerts, texts, Format
 ├── Sources/FixStatLegacy/      AppKit interface for macOS 10.13 – 13 (Swift 5 mode)
 ├── Tests/MacSensorsTests/      swift-testing unit tests
 ├── SensorMaps/sensor-map.json  sensor naming database

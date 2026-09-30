@@ -1,5 +1,6 @@
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Guided ambient light sensor test: normal light → covered → flashlight, with the camera
 /// as a second opinion on whether the flashlight really reached the sensor.
@@ -106,13 +107,6 @@ struct AmbientLightTestView: View {
             }
         }
     }
-}
-
-/// A sensor value together with its unit (lux or raw).
-@available(macOS 14.0, *)
-struct LightReadingValue: Equatable {
-    var value: Double
-    var source: AmbientLightSensor.Source
 }
 
 @available(macOS 14.0, *)
@@ -255,40 +249,5 @@ final class LightTester {
         resultID += 1
         begin(.done)
         if cameraStarted { camera.stop(); cameraStarted = false }
-    }
-}
-
-@available(macOS 14.0, *)
-enum LightText {
-    static func value(_ v: LightReadingValue) -> String {
-        switch v.source {
-        case .lux: Format.number(v.value) + "\u{00A0}lx"
-        case .raw: String(localized: "\(Format.number(v.value)) (raw)")
-        }
-    }
-
-    static func value(_ v: LightReadingValue?) -> String { v.map { value($0) } ?? "–" }
-
-    static func value(_ r: AmbientLightSensor.Reading) -> String {
-        value(LightReadingValue(value: r.value, source: r.source))
-    }
-
-    static func finding(_ f: LightCheck.Finding) -> String {
-        switch f {
-        case .notFound:
-            String(localized: "No ambient light sensor found. On MacBooks this points to the camera board or the display cable.")
-        case .unstable:
-            String(localized: "The reading jumps in steady light — screen brightness would flicker by itself.")
-        case .doesNotDarken:
-            String(localized: "Covering the sensor does not lower the value: it reads bright all the time (display always bright, keyboard light stays off).")
-        case .doesNotBrighten:
-            String(localized: "The flashlight reached the sensor but the value stayed low: it reads dark (display dims by itself).")
-        case .frozen:
-            String(localized: "The value never changes: the sensor reading is frozen.")
-        case .noLightSeen:
-            String(localized: "The flashlight was not seen. Hold it closer to the camera.")
-        case .cameraDidNotSeeLight:
-            String(localized: "The sensor saw the flashlight but the camera stayed dark — check the camera as well.")
-        }
     }
 }

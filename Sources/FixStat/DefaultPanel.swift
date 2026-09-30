@@ -1,5 +1,6 @@
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Design A: battery, the most important sensors, fans and system load.
 @available(macOS 14.0, *)

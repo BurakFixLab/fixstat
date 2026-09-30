@@ -1,6 +1,7 @@
 import AppKit
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// One-page A4 customer report rendered from SwiftUI.
 @available(macOS 14.0, *)

@@ -2,6 +2,7 @@ import AVFoundation
 import CoreAudio
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 // MARK: - Speakers
 

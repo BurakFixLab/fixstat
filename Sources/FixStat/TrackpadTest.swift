@@ -2,6 +2,7 @@ import AppKit
 import CMacSensors
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// What the trackpad test has seen so far.
 @available(macOS 14.0, *)

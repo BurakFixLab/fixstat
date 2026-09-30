@@ -1,5 +1,6 @@
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Design B: raw battery data, cell voltages, every sensor with its raw key.
 @available(macOS 14.0, *)

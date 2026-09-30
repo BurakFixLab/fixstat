@@ -1,6 +1,7 @@
 import Charts
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Runs the SSD write–verify test on a background thread and publishes progress.
 @available(macOS 14.0, *)
@@ -279,82 +280,5 @@ struct SSDResultView: View {
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
-    }
-}
-
-/// Localized SSD texts (window and PDF report).
-@available(macOS 14.0, *)
-enum SSDText {
-    static let usedWarning = 80
-    static let usedCritical = 100
-
-    static func healthFindings(_ h: NVMeHealth) -> [String] {
-        var findings: [String] = []
-        if h.criticalWarning != 0 {
-            findings.append(String(localized: "The SSD reports a critical warning (code \(h.criticalWarning))."))
-        }
-        if h.percentageUsed >= usedCritical {
-            findings.append(String(localized: "Rated endurance used up (\(h.percentageUsed) %)."))
-        } else if h.percentageUsed >= usedWarning {
-            findings.append(String(localized: "Most of the rated endurance is used (\(h.percentageUsed) %)."))
-        }
-        if h.availableSpare < h.availableSpareThreshold {
-            findings.append(String(localized: "Spare blocks below threshold (\(h.availableSpare) %)."))
-        }
-        if h.mediaErrors > 0 {
-            findings.append(String(localized: "\(Format.number(h.mediaErrors)) media / data integrity errors recorded."))
-        }
-        return findings
-    }
-
-    static func healthRows(_ h: NVMeHealth) -> [(String, String)] {
-        [
-            (String(localized: "Endurance used"), Format.percent(Double(h.percentageUsed))),
-            (String(localized: "Available spare"), Format.percent(Double(h.availableSpare))),
-            (String(localized: "Data written"), Format.bytes(h.bytesWritten)),
-            (String(localized: "Data read"), Format.bytes(h.bytesRead)),
-            (String(localized: "Power-on hours"), Format.number(h.powerOnHours)),
-            (String(localized: "Power cycles"), Format.number(h.powerCycles)),
-            (String(localized: "Unsafe shutdowns"), Format.number(h.unsafeShutdowns)),
-            (String(localized: "Media errors"), Format.number(h.mediaErrors)),
-            (String(localized: "Error log entries"), Format.number(h.errorLogEntries)),
-            (String(localized: "Temperature"), h.temperature.map { Format.temperature($0, digits: 0) } ?? "–"),
-        ]
-    }
-
-    static func finding(_ f: SSDStressTest.Result.Finding) -> String {
-        switch f {
-        case let .dataMismatch(chunks, first):
-            return String(localized: "Data read back did not match in \(chunks) blocks (first at \(Format.bytes(Double(first) * 8_388_608))) — failing NAND or controller")
-        case let .ioErrors(count):
-            return String(localized: "\(count) read / write errors")
-        case let .slowChunks(count, worst):
-            return String(localized: "\(count) blocks were very slow (worst \(Format.number(worst * 1000)) ms) — possible weak NAND or retries")
-        case let .smartMediaErrorsIncreased(by):
-            return String(localized: "SMART media errors increased by \(Format.number(by)) during the test")
-        case let .smartErrorLogIncreased(by):
-            return String(localized: "SMART error log grew by \(Format.number(by)) entries during the test")
-        case .stoppedEarly:
-            return String(localized: "Test was stopped before the planned duration")
-        case .notEnoughSpace:
-            return String(localized: "Not enough free space for the test")
-        }
-    }
-
-    static func resultRows(_ r: SSDStressTest.Result) -> [(String, String)] {
-        var rows: [(String, String)] = [
-            (String(localized: "Tested"), Format.bytes(r.testedBytes)),
-            (String(localized: "Write speed"), r.writeSpeed.map { Format.speed(megabytesPerSecond: $0) } ?? "–"),
-            (String(localized: "Read speed"), r.readSpeed.map { Format.speed(megabytesPerSecond: $0) } ?? "–"),
-        ]
-        let writes = r.timings.map(\.write).sorted()
-        let reads = r.timings.compactMap(\.read).sorted()
-        if let worst = writes.last {
-            rows.append((String(localized: "Slowest block write"), "\(Format.number(worst * 1000)) ms"))
-        }
-        if let worst = reads.last {
-            rows.append((String(localized: "Slowest block read"), "\(Format.number(worst * 1000)) ms"))
-        }
-        return rows
     }
 }

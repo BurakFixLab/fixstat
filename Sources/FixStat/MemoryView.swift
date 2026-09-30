@@ -1,5 +1,6 @@
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Runs the memory test on a background thread.
 @available(macOS 14.0, *)
@@ -171,41 +172,5 @@ struct MemoryResultView: View {
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
-    }
-}
-
-@available(macOS 14.0, *)
-enum MemoryText {
-    static func pattern(_ p: MemoryTest.Pattern) -> String {
-        switch p {
-        case .zeros: String(localized: "All zeros")
-        case .ones: String(localized: "All ones")
-        case .checkerboard: String(localized: "Checkerboard")
-        case .walkingOnes: String(localized: "Walking ones")
-        case .addressInAddress: String(localized: "Address in address")
-        case .random: String(localized: "Random data")
-        }
-    }
-
-    static func rows(_ r: MemoryTest.Result) -> [(String, String)] {
-        var rows: [(String, String)] = [
-            (String(localized: "Tested"), Format.bytes(Double(r.bytes))),
-            (String(localized: "Patterns"), "\(r.patternsCompleted.count) / \(MemoryTest.Pattern.allCases.count)"),
-            (String(localized: "Rounds"), Format.number(Double(r.roundsCompleted))),
-            (String(localized: "Errors"), Format.number(Double(r.errorCount))),
-            (String(localized: "Duration"), Format.minutesSeconds(r.seconds)),
-        ]
-        if let t = r.throughput {
-            rows.append((String(localized: "Throughput"), Format.speed(megabytesPerSecond: t * 1000)))
-        }
-        if r.errorCount > 0 {
-            rows.append((String(localized: "Flipped bits"), String(format: "0x%016llX", r.flippedBits)))
-            rows.append((String(localized: "First failing offsets"),
-                         r.firstErrors.prefix(4).map { String(format: "0x%llX", $0) }.joined(separator: ", ")))
-        }
-        if r.cancelled {
-            rows.append((String(localized: "Note"), String(localized: "Test was stopped before the planned duration")))
-        }
-        return rows
     }
 }

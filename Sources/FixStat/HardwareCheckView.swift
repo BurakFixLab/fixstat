@@ -1,6 +1,7 @@
 import AppKit
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 /// Hardware checklist window: one test per component, each marked passed / failed /
 /// skipped by the technician. Tests that measure something fill in the evidence and
@@ -165,77 +166,6 @@ extension Monitor {
         if passed || failed, hardwareCheck[item].status == .untested {
             hardwareCheck[item].status = passed ? .passed : .failed
             hardwareCheck[item].date = Date()
-        }
-    }
-}
-
-@available(macOS 14.0, *)
-enum HardwareText {
-    static func title(_ item: HardwareCheck.Item) -> String {
-        switch item {
-        case .keyboard: String(localized: "Keyboard")
-        case .trackpad: String(localized: "Trackpad")
-        case .display: String(localized: "Display")
-        case .ambientLight: String(localized: "Ambient light sensor")
-        case .speakers: String(localized: "Speakers")
-        case .microphone: String(localized: "Microphone")
-        case .camera: String(localized: "Camera")
-        case .wifi: String(localized: "Wi-Fi")
-        case .bluetooth: String(localized: "Bluetooth")
-        case .ports: String(localized: "Ports")
-        case .lid: String(localized: "Lid sensor")
-        }
-    }
-
-    static func symbol(_ item: HardwareCheck.Item) -> String {
-        switch item {
-        case .keyboard: "keyboard"
-        case .trackpad: "rectangle.and.hand.point.up.left"
-        case .display: "display"
-        case .ambientLight: "sun.max"
-        case .speakers: "speaker.wave.2"
-        case .microphone: "mic"
-        case .camera: "camera"
-        case .wifi: "wifi"
-        case .bluetooth: "dot.radiowaves.left.and.right"
-        case .ports: "cable.connector"
-        case .lid: "laptopcomputer"
-        }
-    }
-
-    static func instructions(_ item: HardwareCheck.Item) -> String {
-        switch item {
-        case .keyboard:
-            String(localized: "Press every key. A key turns blue once it registers; a key that stays grey did not respond. Hold fn for the top row, otherwise macOS uses those keys itself. Touch ID / power cannot be tested here.")
-        case .trackpad:
-            String(localized: "Run a finger over the whole trackpad surface; the pointer can be anywhere. Cells that stay empty did not register touches. Then click once in each of the nine zones and secondary-click (two fingers) in each zone, keeping the pointer in this window. Also force click, scroll and pinch.")
-        case .display:
-            String(localized: "Shows solid colours full screen on the built-in display to spot dead or stuck pixels, lines, stains and backlight bleed. Click or press → for the next colour, ← to go back, esc to end.")
-        case .ambientLight:
-            String(localized: "Checks the ambient light sensor next to the camera in three steps: normal light, covered with a finger, and a flashlight on it. The camera confirms that the light really reached the sensor, so a missing flashlight is not taken for a broken sensor.")
-        case .speakers:
-            String(localized: "Plays test tones on the left and right speaker. The sweep runs from low to high frequencies and reveals rattling or distorted speakers.")
-        case .microphone:
-            String(localized: "Speak or tap near the microphones and watch the level. Record a few seconds and play them back to judge the sound.")
-        case .camera:
-            String(localized: "Shows the built-in camera image. Check sharpness, colours and that the green camera light turns on.")
-        case .wifi:
-            String(localized: "Shows the Wi-Fi link and scans for nearby networks. A weak signal next to the router or few networks can point to an antenna or cable problem.")
-        case .bluetooth:
-            String(localized: "Shows the Bluetooth controller and scans for nearby devices for ten seconds. Finding no devices in a busy room points to an antenna problem.")
-        case .ports:
-            String(localized: "Plug a USB device, a charger or a display into each port in turn. Every port should show a data connection; charging ports should show power in.")
-        case .lid:
-            String(localized: "Close the lid until the Mac sleeps, then open it again. FixStat detects the closing through the lid (Hall) sensor.")
-        }
-    }
-
-    static func status(_ status: HardwareCheck.Status) -> String {
-        switch status {
-        case .untested: String(localized: "Not tested")
-        case .passed: String(localized: "Passed")
-        case .failed: String(localized: "Failed")
-        case .skipped: String(localized: "Skipped")
         }
     }
 }

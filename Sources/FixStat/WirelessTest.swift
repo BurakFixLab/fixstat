@@ -2,6 +2,7 @@ import CoreBluetooth
 import CoreWLAN
 import MacSensors
 import SwiftUI
+import FixStatCore
 
 // MARK: - Wi-Fi
 

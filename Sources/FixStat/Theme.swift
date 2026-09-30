@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import FixStatCore
 
 /// Temperature colours. Deliberately blue / amber / orange (no red–green split).
 @available(macOS 14.0, *)

@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import FixStatCore
 
 /// The window shown from the menu bar item.
 @available(macOS 14.0, *)
