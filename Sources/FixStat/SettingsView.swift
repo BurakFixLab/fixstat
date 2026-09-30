@@ -179,7 +179,7 @@ private struct SensorSettings: View {
             Text("Hide sensors or give them your own name. Names are saved in your sensor map.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
-            List(monitor.sensors.sorted(by: DefaultPanel.displayOrder)) { sensor in
+            List(monitor.sensors.sorted(by: SensorOrder.displayOrder)) { sensor in
                 SensorSettingsRow(sensor: sensor, isVisible: Binding(
                     get: { !hidden.contains(sensor.id) },
                     set: { visible in

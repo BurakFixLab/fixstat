@@ -46,7 +46,7 @@ struct TechnicianPanel: View {
                 Text(verbatim: modelLine)
                     .font(.caption.monospaced())
                     .foregroundStyle(.secondary)
-                Text(adapterLine).font(.caption).foregroundStyle(.secondary)
+                Text(BatteryText.adapter(monitor.battery)).font(.caption).foregroundStyle(.secondary)
             }
             Spacer()
             Text("Technician")
@@ -61,26 +61,6 @@ struct TechnicianPanel: View {
         [monitor.system.model, monitor.system.boardTarget, monitor.system.chip]
             .compactMap { $0 }
             .joined(separator: " · ")
-    }
-
-    private var adapterLine: String {
-        guard let battery = monitor.battery, battery.externalConnected == true else {
-            return String(localized: "No power adapter")
-        }
-        let now = battery.powerTelemetry?.systemPowerIn.flatMap { $0 > 0 ? Format.watts(Double($0) / 1000, digits: 1) : nil }
-        let rated = battery.adapter?.ratedWatts.map { Format.watts(Double($0)) }
-        let kind = battery.adapter?.description?.lowercased().contains("pd") == true ? "USB-C" : nil
-        switch (rated, now) {
-        case let (rated?, now?):
-            let adapter = [rated, kind].compactMap { $0 }.joined(separator: " ")
-            return String(localized: "Adapter \(adapter) · now \(now)")
-        case let (rated?, nil):
-            return String(localized: "Adapter \(rated)")
-        case let (nil, now?):
-            return String(localized: "Power adapter · now \(now)")
-        default:
-            return String(localized: "Power adapter connected")
-        }
     }
 
     // MARK: Battery
@@ -157,7 +137,7 @@ struct TechnicianPanel: View {
     private var sensorSection: some View {
         let hidden = Pref.hiddenSet(hiddenRaw)
         let shown = monitor.sensors.filter { !hidden.contains($0.id) && monitor.value(of: $0) != nil }
-        let matched = shown.filter(\.isMatched).sorted(by: DefaultPanel.displayOrder)
+        let matched = shown.filter(\.isMatched).sorted(by: SensorOrder.displayOrder)
         let unmatched = shown.filter { !$0.isMatched }.sorted { $0.name < $1.name }
         let modelMatches = shown.filter(\.isModelMatch).count
 

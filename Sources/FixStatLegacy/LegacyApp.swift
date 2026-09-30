@@ -9,9 +9,14 @@ import FixStatCore
 /// Swift 6 inserts main-actor checks into @MainActor code called from AppKit, and those
 /// crash on Big Sur. Use target/selector timers; AppKit calls everything on the main thread.
 /// `scripts/simulate-old-macos.sh` runs the app with those libraries missing.
-public final class LegacyApp: NSObject, NSApplicationDelegate {
+public final class LegacyApp: NSObject, NSApplicationDelegate, NSPopoverDelegate {
+    private var core: MonitorCore!
     private var statusItem: NSStatusItem?
-    private var timer: Timer?
+    private let popover = NSPopover()
+    private var panel: LegacyPanelController!
+    private var settings: LegacySettingsController?
+    private var defaultsObserver: NSObjectProtocol?
+    private var popoverMonitor: Any?
 
     public static func run() {
         let app = NSApplication.shared
@@ -22,38 +27,202 @@ public final class LegacyApp: NSObject, NSApplicationDelegate {
     }
 
     public func applicationDidFinishLaunching(_ notification: Notification) {
-        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem = item
-        refresh()
-        let timer = Timer(timeInterval: 5, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
-        RunLoop.main.add(timer, forMode: .common)
-        self.timer = timer
-    }
+        core = MonitorCore()
+        panel = LegacyPanelController(core: core) { [unowned self] in showSettings() }
+        panel.onResize = { [unowned self] size in popover.contentSize = size }
+        popover.contentViewController = panel
+        popover.behavior = .transient
+        popover.animates = false
+        popover.delegate = self
 
-    @objc private func refresh() {
-        let battery = BatteryReader.read()
-        let percent = battery?.stateOfCharge.map { NumberFormatter.localizedString(from: NSNumber(value: $0 / 100), number: .percent) }
-        statusItem?.button?.title = percent ?? "FixStat"
-
-        let menu = NSMenu()
-        if let b = battery {
-            if let p = percent { menu.addItem(info(NSLocalizedString("Battery", comment: ""), p)) }
-            if let h = b.healthPercent {
-                menu.addItem(info(NSLocalizedString("Health", comment: ""),
-                                  NumberFormatter.localizedString(from: NSNumber(value: h / 100), number: .percent)))
-            }
-            if let c = b.cycleCount { menu.addItem(info(NSLocalizedString("Cycles", comment: ""), String(c))) }
-            menu.addItem(.separator())
+        LegacyAppearance.apply()
+        if LegacySnapshot.runIfRequested(core: core, panel: panel, settings: { [unowned self] in makeSettings() }) {
+            return
         }
-        let quit = NSMenuItem(title: NSLocalizedString("Quit", comment: ""), action: #selector(NSApplication.terminate(_:)),
-                              keyEquivalent: "q")
-        menu.addItem(quit)
-        statusItem?.menu = menu
+
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        item.button?.target = self
+        item.button?.action = #selector(togglePopover(_:))
+        item.button?.imagePosition = .imageLeft
+        statusItem = item
+
+        core.onUpdate = { [unowned self] in
+            updateStatusItem()
+            if popover.isShown { panel.update() }
+        }
+        defaultsObserver = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification, object: nil, queue: .main
+        ) { [unowned self] _ in
+            LegacyAppearance.apply()
+            updateStatusItem()
+            if popover.isShown { panel.update() }
+        }
+        updateStatusItem()
     }
 
-    private func info(_ title: String, _ value: String) -> NSMenuItem {
-        let item = NSMenuItem(title: "\(title): \(value)", action: nil, keyEquivalent: "")
-        item.isEnabled = false
-        return item
+    // MARK: Status item
+
+    private func updateStatusItem() {
+        guard let button = statusItem?.button else { return }
+        let defaults = UserDefaults.standard
+        let showIcon = defaults.bool(forKey: Pref.menuBarBatteryIcon)
+        var parts: [String] = []
+        if defaults.bool(forKey: Pref.menuBarBatteryPercent), let soc = core.battery?.stateOfCharge {
+            parts.append(Format.percent(soc))
+        }
+        if defaults.bool(forKey: Pref.menuBarCPUTemperature), let cpu = core.cpuTemperature {
+            parts.append(Format.degrees(cpu))
+        }
+        let title = parts.joined(separator: " · ")
+        if showIcon, core.battery != nil {
+            button.image = BatteryIcon.image(for: core.battery)
+        } else if parts.isEmpty {
+            button.image = Self.thermometer
+        } else {
+            button.image = nil
+        }
+        let text = title.isEmpty ? "" : (button.image == nil ? title : " " + title)
+        if button.title != text {
+            button.attributedTitle = NSAttributedString(string: text, attributes: [
+                .font: NSFont.monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .regular),
+            ])
+        }
+        button.setAccessibilityLabel("FixStat")
+    }
+
+    private static var thermometer: NSImage? {
+        if #available(macOS 11.0, *) {
+            return NSImage(systemSymbolName: "thermometer", accessibilityDescription: "FixStat")
+        }
+        return nil
+    }
+
+    // MARK: Popover
+
+    @objc private func togglePopover(_ sender: Any?) {
+        if popover.isShown {
+            popover.performClose(sender)
+        } else if let button = statusItem?.button {
+            panel.update()
+            NSApp.activate(ignoringOtherApps: true)
+            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            popover.contentViewController?.view.window?.makeKey()
+        }
+    }
+
+    public func popoverDidShow(_ notification: Notification) {
+        core.panelVisible = true
+        // A transient popover only closes on outside clicks while FixStat is active.
+        popoverMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+            self?.popover.performClose(nil)
+        }
+    }
+
+    public func popoverDidClose(_ notification: Notification) {
+        core.panelVisible = false
+        if let popoverMonitor { NSEvent.removeMonitor(popoverMonitor) }
+        popoverMonitor = nil
+    }
+
+    // MARK: Settings
+
+    private func makeSettings() -> LegacySettingsController {
+        if let settings { return settings }
+        let controller = LegacySettingsController(core: core)
+        settings = controller
+        return controller
+    }
+
+    private func showSettings() {
+        popover.performClose(nil)
+        let controller = makeSettings()
+        NSApp.activate(ignoringOtherApps: true)
+        controller.showWindow(nil)
+        controller.window?.makeKeyAndOrderFront(nil)
+    }
+}
+
+/// System / Light / Dark setting (dark mode exists from macOS 10.14).
+enum LegacyAppearance {
+    static func apply() {
+        guard let app = NSApp else { return }
+        let arguments = CommandLine.arguments
+        if #available(macOS 10.14, *) {
+            let name: NSAppearance.Name?
+            if arguments.contains("--dark") {
+                name = .darkAqua
+            } else if arguments.contains("--light") {
+                name = .aqua
+            } else {
+                switch UserDefaults.standard.string(forKey: Pref.appearance) {
+                case "light": name = .aqua
+                case "dark": name = .darkAqua
+                default: name = nil
+                }
+            }
+            let target = name.flatMap(NSAppearance.init(named:))
+            if app.appearance?.name != target?.name { app.appearance = target }
+        }
+    }
+}
+
+/// `--legacy-ui --snapshot out.png [--technician] [--settings 0|1|2]`: renders the AppKit
+/// panel or a Settings tab to PNG and exits (UI checks without clicking).
+enum LegacySnapshot {
+    static func runIfRequested(core: MonitorCore, panel: LegacyPanelController,
+                               settings: () -> LegacySettingsController) -> Bool {
+        let arguments = CommandLine.arguments
+        guard let index = arguments.firstIndex(of: "--snapshot"), index + 1 < arguments.count else { return false }
+        let url = URL(fileURLWithPath: arguments[index + 1])
+        UserDefaults.standard.set(arguments.contains("--technician"), forKey: Pref.technicianMode)
+        core.panelVisible = true
+
+        // The captured view draws its own window background (light or dark).
+        let capture: NSView
+        let window: NSWindow
+        var fitsContent = false
+        if let i = arguments.firstIndex(of: "--settings"), i + 1 < arguments.count, let tab = Int(arguments[i + 1]) {
+            let controller = settings()
+            controller.select(tab: tab)
+            guard let settingsWindow = controller.window, let frame = settingsWindow.contentView?.superview else { exit(1) }
+            window = settingsWindow
+            capture = frame
+        } else {
+            let box = NSBox()
+            box.boxType = .custom
+            box.borderWidth = 0
+            box.cornerRadius = 0
+            box.fillColor = .windowBackgroundColor
+            box.contentViewMargins = .zero
+            box.contentView = panel.view
+            window = NSWindow(contentRect: NSRect(origin: .zero, size: panel.view.fittingSize),
+                              styleMask: [.borderless], backing: .buffered, defer: false)
+            window.contentView = box
+            capture = box
+            fitsContent = true
+        }
+        window.setFrameOrigin(NSPoint(x: -10_000, y: -10_000))
+        window.orderFrontRegardless()
+
+        // Wait for a second refresh (CPU usage needs a delta).
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            core.refresh()
+            panel.update()
+            if fitsContent { window.setContentSize(panel.view.fittingSize) }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                capture.layoutSubtreeIfNeeded()
+                guard let rep = capture.bitmapImageRepForCachingDisplay(in: capture.bounds) else { exit(1) }
+                capture.cacheDisplay(in: capture.bounds, to: rep)
+                do {
+                    guard let png = rep.representation(using: .png, properties: [:]) else { exit(1) }
+                    try png.write(to: url)
+                    exit(0)
+                } catch {
+                    FileHandle.standardError.write(Data("snapshot failed: \(error)\n".utf8))
+                    exit(1)
+                }
+            }
+        }
+        return true
     }
 }

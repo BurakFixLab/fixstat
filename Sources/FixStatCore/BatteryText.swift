@@ -41,6 +41,27 @@ public enum BatteryText {
         return nil
     }
 
+    /// Technician header line: rated adapter power and the current input power.
+    public static func adapter(_ battery: BatteryInfo?) -> String {
+        guard let battery, battery.externalConnected == true else {
+            return L("No power adapter")
+        }
+        let now = battery.powerTelemetry?.systemPowerIn.flatMap { $0 > 0 ? Format.watts(Double($0) / 1000, digits: 1) : nil }
+        let rated = battery.adapter?.ratedWatts.map { Format.watts(Double($0)) }
+        let kind = battery.adapter?.description?.lowercased().contains("pd") == true ? "USB-C" : nil
+        switch (rated, now) {
+        case let (rated?, now?):
+            let adapter = [rated, kind].compactMap { $0 }.joined(separator: " ")
+            return L("Adapter %@ · now %@", adapter, now)
+        case let (rated?, nil):
+            return L("Adapter %@", rated)
+        case let (nil, now?):
+            return L("Power adapter · now %@", now)
+        default:
+            return L("Power adapter connected")
+        }
+    }
+
     public static func symbol(_ battery: BatteryInfo?) -> String {
         guard let battery else { return "battery.0percent" }
         if battery.isCharging == true || battery.fullyCharged == true { return "battery.100percent.bolt" }

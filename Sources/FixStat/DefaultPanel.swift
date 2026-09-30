@@ -61,23 +61,10 @@ struct DefaultPanel: View {
 
     // MARK: Sensors
 
-    /// Aggregated rows shown by default: the hottest sensor of each kind.
-    private static let summaries: [(title: LocalizedStringKey, prefixes: [String])] = [
-        ("Performance clusters", ["cpu.pcluster"]),
-        ("Efficiency clusters", ["cpu.ecluster"]),
-        ("CPU", ["cpu.core", "cpu.die", "cpu.proximity"]),
-        ("GPU", ["gpu."]),
-        ("SSD (NAND)", ["ssd.nand", "ssd."]),
-        ("Enclosure", ["chassis.skin", "chassis.palmrest"]),
-        ("Battery", ["battery."]),
-    ]
-
     private var sensorSection: some View {
         let hidden = Pref.hiddenSet(hiddenRaw)
         let visible = monitor.sensors.filter { !hidden.contains($0.id) && monitor.value(of: $0) != nil }
-        let rows = Self.summaries.compactMap { summary -> (LocalizedStringKey, Double)? in
-            monitor.maximum(idPrefixes: summary.prefixes, excluding: hidden).map { (summary.title, $0) }
-        }.prefix(6)
+        let rows = SensorSummary.rows(sensors: monitor.sensors, values: monitor.values, hidden: hidden)
 
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
@@ -92,7 +79,7 @@ struct DefaultPanel: View {
                 // ideal height of its own and would collapse to zero.
                 ScrollView {
                     VStack(spacing: 5) {
-                        ForEach(visible.sorted(by: Self.displayOrder)) { sensor in
+                        ForEach(visible.sorted(by: SensorOrder.displayOrder)) { sensor in
                             sensorRow(Text(sensor.name), monitor.value(of: sensor))
                         }
                     }
@@ -102,30 +89,14 @@ struct DefaultPanel: View {
                 Text("No temperature sensors found").font(.callout).foregroundStyle(.secondary)
             } else {
                 ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
-                    sensorRow(Text(row.0), row.1)
+                    sensorRow(Text(verbatim: row.title), row.value)
                 }
             }
         }
     }
 
-    /// Id prefixes in display order; unlisted ids come after, by group.
-    private static let idOrder = ["cpu.pcluster", "cpu.ecluster", "cpu.", "gpu.", "ssd.nand", "ssd.",
-                                  "battery.", "chassis.", "soc.", "board.", "pmu.", "pmu2."]
-
     /// Approximate height of one sensor row including spacing.
     static let rowHeight: CGFloat = 22
-
-    static func displayOrder(_ a: DisplaySensor, _ b: DisplaySensor) -> Bool {
-        func rank(_ sensor: DisplaySensor) -> Int {
-            guard let id = sensor.resolved?.id else { return idOrder.count + 1 }
-            return idOrder.firstIndex { id.hasPrefix($0) } ?? idOrder.count
-        }
-        let ra = rank(a), rb = rank(b)
-        if ra != rb { return ra < rb }
-        let ka = a.resolved?.id ?? a.name
-        let kb = b.resolved?.id ?? b.name
-        return ka.localizedStandardCompare(kb) == .orderedAscending
-    }
 
     private func sensorRow(_ title: Text, _ value: Double?) -> some View {
         let color = TemperatureColor.color(for: value, warm: warm, hot: hot)

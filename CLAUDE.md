@@ -118,6 +118,13 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   package if the AppKit interface does not survive; `scripts/check-weak-imports.sh`
   catches non-weak imports from weak libraries.
 - SwiftUI `MenuBarExtra(.window)` + `Settings` scene + tool `Window`s, LSUIElement app.
+- AppKit interface (`LegacyApp`): `NSStatusItem` + transient `NSPopover` (a global mouse
+  monitor closes it on outside clicks) with `LegacyPanelController` — default and
+  technician panels built from NSStackViews that are rebuilt only when their structure
+  changes and otherwise updated in place from `MonitorCore.onUpdate`;
+  `LegacySettingsController` (General / Thresholds / Sensors, controls bound to
+  UserDefaults, so both interfaces share preferences). Battery icon: SF Symbol on 11+,
+  drawn by hand before. Tool windows, export, notifications and login item: stages 4–5.
 - `scripts/build-app.sh` compiles with clang/swiftc directly (SwiftPM raises the deployment
   target to 12): x86_64 for 10.13, arm64 for 11, lipo; the Swift runtime for < 10.14.4 is
   copied to Contents/Frameworks (rpath after /usr/lib/swift); frameworks newer than 10.13
@@ -299,6 +306,8 @@ open build/FixStat.app
 # NavigationSplitView windows such as --hardware do not render this way, use a screenshot):
 build/FixStat.app/Contents/MacOS/FixStat --snapshot out.png [--technician] [--settings 0|1|2] \
     [--history [--range 0…6] --data-dir DIR] [--dark|--light] -AppleLanguages "(tr)" [-AppleLocale en_US]
+# AppKit interface: panel or Settings tab to PNG (also under scripts/simulate-old-macos.sh … -- ARGS):
+build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] [--dark|--light]
 # Write the report (same as "Export report") and exit:
 build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check]
 ```
