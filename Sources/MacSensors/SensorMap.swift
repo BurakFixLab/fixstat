@@ -70,11 +70,20 @@ public struct SensorMap: Codable, Sendable, Equatable {
         }
     }
 
+    /// Sensors of one chip (e.g. "Apple M2 Pro"), for all models with that chip. On Apple
+    /// Silicon after M1 the CPU / GPU die zones exist only as SMC keys, the same on every
+    /// model with the chip.
     public struct ChipMap: Codable, Sendable, Equatable {
         public var sensors: [Entry]
+        /// Raw keys that are meaningless on this chip (constants, calibration values).
+        public var ignored: [String]?
+        /// Raw keys derived from other sensors (uncalibrated readings, peaks, averages).
+        public var derived: [String]?
 
-        public init(sensors: [Entry]) {
+        public init(sensors: [Entry], ignored: [String]? = nil, derived: [String]? = nil) {
             self.sensors = sensors
+            self.ignored = ignored
+            self.derived = derived
         }
     }
 
@@ -177,19 +186,30 @@ public extension SensorMap {
         }
         for (chip, override) in overrides.chips {
             let replaced = Set(override.sensors.map(\.key))
-            let existing = result.chips[chip]?.sensors.filter { !replaced.contains($0.key) } ?? []
-            result.chips[chip] = ChipMap(sensors: override.sensors + existing)
+            let base = result.chips[chip]
+            let existing = base?.sensors.filter { !replaced.contains($0.key) } ?? []
+            func joined(_ a: [String]?, _ b: [String]?) -> [String]? {
+                a == nil && b == nil ? nil : (a ?? []) + (b ?? [])
+            }
+            result.chips[chip] = ChipMap(sensors: override.sensors + existing,
+                                         ignored: joined(base?.ignored, override.ignored),
+                                         derived: joined(base?.derived, override.derived))
         }
         result.patterns = overrides.patterns + result.patterns
         return result
     }
 
-    /// Whether the model lists the key as meaningless or derived, i.e. it should
-    /// only appear in the raw list.
-    func isIgnored(key: String?, hidName: String?, model: String) -> Bool {
-        guard let entry = models[model] else { return false }
-        let hidden = (entry.ignored ?? []) + (entry.derived ?? [])
-        return [key, hidName].compactMap { $0 }.contains(where: hidden.contains)
+    /// Whether the model (or, without a model entry naming the sensor, the chip) lists the
+    /// key as meaningless or derived, i.e. it should only appear in the raw list.
+    func isIgnored(key: String?, hidName: String?, model: String, chip: String? = nil) -> Bool {
+        let lookup = [key, hidName].compactMap { $0 }
+        if let entry = models[model] {
+            if lookup.contains(where: ((entry.ignored ?? []) + (entry.derived ?? [])).contains) { return true }
+            // A sensor the model names is shown even if the chip lists it.
+            if entry.sensors.contains(where: { lookup.contains($0.key) }) { return false }
+        }
+        guard let chip, let entry = chips[chip] else { return false }
+        return lookup.contains(where: ((entry.ignored ?? []) + (entry.derived ?? [])).contains)
     }
 }
 

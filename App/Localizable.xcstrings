@@ -7134,6 +7134,24 @@
         }
       }
     },
+    "sensor.chassis.air" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ambient air"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortam havası"
+          }
+        }
+      }
+    },
     "sensor.chassis.airflow.left" : {
       "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
       "extractionState" : "manual",
@@ -7184,6 +7202,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ortam (sanal)"
+          }
+        }
+      }
+    },
+    "sensor.chassis.display" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display proximity"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekran yakını"
           }
         }
       }

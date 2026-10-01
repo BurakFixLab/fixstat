@@ -748,6 +748,8 @@ SENSORS = {
     "sensor.battery.pack.n": ("Battery pack %lld", "Batarya paketi %lld"),
     "sensor.chassis.skin.n": ("Enclosure surface %lld (virtual)", "Kasa yüzeyi %lld (sanal)"),
     "sensor.chassis.ambient": ("Ambient (virtual)", "Ortam (sanal)"),
+    "sensor.chassis.air": ("Ambient air", "Ortam havası"),
+    "sensor.chassis.display": ("Display proximity", "Ekran yakını"),
     "sensor.chassis.palmrest.n": ("Palm rest %lld", "Avuç içi dayanağı %lld"),
     "sensor.chassis.airflow.left": ("Airflow left", "Hava akışı sol"),
     "sensor.chassis.airflow.right": ("Airflow right", "Hava akışı sağ"),

@@ -75,6 +75,7 @@ public final class MonitorCore {
     public let history: BatteryHistoryStore
     public private(set) var offState: OffStateRecorder?
     private var sampler: TemperatureSampler?
+    private var dieSMCKeys: [String] = []
     private let stats = SystemStats()
     private var timer: Timer?
     private var defaultsObserver: NSObjectProtocol?
@@ -165,16 +166,21 @@ public final class MonitorCore {
         let map = self.map
         // Only SMC keys that are not known to be derived or meaningless; HID is one call anyway.
         let sampler = TemperatureSampler { key in
-            !map.isIgnored(key: key, hidName: nil, model: model)
+            !map.isIgnored(key: key, hidName: nil, model: model, chip: chip)
         }
         self.sampler = sampler
         sensors = sampler.sensors
-            .filter { !map.isIgnored(key: $0.key, hidName: $0.hidName, model: model) }
+            .filter { !map.isIgnored(key: $0.key, hidName: $0.hidName, model: model, chip: chip) }
             .map { descriptor in
                 DisplaySensor(descriptor: descriptor,
                               resolved: map.resolve(key: descriptor.key, hidName: descriptor.hidName,
                                                     model: model, chip: chip))
             }
+        // Read while the panel is closed too (menu bar CPU temperature, chip alert): Intel and
+        // Apple Silicon after M1 have their die sensors only in the SMC.
+        dieSMCKeys = sensors
+            .filter { ($0.group == .cpu || $0.group == .gpu) && $0.descriptor.source == .smc }
+            .compactMap(\.descriptor.key)
     }
 
     /// Stores a user-defined name (or removes it when `name` is empty) in the
@@ -262,9 +268,9 @@ public final class MonitorCore {
                 cpuUsage = stats.cpuUsage().map { ($0 * 1000).rounded() / 1000 }
                 memory = stats.memory()
             } else if defaults.bool(forKey: Pref.menuBarCPUTemperature) || AlertManager.enabled {
-                // HID only: covers the CPU cluster sensors on Apple Silicon in one call.
+                // HID (one call) plus the CPU / GPU sensors that only the SMC has.
                 var latest = values
-                for (uid, value) in sampler.sampleHID() {
+                for (uid, value) in sampler.sampleHID().merging(sampler.sampleSMC(keys: dieSMCKeys), uniquingKeysWith: { a, _ in a }) {
                     latest[uid] = (value * 10).rounded() / 10
                 }
                 values = latest
@@ -288,6 +294,8 @@ public final class MonitorCore {
 
     public static func value(of sensor: DisplaySensor, in values: [String: Double]) -> Double? {
         guard let value = values[sensor.id], SMC.plausibleTemperatureRange.contains(value) else { return nil }
+        // A power-gated Apple Silicon cluster reads 0 or its calibration offset: no reading.
+        if sensor.group == .cpu || sensor.group == .gpu, value < SMC.minimumActiveDieTemperature { return nil }
         return value
     }
 

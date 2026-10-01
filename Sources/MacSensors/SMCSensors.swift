@@ -23,6 +23,10 @@ public extension SMC {
     /// are usually unpopulated or not temperatures at all.
     static let plausibleTemperatureRange = 0.5...130.0
 
+    /// Apple Silicon CPU / GPU die zones (SMC keys) read 0 or a constant calibration offset
+    /// (≈ 5–10 °C) while their cluster is power gated. A die in use is never this cold.
+    static let minimumActiveDieTemperature = 15.0
+
     /// Every key starting with `T` that decodes to a number.
     func temperatureReadings(keys: [FourCC]? = nil) -> [SMCReading] {
         let keys = (try? keys ?? allKeys()) ?? []

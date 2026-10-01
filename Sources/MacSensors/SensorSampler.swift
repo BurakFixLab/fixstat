@@ -72,6 +72,19 @@ public final class TemperatureSampler {
         return values
     }
 
+    /// Only the given SMC keys, keyed by uid. For the few keys needed while the panel is
+    /// closed (CPU / GPU die sensors that are not exposed through HID).
+    public func sampleSMC(keys: [String]) -> [String: Double] {
+        guard let smc else { return [:] }
+        var values: [String: Double] = [:]
+        for key in keys {
+            if let value = (try? smc.read(FourCC(key)))?.doubleValue {
+                values[SensorDescriptor(source: .smc, key: key, hidName: nil).uid] = value
+            }
+        }
+        return values
+    }
+
     /// One value per entry of `sensors` (nil if the read failed).
     public func sample() -> [Double?] {
         var hidValues: [String: Double] = [:]

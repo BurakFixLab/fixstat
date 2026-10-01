@@ -1,6 +1,984 @@
 {
   "chips" : {
-
+    "Apple M1 Max" : {
+      "derived" : [
+        "Te00",
+        "Te02",
+        "Tp00",
+        "Tp02",
+        "Tp04",
+        "Tp06",
+        "Tp08",
+        "Tp0A",
+        "Tp0C",
+        "Tp0E",
+        "Tp0G",
+        "Tp0I",
+        "Tp0K",
+        "Tp0M",
+        "Tp0O",
+        "Tp0Q",
+        "Tp0S",
+        "Tp0U",
+        "Tp0W",
+        "Tp0Y",
+        "Tp0a",
+        "Tp0c"
+      ],
+      "sensors" : [
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.1",
+          "key" : "Tp01",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording; assumed for Apple M1 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.2",
+          "key" : "Tp05",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording; assumed for Apple M1 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.3",
+          "key" : "Tp09",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording; assumed for Apple M1 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.4",
+          "key" : "Tp0D",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording; assumed for Apple M1 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.5",
+          "key" : "Tp0H",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording; assumed for Apple M1 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.6",
+          "key" : "Tp0L",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording; assumed for Apple M1 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.7",
+          "key" : "Tp0P",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording; assumed for Apple M1 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.8",
+          "key" : "Tp0T",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording; assumed for Apple M1 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.9",
+          "key" : "Tp0X",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording; assumed for Apple M1 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.10",
+          "key" : "Tp0b",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording; assumed for Apple M1 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.1",
+          "key" : "Te01",
+          "note" : "SMC, efficiency cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording; assumed for Apple M1 Max (same CPU complex, not recorded)"
+        }
+      ]
+    },
+    "Apple M1 Pro" : {
+      "derived" : [
+        "Te00",
+        "Te02",
+        "Tg04",
+        "Tg0C",
+        "Tp00",
+        "Tp02",
+        "Tp04",
+        "Tp06",
+        "Tp08",
+        "Tp0A",
+        "Tp0C",
+        "Tp0E",
+        "Tp0G",
+        "Tp0I",
+        "Tp0K",
+        "Tp0M",
+        "Tp0O",
+        "Tp0Q",
+        "Tp0S",
+        "Tp0U",
+        "Tp0W",
+        "Tp0Y",
+        "Tp0a",
+        "Tp0c"
+      ],
+      "sensors" : [
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.1",
+          "key" : "Tp01",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.2",
+          "key" : "Tp05",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.3",
+          "key" : "Tp09",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.4",
+          "key" : "Tp0D",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.5",
+          "key" : "Tp0H",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.6",
+          "key" : "Tp0L",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.7",
+          "key" : "Tp0P",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.8",
+          "key" : "Tp0T",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.9",
+          "key" : "Tp0X",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.10",
+          "key" : "Tp0b",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.1",
+          "key" : "Te01",
+          "note" : "SMC, efficiency cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.1",
+          "key" : "Tg05",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.2",
+          "key" : "Tg0D",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a MacBookPro18,3 bench recording"
+        }
+      ]
+    },
+    "Apple M2" : {
+      "derived" : [
+        "Te04",
+        "Te06",
+        "Tg0e",
+        "Tg0m",
+        "Tg0q",
+        "Tp00",
+        "Tp02",
+        "Tp04",
+        "Tp06",
+        "Tp08",
+        "Tp0A",
+        "Tp0C",
+        "Tp0E",
+        "Tp0a",
+        "Tp0c",
+        "Tp0e",
+        "Tp0g",
+        "Tp0i",
+        "Tp0k",
+        "Tp0m",
+        "Tp0o",
+        "Tp0q",
+        "Tp0s"
+      ],
+      "sensors" : [
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.1",
+          "key" : "Tp01",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.2",
+          "key" : "Tp05",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.3",
+          "key" : "Tp09",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.4",
+          "key" : "Tp0D",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.5",
+          "key" : "Tp0b",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.6",
+          "key" : "Tp0f",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.7",
+          "key" : "Tp0j",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.8",
+          "key" : "Tp0n",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.9",
+          "key" : "Tp0r",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.1",
+          "key" : "Te05",
+          "note" : "SMC, efficiency cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.1",
+          "key" : "Tg0f",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.2",
+          "key" : "Tg0n",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.3",
+          "key" : "Tg0r",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,2 bench recording"
+        }
+      ]
+    },
+    "Apple M2 Max" : {
+      "derived" : [
+        "Te04",
+        "Te06",
+        "Tp00",
+        "Tp02",
+        "Tp04",
+        "Tp06",
+        "Tp08",
+        "Tp0A",
+        "Tp0C",
+        "Tp0E",
+        "Tp0W",
+        "Tp0Y",
+        "Tp0a",
+        "Tp0c",
+        "Tp0e",
+        "Tp0g",
+        "Tp0i",
+        "Tp0k",
+        "Tp16",
+        "Tp18",
+        "Tp1A",
+        "Tp1C",
+        "Tp1E",
+        "Tp1G",
+        "Tp1I",
+        "Tp1K",
+        "Tp1M",
+        "Tp1O",
+        "Tp1g",
+        "Tp1i",
+        "Tp1k",
+        "Tp1m",
+        "Tp1o",
+        "Tp1q",
+        "Tp1s",
+        "Tp1u",
+        "Tp2G",
+        "Tp2I"
+      ],
+      "sensors" : [
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.1",
+          "key" : "Tp01",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.2",
+          "key" : "Tp05",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.3",
+          "key" : "Tp09",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.4",
+          "key" : "Tp0D",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.5",
+          "key" : "Tp0X",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.6",
+          "key" : "Tp0b",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.7",
+          "key" : "Tp0f",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.8",
+          "key" : "Tp0j",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.9",
+          "key" : "Tp17",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.10",
+          "key" : "Tp1B",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.11",
+          "key" : "Tp1F",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.12",
+          "key" : "Tp1J",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.13",
+          "key" : "Tp1N",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.14",
+          "key" : "Tp1h",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.15",
+          "key" : "Tp1l",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.16",
+          "key" : "Tp1p",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.17",
+          "key" : "Tp1t",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.18",
+          "key" : "Tp2H",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.1",
+          "key" : "Te05",
+          "note" : "SMC, efficiency cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording; assumed for Apple M2 Max (same CPU complex, not recorded)"
+        }
+      ]
+    },
+    "Apple M2 Pro" : {
+      "derived" : [
+        "Te04",
+        "Te06",
+        "Tg0W",
+        "Tg0e",
+        "Tg0i",
+        "Tg1g",
+        "Tg1k",
+        "Tp00",
+        "Tp02",
+        "Tp04",
+        "Tp06",
+        "Tp08",
+        "Tp0A",
+        "Tp0C",
+        "Tp0E",
+        "Tp0W",
+        "Tp0Y",
+        "Tp0a",
+        "Tp0c",
+        "Tp0e",
+        "Tp0g",
+        "Tp0i",
+        "Tp0k",
+        "Tp16",
+        "Tp18",
+        "Tp1A",
+        "Tp1C",
+        "Tp1E",
+        "Tp1G",
+        "Tp1I",
+        "Tp1K",
+        "Tp1M",
+        "Tp1O",
+        "Tp1g",
+        "Tp1i",
+        "Tp1k",
+        "Tp1m",
+        "Tp1o",
+        "Tp1q",
+        "Tp1s",
+        "Tp1u",
+        "Tp2G",
+        "Tp2I"
+      ],
+      "ignored" : [
+        "Tf00",
+        "Tf01",
+        "Tf02",
+        "Tf05",
+        "Tf06",
+        "Tf10",
+        "Tf11",
+        "Tf12",
+        "Tf15",
+        "Tf20",
+        "Tf21",
+        "Tf22",
+        "Tf25",
+        "Tf26"
+      ],
+      "sensors" : [
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.1",
+          "key" : "Tp01",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.2",
+          "key" : "Tp05",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.3",
+          "key" : "Tp09",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.4",
+          "key" : "Tp0D",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.5",
+          "key" : "Tp0X",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.6",
+          "key" : "Tp0b",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.7",
+          "key" : "Tp0f",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.8",
+          "key" : "Tp0j",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.9",
+          "key" : "Tp17",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.10",
+          "key" : "Tp1B",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.11",
+          "key" : "Tp1F",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.12",
+          "key" : "Tp1J",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.13",
+          "key" : "Tp1N",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.14",
+          "key" : "Tp1h",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.15",
+          "key" : "Tp1l",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.16",
+          "key" : "Tp1p",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.17",
+          "key" : "Tp1t",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.18",
+          "key" : "Tp2H",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.1",
+          "key" : "Te05",
+          "note" : "SMC, efficiency cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.1",
+          "key" : "Tg0X",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.2",
+          "key" : "Tg0f",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.3",
+          "key" : "Tg0j",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.4",
+          "key" : "Tg1h",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.5",
+          "key" : "Tg1l",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac14,9 bench recording"
+        }
+      ]
+    },
+    "Apple M4" : {
+      "derived" : [
+        "Te04",
+        "Te06",
+        "Te08",
+        "Te0A",
+        "Te0G",
+        "Te0I",
+        "Te0R",
+        "Te0T",
+        "Te0U",
+        "Te0V",
+        "Te0W",
+        "Te0X",
+        "Tg0C",
+        "Tg0G",
+        "Tg0K",
+        "Tg0O",
+        "Tg0U",
+        "Tg0X",
+        "Tg0d",
+        "Tg0j",
+        "Tg0m",
+        "Tp00",
+        "Tp02",
+        "Tp04",
+        "Tp06",
+        "Tp08",
+        "Tp0A",
+        "Tp0C",
+        "Tp0E",
+        "Tp0U",
+        "Tp0W",
+        "Tp0X",
+        "Tp0Z",
+        "Tp0a",
+        "Tp0c",
+        "Tp0d",
+        "Tp0f",
+        "Tp1A",
+        "Tp1C",
+        "Tp1E",
+        "Tp1G",
+        "Tp1Q",
+        "Tp1S",
+        "Tp3O",
+        "Tp3P",
+        "Tp3S",
+        "Tp3T",
+        "Tp3W",
+        "Tp3X"
+      ],
+      "sensors" : [
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.1",
+          "key" : "Tp01",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.2",
+          "key" : "Tp05",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.3",
+          "key" : "Tp09",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.4",
+          "key" : "Tp0D",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.5",
+          "key" : "Tp0V",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.6",
+          "key" : "Tp0Y",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.7",
+          "key" : "Tp0b",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.8",
+          "key" : "Tp0e",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.9",
+          "key" : "Tp1B",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.10",
+          "key" : "Tp1F",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.11",
+          "key" : "Tp1R",
+          "note" : "SMC, performance cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.1",
+          "key" : "Te05",
+          "note" : "SMC, efficiency cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.2",
+          "key" : "Te09",
+          "note" : "SMC, efficiency cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.3",
+          "key" : "Te0H",
+          "note" : "SMC, efficiency cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.4",
+          "key" : "Te0S",
+          "note" : "SMC, efficiency cluster thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.1",
+          "key" : "Tg0D",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.2",
+          "key" : "Tg0H",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.3",
+          "key" : "Tg0L",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.4",
+          "key" : "Tg0P",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.5",
+          "key" : "Tg0V",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.6",
+          "key" : "Tg0Y",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.7",
+          "key" : "Tg0e",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.8",
+          "key" : "Tg0k",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.9",
+          "key" : "Tg0n",
+          "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
+        }
+      ]
+    }
   },
   "models" : {
     "MacBookAir10,1" : {
@@ -748,6 +1726,24 @@
       "id" : "gpu.proximity",
       "key" : "TG0P",
       "note" : "Intel: GPU proximity"
+    },
+    {
+      "group" : "gpu",
+      "id" : "gpu.die",
+      "key" : "TCGC",
+      "note" : "Intel: integrated GPU (PECI)"
+    },
+    {
+      "group" : "chassis",
+      "id" : "chassis.air",
+      "key" : "TA0[PV]",
+      "note" : "Intel: ambient air temperature"
+    },
+    {
+      "group" : "chassis",
+      "id" : "chassis.display",
+      "key" : "TL0P",
+      "note" : "Intel iMac: display (LCD) proximity"
     },
     {
       "group" : "ssd",

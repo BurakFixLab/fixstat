@@ -57,6 +57,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 - Lookup is layered, first match wins: **model** entry (`verified` or `estimated`) →
   **chip** entry (always estimated) → **pattern** (always estimated). A model entry
   always wins. Unmatched sensors are listed separately with their raw names.
+- Chip entries also carry `ignored` / `derived` (hidden and not polled unless the model
+  entry names the key). They name the SMC-only CPU / GPU die zones of Apple Silicon after
+  M1 (see Hardware findings); M1 Max / M2 Max reuse the CPU entries of the Pro chip
+  (assumed, not recorded). M3 is not covered yet (no recording).
 - Model entries also carry `ignored` (never plausible / constant calibration keys) and
   `derived` (SMC aggregates of other sensors, e.g. Apple Silicon `Tp2a/b/x/z`, `Tc*`);
   both appear only in raw lists and are never polled by the app.
@@ -93,6 +97,17 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   TCHP=TP7d (charger), TW0P=TP4d (Wi-Fi), TIOP=TP3d (I/O), TPMP=TP5d (PMU), TMVR=TP8d
   (memory VR), TPSP=TR5d (power input), TSCD=TR4d, TH0T/TH0x=TR2d (SSD), TB2T=TG2B.
 - Unpopulated NTC channels read ≈ −22 °C and are listed as `ignored`.
+- **Apple Silicon after M1** (M1 Pro, M2, M2 Pro, M4 recorded): no pACC / eACC / GPU MTR HID
+  services; the CPU / GPU die zones exist only as SMC keys `Tp..` (P clusters), `Te..`
+  (E cluster, active at idle), `Tg..` (GPU). CPU keys come in triplets: raw, calibrated
+  (= raw + a constant offset, the value shown) and a noisier peak; GPU keys in pairs (raw,
+  calibrated). A power-gated cluster reads 0 (raw) / the offset (≈ 5–10 °C), so cpu / gpu
+  values below `SMC.minimumActiveDieTemperature` (15 °C) count as no reading. M4 also has
+  cluster averages / peaks (`Tp3*`, `Te0U–X`); M2 Pro has constant `Tf..` calibration keys.
+  Which key is which was derived from the recordings (constant offset between neighbours),
+  not from key names (the triplets are not aligned to the key alphabet on M4).
+- While the panel is closed, the menu bar CPU temperature reads HID plus the SMC keys of the
+  cpu / gpu groups (Intel and Apple Silicon after M1 have no HID die sensors).
 - HID power page (0xff08) voltage/current events return implausible raw values; they are
   behind `sensordump --hid-power` and marked experimental.
 - Battery (`AppleSmartBattery`): health = `AppleRawMaxCapacity / DesignCapacity`;
