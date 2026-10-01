@@ -42,6 +42,14 @@ public final class SensorRecorder {
     public var onSample: (SensorRecording.Sample) -> Void = { _ in }
     /// Checked once per second; ends the current phase early when true.
     public var isCancelled: () -> Bool = { false }
+    /// Sensors that count for `hotMean`, by index (nil: all). Leave out keys a sensor map
+    /// hides: aggregates such as the M1's `Tp8z` read values far above the real dies.
+    private var hotMeanIndices: Set<Int>?
+
+    /// Only sensors for which `include` returns true count for `hotMean`.
+    public func setHotMeanFilter(_ include: (SensorDescriptor) -> Bool) {
+        hotMeanIndices = Set(recording.sensors.indices.filter { include(recording.sensors[$0]) })
+    }
 
     public init(interval: TimeInterval = 1) {
         self.interval = interval
@@ -122,8 +130,9 @@ public final class SensorRecorder {
     /// Readings below `SMC.minimumActiveDieTemperature` (power-gated zones) are left out.
     public func hotMean(_ sample: SensorRecording.Sample?, count: Int = 8) -> Double? {
         guard let sample else { return nil }
-        let values = sample.values.compactMap { value -> Double? in
-            guard let value, SMC.plausibleTemperatureRange.contains(value),
+        let values = sample.values.enumerated().compactMap { index, value -> Double? in
+            guard hotMeanIndices?.contains(index) ?? true,
+                  let value, SMC.plausibleTemperatureRange.contains(value),
                   value >= SMC.minimumActiveDieTemperature else { return nil }
             return value
         }.sorted(by: >).prefix(count)
