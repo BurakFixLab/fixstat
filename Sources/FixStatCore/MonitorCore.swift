@@ -8,6 +8,8 @@ import MacSensors
 /// called after every refresh; values are only replaced when they changed.
 public final class MonitorCore {
     public let system = SystemInfo.current()
+    /// Notebook, iMac or desktop and its built-in parts: decides which tools and checks apply.
+    public let profile: HardwareProfile
     public private(set) var sensors: [DisplaySensor] = []
     /// Sensor uid → °C.
     public private(set) var values: [String: Double] = [:]
@@ -52,9 +54,14 @@ public final class MonitorCore {
 
     // Session results (for reports), shared by both interfaces.
     /// Hardware checklist of this session.
-    public var hardwareCheck = HardwareCheck()
+    public var hardwareCheck: HardwareCheck
     /// Called after `recordCheck` changed the checklist (the AppKit window updates its list).
     public var onHardwareCheckChange: (() -> Void)?
+
+    /// Clears every mark of the hardware check.
+    public func resetHardwareCheck() {
+        hardwareCheck = HardwareCheck(profile: profile)
+    }
     /// Device card data (system_profiler takes about a second, so it is loaded on demand).
     public var deviceInfo: DeviceInfo?
     /// Last panic / shutdown cause scan.
@@ -87,14 +94,18 @@ public final class MonitorCore {
     public static let historyInterval: TimeInterval = 60
 
     public init() {
+        profile = HardwareProfile.current(system: system)
+        hardwareCheck = HardwareCheck(profile: profile)
         Pref.register()
         history = BatteryHistoryStore(directory: Self.dataDirectory)
         if !CommandLine.arguments.contains("--snapshot") && !CommandLine.arguments.contains("--export") {
             offState = OffStateRecorder(directory: Self.dataDirectory)
-            UnexpectedShutdown.checkAtLaunch()
+            // Judged from the battery charge before the shutdown: notebooks only.
+            if profile.hasBattery { UnexpectedShutdown.checkAtLaunch() }
         }
         loadMap()
-        buildSensors()
+        let interactive = !CommandLine.arguments.contains("--snapshot") && !CommandLine.arguments.contains("--export")
+        buildSensors(inBackground: interactive)
         refresh()
         scheduleTimer()
         defaultsObserver = NotificationCenter.default.addObserver(
@@ -160,14 +171,36 @@ public final class MonitorCore {
         map = result
     }
 
-    private func buildSensors() {
+    /// Enumerating the SMC (≈ 1500 keys, then every temperature key) takes seconds on older
+    /// Intel Macs, so at launch it runs in the background; snapshots and exports need the
+    /// sensors right away.
+    private func buildSensors(inBackground: Bool = false) {
         let model = system.model
         let chip = system.chip
         let map = self.map
         // Only SMC keys that are not known to be derived or meaningless; HID is one call anyway.
-        let sampler = TemperatureSampler { key in
-            !map.isIgnored(key: key, hidName: nil, model: model, chip: chip)
+        let make = {
+            TemperatureSampler { key in
+                !map.isIgnored(key: key, hidName: nil, model: model, chip: chip)
+            }
         }
+        guard inBackground else {
+            install(make(), map: map)
+            return
+        }
+        DispatchQueue.global(qos: .userInitiated).async {
+            let sampler = make()
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.install(sampler, map: map)
+                self.refresh()
+            }
+        }
+    }
+
+    private func install(_ sampler: TemperatureSampler, map: SensorMap) {
+        let model = system.model
+        let chip = system.chip
         self.sampler = sampler
         sensors = sampler.sensors
             .filter { !map.isIgnored(key: $0.key, hidName: $0.hidName, model: model, chip: chip) }
@@ -244,7 +277,7 @@ public final class MonitorCore {
         let needsBattery = panelVisible || detailsVisible || testRunning || historyDue || AlertManager.enabled
             || defaults.bool(forKey: Pref.menuBarBatteryIcon) || defaults.bool(forKey: Pref.menuBarBatteryPercent)
         if needsBattery {
-            let latest = BatteryReader.read()
+            let latest = profile.hasBattery ? BatteryReader.read() : nil
             if latest != battery { battery = latest }
             if historyDue, let latest {
                 history.record(latest, at: now)

@@ -54,6 +54,8 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
   kartı (Aktivasyon Kilidi, MDM, parça numarası) ve donanım kontrolü
   (klavye, trackpad yüzeyi, ekran, hoparlör, mikrofon, kamera, Wi-Fi, Bluetooth, arıza
   sayaçlı USB-C portları, kapak sensörü).
+- **Mac'e uyum.** iMac, Mac mini veya Mac Studio'da batarya araçları gizlenir; donanım
+  kontrolü yalnızca o Mac'te bulunan parçaları listeler.
 - **Raporlar.** Müşteri cihazları için PDF / CSV / JSON dışa aktarma; seri numaraları,
   Ayarlar'dan tam gösterim açılmadıkça (kendi kayıtlarınız için) maskeli.
 - **Sadece okuma.** FixStat SMC'ye hiçbir zaman yazmaz, fan kontrolü yoktur ve yönetici

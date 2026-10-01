@@ -40,14 +40,18 @@ struct SettingsButton: View {
 @available(macOS 14.0, *)
 struct ToolsMenu: View {
     @Environment(\.openWindow) private var openWindow
+    @Environment(Monitor.self) private var monitor
 
     var body: some View {
         Menu {
             Button("Device info") { open(DeviceInfoView.windowID) }
             Divider()
-            Button("Battery history") { open(HistoryView.windowID) }
-            Button("Battery details") { open(BatteryDetailsView.windowID) }
-            Button("Battery capacity test") { open(CapacityTestView.windowID) }
+            // No battery tools on an iMac, a Mac mini or a notebook without its battery.
+            if monitor.profile.hasBattery {
+                Button("Battery history") { open(HistoryView.windowID) }
+                Button("Battery details") { open(BatteryDetailsView.windowID) }
+                Button("Battery capacity test") { open(CapacityTestView.windowID) }
+            }
             Button("SSD health and test") { open(SSDView.windowID) }
             Button("Memory test") { open(MemoryView.windowID) }
             Button("Panic and shutdown history") { open(CrashHistoryView.windowID) }

@@ -46,7 +46,10 @@ struct TechnicianPanel: View {
                 Text(verbatim: modelLine)
                     .font(.caption.monospaced())
                     .foregroundStyle(.secondary)
-                Text(BatteryText.adapter(monitor.battery)).font(.caption).foregroundStyle(.secondary)
+                // Desktops have an internal power supply, not an adapter.
+                if monitor.profile.hasBattery {
+                    Text(BatteryText.adapter(monitor.battery)).font(.caption).foregroundStyle(.secondary)
+                }
             }
             Spacer()
             Text("Technician")

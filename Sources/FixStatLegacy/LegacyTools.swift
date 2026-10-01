@@ -23,6 +23,10 @@ final class LegacyTools {
             }
         }
 
+        /// Battery history, details and capacity test: not on an iMac, a Mac mini or a
+        /// notebook without its battery.
+        var needsBattery: Bool { self == .history || self == .batteryDetails || self == .capacity }
+
         /// Separator after this item in the menu.
         var endsGroup: Bool { self == .deviceInfo }
     }
@@ -40,7 +44,7 @@ final class LegacyTools {
     func makeMenuButton(small: Bool, willOpen: @escaping () -> Void) -> NSView {
         let button = NSPopUpButton(frame: .zero, pullsDown: true)
         button.addItem(withTitle: L("Tools"))
-        for tool in Tool.allCases {
+        for tool in Tool.allCases where core.profile.hasBattery || !tool.needsBattery {
             let item = LegacyMenuItem(title: tool.title) { [unowned self] in
                 willOpen()
                 open(tool)

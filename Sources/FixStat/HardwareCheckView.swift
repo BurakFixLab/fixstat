@@ -13,13 +13,15 @@ struct HardwareCheckView: View {
     @Environment(Monitor.self) private var monitor
     @State private var selection: HardwareCheck.Item?
 
-    init(initialItem: HardwareCheck.Item = .keyboard) {
+    /// nil: the first item that applies to this Mac.
+    init(initialItem: HardwareCheck.Item? = nil) {
         _selection = State(initialValue: initialItem)
     }
 
     var body: some View {
+        let items = monitor.hardwareCheck.items
         NavigationSplitView {
-            List(HardwareCheck.Item.allCases, id: \.self, selection: $selection) { item in
+            List(items, id: \.self, selection: $selection) { item in
                 HStack(spacing: 8) {
                     Image(systemName: HardwareText.symbol(item))
                         .frame(width: 20)
@@ -39,6 +41,9 @@ struct HardwareCheckView: View {
             }
         }
         .frame(minWidth: 860, minHeight: 620)
+        .onAppear {
+            if selection.map(items.contains) != true { selection = items.first }
+        }
     }
 
     private var summary: some View {
@@ -50,7 +55,7 @@ struct HardwareCheckView: View {
                 .foregroundStyle(.secondary)
                 .monospacedDigit()
             HStack {
-                Button("Reset") { monitor.hardwareCheck = HardwareCheck() }
+                Button("Reset") { monitor.resetHardwareCheck() }
                     .disabled(check.isEmpty)
                     .fixedSize()
                 Spacer()

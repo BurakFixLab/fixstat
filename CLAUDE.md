@@ -192,6 +192,15 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   (menu bar CPU temperature), at most every 5 s, timer tolerance 20 %. Battery history is
   recorded every 60 s regardless.
 - Menu bar CPU temperature = hottest `cpu` group sensor.
+- `HardwareProfile` (MacSensors): notebook / all-in-one (iMac) / desktop (Mac mini, Studio,
+  Pro) from the product name, then the model identifier (recent Apple Silicon models are all
+  `MacNN,N`), then lid / battery; plus `hasBattery` (`BatteryInstalled`). Without a battery
+  the battery tools, settings, alerts and the adapter line are hidden; the hardware check
+  lists only `HardwareCheck.items(for:)` (no keyboard / trackpad / lid off notebooks, no
+  display / camera / microphone / light sensor on desktops). Test on this Mac with
+  `-FixStatHardwareKind desktop|allInOne|notebook`.
+- At launch the SMC is enumerated in the background (seconds on old Intel SMCs; a High
+  Sierra iMac froze briefly at launch before); `--snapshot` / `--export` build synchronously.
 - Appearance setting (System / Light / Dark) sets `NSApp.appearance`;
   `AppearancePreference.apply()` must tolerate `NSApp == nil` (UserDefaults notifications
   can arrive before NSApplication exists).

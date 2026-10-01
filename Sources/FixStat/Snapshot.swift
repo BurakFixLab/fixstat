@@ -36,7 +36,7 @@ enum Snapshot {
         }
         let root: AnyView
         if let i = arguments.firstIndex(of: "--hardware") {
-            let item = (i + 1 < arguments.count ? HardwareCheck.Item(rawValue: arguments[i + 1]) : nil) ?? .keyboard
+            let item = (i + 1 < arguments.count ? HardwareCheck.Item(rawValue: arguments[i + 1]) : nil)
             root = AnyView(HardwareCheckView(initialItem: item)
                 .environment(monitor)
                 .frame(width: 900, height: 680)
@@ -92,7 +92,7 @@ enum Snapshot {
 
     /// Synthetic checklist for screenshots and PDF checks (`--sample-check`).
     static func sampleCheck() -> HardwareCheck {
-        var check = HardwareCheck()
+        var check = HardwareCheck(profile: .current())
         check[.keyboard] = .init(status: .passed, detail: String(localized: "\(78) / \(78) keys"))
         check[.trackpad] = .init(status: .passed, detail: String(localized: "Surface \(Format.percent(100))"))
         check[.display] = .init(status: .failed, note: "Sample: bright spot near the lower left corner")

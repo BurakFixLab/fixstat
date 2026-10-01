@@ -12,6 +12,9 @@ public final class AlertManager {
 
         public var enabledKey: String { "alerts.\(rawValue)" }
 
+        /// Only offered on Macs with a battery.
+        public var needsBattery: Bool { self != .chipTemperature }
+
         /// How long the condition must hold before notifying.
         public var delay: TimeInterval {
             switch self {

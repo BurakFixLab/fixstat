@@ -29,6 +29,7 @@ struct SettingsView: View {
 
 @available(macOS 14.0, *)
 private struct GeneralSettings: View {
+    @Environment(Monitor.self) private var monitor
     @AppStorage(Pref.menuBarBatteryIcon) private var batteryIcon = true
     @AppStorage(Pref.menuBarBatteryPercent) private var batteryPercent = true
     @AppStorage(Pref.menuBarCPUTemperature) private var cpuTemperature = true
@@ -42,8 +43,10 @@ private struct GeneralSettings: View {
     var body: some View {
         Form {
             Section("Menu bar") {
-                Toggle("Battery icon", isOn: $batteryIcon)
-                Toggle("Battery percentage", isOn: $batteryPercent)
+                if monitor.profile.hasBattery {
+                    Toggle("Battery icon", isOn: $batteryIcon)
+                    Toggle("Battery percentage", isOn: $batteryPercent)
+                }
                 Toggle("CPU temperature", isOn: $cpuTemperature)
             }
             Section {
@@ -105,6 +108,7 @@ private struct GeneralSettings: View {
 
 @available(macOS 14.0, *)
 private struct ThresholdSettings: View {
+    @Environment(Monitor.self) private var monitor
     @AppStorage(Pref.warmThreshold) private var warm = Pref.defaultWarm
     @AppStorage(Pref.hotThreshold) private var hot = Pref.defaultHot
     @AppStorage(Pref.cellImbalanceThreshold) private var imbalance = Pref.defaultCellImbalance
@@ -126,15 +130,17 @@ private struct ThresholdSettings: View {
             } header: {
                 Text("Temperature colours")
             }
-            Section {
-                StepperRow(title: "Warn above", value: Format.millivolts(imbalance)) {
-                    Stepper("Warn above", value: $imbalance, in: 5...500, step: 5)
+            if monitor.profile.hasBattery {
+                Section {
+                    StepperRow(title: "Warn above", value: Format.millivolts(imbalance)) {
+                        Stepper("Warn above", value: $imbalance, in: 5...500, step: 5)
+                    }
+                } header: {
+                    Text("Cell voltage spread")
+                } footer: {
+                    Text("Difference between the highest and lowest cell voltage.")
+                        .foregroundStyle(.secondary)
                 }
-            } header: {
-                Text("Cell voltage spread")
-            } footer: {
-                Text("Difference between the highest and lowest cell voltage.")
-                    .foregroundStyle(.secondary)
             }
             NotificationSettingsSection()
             Section {
@@ -255,6 +261,7 @@ private struct ReportSettingsSection: View {
 /// Notification switches (Thresholds tab).
 @available(macOS 14.0, *)
 private struct NotificationSettingsSection: View {
+    @Environment(Monitor.self) private var monitor
     @AppStorage(Pref.alertsEnabled) private var enabled = false
     @AppStorage(Pref.alertChipTemperature) private var chipLimit = Pref.defaultAlertChipTemperature
     @AppStorage(AlertManager.Kind.chipTemperature.enabledKey) private var chip = true
@@ -290,10 +297,12 @@ private struct NotificationSettingsSection: View {
                 StepperRow(title: "Alert above", value: Format.temperature(chipLimit, digits: 0)) {
                     Stepper("Alert above", value: $chipLimit, in: 60...110, step: 1)
                 }
-                Toggle("Battery temperature above 45 °C", isOn: $battery)
-                Toggle("Cell spread above the warning threshold (on battery)", isOn: $cells)
-                Toggle("Power adapter connected but not charging", isOn: $charging)
-                Toggle("Mac turned off unexpectedly (possible battery problem)", isOn: $shutdown)
+                if monitor.profile.hasBattery {
+                    Toggle("Battery temperature above 45 °C", isOn: $battery)
+                    Toggle("Cell spread above the warning threshold (on battery)", isOn: $cells)
+                    Toggle("Power adapter connected but not charging", isOn: $charging)
+                    Toggle("Mac turned off unexpectedly (possible battery problem)", isOn: $shutdown)
+                }
             }
             .disabled(!enabled)
         } header: {

@@ -38,6 +38,13 @@ final class Monitor {
 
     // Session results kept in the core (both interfaces read them), observed here.
     /// Hardware checklist of this session (for reports).
+    /// Notebook, iMac or desktop: decides which tools and checks are offered.
+    var profile: HardwareProfile { core.profile }
+
+    func resetHardwareCheck() {
+        withMutation(keyPath: \.hardwareCheck) { core.resetHardwareCheck() }
+    }
+
     var hardwareCheck: HardwareCheck {
         get { access(keyPath: \.hardwareCheck); return core.hardwareCheck }
         set { withMutation(keyPath: \.hardwareCheck) { core.hardwareCheck = newValue } }

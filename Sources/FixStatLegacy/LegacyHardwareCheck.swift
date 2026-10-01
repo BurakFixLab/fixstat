@@ -47,9 +47,10 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
     private var panes: [HardwareCheck.Item: LegacyCheckPane] = [:]
     private var current: HardwareCheck.Item?
     private var shownStatuses: [HardwareCheck.Status] = []
-    private let items = HardwareCheck.Item.allCases
-    /// Item selected on first opening (`--item NAME` for snapshots).
-    static var initialItem = HardwareCheck.Item.keyboard
+    private var items: [HardwareCheck.Item] { core.hardwareCheck.items }
+    /// Item selected on first opening (`--item NAME` for snapshots); nil: the first item
+    /// that applies to this Mac.
+    static var initialItem: HardwareCheck.Item?
 
     init(core: MonitorCore) {
         self.core = core
@@ -57,7 +58,11 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
         let content = buildContent()
         window = LegacyToolWindow(title: L("Hardware check"), view: content, size: NSSize(width: 900, height: 680))
         window.onOpen = { [unowned self] in
-            if let current { panes[current]?.activate() } else { select(Self.initialItem) }
+            if let current {
+                panes[current]?.activate()
+            } else if let first = Self.initialItem.flatMap({ items.contains($0) ? $0 : nil }) ?? items.first {
+                select(first)
+            }
             updateStatus()
             // The note field would take the focus, and the keyboard test ignores keys typed there.
             DispatchQueue.main.async { [weak self] in self?.window.window?.makeFirstResponder(nil) }
@@ -233,7 +238,7 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
     }
 
     @objc private func reset() {
-        core.hardwareCheck = HardwareCheck()
+        core.resetHardwareCheck()
         updateStatus()
     }
 

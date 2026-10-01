@@ -43,6 +43,37 @@ import Testing
         #expect(try! JSONDecoder().decode(HardwareCheck.self, from: data) == check)
     }
 
+    @Test func hardwareKind() {
+        #expect(HardwareProfile.kind(marketingName: "MacBook Air (M2, 2022)", model: "Mac14,2") == .notebook)
+        #expect(HardwareProfile.kind(marketingName: "iMac (24-inch, 2024)", model: "Mac16,2") == .allInOne)
+        #expect(HardwareProfile.kind(marketingName: "Mac mini (2024)", model: "Mac16,10") == .desktop)
+        #expect(HardwareProfile.kind(marketingName: "Mac Studio (2023)", model: "Mac14,13") == .desktop)
+        #expect(HardwareProfile.kind(marketingName: nil, model: "iMac20,1") == .allInOne)
+        #expect(HardwareProfile.kind(marketingName: nil, model: "Macmini8,1") == .desktop)
+        #expect(HardwareProfile.kind(marketingName: nil, model: "MacBookAir6,1") == .notebook)
+        #expect(HardwareProfile.kind(marketingName: nil, model: "Mac15,3") == nil)
+    }
+
+    @Test func checklistFollowsTheMac() {
+        let mini = HardwareCheck.items(for: HardwareProfile(kind: .desktop, hasBattery: false))
+        #expect(mini == [.speakers, .wifi, .bluetooth, .ports])
+        let iMac = HardwareCheck.items(for: HardwareProfile(kind: .allInOne, hasBattery: false))
+        #expect(iMac == [.display, .ambientLight, .speakers, .microphone, .camera, .wifi, .bluetooth, .ports])
+        #expect(HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true)) == HardwareCheck.Item.allCases)
+
+        var check = HardwareCheck(items: mini)
+        check[.keyboard].status = .passed // not part of this Mac's checklist
+        #expect(check.isEmpty)
+        #expect(check.count(.untested) == 4)
+    }
+
+    @Test func checklistFromAnEarlierVersionDecodes() throws {
+        let json = #"{"entries":["camera",{"status":"failed","note":""}]}"#
+        let check = try JSONDecoder().decode(HardwareCheck.self, from: Data(json.utf8))
+        #expect(check.items == HardwareCheck.Item.allCases)
+        #expect(check[.camera].status == .failed)
+    }
+
     @Test func lastSleepReason() {
         let log = """
             2026-09-29 06:10:21 +0300 Sleep               \tEntering Sleep state due to 'Low Power Sleep':TCPKeepAlive=inactive

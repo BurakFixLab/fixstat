@@ -296,6 +296,8 @@ final class LegacyPanelController: NSViewController {
                               color: .secondaryLabelColor, font: LegacyStyle.mono(LegacyStyle.caption))
         let adapter = makeLabel("", size: LegacyStyle.caption, color: .secondaryLabelColor)
         updaters.append { [unowned self] in adapter.stringValue = BatteryText.adapter(core.battery) }
+        // Desktops have an internal power supply, not an adapter.
+        adapter.isHidden = !core.profile.hasBattery
         let badge = TileView(content: makeLabel(L("Technician"), size: 10, weight: .medium), horizontal: 6, vertical: 2)
         badge.cornerRadius = 4
         return hStack([vStack([name, model, adapter], spacing: 2), makeSpacer(), badge], alignment: .top)

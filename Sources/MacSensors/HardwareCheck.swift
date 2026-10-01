@@ -30,9 +30,41 @@ public struct HardwareCheck: Codable, Sendable, Equatable {
     }
 
     public var entries: [Item: Entry]
+    /// The items that apply to this Mac (no lid or trackpad on an iMac, no camera on a
+    /// Mac mini), in checklist order.
+    public var items: [Item]
 
-    public init(entries: [Item: Entry] = [:]) {
+    public init(entries: [Item: Entry] = [:], items: [Item] = Item.allCases) {
         self.entries = entries
+        self.items = items
+    }
+
+    /// An empty checklist for a Mac with this profile.
+    public init(profile: HardwareProfile) {
+        self.init(items: Self.items(for: profile))
+    }
+
+    public static func items(for profile: HardwareProfile) -> [Item] {
+        Item.allCases.filter { item in
+            switch item {
+            case .keyboard: return profile.hasBuiltInKeyboard
+            case .trackpad: return profile.hasBuiltInTrackpad
+            case .display: return profile.hasBuiltInDisplay
+            case .ambientLight: return profile.hasAmbientLightSensor
+            case .microphone: return profile.hasBuiltInMicrophone
+            case .camera: return profile.hasBuiltInCamera
+            case .lid: return profile.hasLid
+            case .speakers, .wifi, .bluetooth, .ports: return true
+            }
+        }
+    }
+
+    enum CodingKeys: String, CodingKey { case entries, items }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        entries = try container.decode([Item: Entry].self, forKey: .entries)
+        items = try container.decodeIfPresent([Item].self, forKey: .items) ?? Item.allCases
     }
 
     public subscript(item: Item) -> Entry {
@@ -41,11 +73,11 @@ public struct HardwareCheck: Codable, Sendable, Equatable {
     }
 
     public func count(_ status: Status) -> Int {
-        Item.allCases.filter { self[$0].status == status }.count
+        items.filter { self[$0].status == status }.count
     }
 
     /// Nothing has been marked yet.
-    public var isEmpty: Bool { count(.untested) == Item.allCases.count }
+    public var isEmpty: Bool { count(.untested) == items.count }
 
     public var hasFailures: Bool { count(.failed) > 0 }
 }

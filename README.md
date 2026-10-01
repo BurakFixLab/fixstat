@@ -53,6 +53,8 @@ battery gauge data you normally dig out of `ioreg`.
   while shut down, a device card (Activation Lock, MDM, part number), and a
   hardware check (keyboard, trackpad surface, display, speakers, microphone, camera,
   Wi-Fi, Bluetooth, USB-C ports with fault counters, lid sensor).
+- **Fits the Mac.** On an iMac, Mac mini or Mac Studio the battery tools disappear and the
+  hardware check lists only the parts that Mac has.
 - **Reports.** PDF / CSV / JSON export for customer devices, serial numbers masked unless you
   turn on full serials in Settings (for your own records).
 - **Read-only.** FixStat never writes to the SMC, has no fan control and needs no

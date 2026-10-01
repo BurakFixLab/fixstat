@@ -100,13 +100,12 @@ final class LegacySettingsController: NSWindowController, NSWindowDelegate {
     // MARK: General
 
     private func generalTab() -> NSView {
-        var rows: [NSView] = [
-            makeSectionTitle(L("Menu bar")),
-            checkbox(L("Battery icon"), key: Pref.menuBarBatteryIcon),
-            checkbox(L("Battery percentage"), key: Pref.menuBarBatteryPercent),
-            checkbox(L("CPU temperature"), key: Pref.menuBarCPUTemperature),
-            spacer(),
-        ]
+        var rows: [NSView] = [makeSectionTitle(L("Menu bar"))]
+        if core.profile.hasBattery {
+            rows += [checkbox(L("Battery icon"), key: Pref.menuBarBatteryIcon),
+                     checkbox(L("Battery percentage"), key: Pref.menuBarBatteryPercent)]
+        }
+        rows += [checkbox(L("CPU temperature"), key: Pref.menuBarCPUTemperature), spacer()]
         if #available(macOS 10.14, *) {
             rows += [labeled(L("Appearance"), appearanceControl()), spacer()]
         }
@@ -197,17 +196,20 @@ final class LegacySettingsController: NSWindowController, NSWindowDelegate {
             defaults.set(Pref.defaultHot, forKey: Pref.hotThreshold)
             defaults.set(Pref.defaultCellImbalance, forKey: Pref.cellImbalanceThreshold)
         }
-        return form([
+        var rows: [NSView] = [
             makeSectionTitle(L("Temperature colours")),
             labeled(L("Warm from"), warm),
             labeled(L("Hot from"), hot),
             legend,
             spacer(),
-            makeSectionTitle(L("Cell voltage spread")),
-            labeled(L("Warn above"), imbalance),
-            makeNote(L("Difference between the highest and lowest cell voltage."), width: Self.formWidth),
-            spacer(),
-        ] + notificationRows() + [
+        ]
+        if core.profile.hasBattery {
+            rows += [makeSectionTitle(L("Cell voltage spread")),
+                     labeled(L("Warn above"), imbalance),
+                     makeNote(L("Difference between the highest and lowest cell voltage."), width: Self.formWidth),
+                     spacer()]
+        }
+        return form(rows + notificationRows() + [
             spacer(),
             restore,
         ])
@@ -227,7 +229,7 @@ final class LegacySettingsController: NSWindowController, NSWindowDelegate {
             (L("Cell spread above the warning threshold (on battery)"), .cellImbalance),
             (L("Power adapter connected but not charging"), .chargingStopped),
             (L("Mac turned off unexpectedly (possible battery problem)"), .unexpectedShutdown),
-        ]
+        ].filter { core.profile.hasBattery || !$0.1.needsBattery }
         let toggles = kinds.map { title, kind -> NSButton in
             let box = NSButton(checkboxWithTitle: title, target: nil, action: nil)
             // Unset means on, like the SwiftUI @AppStorage default.

@@ -324,7 +324,7 @@ private final class ReportWriter {
         text(L("%lld passed · %lld failed · %lld not tested", check.count(.passed), check.count(.failed), check.count(.untested)),
              font: .systemFont(ofSize: 11, weight: .semibold))
         let statusX = margin + 130, detailX = margin + 225
-        for item in HardwareCheck.Item.allCases {
+        for item in check.items {
             let entry = check[item]
             var lines: [(String, NSFont)] = []
             if let detail = entry.detail { lines.append((detail, body)) }
