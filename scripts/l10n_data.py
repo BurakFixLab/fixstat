@@ -53,6 +53,24 @@ TR = {
     "Export report": "Rapor dışa aktar",
     "Fan %lld": "Fan %lld",
     "Fans": "Fanlar",
+    "Puts load on the CPU and GPU for 90 seconds and checks that every fan follows the speed the system asks for, then watches it slow down again. Listen for grinding, rattling or a whine while the fans speed up. FixStat never sets fan speeds itself.":
+        "CPU ve GPU'ya 90 saniye yük verir ve her fanın sistemin istediği devri izleyip izlemediğine bakar, ardından yavaşlamasını izler. Fanlar hızlanırken sürtünme, tıkırtı veya ıslık sesi olup olmadığını dinleyin. FixStat fan devrini kendisi asla ayarlamaz.",
+    "Fan %lld: %@ → %@ (max %@)": "Fan %1$lld: %2$@ → %3$@ (en fazla %4$@)",
+    "Every fan followed the speed the system asked for.": "Her fan sistemin istediği devri izledi.",
+    "Fan %lld does not turn although the system asks for %@: check the connector and the fan.":
+        "Sistem %2$@ istediği halde fan %1$lld dönmüyor: konnektörü ve fanı kontrol edin.",
+    "Fan %lld stays well below its target (%@ instead of %@): worn bearing, dirt or a weak fan.":
+        "Fan %1$lld hedefinin çok altında kalıyor (%3$@ yerine %2$@): aşınmış rulman, kir veya zayıf fan.",
+    "The fans were not asked to speed up: the Mac stayed cool enough. Judge them by ear, or test again when the Mac is warm.":
+        "Fanların hızlanması gerekmedi: Mac yeterince serin kaldı. Fanları kulakla değerlendirin veya Mac ısındığında testi tekrarlayın.",
+    "target %@": "hedef %@",
+    "range %@–%@": "aralık %1$@–%2$@",
+    "Load on CPU and GPU · %@ of %@": "CPU ve GPU yükte · %1$@ / %2$@",
+    "Load stopped, the fans slow down · %@": "Yük durdu, fanlar yavaşlıyor · %@",
+    "This Mac has no fans.": "Bu Mac'te fan yok.",
+    "CPU %@": "CPU %@",
+    "Test again": "Tekrar test et",
+    "Start fan test": "Fan testini başlat",
     "FixStat": "FixStat",
     "Full in": "Dolum",
     "Full in %@": "Dolmasına %@",

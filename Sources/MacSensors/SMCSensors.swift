@@ -16,6 +16,14 @@ public struct FanReading: Codable, Sendable, Equatable {
     public let minimum: Double?
     public let maximum: Double?
     public let target: Double?
+
+    public init(index: Int, actual: Double?, minimum: Double?, maximum: Double?, target: Double?) {
+        self.index = index
+        self.actual = actual
+        self.minimum = minimum
+        self.maximum = maximum
+        self.target = target
+    }
 }
 
 public extension SMC {

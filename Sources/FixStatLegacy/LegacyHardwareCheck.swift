@@ -31,7 +31,7 @@ class BlockPane: LegacyCheckPane {
 /// Hardware checklist window: one test per component, each marked passed / failed /
 /// skipped by the technician. Tests that measure something fill in the evidence and
 /// mark the item passed on their own; the technician can always override.
-final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
+final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate, LegacySnapshotStartable {
     private let core: MonitorCore
     private(set) var window: LegacyToolWindow!
     private let table = NSTableView()
@@ -194,11 +194,18 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
         case .speakers: return LegacySpeakerPane(core: core)
         case .microphone: return LegacyMicrophonePane(core: core)
         case .camera: return LegacyCameraPane(core: core)
+        case .fans: return LegacyFanPane(core: core)
         case .wifi: return LegacyWiFiPane(core: core)
         case .bluetooth: return LegacyBluetoothPane(core: core)
         case .ports: return LegacyPortsPane(core: core)
         case .lid: return LegacyLidPane(core: core)
         }
+    }
+
+    /// `--start-test SECONDS` (snapshots): starts the test of the pane on screen, if it has one.
+    func start(seconds: TimeInterval) {
+        guard let current, let pane = panes[current] as? LegacySnapshotStartable else { return }
+        pane.start(seconds: seconds)
     }
 
     // MARK: Status
@@ -660,6 +667,62 @@ final class LegacyLidPane: BlockPane {
             blocks.append(.status(event, .good))
         } else {
             blocks.append(.secondary(L("Waiting for the lid to close…")))
+        }
+        return blocks
+    }
+}
+
+/// Fan test: live speeds, then load and the verdict (core `FanTestRunner`).
+final class LegacyFanPane: BlockPane, LegacySnapshotStartable {
+    private lazy var runner = FanTestRunner(monitor: core)
+
+    override init(core: MonitorCore) {
+        super.init(core: core)
+        runner.onChange = { [weak self] in self?.refresh() }
+    }
+
+    override func activate() {
+        runner.prepare()
+        super.activate()
+    }
+
+    override func deactivate() {
+        runner.stop()
+    }
+
+    /// `--start-test SECONDS` (snapshots): a shortened run.
+    func start(seconds: TimeInterval) {
+        runner.loadSeconds = seconds * 0.7
+        runner.coolSeconds = seconds * 0.2
+        runner.start()
+    }
+
+    override func blocks() -> [Block] {
+        guard !runner.fans.isEmpty else { return [.secondary(L("This Mac has no fans."))] }
+        var blocks: [Block] = [.rows(runner.fans.map { fan in
+            DocRow(title: L("Fan %lld", fan.index + 1),
+                   value: [fan.actual.map(Format.rpm), FanText.live(fan)].compactMap { $0 }.joined(separator: " · "))
+        }, labelWidth: 90)]
+        if let cpu = runner.cpuTemperature {
+            blocks.append(.secondary(L("CPU %@", Format.temperature(cpu))))
+        }
+        if let progress = runner.progress {
+            blocks.append(.progress(progress))
+            blocks.append(.actions([DocAction(title: L("Stop")) { [unowned self] in runner.cancel() }]))
+        } else {
+            if runner.state == .finished {
+                let verdict = runner.check.verdict
+                let tone: Tone
+                switch verdict {
+                case .passed: tone = .good
+                case .stalled, .belowTarget: tone = .bad
+                case .notAsked: tone = .neutral
+                }
+                blocks.append(.status(FanText.verdict(verdict), tone, detail: FanText.detail(runner.check)))
+            }
+            blocks.append(.actions([DocAction(title: runner.state == .finished ? L("Test again") : L("Start fan test")) {
+                [unowned self] in runner.start()
+            }]))
         }
         return blocks
     }

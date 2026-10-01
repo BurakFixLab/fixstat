@@ -299,7 +299,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   MultitouchSupport framework via `dlopen` in `multitouch.c`, independent of the
   pointer → 16×10 surface grid; clicks assigned to 3×3 zones by the pressing finger /
   the centre of two fingers; force click / scroll / pinch, haptic pulses), display
-  (full-screen colours on the built-in screen), speakers (L/R tones, sweep), microphone
+  (full-screen colours on the built-in screen), fans (`FanCheck` / `FanTestRunner`: CPU + GPU load
+  for 90 s, every fan must follow its SMC target `F<n>Tg`; stalled or far below the target
+  fails; no target rise = no verdict; `-FixStatSimulateFans N` fakes fans on a fanless Mac),
+  speakers (L/R tones, sweep), microphone
   (level, record + play back), camera (preview, average luma), Wi-Fi (CoreWLAN; scan
   works without Location, names hidden), Bluetooth (`system_profiler` + CoreBluetooth
   scan), ports, lid. Tests fill in evidence and may mark passed; the technician's choice

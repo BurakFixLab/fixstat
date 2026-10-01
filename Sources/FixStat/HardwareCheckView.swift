@@ -105,6 +105,7 @@ private struct CheckDetail: View {
                 case .speakers: SpeakerTestView()
                 case .microphone: MicrophoneTestView()
                 case .camera: CameraTestView()
+                case .fans: FanTestView()
                 case .wifi: WiFiTestView()
                 case .bluetooth: BluetoothTestView()
                 case .ports: PortsTestView()

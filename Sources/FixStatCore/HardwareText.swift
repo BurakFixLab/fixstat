@@ -11,6 +11,7 @@ public enum HardwareText {
         case .speakers: L("Speakers")
         case .microphone: L("Microphone")
         case .camera: L("Camera")
+        case .fans: L("Fans")
         case .wifi: L("Wi-Fi")
         case .bluetooth: L("Bluetooth")
         case .ports: L("Ports")
@@ -27,6 +28,7 @@ public enum HardwareText {
         case .speakers: "speaker.wave.2"
         case .microphone: "mic"
         case .camera: "camera"
+        case .fans: "fan"
         case .wifi: "wifi"
         case .bluetooth: "dot.radiowaves.left.and.right"
         case .ports: "cable.connector"
@@ -50,6 +52,8 @@ public enum HardwareText {
             L("Speak or tap near the microphones and watch the level. Record a few seconds and play them back to judge the sound.")
         case .camera:
             L("Shows the built-in camera image. Check sharpness, colours and that the green camera light turns on.")
+        case .fans:
+            L("Puts load on the CPU and GPU for 90 seconds and checks that every fan follows the speed the system asks for, then watches it slow down again. Listen for grinding, rattling or a whine while the fans speed up. FixStat never sets fan speeds itself.")
         case .wifi:
             L("Shows the Wi-Fi link and scans for nearby networks. A weak signal next to the router or few networks can point to an antenna or cable problem.")
         case .bluetooth:

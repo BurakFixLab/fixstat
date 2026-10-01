@@ -59,7 +59,11 @@ import Testing
         #expect(mini == [.speakers, .wifi, .bluetooth, .ports])
         let iMac = HardwareCheck.items(for: HardwareProfile(kind: .allInOne, hasBattery: false))
         #expect(iMac == [.display, .ambientLight, .speakers, .microphone, .camera, .wifi, .bluetooth, .ports])
-        #expect(HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true)) == HardwareCheck.Item.allCases)
+        #expect(HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true, hasFans: true)) == HardwareCheck.Item.allCases)
+        // Fanless MacBook Air: everything but the fan test.
+        #expect(HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true)) == HardwareCheck.Item.allCases.filter { $0 != .fans })
+        let iMacWithFans = HardwareCheck.items(for: HardwareProfile(kind: .allInOne, hasBattery: false, hasFans: true))
+        #expect(iMacWithFans == [.display, .ambientLight, .speakers, .microphone, .camera, .fans, .wifi, .bluetooth, .ports])
 
         var check = HardwareCheck(items: mini)
         check[.keyboard].status = .passed // not part of this Mac's checklist
@@ -118,5 +122,49 @@ import Testing
         #expect(DeviceInfo.activationLock(nil) == .unknown)
         #expect(DeviceInfo.parseStatus("System Integrity Protection status: enabled.", on: "enabled", off: "disabled") == .on)
         #expect(DeviceInfo.parseStatus("FileVault is Off.", on: "FileVault is On", off: "FileVault is Off") == .off)
+    }
+}
+
+@Suite struct FanCheckTests {
+    static func reading(_ actual: Double, target: Double, index: Int = 0) -> FanReading {
+        FanReading(index: index, actual: actual, minimum: 1200, maximum: 6000, target: target)
+    }
+
+    @Test func fanFollowingItsTargetPasses() {
+        var check = FanCheck()
+        check.add([Self.reading(1200, target: 1200)])
+        for rpm in stride(from: 1200.0, through: 4000, by: 200) { check.add([Self.reading(rpm - 100, target: rpm)]) }
+        #expect(check.verdict == .passed)
+        #expect(check.fans[0].idle == 1200)
+        #expect(check.fans[0].peak == 3900)
+    }
+
+    @Test func fanThatDoesNotTurnFails() {
+        var check = FanCheck()
+        for _ in 0..<10 { check.add([Self.reading(0, target: 2500)]) }
+        #expect(check.verdict == .stalled(fan: 0, target: 2500))
+    }
+
+    @Test func slowFanFails() {
+        var check = FanCheck()
+        check.add([Self.reading(1200, target: 1200)])
+        for _ in 0..<16 { check.add([Self.reading(1500, target: 3000)]) }
+        #expect(check.verdict == .belowTarget(fan: 0, actual: 1500, target: 3000))
+    }
+
+    @Test func spinningUpTakesAFewSeconds() {
+        var check = FanCheck()
+        check.add([Self.reading(1200, target: 1200)])
+        // Target jumps, the fan needs five seconds to get there: no failure.
+        for rpm in [1300.0, 1800, 2300, 2900, 3500] { check.add([Self.reading(rpm, target: 4000)]) }
+        for _ in 0..<20 { check.add([Self.reading(3900, target: 4000)]) }
+        #expect(check.verdict == .passed)
+    }
+
+    @Test func fansOffWhileCoolAreNotAFailure() {
+        // Apple Silicon MacBook Pro: fans off (target 0) until the Mac gets warm.
+        var check = FanCheck()
+        for _ in 0..<30 { check.add([FanReading(index: 0, actual: 0, minimum: 1200, maximum: 6000, target: 0)]) }
+        #expect(check.verdict == .notAsked)
     }
 }

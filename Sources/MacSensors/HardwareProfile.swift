@@ -20,10 +20,14 @@ public struct HardwareProfile: Codable, Sendable, Equatable {
     /// An internal battery is installed (false on desktops and on a notebook running
     /// without its battery at the bench).
     public var hasBattery: Bool
+    /// The SMC reports fans (`FNum` > 0): MacBook Pro, iMac, Mac mini, Mac Studio, Mac Pro
+    /// and older MacBook Airs; not the fanless Apple Silicon MacBook Airs.
+    public var hasFans: Bool
 
-    public init(kind: Kind, hasBattery: Bool) {
+    public init(kind: Kind, hasBattery: Bool, hasFans: Bool = false) {
         self.kind = kind
         self.hasBattery = hasBattery
+        self.hasFans = hasFans
     }
 
     public var isNotebook: Bool { kind == .notebook }
@@ -42,12 +46,13 @@ public struct HardwareProfile: Codable, Sendable, Equatable {
     /// override also hides the battery.
     public static func current(system: SystemInfo = .current()) -> HardwareProfile {
         let battery = batteryInstalled()
+        let fans = ((try? SMC())?.fans().count ?? 0) > 0 || UserDefaults.standard.integer(forKey: "FixStatSimulateFans") > 0
         if let raw = UserDefaults.standard.string(forKey: "FixStatHardwareKind"), let kind = Kind(rawValue: raw) {
-            return HardwareProfile(kind: kind, hasBattery: battery && kind == .notebook)
+            return HardwareProfile(kind: kind, hasBattery: battery && kind == .notebook, hasFans: fans)
         }
         let kind = Self.kind(marketingName: system.marketingName, model: system.model)
             ?? (battery || LidSensor.isClosed() != nil ? .notebook : .desktop)
-        return HardwareProfile(kind: kind, hasBattery: battery)
+        return HardwareProfile(kind: kind, hasBattery: battery, hasFans: fans)
     }
 
     /// Kind from the product name ("MacBook Air (M2, 2022)", "iMac (24-inch, M4, 2024)",

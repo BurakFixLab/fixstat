@@ -1048,6 +1048,16 @@
         }
       }
     },
+    "CPU %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU %@"
+          }
+        }
+      }
+    },
     "CPU / GPU temperature" : {
       "localizations" : {
         "tr" : {
@@ -2086,6 +2096,16 @@
         }
       }
     },
+    "Every fan followed the speed the system asked for." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her fan sistemin istediği devri izledi."
+          }
+        }
+      }
+    },
     "Export history" : {
       "localizations" : {
         "tr" : {
@@ -2132,6 +2152,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fan %lld"
+          }
+        }
+      }
+    },
+    "Fan %lld does not turn although the system asks for %@: check the connector and the fan." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fan %1$lld does not turn although the system asks for %2$@: check the connector and the fan."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem %2$@ istediği halde fan %1$lld dönmüyor: konnektörü ve fanı kontrol edin."
+          }
+        }
+      }
+    },
+    "Fan %lld stays well below its target (%@ instead of %@): worn bearing, dirt or a weak fan." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fan %1$lld stays well below its target (%2$@ instead of %3$@): worn bearing, dirt or a weak fan."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fan %1$lld hedefinin çok altında kalıyor (%3$@ yerine %2$@): aşınmış rulman, kir veya zayıf fan."
+          }
+        }
+      }
+    },
+    "Fan %lld: %@ → %@ (max %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fan %1$lld: %2$@ → %3$@ (max %4$@)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fan %1$lld: %2$@ → %3$@ (en fazla %4$@)"
           }
         }
       }
@@ -3048,6 +3116,32 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yük"
+          }
+        }
+      }
+    },
+    "Load on CPU and GPU · %@ of %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Load on CPU and GPU · %1$@ of %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU ve GPU yükte · %1$@ / %2$@"
+          }
+        }
+      }
+    },
+    "Load stopped, the fans slow down · %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yük durdu, fanlar yavaşlıyor · %@"
           }
         }
       }
@@ -4474,6 +4568,16 @@
         }
       }
     },
+    "Puts load on the CPU and GPU for 90 seconds and checks that every fan follows the speed the system asks for, then watches it slow down again. Listen for grinding, rattling or a whine while the fans speed up. FixStat never sets fan speeds itself." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU ve GPU'ya 90 saniye yük verir ve her fanın sistemin istediği devri izleyip izlemediğine bakar, ardından yavaşlamasını izler. Fanlar hızlanırken sürtünme, tıkırtı veya ıslık sesi olup olmadığını dinleyin. FixStat fan devrini kendisi asla ayarlamaz."
+          }
+        }
+      }
+    },
     "Qmax" : {
       "localizations" : {
         "tr" : {
@@ -5426,6 +5530,16 @@
         }
       }
     },
+    "Start fan test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fan testini başlat"
+          }
+        }
+      }
+    },
     "Start full test" : {
       "localizations" : {
         "tr" : {
@@ -5652,6 +5766,16 @@
         }
       }
     },
+    "Test again" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekrar test et"
+          }
+        }
+      }
+    },
     "Test was stopped before the planned duration" : {
       "localizations" : {
         "tr" : {
@@ -5858,6 +5982,16 @@
         }
       }
     },
+    "The fans were not asked to speed up: the Mac stayed cool enough. Judge them by ear, or test again when the Mac is warm." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fanların hızlanması gerekmedi: Mac yeterince serin kaldı. Fanları kulakla değerlendirin veya Mac ısındığında testi tekrarlayın."
+          }
+        }
+      }
+    },
     "The flashlight reached the sensor but the value stayed low: it reads dark (display dims by itself)." : {
       "localizations" : {
         "tr" : {
@@ -5964,6 +6098,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu Mac port durumunu yayınlamıyor (IOPort). Portları elle kontrol edin."
+          }
+        }
+      }
+    },
+    "This Mac has no fans." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Mac'te fan yok."
           }
         }
       }
@@ -6924,6 +7068,22 @@
         }
       }
     },
+    "range %@–%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "range %1$@–%2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aralık %1$@–%2$@"
+          }
+        }
+      }
+    },
     "resistance %@ vs. average" : {
       "localizations" : {
         "tr" : {
@@ -7600,6 +7760,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tarama sesi"
+          }
+        }
+      }
+    },
+    "target %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hedef %@"
           }
         }
       }
