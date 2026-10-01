@@ -72,9 +72,11 @@ public enum LoadGenerator {
                           let encoder = commands.makeComputeCommandEncoder() else { break }
                     encoder.setComputePipelineState(pipeline)
                     encoder.setBuffer(buffer, offset: 0, index: 0)
+                    // Whole threadgroups: dispatchThreads needs non-uniform threadgroup support,
+                    // which older Intel GPUs (e.g. HD 5000) lack.
                     let width = pipeline.threadExecutionWidth
-                    encoder.dispatchThreads(MTLSize(width: count, height: 1, depth: 1),
-                                            threadsPerThreadgroup: MTLSize(width: width, height: 1, depth: 1))
+                    encoder.dispatchThreadgroups(MTLSize(width: count / width, height: 1, depth: 1),
+                                                 threadsPerThreadgroup: MTLSize(width: width, height: 1, depth: 1))
                     encoder.endEncoding()
                     commands.commit()
                     commands.waitUntilCompleted()

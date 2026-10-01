@@ -15,6 +15,10 @@ public struct SensorRecording: Codable, Sendable {
         public var values: [Double?]
         public var batteryAmperage: Int?
         public var externalConnected: Bool?
+        /// Fan speeds in rpm (empty on fanless Macs; nil in older recordings).
+        public var fans: [Double]?
+        /// Adapter input power in W (`SystemPowerIn`, Apple Silicon notebooks on power).
+        public var powerIn: Double?
     }
 
     public var tool = "sensormap"
@@ -34,6 +38,10 @@ public final class SensorRecorder {
     public let interval: TimeInterval
     /// Progress lines (e.g. printed to stderr by the command-line tools).
     public var progress: (String) -> Void = { _ in }
+    /// Called after every sample (e.g. to show live values).
+    public var onSample: (SensorRecording.Sample) -> Void = { _ in }
+    /// Checked once per second; ends the current phase early when true.
+    public var isCancelled: () -> Bool = { false }
 
     public init(interval: TimeInterval = 1) {
         self.interval = interval
@@ -44,9 +52,14 @@ public final class SensorRecorder {
 
     public func takeSample() {
         let battery = BatteryReader.read()
-        recording.samples.append(.init(t: now, values: sampler.sample(),
-                                       batteryAmperage: battery?.amperage,
-                                       externalConnected: battery?.externalConnected))
+        let input = battery?.powerTelemetry?.systemPowerIn.flatMap { $0 > 0 ? Double($0) / 1000 : nil }
+        let sample = SensorRecording.Sample(t: now, values: sampler.sample(),
+                                            batteryAmperage: battery?.amperage,
+                                            externalConnected: battery?.externalConnected,
+                                            fans: sampler.fans().compactMap(\.actual),
+                                            powerIn: input)
+        recording.samples.append(sample)
+        onSample(sample)
     }
 
     /// Samples for `duration` seconds and records the span as a phase.
@@ -57,7 +70,7 @@ public final class SensorRecorder {
         while Date() < deadline {
             let tick = Date()
             takeSample()
-            if stop?() == true { break }
+            if stop?() == true || isCancelled() { break }
             if Date().timeIntervalSince(lastLog) >= 10 {
                 progress("  \(name): \(Int(now - phaseStart)) s, mean HID \(SensorMapReport.fmt(meanHID(recording.samples.last)))")
                 lastLog = Date()
@@ -68,15 +81,60 @@ public final class SensorRecorder {
         recording.phases.append(.init(name: name, start: phaseStart, end: now))
     }
 
-    /// Cools down until the mean of the HID temperatures is within `tolerance`
-    /// of `target`, bounded by `minimum` and `maximum` seconds.
+    /// Cools down until the hot mean (see `hotMean`) is within `tolerance` of `target`,
+    /// bounded by `minimum` and `maximum` seconds.
     public func cooldown(to target: Double?, tolerance: Double = 1.0, minimum: TimeInterval, maximum: TimeInterval) {
         let begin = Date()
         phase("cooldown", duration: maximum) { [self] in
             guard Date().timeIntervalSince(begin) >= minimum else { return false }
-            guard let target, let current = meanHID(recording.samples.last) else { return true }
+            guard let target, let current = recentHotMean(seconds: 5) else { return true }
             return current <= target + tolerance
         }
+    }
+
+    /// Runs a phase for at least `minimum` seconds and ends it once the temperatures stop
+    /// rising (the hot mean changed less than `tolerance` °C over the last `window`
+    /// seconds), at the latest after `maximum` seconds.
+    public func plateauPhase(_ name: String, minimum: TimeInterval, maximum: TimeInterval,
+                             window: TimeInterval = 30, tolerance: Double = 0.5) {
+        let begin = Date()
+        phase(name, duration: maximum) { [self] in
+            guard Date().timeIntervalSince(begin) >= max(minimum, window) else { return false }
+            return isPlateau(window: window, tolerance: tolerance)
+        }
+    }
+
+    /// The hot mean changed less than `tolerance` between the start and the end of the
+    /// last `window` seconds (5 s averages at both ends).
+    public func isPlateau(window: TimeInterval, tolerance: Double) -> Bool {
+        let end = now
+        func mean(from: Double, to: Double) -> Double? {
+            let values = recording.samples.filter { $0.t >= from && $0.t <= to }.compactMap { hotMean($0) }
+            return values.isEmpty ? nil : values.reduce(0, +) / Double(values.count)
+        }
+        guard let first = mean(from: end - window, to: end - window + 5), let last = mean(from: end - 5, to: end)
+        else { return false }
+        return abs(last - first) < tolerance
+    }
+
+    /// Mean of the `count` hottest plausible readings of a sample (all sources). Follows
+    /// the dies on every Mac: Intel and Apple Silicon after M1 have no die sensors in HID.
+    /// Readings below `SMC.minimumActiveDieTemperature` (power-gated zones) are left out.
+    public func hotMean(_ sample: SensorRecording.Sample?, count: Int = 8) -> Double? {
+        guard let sample else { return nil }
+        let values = sample.values.compactMap { value -> Double? in
+            guard let value, SMC.plausibleTemperatureRange.contains(value),
+                  value >= SMC.minimumActiveDieTemperature else { return nil }
+            return value
+        }.sorted(by: >).prefix(count)
+        return values.isEmpty ? nil : values.reduce(0, +) / Double(values.count)
+    }
+
+    /// Hot mean over the last `seconds` of samples.
+    public func recentHotMean(seconds: Double = 10) -> Double? {
+        let cutoff = now - seconds
+        let values = recording.samples.filter { $0.t >= cutoff }.compactMap { hotMean($0) }
+        return values.isEmpty ? nil : values.reduce(0, +) / Double(values.count)
     }
 
     /// Mean over plausible HID sensor values of one sample.
@@ -131,7 +189,7 @@ public enum SensorLoadTests {
         recorder.progress("baseline (\(Int(plan.baseline)) s)")
         recorder.phase("baseline", duration: plan.baseline)
         for test in plan.tests where loadTests.contains(test) {
-            let reference = recorder.recentMeanHID()
+            let reference = recorder.recentHotMean()
             let flag = StopFlag()
             switch test {
             case "single":

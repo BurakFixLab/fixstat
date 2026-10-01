@@ -21,7 +21,9 @@ public enum SensorMapProposer {
         "board.psu": ["charging"],
     ]
 
-    /// Apple Silicon SMC keys like `Tp2a`, `Tc8z`: aggregates of the HID zone sensors.
+    /// M1-type Apple Silicon SMC keys like `Tp2a`, `Tc8z`: aggregates of the HID zone
+    /// sensors. Only applied when the recording has HID die sensors: on later chips keys of
+    /// this shape (`Tp0b`, `Tg0f`) are the real die zones.
     static let derivedKeyPattern = "T[a-z][0-9a-z][abxz]"
 
     /// Minimum rise in °C that counts as a response to a test.
@@ -38,7 +40,9 @@ public enum SensorMapProposer {
     public static func propose(recordings: [SensorRecording], map: SensorMap) -> Proposal {
         let rows = SensorMapReport.deltas(for: recordings)
         let system = recordings[0].system
-        let patternsOnly = SensorMap(patterns: map.patterns)
+        // Names from chip entries and patterns; existing model entries are what is proposed.
+        let patternsOnly = SensorMap(chips: map.chips, patterns: map.patterns)
+        let hasHIDDieSensors = recordings[0].sensors.contains { $0.hidName?.contains("MTR Temp Sensor") == true }
 
         var entries: [SensorMap.Entry] = []
         var ignored: [String] = []
@@ -51,14 +55,18 @@ public enum SensorMapProposer {
             let label = sensor.rawLabel
             let (minimum, maximum) = range(of: sensor, in: recordings)
 
+            // Hidden by the chip entry (raw / peak readings, calibration constants).
+            if patternsOnly.isIgnored(key: sensor.key, hidName: sensor.hidName, model: system.model, chip: system.chip) {
+                continue
+            }
             guard row.baseline != nil, let minimum, let maximum else {
                 ignored.append(label) // never plausible: unpopulated or not a temperature
                 continue
             }
             let isConstant = maximum - minimum < 0.05
             guard let resolved = patternsOnly.resolve(key: sensor.key, hidName: sensor.hidName,
-                                                      model: system.model, chip: nil) else {
-                if sensor.source == .smc, let key = sensor.key,
+                                                      model: system.model, chip: system.chip) else {
+                if hasHIDDieSensors, sensor.source == .smc, let key = sensor.key,
                    SensorMap.PatternRule.fullMatch(derivedKeyPattern, key) != nil {
                     derived.append(key)
                 } else if isConstant {
