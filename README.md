@@ -9,9 +9,12 @@
 > **Runs on macOS 10.13 High Sierra or later** (Intel) and **macOS 11 Big Sur or later**
 > (Apple Silicon) — one universal app. macOS 14 and later get the SwiftUI interface, older
 > versions an AppKit interface with the same features.
-> Tested on a MacBook Air M1 (macOS 26) and a MacBook Air 11" Early 2014 (Intel, macOS 11).
-> macOS 10.13 – 10.15 have only been checked in a simulation so far, and Intel sensor names
-> are still estimated — reports are welcome.
+> Tested on a MacBook Air M1 (macOS 26), a MacBook Air 11" Early 2014 (Intel, macOS 11) and
+> an Intel iMac with macOS 10.13 High Sierra. Intel sensor names are still estimated —
+> reports are welcome.
+>
+> **Not yet supported:** SSD health (SMART) of AHCI / SATA SSDs, as in many Intel Macs up to
+> about 2015. It is coming in a later version; NVMe SSDs are supported.
 >
 > **Download:** `FixStat.dmg` on the [Releases](../../releases/latest) page.
 
