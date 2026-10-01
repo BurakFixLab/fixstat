@@ -47,8 +47,10 @@ public final class FullSSDRunner: @unchecked Sendable {
     public var isRunning: Bool { state == .scanning || state == .writeVerify }
 
     /// macOS has no request dialog for Full Disk Access. The TCC database can only be
-    /// opened by processes that have it, which makes it a reliable check.
+    /// opened by processes that have it, which makes it a reliable check. Full Disk Access
+    /// exists from 10.14; on 10.13 root alone may read the raw disk.
     public static var hasFullDiskAccess: Bool {
+        guard #available(macOS 10.14, *) else { return true }
         let fd = open("/Library/Application Support/com.apple.TCC/TCC.db", O_RDONLY)
         if fd >= 0 { close(fd); return true }
         return false

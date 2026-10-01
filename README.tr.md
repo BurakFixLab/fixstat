@@ -6,10 +6,12 @@
 
 [English](README.md)
 
-> **macOS 14 Sonoma veya üstü gerekir.** Apple Silicon'da (MacBook Air M1) test edildi.
-> **Intel Mac'lerde henüz test edilmedi**: FixStat çalışmalı, ancak sensör isimleri ve fan
-> değerleri eksik olabilir; geri bildirimlerinizi bekliyoruz. **macOS 10.13 High Sierra'ya
-> kadar** eski macOS sürümleri için destek geliyor.
+> **macOS 10.13 High Sierra ve üstünde** (Intel) ve **macOS 11 Big Sur ve üstünde** (Apple
+> Silicon) çalışır — tek bir universal uygulama. macOS 14 ve sonrasında SwiftUI arayüzü,
+> eski sürümlerde aynı özelliklere sahip bir AppKit arayüzü açılır.
+> MacBook Air M1 (macOS 26) ve MacBook Air 11" Early 2014'te (Intel, macOS 11) test edildi.
+> macOS 10.13 – 10.15 şimdilik yalnızca simülasyonda denendi; Intel'de sensör isimleri hâlâ
+> tahminidir — geri bildirimlerinizi bekliyoruz.
 >
 > **İndirme:** [Releases](../../releases/latest) sayfasındaki `FixStat.dmg`.
 
@@ -74,20 +76,20 @@ isimlendirilir ve "tahmini" olarak işaretlenir. Kendi modelinizi eklemek için
 **Adım adım rehber: [INSTALL.tr.md](INSTALL.tr.md)** — indirme, imzasız uygulamanın ilk
 açılışı, menü çubuğu, oturum açılışında başlatma, güncelleme, kaldırma ve sorun giderme.
 
-Kısaca (macOS 14 Sonoma veya üstü):
+Kısaca:
 
 1. [Releases](../../releases) sayfasından `FixStat.dmg`'yi indirin, açın ve penceresindeki
    FixStat'ı Uygulamalar klasörüne sürükleyin.
 2. FixStat Apple tarafından notarize edilmediği için ilk açılış bir kez engellenir:
    uygulamayı açmayı deneyin, sonra **Sistem Ayarları › Gizlilik ve Güvenlik**'te
-   **Yine de Aç**'a tıklayın (macOS 14'te: sağ tık › Aç). Ya da Terminal'de:
+   **Yine de Aç**'a tıklayın (macOS 14 ve öncesinde: sağ tık › Aç). Ya da Terminal'de:
    ```bash
    xattr -dr com.apple.quarantine /Applications/FixStat.app
    ```
-3. FixStat menü çubuğunda çalışır (Dock simgesi yoktur). **Oturum açılışında başlat**
-   seçeneği ayarlarındadır.
+3. FixStat menü çubuğunda çalışır; Dock simgesi yalnızca pencerelerinden biri açıkken
+   görünür. **Oturum açılışında başlat** seçeneği ayarlarındadır.
 
-Kaynaktan derlemek için (Xcode 16+, başka araç gerekmez):
+Kaynaktan derlemek için (macOS 14+ ve Xcode 16 veya üstü, başka araç gerekmez):
 
 ```bash
 git clone https://github.com/BurakFixLab/fixstat.git

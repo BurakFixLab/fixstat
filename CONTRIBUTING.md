@@ -134,6 +134,6 @@ directly in the catalog.
 | `Sources/sensormap` | Load tests, report, map proposal |
 | `Sources/FixStatCore` | Shared by both interfaces: polling (`MonitorCore`), preferences, alerts, texts, formatting |
 | `Sources/FixStat` | SwiftUI menu bar app (macOS 14+) |
-| `Sources/FixStatLegacy` | AppKit interface for macOS 10.13 – 13 (in progress) |
+| `Sources/FixStatLegacy` | AppKit interface for macOS 10.13 – 13 |
 | `SensorMaps/sensor-map.json` | Sensor naming database |
 | `App/` | Info.plist and string catalog |

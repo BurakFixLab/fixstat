@@ -10,8 +10,9 @@ https://github.com/BurakFixLab/fixstat/blob/main/INSTALL.tr.md
 ENGLISH
 -------
 
-Requires macOS 14 Sonoma or later. Tested on Apple Silicon; Intel Macs have
-not been tested yet. Support for older versions is coming.
+Runs on macOS 10.13 High Sierra or later (Intel) and macOS 11 Big Sur or
+later (Apple Silicon). macOS 13 and earlier get a simpler AppKit interface
+with the same features.
 
 1. Drag FixStat.app into your Applications folder.
 
@@ -23,14 +24,17 @@ not been tested yet. Support for older versions is coming.
      - Open System Settings > Privacy & Security, scroll to "Security".
      - Click "Open Anyway" next to the FixStat message and confirm.
 
-   macOS 14 Sonoma:
+   macOS 14 Sonoma and earlier:
      - Right-click (Control-click) FixStat > Open > Open.
+     - No "Open" button? System Preferences > Security & Privacy >
+       General > "Open Anyway".
 
    Or, on any version, in Terminal:
      xattr -dr com.apple.quarantine /Applications/FixStat.app
 
 3. FixStat runs in the menu bar (top right: battery icon, percentage, CPU
-   temperature). It has no Dock icon. Click it to open the panel.
+   temperature). Click it to open the panel. A Dock icon appears only while
+   one of its windows is open.
    Settings... > General > "Open at login" starts it automatically.
 
 FixStat needs no administrator rights and no special permissions. It only
@@ -39,7 +43,7 @@ The hardware check asks for camera, microphone and Bluetooth access the
 first time you open those tests.
 Exception: the optional full SSD test asks for your administrator password
 and needs Full Disk Access (System Settings > Privacy & Security > Full Disk
-Access > FixStat on). It only reads the disk.
+Access > FixStat on; not needed on macOS 10.13). It only reads the disk.
 
 Uninstall: turn off "Open at login", quit FixStat, move FixStat.app to the
 Trash. Optional: delete ~/Library/Application Support/FixStat
@@ -48,8 +52,9 @@ Trash. Optional: delete ~/Library/Application Support/FixStat
 TÜRKÇE
 ------
 
-macOS 14 Sonoma veya üstü gerekir. Apple Silicon'da test edildi; Intel
-Mac'lerde henüz test edilmedi. Eski sürümler için destek geliyor.
+macOS 10.13 High Sierra ve üstünde (Intel) ve macOS 11 Big Sur ve üstünde
+(Apple Silicon) çalışır. macOS 13 ve öncesinde aynı özelliklere sahip, daha
+sade bir AppKit arayüzü açılır.
 
 1. FixStat.app'i Uygulamalar (Applications) klasörüne sürükleyin.
 
@@ -61,14 +66,17 @@ Mac'lerde henüz test edilmedi. Eski sürümler için destek geliyor.
      - Sistem Ayarları > Gizlilik ve Güvenlik'i açın, "Güvenlik" bölümüne inin.
      - FixStat uyarısının yanındaki "Yine de Aç"a tıklayıp onaylayın.
 
-   macOS 14 Sonoma:
+   macOS 14 Sonoma ve öncesi:
      - FixStat'a sağ tıklayın (Control ile tıklayın) > Aç > Aç.
+     - "Aç" düğmesi yoksa: Sistem Tercihleri > Güvenlik ve Gizlilik >
+       Genel > "Yine de Aç".
 
    Ya da tüm sürümlerde Terminal'de:
      xattr -dr com.apple.quarantine /Applications/FixStat.app
 
 3. FixStat menü çubuğunda çalışır (sağ üst: batarya simgesi, yüzde, CPU
-   sıcaklığı). Dock simgesi yoktur. Paneli açmak için tıklayın.
+   sıcaklığı). Paneli açmak için tıklayın. Dock simgesi yalnızca
+   pencerelerinden biri açıkken görünür.
    Ayarlar... > Genel > "Oturum açılışında başlat" ile otomatik başlar.
 
 FixStat yönetici yetkisi veya özel izin gerektirmez. Yalnızca sensör
@@ -77,7 +85,7 @@ Donanım kontrolü, ilgili testleri ilk açtığınızda kamera, mikrofon ve
 Bluetooth izni ister.
 İstisna: isteğe bağlı tam SSD testi yönetici parolanızı sorar ve Tam Disk
 Erişimi ister (Sistem Ayarları > Gizlilik ve Güvenlik > Tam Disk Erişimi >
-FixStat açık). Diski yalnızca okur.
+FixStat açık; macOS 10.13'te gerekmez). Diski yalnızca okur.
 
 Kaldırma: "Oturum açılışında başlat"ı kapatın, FixStat'tan çıkın,
 FixStat.app'i Çöp Sepeti'ne taşıyın. İsteğe bağlı:

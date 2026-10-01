@@ -6,10 +6,12 @@
 
 [Türkçe](README.tr.md)
 
-> **Requires macOS 14 Sonoma or later.** Tested on Apple Silicon (MacBook Air M1).
-> **Intel Macs have not been tested yet**: FixStat should run, but sensor names and fan
-> readings may be incomplete — reports are welcome. Support for older macOS versions,
-> down to **macOS 10.13 High Sierra**, is coming.
+> **Runs on macOS 10.13 High Sierra or later** (Intel) and **macOS 11 Big Sur or later**
+> (Apple Silicon) — one universal app. macOS 14 and later get the SwiftUI interface, older
+> versions an AppKit interface with the same features.
+> Tested on a MacBook Air M1 (macOS 26) and a MacBook Air 11" Early 2014 (Intel, macOS 11).
+> macOS 10.13 – 10.15 have only been checked in a simulation so far, and Intel sensor names
+> are still estimated — reports are welcome.
 >
 > **Download:** `FixStat.dmg` on the [Releases](../../releases/latest) page.
 
@@ -72,19 +74,20 @@ estimated. Please help add your model — see [CONTRIBUTING.md](CONTRIBUTING.md)
 **Step-by-step guide: [INSTALL.md](INSTALL.md)** — download, first launch of the unsigned
 app, menu bar, open at login, updating, uninstalling and troubleshooting.
 
-In short (macOS 14 Sonoma or later):
+In short:
 
 1. Download `FixStat.dmg` from [Releases](../../releases), open it and drag FixStat onto
    the Applications folder in its window.
 2. FixStat is not notarized by Apple, so the first launch is blocked once: open it, then
-   click **Open Anyway** in **System Settings › Privacy & Security** (on macOS 14:
-   right-click › Open). Or in Terminal:
+   click **Open Anyway** in **System Settings › Privacy & Security** (on macOS 14 and
+   earlier: right-click › Open). Or in Terminal:
    ```bash
    xattr -dr com.apple.quarantine /Applications/FixStat.app
    ```
-3. FixStat runs in the menu bar (no Dock icon). **Open at login** is in its settings.
+3. FixStat runs in the menu bar; a Dock icon appears only while one of its windows is open.
+   **Open at login** is in its settings.
 
-To build from source (Xcode 16+, no other tools):
+To build from source (macOS 14+ with Xcode 16 or later, no other tools):
 
 ```bash
 git clone https://github.com/BurakFixLab/fixstat.git

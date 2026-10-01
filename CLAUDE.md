@@ -17,7 +17,7 @@ Personal, machine-specific notes may exist in a git-ignored `CLAUDE.local.md`.
   exception is the optional full SSD surface scan (read-only, see Diagnostics tools).
 - **MacSensors and CMacSensors must build for macOS 10.13** (Intel) / 11 (Apple Silicon):
   they are compiled for older macOS outside SwiftPM (which raises the deployment target
-  to 12) for tools and the planned older-macOS app. Guard newer APIs with `#available` or
+  to 12) for tools and the app. Guard newer APIs with `#available` or
   use older equivalents: `ioMainPort` instead of `kIOMainPortDefault`, the pre-10.15
   `FileHandle` methods, no `formatted()` / `.withoutEscapingSlashes` without a check.
 - Private APIs are allowed (no App Store, no sandbox): `IOHIDEventSystemClient` for Apple
@@ -109,7 +109,7 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 
 - One app for macOS 10.13+ (Intel) / 11+ (Apple Silicon). `main.swift` picks the interface:
   macOS 14+ → SwiftUI (`FixStatApp`, every declaration marked `@available(macOS 14.0, *)`);
-  older → AppKit (`Sources/FixStatLegacy`, in progress; `--legacy-ui` forces it for
+  older → AppKit (`Sources/FixStatLegacy`; `--legacy-ui` forces it for
   testing). The AppKit module must work on 10.13: no SwiftUI / Combine / FormatStyle and
   **nothing that calls the Swift concurrency runtime** (missing before macOS 12). It is
   compiled in **Swift 5 mode without actor annotations**: in Swift 6, a `@MainActor`
@@ -226,7 +226,8 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
     trampoline instead: EPERM on `/dev/rdisk0` even with Full Disk Access.
   - The askpass prompt is embedded as an AppleScript literal (`system attribute` decodes
     environment variables as Mac Roman → garbled Turkish).
-  - Full Disk Access check: open `/Library/Application Support/com.apple.TCC/TCC.db`.
+  - Full Disk Access check: open `/Library/Application Support/com.apple.TCC/TCC.db` (10.14+;
+    10.13 has no Full Disk Access, the check passes).
     Ad-hoc signed rebuilds lose the grant; toggle FixStat off/on in System Settings.
 - Panic / shutdown history: `.panic` / panic `.ips` in DiagnosticReports (file names
   contain the computer name — never show them); "Previous shutdown cause" from
@@ -391,5 +392,8 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.
 
 ## Roadmap
 
-- Support for older macOS versions (down to 10.13 High Sierra). SwiftUI does not exist
-  before 10.15, so this needs an AppKit UI; testing requires real Intel Macs.
+- Test the AppKit interface on real macOS 10.13 – 10.15 Intel Macs (so far: Big Sur on a
+  MacBookAir6,1 and the Rosetta simulation).
+- Verified sensor maps for more models, especially Apple Silicon after M1: their CPU / GPU
+  die sensors are SMC keys (`Tp0x`, `Te0x`, `Tg0x` …) that the current patterns do not name.
+- SMART for AHCI / SATA SSDs (older Intel Macs); only NVMe is read today.
