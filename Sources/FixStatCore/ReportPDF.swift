@@ -20,6 +20,8 @@ public struct ReportData {
     public let shopName: String
     public let note: String
     public let hardwareCheck: HardwareCheck?
+    /// Serial numbers are shown in full (Settings › PDF report), otherwise masked.
+    public let fullSerial: Bool
     public let sleep: SleepAnalysis?
     public let offPeriods: [OffPeriod]
     public let capacity: CapacityResult?
@@ -27,10 +29,11 @@ public struct ReportData {
     /// Reads what the report needs (system_profiler, SMART, panics: about a second).
     public init(monitor: MonitorCore) {
         system = monitor.system
-        battery = BatteryReader.read(includeSerial: false)
+        fullSerial = Pref.reportsShowSerial
+        battery = BatteryReader.read(includeSerial: fullSerial)
         temperatures = SensorSummary.rows(sensors: monitor.sensors, values: monitor.values, hidden: [])
         test = monitor.lastTestResult
-        ssd = SSDInfo.read(includeSerial: false)
+        ssd = SSDInfo.read(includeSerial: fullSerial)
         ssdTest = monitor.lastSSDResult
         panics = monitor.lastCrashScan?.panics ?? CrashHistory.panics()
         shutdowns = monitor.lastCrashScan?.shutdowns
@@ -38,7 +41,8 @@ public struct ReportData {
         batteryCheck = battery.map { PartCheck.battery($0, model: monitor.system.model, reference: monitor.partsReference) }
         adapterCheck = battery.flatMap { PartCheck.adapter($0, reference: monitor.partsReference) }
         macOSHealth = MacOSBatteryHealth.read()
-        device = monitor.deviceInfo ?? DeviceInfo.read()
+        // The device card in the app is always masked: read again for full serials.
+        device = fullSerial ? DeviceInfo.read(includeSerial: true) : (monitor.deviceInfo ?? DeviceInfo.read())
         let defaults = UserDefaults.standard
         shopName = defaults.string(forKey: Pref.reportShopName) ?? ""
         note = defaults.string(forKey: Pref.reportNote) ?? ""
@@ -137,7 +141,10 @@ private final class ReportWriter {
             top += noteHeight + 4
         }
         line(at: top)
-        _ = draw(L("Created with FixStat %@ — github.com/BurakFixLab/fixstat. Serial numbers are masked.", AboutInfo.version),
+        let credit = data.fullSerial
+            ? L("Created with FixStat %@ — github.com/BurakFixLab/fixstat.", AboutInfo.version)
+            : L("Created with FixStat %@ — github.com/BurakFixLab/fixstat. Serial numbers are masked.", AboutInfo.version)
+        _ = draw(credit,
                  at: margin, width: width, font: .systemFont(ofSize: 8), color: gray, top: top + 4)
     }
 

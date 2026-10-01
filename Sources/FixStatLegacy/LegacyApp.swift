@@ -42,10 +42,12 @@ public final class LegacyApp: NSObject, NSApplicationDelegate, NSPopoverDelegate
         popover.delegate = self
 
         LegacyAppearance.apply()
+        NSApp.mainMenu = makeMainMenu()
         if LegacySnapshot.runIfRequested(core: core, panel: panel, tools: tools, settings: { [unowned self] in makeSettings() }) {
             return
         }
 
+        DockIcon.start()
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.button?.target = self
         item.button?.action = #selector(togglePopover(_:))
@@ -64,6 +66,54 @@ public final class LegacyApp: NSObject, NSApplicationDelegate, NSPopoverDelegate
             if popover.isShown { panel.update() }
         }
         updateStatusItem()
+    }
+
+    // MARK: Main menu
+
+    /// Shown while FixStat has a Dock icon (a window is open): app, Edit (copy / paste in
+    /// text fields) and Window menus.
+    private func makeMainMenu() -> NSMenu {
+        let main = NSMenu()
+        func submenu(_ title: String, _ items: [NSMenuItem]) {
+            let menu = NSMenu(title: title)
+            items.forEach(menu.addItem)
+            let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+            item.submenu = menu
+            main.addItem(item)
+        }
+        func item(_ title: String, _ action: Selector?, _ key: String, target: AnyObject? = nil) -> NSMenuItem {
+            let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
+            item.target = target
+            return item
+        }
+        submenu("FixStat", [
+            item(L("About FixStat"), #selector(showAbout), "", target: self),
+            .separator(),
+            item(L("Settings…"), #selector(openSettings), ",", target: self),
+            .separator(),
+            item(L("Hide FixStat"), #selector(NSApplication.hide(_:)), "h"),
+            item(L("Quit FixStat"), #selector(NSApplication.terminate(_:)), "q"),
+        ])
+        submenu(L("Edit"), [
+            item(L("Cut"), #selector(NSText.cut(_:)), "x"),
+            item(L("Copy"), #selector(NSText.copy(_:)), "c"),
+            item(L("Paste"), #selector(NSText.paste(_:)), "v"),
+            item(L("Select All"), #selector(NSText.selectAll(_:)), "a"),
+        ])
+        submenu(L("Window"), [
+            item(L("Minimize"), #selector(NSWindow.performMiniaturize(_:)), "m"),
+            item(L("Close"), #selector(NSWindow.performClose(_:)), "w"),
+        ])
+        return main
+    }
+
+    @objc private func showAbout() { AboutInfo.show() }
+    @objc private func openSettings() { showSettings() }
+
+    /// A click on the Dock icon with no window open shows the menu bar panel.
+    public func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if !flag { togglePopover(nil) }
+        return true
     }
 
     // MARK: Status item

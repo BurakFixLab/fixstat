@@ -38,8 +38,8 @@ public struct SensorReport: Encodable {
     public init(monitor: MonitorCore) {
         generatedAt = Date()
         system = monitor.system
-        // Re-read with masking enforced, independent of what the UI holds.
-        battery = BatteryReader.read(includeSerial: false)
+        // Re-read: masked unless the technician chose full serials for reports.
+        battery = BatteryReader.read(includeSerial: Pref.reportsShowSerial)
         sensors = monitor.sensors.map { sensor in
             Sensor(key: sensor.descriptor.rawLabel,
                    source: sensor.descriptor.source.rawValue,
@@ -56,7 +56,7 @@ public struct SensorReport: Encodable {
                     memoryUsedBytes: monitor.memory?.used,
                     memoryTotalBytes: monitor.memory?.total)
         healthHistory = monitor.history.healthRecords()
-        ssd = SSDInfo.read(includeSerial: false)
+        ssd = SSDInfo.read(includeSerial: Pref.reportsShowSerial)
         var ssdTest = monitor.lastSSDResult
         ssdTest?.timings = [] // per-block timings are too long for a report
         self.ssdTest = ssdTest

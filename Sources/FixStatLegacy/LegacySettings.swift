@@ -74,16 +74,26 @@ final class LegacySettingsController: NSWindowController, NSWindowDelegate {
     private func item(_ title: String, _ view: NSView) -> NSTabViewItem {
         let item = NSTabViewItem(identifier: title)
         item.label = title
-        let container = NSView()
+        // Scrolls when a tab is taller than the window (small screens, more settings).
+        let document = FlippedView()
+        document.translatesAutoresizingMaskIntoConstraints = false
         view.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(view)
+        document.addSubview(view)
+        let scroll = NSScrollView()
+        scroll.drawsBackground = false
+        scroll.hasVerticalScroller = true
+        scroll.autohidesScrollers = true
+        scroll.documentView = document
         NSLayoutConstraint.activate([
-            view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 18),
-            view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -18),
-            view.topAnchor.constraint(equalTo: container.topAnchor, constant: 16),
-            view.bottomAnchor.constraint(lessThanOrEqualTo: container.bottomAnchor, constant: -16),
+            view.leadingAnchor.constraint(equalTo: document.leadingAnchor, constant: 18),
+            view.trailingAnchor.constraint(lessThanOrEqualTo: document.trailingAnchor, constant: -18),
+            view.topAnchor.constraint(equalTo: document.topAnchor, constant: 16),
+            view.bottomAnchor.constraint(equalTo: document.bottomAnchor, constant: -16),
+            document.leadingAnchor.constraint(equalTo: scroll.contentView.leadingAnchor),
+            document.topAnchor.constraint(equalTo: scroll.contentView.topAnchor),
+            document.widthAnchor.constraint(equalTo: scroll.contentView.widthAnchor),
         ])
-        item.view = container
+        item.view = scroll
         return item
     }
 
@@ -101,6 +111,10 @@ final class LegacySettingsController: NSWindowController, NSWindowDelegate {
             rows += [labeled(L("Appearance"), appearanceControl()), spacer()]
         }
         rows += [
+            checkbox(L("Always show the Dock icon"), key: Pref.showInDock),
+            makeNote(L("Otherwise the Dock icon appears while a FixStat window is open, so windows do not get lost behind other apps."),
+                     width: Self.formWidth),
+            spacer(),
             checkbox(L("Technician mode"), key: Pref.technicianMode),
             makeNote(L("Shows raw battery data, cell voltages and every sensor with its raw key."), width: Self.formWidth),
             spacer(),
@@ -113,6 +127,9 @@ final class LegacySettingsController: NSWindowController, NSWindowDelegate {
             labeled(L("Shop name"), textField(key: Pref.reportShopName, placeholder: L("Optional"))),
             labeled(L("Note at the bottom"), textField(key: Pref.reportNote,
                                                        placeholder: L("Optional, e.g. phone or warranty terms"))),
+            checkbox(L("Show full serial numbers in reports"), key: Pref.reportFullSerial),
+            makeNote(L("Applies to PDF, CSV and JSON. Reports often reach customers or the internet, and a serial number reveals ownership and warranty details: keep it masked in reports you share publicly, e.g. in bug reports."),
+                     width: Self.formWidth),
             spacer(),
             labeled(L("Version"), makeLabel("\(AboutInfo.version) (\(AboutInfo.build))")),
             hStack([ActionButton(title: L("About FixStat")) { AboutInfo.show() }, makeSpacer(),

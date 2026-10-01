@@ -32,7 +32,9 @@ Personal, machine-specific notes may exist in a git-ignored `CLAUDE.local.md`.
 - Never commit battery serials, device serials, UUIDs, or paths containing a user name.
   Example outputs and test data must be masked.
 - Serial numbers are masked in every output (first 3 characters kept, the rest `*`);
-  shown only with `sensordump --include-serial`, never in exported reports.
+  shown only with `sensordump --include-serial`, and in exported reports only when the
+  technician turns on `Pref.reportFullSerial` ("Show full serial numbers in reports", off by
+  default; the in-app device card and battery details stay masked).
 - Pre-commit hook: `.githooks/pre-commit` → `scripts/privacy-scan.sh --staged`
   (enable with `git config core.hooksPath .githooks`). It reads the current Mac's
   serials / UUID from ioreg at runtime, so the literal values are never stored, and
@@ -118,6 +120,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   package if the AppKit interface does not survive; `scripts/check-weak-imports.sh`
   catches non-weak imports from weak libraries.
 - SwiftUI `MenuBarExtra(.window)` + `Settings` scene + tool `Window`s, LSUIElement app.
+- Dock icon (`DockIcon`, both interfaces): macOS pushes the windows of LSUIElement apps behind
+  others, so while a titled FixStat window (tool window, Settings) is open the app switches to
+  the regular activation policy (Dock icon, ⌘-Tab) and back to accessory when the last one
+  closes; `Pref.showInDock` keeps it regular. The AppKit interface then has its own main menu
+  (FixStat / Edit / Window).
 - AppKit interface (`LegacyApp`): `NSStatusItem` + transient `NSPopover` (a global mouse
   monitor closes it on outside clicks) with `LegacyPanelController` — default and
   technician panels built from NSStackViews that are rebuilt only when their structure

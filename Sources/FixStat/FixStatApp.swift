@@ -18,7 +18,10 @@ struct FixStatApp: App {
         _memoryRunner = State(initialValue: MemoryTestRunner(monitor: monitor))
         _fullSSDRunner = State(initialValue: FullSSDTestRunner(monitor: monitor))
         _capacityRunner = State(initialValue: CapacityTestRunner(monitor: monitor))
-        DispatchQueue.main.async { Snapshot.runIfRequested(monitor: monitor) }
+        DispatchQueue.main.async {
+            Snapshot.runIfRequested(monitor: monitor)
+            DockIcon.start()
+        }
     }
 
     var body: some Scene {

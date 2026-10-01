@@ -19,8 +19,15 @@ public enum Pref {
     /// Shop name and footer note printed on the PDF report.
     public static let reportShopName = "report.shopName"
     public static let reportNote = "report.note"
+    /// Full serial numbers in exported reports (masked by default).
+    public static let reportFullSerial = "report.fullSerial" // privacy:allow (a preference key name)
+
+    /// Whether exported reports carry full serial numbers.
+    public static var reportsShowSerial: Bool { UserDefaults.standard.bool(forKey: reportFullSerial) }
     /// Newline-separated sensor uids hidden from the lists.
     public static let hiddenSensors = "hiddenSensors"
+    /// Dock icon also while no FixStat window is open (see DockIcon).
+    public static let showInDock = "dock.alwaysShow"
 
     public static let defaultWarm = 45.0
     public static let defaultHot = 55.0
@@ -40,6 +47,8 @@ public enum Pref {
             cellImbalanceThreshold: defaultCellImbalance,
             updateInterval: defaultInterval,
             hiddenSensors: "",
+            showInDock: false,
+            reportFullSerial: false,
             alertsEnabled: false,
             alertChipTemperature: defaultAlertChipTemperature,
         ])

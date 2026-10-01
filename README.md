@@ -51,7 +51,8 @@ battery gauge data you normally dig out of `ioreg`.
   while shut down, a device card (Activation Lock, MDM, part number), and a
   hardware check (keyboard, trackpad surface, display, speakers, microphone, camera,
   Wi-Fi, Bluetooth, USB-C ports with fault counters, lid sensor).
-- **Reports.** PDF / CSV / JSON export for customer devices, serial numbers always masked.
+- **Reports.** PDF / CSV / JSON export for customer devices, serial numbers masked unless you
+  turn on full serials in Settings (for your own records).
 - **Read-only.** FixStat never writes to the SMC, has no fan control and needs no
   administrator rights. The only exception is the optional full SSD surface scan, which
   asks for your password and Full Disk Access and only reads the disk.
@@ -123,7 +124,8 @@ FixStat and pick a language. Numbers and units follow your region settings.
   telemetry, no update checks, no network access at all. Settings, custom sensor names and
   battery history stay on your Mac in `~/Library/Application Support/FixStat/`; reports
   are only created when you export them.
-- **Serial numbers** are masked in every output and export.
+- **Serial numbers** are masked in every output and export, unless you turn on
+  "Show full serial numbers in reports" in Settings (off by default).
 
 ## Acknowledgements
 

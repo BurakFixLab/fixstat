@@ -52,8 +52,8 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
   kartı (Aktivasyon Kilidi, MDM, parça numarası) ve donanım kontrolü
   (klavye, trackpad yüzeyi, ekran, hoparlör, mikrofon, kamera, Wi-Fi, Bluetooth, arıza
   sayaçlı USB-C portları, kapak sensörü).
-- **Raporlar.** Müşteri cihazları için PDF / CSV / JSON dışa aktarma; seri numaraları
-  her zaman maskeli.
+- **Raporlar.** Müşteri cihazları için PDF / CSV / JSON dışa aktarma; seri numaraları,
+  Ayarlar'dan tam gösterim açılmadıkça (kendi kayıtlarınız için) maskeli.
 - **Sadece okuma.** FixStat SMC'ye hiçbir zaman yazmaz, fan kontrolü yoktur ve yönetici
   izni gerektirmez. Tek istisna isteğe bağlı tam SSD yüzey taramasıdır: parolanızı ve Tam
   Disk Erişimi'ni ister ve diski yalnızca okur.
@@ -129,7 +129,8 @@ biçimleri bölge ayarınızı izler.
   telemetri, güncelleme kontrolü yoktur, ağ erişimi hiç yoktur. Ayarlar, özel sensör
   isimleri ve batarya geçmişi Mac'inizde `~/Library/Application Support/FixStat/`
   klasöründe kalır; raporlar yalnızca siz dışa aktardığınızda oluşturulur.
-- **Seri numaraları** her çıktıda ve dışa aktarmada maskelenir.
+- **Seri numaraları** her çıktıda ve dışa aktarmada maskelenir; Ayarlar'da "Raporlarda seri
+  numaralarını tam göster" açılırsa raporlarda tam görünür (varsayılan kapalı).
 
 ## Teşekkür
 

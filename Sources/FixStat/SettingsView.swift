@@ -35,6 +35,7 @@ private struct GeneralSettings: View {
     @AppStorage(Pref.technicianMode) private var technicianMode = false
     @AppStorage(Pref.appearance) private var appearance = AppearancePreference.system.rawValue
     @AppStorage(Pref.updateInterval) private var interval = Pref.defaultInterval
+    @AppStorage(Pref.showInDock) private var showInDock = false
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
     @State private var loginError: String?
 
@@ -52,6 +53,12 @@ private struct GeneralSettings: View {
                     Text("Dark").tag(AppearancePreference.dark.rawValue)
                 }
                 .pickerStyle(.segmented)
+            }
+            Section {
+                Toggle("Always show the Dock icon", isOn: $showInDock)
+            } footer: {
+                Text("Otherwise the Dock icon appears while a FixStat window is open, so windows do not get lost behind other apps.")
+                    .foregroundStyle(.secondary)
             }
             Section {
                 Toggle("Technician mode", isOn: $technicianMode)
@@ -228,14 +235,19 @@ private struct SensorSettingsRow: View {
 private struct ReportSettingsSection: View {
     @AppStorage(Pref.reportShopName) private var shopName = ""
     @AppStorage(Pref.reportNote) private var note = ""
+    @AppStorage(Pref.reportFullSerial) private var fullSerial = false
 
     var body: some View {
         Section {
             TextField("Shop name", text: $shopName, prompt: Text("Optional"))
             TextField("Note at the bottom", text: $note, prompt: Text("Optional, e.g. phone or warranty terms"), axis: .vertical)
                 .lineLimit(1...3)
+            Toggle("Show full serial numbers in reports", isOn: $fullSerial)
         } header: {
             Text("PDF report")
+        } footer: {
+            Text("Applies to PDF, CSV and JSON. Reports often reach customers or the internet, and a serial number reveals ownership and warranty details: keep it masked in reports you share publicly, e.g. in bug reports.")
+                .foregroundStyle(.secondary)
         }
     }
 }
