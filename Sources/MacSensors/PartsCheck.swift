@@ -23,6 +23,8 @@ public struct PartsReference: Codable, Sendable, Equatable {
     }
 
     public var schemaVersion: Int
+    /// Free-text note at the top of parts.json (kept when the file is rewritten).
+    public var note: String?
     public var batteries: [String: Battery]
     public var adapters: [Adapter]
 

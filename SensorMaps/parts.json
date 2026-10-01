@@ -2,10 +2,42 @@
   "schemaVersion": 1,
   "note": "Reference data from parts known to be genuine. Add a model or adapter only from a known-genuine part (see CONTRIBUTING.md).",
   "batteries": {
+    "Mac14,2": {
+      "designCapacity": [4563],
+      "chemistryIDs": [21620],
+      "gauges": ["bq40z651"],
+      "cellCount": 3,
+      "cellVendors": ["COS"],
+      "samples": 1
+    },
+    "Mac14,9": {
+      "designCapacity": [6075],
+      "chemistryIDs": [20882],
+      "gauges": ["bq40z651"],
+      "cellCount": 3,
+      "cellVendors": ["ATL"],
+      "samples": 1
+    },
+    "Mac16,12": {
+      "designCapacity": [4629],
+      "chemistryIDs": [29845],
+      "gauges": ["bq40z651"],
+      "cellCount": 3,
+      "cellVendors": ["COS"],
+      "samples": 1
+    },
     "MacBookAir10,1": {
       "designCapacity": [4382],
       "chemistryIDs": [10037],
       "gauges": ["bq20z451"],
+      "cellCount": 3,
+      "cellVendors": ["ATL"],
+      "samples": 2
+    },
+    "MacBookPro18,3": {
+      "designCapacity": [6075],
+      "chemistryIDs": [20882],
+      "gauges": ["bq40z651"],
       "cellCount": 3,
       "cellVendors": ["ATL"],
       "samples": 1
@@ -19,7 +51,7 @@
       "watts": 94,
       "profiles": [[5000, 3000], [9000, 3000], [15000, 3000], [20000, 4700]],
       "firmware": ["01070051"],
-      "samples": 1
+      "samples": 4
     }
   ]
 }
