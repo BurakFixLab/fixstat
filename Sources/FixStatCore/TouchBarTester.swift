@@ -17,8 +17,9 @@ public final class TouchBarTester: NSObject, NSTouchBarDelegate {
     /// Colours of the display test, in order.
     public static let colours: [NSColor] = [.black, .white, .red, .green, .blue]
     public static let cellCount = 32
-    /// Part of the cells kept in the Esc area (its own item, left of the main one).
-    static let escapeCells = 2
+    /// Cells in the Esc area of the bar (its own item, left of the main one) on models whose
+    /// Esc key is on the Touch Bar; models with a physical Esc have no such area.
+    let escapeCells: Int
 
     public private(set) var mode = Mode.off
     public private(set) var touched = Set<Int>()
@@ -27,13 +28,17 @@ public final class TouchBarTester: NSObject, NSTouchBarDelegate {
     public var onChange: (() -> Void)?
 
     private var bar: NSTouchBar?
-    private let escapeView = TouchBarCanvas(first: 0, count: TouchBarTester.escapeCells)
-    private let mainView = TouchBarCanvas(first: TouchBarTester.escapeCells,
-                                          count: TouchBarTester.cellCount - TouchBarTester.escapeCells)
+    private let escapeView: TouchBarCanvas
+    private let mainView: TouchBarCanvas
     private static let escapeID = NSTouchBarItem.Identifier("io.github.burakfixlab.fixstat.touchbar.escape")
     private static let mainID = NSTouchBarItem.Identifier("io.github.burakfixlab.fixstat.touchbar.main")
 
     public override init() {
+        let defaults = UserDefaults.standard.string(forKey: "FixStatTouchBar").flatMap(HardwareProfile.TouchBar.init(rawValue:))
+        let kind = defaults ?? HardwareProfile.touchBar(model: SystemInfo.current().model)
+        escapeCells = kind == .withoutEscapeKey ? 2 : 0
+        escapeView = TouchBarCanvas(first: 0, count: max(escapeCells, 1))
+        mainView = TouchBarCanvas(first: escapeCells, count: Self.cellCount - escapeCells)
         super.init()
         for view in [escapeView, mainView] {
             view.onTouch = { [weak self] cell in self?.touch(cell) }
@@ -85,11 +90,28 @@ public final class TouchBarTester: NSObject, NSTouchBarDelegate {
         let bar = NSTouchBar()
         bar.delegate = self
         bar.defaultItemIdentifiers = [Self.mainID]
-        bar.escapeKeyReplacementItemIdentifier = Self.escapeID
+        if escapeCells > 0 { bar.escapeKeyReplacementItemIdentifier = Self.escapeID }
         self.bar = bar
+        // No close box at the left end of the system-modal bar (it would cover the first cells).
+        if let handle = dlopen("/System/Library/PrivateFrameworks/DFRFoundation.framework/DFRFoundation", RTLD_LAZY),
+           let symbol = dlsym(handle, "DFRSystemModalShowsCloseBoxWhenFrontMost") {
+            typealias ShowsCloseBox = @convention(c) (Bool) -> Void
+            unsafeBitCast(symbol, to: ShowsCloseBox.self)(false)
+        }
+        // Placement 1 covers the whole bar, Control Strip (brightness, volume, Siri) included.
+        typealias PresentWithPlacement = @convention(c) (AnyObject, Selector, NSTouchBar, Int, AnyObject?) -> Void
+        let cls: AnyObject = NSTouchBar.self
+        for name in ["presentSystemModalTouchBar:placement:systemTrayItemIdentifier:",
+                     "presentSystemModalFunctionBar:placement:systemTrayItemIdentifier:"] {
+            let selector = NSSelectorFromString(name)
+            guard cls.responds(to: selector), let method = class_getClassMethod(NSTouchBar.self, selector) else { continue }
+            let present = unsafeBitCast(method_getImplementation(method), to: PresentWithPlacement.self)
+            present(cls, selector, bar, 1, nil)
+            fullWidth = true
+            return
+        }
         let modern = NSSelectorFromString("presentSystemModalTouchBar:systemTrayItemIdentifier:")
         let older = NSSelectorFromString("presentSystemModalFunctionBar:systemTrayItemIdentifier:")
-        let cls: AnyObject = NSTouchBar.self
         if cls.responds(to: modern) {
             _ = cls.perform(modern, with: bar, with: nil)
             fullWidth = true
