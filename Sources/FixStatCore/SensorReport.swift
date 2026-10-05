@@ -138,6 +138,22 @@ public struct SensorReport: Encodable {
         for record in healthHistory {
             add("healthHistory", record.day, record.cycleCount.map { "cycles \($0)" } ?? "", record.health, "%")
         }
+        if let ssd {
+            add("ssd", "health", ssd.model ?? "", ssd.healthPercent.map(Double.init), "%")
+            add("ssd", "capacity", "", ssd.capacity, "B")
+            add("ssd", "volumeTotal", "", ssd.space?.total, "B")
+            add("ssd", "volumeUsed", "", ssd.space?.used, "B")
+            add("ssd", "volumeAvailable", "", ssd.space?.available, "B")
+        }
+        if let a = ssd?.ata {
+            add("ssd", "lifeLeft", a.lifeLeft.map { "attribute \($0.attribute)" } ?? "", a.lifeLeft.map { Double($0.percent) }, "%")
+            add("ssd", "powerOnHours", "", a.powerOnHours, "h")
+            add("ssd", "reallocatedSectors", "", a.reallocatedSectors, "")
+            add("ssd", "pendingSectors", "", a.pendingSectors, "")
+            add("ssd", "uncorrectableSectors", "", a.uncorrectableSectors, "")
+            add("ssd", "crcErrors", "", a.crcErrors, "")
+            add("ssd", "bytesWrittenEstimate", "", a.bytesWritten, "B")
+        }
         if let h = ssd?.health {
             add("ssd", "percentageUsed", ssd?.model ?? "", Double(h.percentageUsed), "%")
             add("ssd", "availableSpare", "", Double(h.availableSpare), "%")

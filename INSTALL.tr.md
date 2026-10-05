@@ -5,7 +5,6 @@
 > **macOS 10.13 High Sierra ve üstünde** (Intel) ve **macOS 11 Big Sur ve üstünde** (Apple
 > Silicon) çalışır. macOS 14 ve sonrasında SwiftUI arayüzü, eski sürümlerde aynı özelliklere
 > sahip bir AppKit arayüzü açılır. macOS 10.13 High Sierra'ya kadar test edildi (Intel iMac).
-> AHCI / SATA SSD'lerin sağlık bilgisi (SMART) henüz desteklenmiyor; ilerleyen sürümlerde gelecek.
 
 - [1. İndirme](#indirme)
 - [2. İlk açılış](#ilk-acilis)

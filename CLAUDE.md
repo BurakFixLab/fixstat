@@ -239,7 +239,14 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 
 ## Diagnostics tools (Tools menu)
 
-- SSD: NVMe SMART via the NVMeSMARTLib CFPlugIn (no root); write–verify stress test on
+- SSD: NVMe SMART via the NVMeSMARTLib CFPlugIn (no root); ATA SMART of AHCI / SATA drives
+  (`ata.c`, the public ATASMARTLib CFPlugIn on IOBlockStorageDevice with "SMART Capable":
+  only READ DATA / READ THRESHOLDS / RETURN STATUS, never enable or self-test) → `ATAHealth`;
+  every internal ATA drive is read (`ATADrive`, e.g. a Fusion Drive's hard disk). Health % =
+  100 − NVMe percentage used, or the normalized value of the first ATA life attribute
+  (231, 169, 233, 177, 202, 173; vendor specific, to be confirmed with lab records). Startup
+  volume space from `URLResourceValues` (important-usage capacity, like Finder).
+  `-FixStatSampleATA YES` shows a made-up AHCI SSD + hard disk. Write–verify stress test on
   free space (`SSDStressTest`, keeps 10 GB free, speeds from per-block I/O time).
 - Full SSD test: `fixstat-diskscan` (in `Contents/MacOS`) reads `/dev/rdiskN` read-only
   (O_RDONLY + F_NOCACHE, 8 MiB chunks, 256 KB re-probe on errors) and writes JSON lines
@@ -423,4 +430,4 @@ build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.
   MacBookAir6,1 and the Rosetta simulation).
 - Verified sensor maps for more models, especially Apple Silicon after M1: their CPU / GPU
   die sensors are SMC keys (`Tp0x`, `Te0x`, `Tg0x` …) that the current patterns do not name.
-- SMART for AHCI / SATA SSDs (older Intel Macs); only NVMe is read today.
+- Confirm the ATA life attribute per vendor (Apple SM… / SD… / TS… AHCI SSDs) with lab records.

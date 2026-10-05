@@ -55,6 +55,16 @@
         }
       }
     },
+    "%@ interface CRC errors: check the SATA cable / flex and the connector." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ arayüz CRC hatası: SATA kablosunu / flex'i ve konnektörü kontrol edin."
+          }
+        }
+      }
+    },
     "%@ media / data integrity errors recorded." : {
       "localizations" : {
         "tr" : {
@@ -107,6 +117,16 @@
         }
       }
     },
+    "%@ reallocated sectors: the drive has replaced failing blocks." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ yeniden atanmış sektör: disk arızalı blokları değiştirmiş."
+          }
+        }
+      }
+    },
     "%@ remaining" : {
       "localizations" : {
         "tr" : {
@@ -128,12 +148,48 @@
         }
       }
     },
+    "%@ sectors waiting for reallocation: unreadable blocks right now." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden atanmayı bekleyen %@ sektör: şu anda okunamayan bloklar."
+          }
+        }
+      }
+    },
+    "%@ uncorrectable sectors." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ düzeltilemeyen sektör."
+          }
+        }
+      }
+    },
     "%@ usable" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ kullanılabilir"
+          }
+        }
+      }
+    },
+    "%@ used of %@ · %@ free" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ used of %2$@ · %3$@ free"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%2$@ alanın %1$@ kadarı dolu · %3$@ boş"
           }
         }
       }
@@ -145,16 +201,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@°"
-          }
-        }
-      }
-    },
-    "%lld %% used" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%%%lld kullanılmış"
           }
         }
       }
@@ -576,6 +622,16 @@
         }
       }
     },
+    "All SMART attributes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm SMART öznitelikleri"
+          }
+        }
+      }
+    },
     "All keys are detected. macOS still acts on its own keys (Mission Control, Spotlight …); allow FixStat under Accessibility to block that during the test." : {
       "localizations" : {
         "tr" : {
@@ -682,6 +738,32 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%0'da macOS Mac'i kendiliğinden uyutur veya kapatır. Ölçümler test boyunca kaydedilir; Mac kapanırsa (zayıf bataryalardaki gibi erken de olsa) sonuç FixStat bir sonraki açılışında burada görünür. Tam boşaltma bataryayı yıpratır, idareli kullanın."
+          }
+        }
+      }
+    },
+    "Attribute" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öznitelik"
+          }
+        }
+      }
+    },
+    "Attribute %lld (%@) is below its failure threshold." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attribute %1$lld (%2$@) is below its failure threshold."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld numaralı öznitelik (%2$@) arıza eşiğinin altında."
           }
         }
       }
@@ -1816,6 +1898,16 @@
         }
       }
     },
+    "Data written (estimate)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazılan veri (tahmini)"
+          }
+        }
+      }
+    },
     "Day" : {
       "localizations" : {
         "tr" : {
@@ -2072,6 +2164,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kayıtlı — bir kurum tarafından yönetiliyor"
+          }
+        }
+      }
+    },
+    "Erase fails" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silme hataları"
           }
         }
       }
@@ -2594,6 +2696,16 @@
         }
       }
     },
+    "Hard disk" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sabit disk"
+          }
+        }
+      }
+    },
     "Hard resets" : {
       "localizations" : {
         "tr" : {
@@ -2620,6 +2732,48 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sağlık"
+          }
+        }
+      }
+    },
+    "Health %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sağlık %@"
+          }
+        }
+      }
+    },
+    "Health %@ (%@ of the rated endurance used)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Health %1$@ (%2$@ of the rated endurance used)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sağlık %1$@ (dayanım ömrünün %2$@ kadarı kullanıldı)"
+          }
+        }
+      }
+    },
+    "Health %@ (SMART attribute %lld, vendor estimate)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Health %1$@ (SMART attribute %2$lld, vendor estimate)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sağlık %1$@ (SMART özniteliği %2$lld, üretici tahmini)"
           }
         }
       }
@@ -2824,6 +2978,16 @@
         }
       }
     },
+    "ID" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ID"
+          }
+        }
+      }
+    },
     "Idle sleep" : {
       "localizations" : {
         "tr" : {
@@ -2860,6 +3024,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arayüz"
+          }
+        }
+      }
+    },
+    "Interface CRC errors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arayüz CRC hataları"
           }
         }
       }
@@ -3080,12 +3254,32 @@
         }
       }
     },
+    "Life left" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalan ömür"
+          }
+        }
+      }
+    },
     "Lifetime (gauge)" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ömür boyu (gauge)"
+          }
+        }
+      }
+    },
+    "Lifetime remaining" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalan kullanım ömrü"
           }
         }
       }
@@ -3106,6 +3300,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hafif"
+          }
+        }
+      }
+    },
+    "Little rated endurance left (%@)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dayanım ömrünün az kısmı kaldı (%@)."
           }
         }
       }
@@ -3352,6 +3556,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Medya hataları"
+          }
+        }
+      }
+    },
+    "Media wearout indicator" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortam aşınma göstergesi"
           }
         }
       }
@@ -3616,12 +3830,12 @@
         }
       }
     },
-    "No internal NVMe SSD found." : {
+    "No internal SSD found." : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dahili NVMe SSD bulunamadı."
+            "value" : "Dahili SSD bulunamadı."
           }
         }
       }
@@ -4062,6 +4276,16 @@
         }
       }
     },
+    "Other internal drives" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diğer dahili diskler"
+          }
+        }
+      }
+    },
     "Otherwise the Dock icon appears while a FixStat window is open, so windows do not get lost behind other apps." : {
       "localizations" : {
         "tr" : {
@@ -4228,6 +4452,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desenler"
+          }
+        }
+      }
+    },
+    "Pending sectors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bekleyen sektörler"
           }
         }
       }
@@ -4548,6 +4782,16 @@
         }
       }
     },
+    "Program fails" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Programlama hataları"
+          }
+        }
+      }
+    },
     "Project page" : {
       "localizations" : {
         "tr" : {
@@ -4658,6 +4902,16 @@
         }
       }
     },
+    "Raw" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ham"
+          }
+        }
+      }
+    },
     "Raw trackpad data is not available on this Mac; only clicks and gestures are checked." : {
       "localizations" : {
         "tr" : {
@@ -4674,6 +4928,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Okuma"
+          }
+        }
+      }
+    },
+    "Read error rate" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okuma hata oranı"
           }
         }
       }
@@ -4734,6 +4998,26 @@
         }
       }
     },
+    "Reallocated sectors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden atanmış sektörler"
+          }
+        }
+      }
+    },
+    "Reallocation events" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden atama olayları"
+          }
+        }
+      }
+    },
     "Reason codes are Apple's undocumented bit fields, shown as reported. 0 means none." : {
       "localizations" : {
         "tr" : {
@@ -4790,6 +5074,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kalan"
+          }
+        }
+      }
+    },
+    "Remaining life" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalan ömür"
+          }
+        }
+      }
+    },
+    "Reported uncorrectable errors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildirilen düzeltilemeyen hatalar"
           }
         }
       }
@@ -4934,6 +5238,26 @@
         }
       }
     },
+    "SMART not readable" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SMART okunamıyor"
+          }
+        }
+      }
+    },
+    "SMART: no problems" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SMART: sorun yok"
+          }
+        }
+      }
+    },
     "SMC" : {
       "localizations" : {
         "tr" : {
@@ -5000,6 +5324,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SSD sağlığı iyi."
+          }
+        }
+      }
+    },
+    "SSD life left" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSD kalan ömrü"
           }
         }
       }
@@ -5570,6 +5904,16 @@
         }
       }
     },
+    "Startup volume" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlangıç birimi"
+          }
+        }
+      }
+    },
     "State" : {
       "localizations" : {
         "tr" : {
@@ -5982,6 +6326,16 @@
         }
       }
     },
+    "The drive reports a SMART failure (threshold exceeded)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk bir SMART arızası bildiriyor (eşik aşıldı)."
+          }
+        }
+      }
+    },
     "The fans were not asked to speed up: the Mac stayed cool enough. Judge them by ear, or test again when the Mac is warm." : {
       "localizations" : {
         "tr" : {
@@ -6142,6 +6496,16 @@
         }
       }
     },
+    "Threshold" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eşik"
+          }
+        }
+      }
+    },
     "Thresholds" : {
       "localizations" : {
         "tr" : {
@@ -6208,6 +6572,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Araçlar"
+          }
+        }
+      }
+    },
+    "Total LBAs read" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okunan toplam LBA"
+          }
+        }
+      }
+    },
+    "Total LBAs written" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazılan toplam LBA"
           }
         }
       }
@@ -6292,6 +6676,26 @@
         }
       }
     },
+    "Uncorrectable sectors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Düzeltilemeyen sektörler"
+          }
+        }
+      }
+    },
+    "Unexpected power losses" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beklenmedik güç kesintileri"
+          }
+        }
+      }
+    },
     "Unknown code" : {
       "localizations" : {
         "tr" : {
@@ -6362,6 +6766,16 @@
         }
       }
     },
+    "Used reserved blocks" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kullanılan yedek bloklar"
+          }
+        }
+      }
+    },
     "User activity" : {
       "localizations" : {
         "tr" : {
@@ -6378,6 +6792,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "V"
+          }
+        }
+      }
+    },
+    "Value" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değer"
+          }
+        }
+      }
+    },
+    "Vendor specific" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üreticiye özel"
           }
         }
       }
@@ -6532,6 +6966,26 @@
         }
       }
     },
+    "Wear leveling" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aşınma dengeleme"
+          }
+        }
+      }
+    },
+    "Wear leveling count" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aşınma dengeleme sayısı"
+          }
+        }
+      }
+    },
     "What keeps the Mac awake" : {
       "localizations" : {
         "tr" : {
@@ -6598,6 +7052,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kamera izni olmadan fener elle onaylanır."
+          }
+        }
+      }
+    },
+    "Worst" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En kötü"
           }
         }
       }

@@ -13,10 +13,6 @@
 > High Sierra yüklü bir Intel iMac'te test edildi. Intel'de sensör isimleri hâlâ tahminidir —
 > geri bildirimlerinizi bekliyoruz.
 >
-> **Henüz desteklenmiyor:** AHCI / SATA SSD'lerin sağlık bilgisi (SMART); yaklaşık 2015'e kadar
-> olan birçok Intel Mac'te bu tür SSD var. İlerleyen sürümlerde gelecek; NVMe SSD'ler
-> destekleniyor.
->
 > **İndirme:** [Releases](../../releases/latest) sayfasındaki `FixStat.dmg`.
 
 FixStat batarya, sıcaklık, fan ve sistem verilerini menü çubuğunda gösterir. Sensör
@@ -51,7 +47,7 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
   şarj devresi NTC'si olarak görünür.
 - **Batarya geçmişi.** Son 1 saatten 30 güne kadar şarj, akım ve sağlık; ayrıca süresiz
   tutulan günlük sağlık kaydı.
-- **Tek uygulamada tanı araçları.** Tamir sonrası stres testi, SSD sağlığı (NVMe SMART),
+- **Tek uygulamada tanı araçları.** Tamir sonrası stres testi, yüzde olarak SSD sağlığı (NVMe ve AHCI / SATA SMART, kapasite ve boş alan),
   yaz–doğrula stres testi ve isteğe bağlı tam yüzey taraması, bellek testi, kernel panic
   ve kapanma nedeni geçmişi, batarya ve adaptör orijinallik kontrolü, batarya kapasite
   (deşarj) testi, uykuda ve kapalıyken batarya tüketimiyle uyku / uyanma analizi, cihaz

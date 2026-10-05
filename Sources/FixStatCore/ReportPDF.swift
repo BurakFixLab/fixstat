@@ -268,10 +268,20 @@ private final class ReportWriter {
     private func ssdSection(_ ssd: SSDInfo) {
         group(L("SSD"))
         row(L("Model"), [ssd.model, ssd.capacity.map { Format.bytes($0) }].compactMap { $0 }.joined(separator: " · "))
+        if let space = ssd.space { row(L("Startup volume"), SSDText.space(space)) }
         if let h = ssd.health {
             let findings = SSDText.healthFindings(h)
-            row(L("Health (SMART)"), findings.isEmpty ? L("SSD health is good.") : findings.joined(separator: " "))
+            row(L("Health (SMART)"), ([SSDText.healthSummary(ssd)].compactMap { $0 }
+                + [findings.isEmpty ? L("SSD health is good.") : findings.joined(separator: " ")]).joined(separator: " · "))
             twoColumns(Array(SSDText.healthRows(h).prefix(8)))
+        } else if let a = ssd.ata {
+            let findings = SSDText.ataFindings(a)
+            row(L("Health (SMART)"), ([SSDText.healthSummary(ssd)].compactMap { $0 }
+                + [findings.isEmpty ? L("SSD health is good.") : findings.joined(separator: " ")]).joined(separator: " · "))
+            twoColumns(Array(SSDText.ataRows(a).prefix(8)))
+        }
+        for drive in ssd.otherDrives {
+            row(drive.model ?? L("Other internal drives"), SSDText.driveSummary(drive))
         }
         if let test = data.ssdTest {
             let problems = test.findings.filter { $0 != .stoppedEarly }

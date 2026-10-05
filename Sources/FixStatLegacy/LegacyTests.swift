@@ -326,18 +326,26 @@ final class LegacySSD: LegacySnapshotStartable {
         var blocks: [Block] = []
         if let info {
             blocks.append(.headline(info.model ?? "SSD", nil))
-            blocks.append(.secondary([info.capacity.map { Format.bytes($0) },
-                                      [info.nandVendor, info.nandType].compactMap { $0 }.joined(separator: " "),
-                                      info.bitsPerCell.map { L("%lld bits per cell", $0) },
-                                      info.firmware.map { "FW \($0)" }]
-                .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")))
+            blocks.append(.secondary(SSDText.identity(info)))
+            if let space = info.space { blocks.append(.secondary(SSDText.space(space))) }
             if let health = info.health {
-                blocks.append(healthGroup(health))
+                blocks.append(healthGroup(summary: SSDText.healthSummary(info), findings: SSDText.healthFindings(health),
+                                          rows: SSDText.healthRows(health), attributes: nil))
+            } else if let ata = info.ata {
+                blocks.append(healthGroup(summary: SSDText.healthSummary(info), findings: SSDText.ataFindings(ata),
+                                          rows: SSDText.ataRows(ata), attributes: SSDText.ataTable(ata)))
             } else {
                 blocks.append(.secondary(L("SMART data is not available for this SSD.")))
             }
+            if !info.otherDrives.isEmpty {
+                blocks.append(.group(L("Other internal drives"), info.otherDrives.map { drive in
+                    let problems = drive.health.map(SSDText.ataFindings)?.isEmpty == false || drive.health?.thresholdExceeded == true
+                    return problems ? .status(drive.model ?? "–", .bad, detail: SSDText.driveSummary(drive))
+                        : .item(drive.model ?? "–", detail: SSDText.driveSummary(drive))
+                }))
+            }
         } else {
-            blocks.append(.secondary(L("No internal NVMe SSD found.")))
+            blocks.append(.secondary(L("No internal SSD found.")))
         }
         blocks += quickTest()
         blocks.append(.gap)
@@ -345,12 +353,17 @@ final class LegacySSD: LegacySnapshotStartable {
         return blocks
     }
 
-    private func healthGroup(_ health: NVMeHealth) -> Block {
-        let findings = SSDText.healthFindings(health)
-        var blocks: [Block] = findings.isEmpty
-            ? [.headline(L("SSD health is good."), .good)]
-            : [.list(findings.map { .status($0, .bad) })]
-        blocks.append(.rows(SSDText.healthRows(health).map { DocRow(title: $0.0, value: $0.1) }, labelWidth: 200))
+    private func healthGroup(summary: String?, findings: [String], rows: [(String, String)],
+                             attributes: [[String]]?) -> Block {
+        var blocks: [Block] = []
+        if let summary { blocks.append(.headline(summary, nil)) }
+        blocks.append(findings.isEmpty ? .headline(L("SSD health is good."), .good) : .list(findings.map { .status($0, .bad) }))
+        blocks.append(.rows(rows.map { DocRow(title: $0.0, value: $0.1) }, labelWidth: 200))
+        if let attributes {
+            blocks.append(.section(L("All SMART attributes")))
+            blocks.append(.table(header: SSDText.ataTableHeader, rows: attributes,
+                                 tones: attributes.map { _ in Array(repeating: nil, count: 6) }, leading: true))
+        }
         return .group(L("Health (SMART)"), blocks)
     }
 

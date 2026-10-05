@@ -61,13 +61,32 @@ struct SSDView: View {
                 if let info {
                     identity(info)
                     if let health = info.health {
-                        HealthCard(health: health)
+                        HealthCard(summary: SSDText.healthSummary(info), findings: SSDText.healthFindings(health),
+                                   rows: SSDText.healthRows(health), attributes: nil)
+                    } else if let ata = info.ata {
+                        HealthCard(summary: SSDText.healthSummary(info), findings: SSDText.ataFindings(ata),
+                                   rows: SSDText.ataRows(ata), attributes: SSDText.ataTable(ata))
                     } else {
                         Text("SMART data is not available for this SSD.")
                             .foregroundStyle(.secondary)
                     }
+                    if !info.otherDrives.isEmpty {
+                        VStack(alignment: .leading, spacing: 6) {
+                            SectionTitle(title: "Other internal drives")
+                            ForEach(Array(info.otherDrives.enumerated()), id: \.offset) { _, drive in
+                                let problems = drive.health.map(SSDText.ataFindings)?.isEmpty == false
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Label(drive.model ?? "–", systemImage: problems ? "exclamationmark.triangle.fill" : "internaldrive")
+                                        .fontWeight(.medium)
+                                        .foregroundStyle(problems ? TemperatureColor.hot : .primary)
+                                    Text(verbatim: SSDText.driveSummary(drive)).foregroundStyle(.secondary)
+                                }
+                                .font(.callout)
+                            }
+                        }
+                    }
                 } else {
-                    Text("No internal NVMe SSD found.").foregroundStyle(.secondary)
+                    Text("No internal SSD found.").foregroundStyle(.secondary)
                 }
                 stressTest
             }
@@ -83,13 +102,12 @@ struct SSDView: View {
     private func identity(_ info: SSDInfo) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(verbatim: info.model ?? "SSD").font(.headline)
-            Text(verbatim: [info.capacity.map { Format.bytes($0) },
-                            [info.nandVendor, info.nandType].compactMap { $0 }.joined(separator: " "),
-                            info.bitsPerCell.map { String(localized: "\($0) bits per cell") },
-                            info.firmware.map { "FW \($0)" }]
-                .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
+            Text(verbatim: SSDText.identity(info))
                 .font(.callout)
                 .foregroundStyle(.secondary)
+            if let space = info.space {
+                Text(verbatim: SSDText.space(space)).font(.callout).foregroundStyle(.secondary)
+            }
         }
     }
 
@@ -176,12 +194,18 @@ struct SSDView: View {
 /// SMART values with an assessment.
 @available(macOS 14.0, *)
 private struct HealthCard: View {
-    let health: NVMeHealth
+    let summary: String?
+    let findings: [String]
+    let rows: [(String, String)]
+    /// ATA SMART attribute table (technician detail), nil for NVMe.
+    let attributes: [[String]]?
 
     var body: some View {
-        let findings = SSDText.healthFindings(health)
         VStack(alignment: .leading, spacing: 8) {
             SectionTitle(title: "Health (SMART)")
+            if let summary {
+                Text(verbatim: summary).font(.title3.weight(.semibold))
+            }
             if findings.isEmpty {
                 Label("SSD health is good.", systemImage: "checkmark.seal.fill")
                     .font(.headline)
@@ -193,7 +217,7 @@ private struct HealthCard: View {
                 }
             }
             Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 4) {
-                ForEach(Array(SSDText.healthRows(health).enumerated()), id: \.offset) { _, row in
+                ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                     GridRow {
                         Text(verbatim: row.0).foregroundStyle(.secondary)
                         Text(verbatim: row.1).font(.callout.monospaced())
@@ -201,6 +225,23 @@ private struct HealthCard: View {
                 }
             }
             .font(.callout)
+            if let attributes {
+                DisclosureGroup("All SMART attributes") {
+                    Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 3) {
+                        GridRow {
+                            ForEach(SSDText.ataTableHeader, id: \.self) { Text(verbatim: $0).foregroundStyle(.secondary) }
+                        }
+                        ForEach(Array(attributes.enumerated()), id: \.offset) { _, row in
+                            GridRow {
+                                ForEach(Array(row.enumerated()), id: \.offset) { _, cell in Text(verbatim: cell) }
+                            }
+                        }
+                    }
+                    .font(.caption.monospaced())
+                    .padding(.top, 4)
+                }
+                .font(.callout)
+            }
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)

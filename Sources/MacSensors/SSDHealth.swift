@@ -54,7 +54,8 @@ public struct NVMeHealth: Codable, Sendable, Equatable {
     }
 }
 
-/// Internal SSD identity from the IORegistry. The serial number is masked unless requested.
+/// The internal SSD (NVMe, or an AHCI / SATA drive on older Intel Macs) from the IORegistry.
+/// The serial number is masked unless requested.
 public struct SSDInfo: Codable, Sendable, Equatable {
     public var model: String?
     public var firmware: String?
@@ -64,7 +65,25 @@ public struct SSDInfo: Codable, Sendable, Equatable {
     public var nandType: String?
     public var bitsPerCell: Int?
     public var serial: String?
+    /// NVMe SMART / health log.
     public var health: NVMeHealth?
+    /// ATA SMART of an AHCI / SATA SSD (when there is no NVMe SSD).
+    public var ata: ATAHealth?
+    /// "PCI-Express", "SATA", "Apple Fabric" …
+    public var interconnect: String?
+    /// Space on the startup volume.
+    public var space: VolumeSpace?
+    /// Further internal ATA drives, e.g. the hard disk of a Fusion Drive iMac.
+    public var otherDrives: [ATADrive] = []
+
+    /// Health in %: 100 − NVMe "percentage used", or the life attribute of ATA SMART. A
+    /// vendor estimate of the remaining rated endurance.
+    public var healthPercent: Int? {
+        if let health { return max(0, 100 - health.percentageUsed) }
+        return ata?.lifeLeft?.percent
+    }
+
+    public var isNVMe: Bool { health != nil || nandVendor != nil }
 
     public static func read(includeSerial: Bool = false) -> SSDInfo? {
         var info = SSDInfo()
@@ -82,7 +101,37 @@ public struct SSDInfo: Codable, Sendable, Equatable {
             }
         }
         info.health = readHealth()
-        guard info.model != nil || info.health != nil else { return nil }
+        if let device = Registry.properties(ofClass: "IOBlockStorageDevice") {
+            let characteristics = device.dict("Device Characteristics") ?? [:]
+            if info.model == nil { info.model = characteristics.string("Product Name")?.trimmingCharacters(in: .whitespaces) }
+            if info.firmware == nil {
+                info.firmware = characteristics.string("Product Revision Level")?.trimmingCharacters(in: .whitespaces)
+            }
+            info.interconnect = device.dict("Protocol Characteristics")?.string("Physical Interconnect")
+        }
+        if info.capacity == nil {
+            // Intel NVMe (no "Controller Characteristics"): the size of the disk medium.
+            let service = IOServiceGetMatchingService(ioMainPort, IOServiceMatching("IOBlockStorageDevice"))
+            if service != IO_OBJECT_NULL {
+                info.capacity = ATADrive.mediaSize(below: service)
+                IOObjectRelease(service)
+            }
+        }
+        var drives = ATADrive.readAll(includeSerial: includeSerial)
+        if info.health == nil, let index = drives.firstIndex(where: { $0.isSolidState }) ?? drives.indices.first {
+            // No NVMe SSD: the (first solid state) ATA drive is the SSD.
+            let drive = drives.remove(at: index)
+            info.model = drive.model ?? info.model
+            info.firmware = drive.firmware ?? info.firmware
+            info.serial = drive.serial ?? info.serial
+            info.capacity = drive.capacity ?? info.capacity
+            info.interconnect = drive.interconnect ?? info.interconnect
+            info.ata = drive.health
+        }
+        info.otherDrives = drives
+        info.space = VolumeSpace.startup()
+        if UserDefaults.standard.bool(forKey: "FixStatSampleATA") { info = sampleATA(space: info.space) }
+        guard info.model != nil || info.health != nil || info.ata != nil else { return nil }
         return info
     }
 
@@ -90,5 +139,32 @@ public struct SSDInfo: Codable, Sendable, Equatable {
         var log = [UInt8](repeating: 0, count: 512)
         guard FSNVMeReadSMARTLog(&log) == KERN_SUCCESS else { return nil }
         return NVMeHealth.parse(log)
+    }
+}
+
+extension SSDInfo {
+    /// `-FixStatSampleATA YES`: a made-up AHCI SSD with a Fusion-style hard disk, for checking
+    /// the AHCI screens on a Mac with an NVMe SSD.
+    static func sampleATA(space: VolumeSpace?) -> SSDInfo {
+        func health(_ attributes: [(Int, Int, Int, Int, UInt64)]) -> ATAHealth {
+            ATAHealth(attributes: attributes.map {
+                ATASMARTAttribute(id: $0.0, current: $0.1, worst: $0.2, threshold: $0.3, raw: $0.4)
+            }, thresholdExceeded: false)
+        }
+        var info = SSDInfo()
+        info.model = "APPLE SSD SM0256F"
+        info.firmware = "UXM2JA1Q"
+        info.capacity = 251_000_193_024
+        info.interconnect = "PCI-Express"
+        info.space = space
+        info.ata = health([(1, 200, 200, 0, 0), (5, 100, 100, 10, 0), (9, 98, 98, 0, 6_120), (12, 98, 98, 0, 2_311),
+                           (177, 93, 93, 0, 61), (179, 100, 100, 10, 0), (181, 100, 100, 10, 0), (182, 100, 100, 10, 0),
+                           (194, 71, 49, 0, 29), (199, 200, 200, 0, 0), (241, 99, 99, 0, 21_474_836_480)])
+        // privacy:allow on the next line: a Seagate model number, not a serial.
+        info.otherDrives = [ATADrive(model: "ST1000DM003-1ER162", firmware: "CC43", serial: nil, medium: "Rotational", // privacy:allow
+                                     interconnect: "SATA", capacity: 1_000_204_886_016,
+                                     health: health([(5, 100, 100, 36, 8), (9, 63, 63, 0, 32_870), (197, 100, 100, 0, 16),
+                                                     (199, 200, 200, 0, 0)]))]
+        return info
     }
 }

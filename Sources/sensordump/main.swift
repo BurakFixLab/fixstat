@@ -219,7 +219,25 @@ if let ssd = snapshot.ssd {
         ("Capacity", ssd.capacity.map { String(format: "%.0f GB", $0 / 1e9) } ?? "-"),
         ("NAND", [ssd.nandVendor, ssd.nandType, ssd.bitsPerCell.map { "\($0) bits/cell" }].compactMap { $0 }.joined(separator: " · ")),
         ("Serial", ssd.serial ?? "-"),
+        ("Interconnect", ssd.interconnect ?? "-"),
+        ("Health", ssd.healthPercent.map { "\($0) %" } ?? "-"),
+        ("Startup volume", ssd.space.map { String(format: "%.0f of %.0f GB used, %.0f GB free", $0.used / 1e9, $0.total / 1e9, $0.available / 1e9) } ?? "-"),
     ]
+    if let a = ssd.ata {
+        rows += [
+            ("ATA SMART", a.thresholdExceeded == true ? "FAILING (threshold exceeded)" : "ok"),
+            ("Life left", a.lifeLeft.map { "\($0.percent) % (attribute \($0.attribute))" } ?? "-"),
+        ]
+        for attribute in a.attributes {
+            rows.append((String(format: "  #%d", attribute.id),
+                         "value \(attribute.current) worst \(attribute.worst) threshold \(attribute.threshold) raw \(attribute.raw)"))
+        }
+    }
+    for drive in ssd.otherDrives {
+        rows.append(("Other drive", [drive.model, drive.medium, drive.capacity.map { String(format: "%.0f GB", $0 / 1e9) },
+                                     drive.health.map { $0.thresholdExceeded == true ? "SMART FAILING" : "SMART ok" }]
+            .compactMap { $0 }.joined(separator: " · ")))
+    }
     if let h = ssd.health {
         rows += [
             ("Percentage used", "\(h.percentageUsed) %"),
@@ -234,7 +252,7 @@ if let ssd = snapshot.ssd {
             ("Temperature", fmt(h.temperature, 0, unit: " °C")),
             ("Critical warning", h.criticalWarning == 0 ? "none" : h.warnings.joined(separator: ", ")),
         ]
-    } else {
+    } else if ssd.ata == nil {
         rows.append(("SMART", "not available"))
     }
     keyValues(rows)

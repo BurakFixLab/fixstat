@@ -13,9 +13,6 @@
 > an Intel iMac with macOS 10.13 High Sierra. Intel sensor names are still estimated —
 > reports are welcome.
 >
-> **Not yet supported:** SSD health (SMART) of AHCI / SATA SSDs, as in many Intel Macs up to
-> about 2015. It is coming in a later version; NVMe SSDs are supported.
->
 > **Download:** `FixStat.dmg` on the [Releases](../../releases/latest) page.
 
 FixStat shows battery, temperature, fan and system data in the menu bar — with
@@ -49,7 +46,7 @@ battery gauge data you normally dig out of `ioreg`.
   through `PMU tdev7`.
 - **Battery history.** Charge, current and health from the last hour up to 30 days,
   plus a daily health log that is kept indefinitely.
-- **Diagnostics in one app.** Post-repair stress test, SSD health (NVMe SMART) with a
+- **Diagnostics in one app.** Post-repair stress test, SSD health in % (NVMe and AHCI / SATA SMART, capacity and free space) with a
   write–verify stress test and an optional full surface scan, memory test, kernel panic
   and shutdown cause history, battery and power adapter originality check, battery
   capacity (discharge) test, sleep / wake analysis with battery drain while asleep and

@@ -5,7 +5,6 @@
 > **Runs on macOS 10.13 High Sierra or later** (Intel) and **macOS 11 Big Sur or later**
 > (Apple Silicon). macOS 14 and later show the SwiftUI interface, older versions an AppKit
 > interface with the same features. Tested down to macOS 10.13 High Sierra (Intel iMac).
-> SSD health (SMART) of AHCI / SATA SSDs is not supported yet; it is coming in a later version.
 
 - [1. Download](#1-download)
 - [2. Open it the first time](#2-open-it-the-first-time)

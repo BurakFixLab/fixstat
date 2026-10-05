@@ -72,10 +72,11 @@ public enum DeviceText {
             rows.append((L("Battery"), parts.joined(separator: " · "),
                          (b.healthPercent ?? 100) < 80 || check.verdict == .suspicious))
         }
-        if let h = ssd?.health {
-            let findings = SSDText.healthFindings(h)
+        if let ssd, ssd.health != nil || ssd.ata != nil {
+            let findings = ssd.health.map(SSDText.healthFindings) ?? ssd.ata.map(SSDText.ataFindings) ?? []
+            let summary = ssd.healthPercent.map { L("Health %@", Format.percent(Double($0))) }
             rows.append((L("SSD"), findings.isEmpty
-                         ? L("SSD health is good.") + " " + L("%lld %% used", h.percentageUsed)
+                         ? ([L("SSD health is good.")] + [summary].compactMap { $0 }).joined(separator: " ")
                          : findings.joined(separator: " "), !findings.isEmpty))
         }
         if let panics {

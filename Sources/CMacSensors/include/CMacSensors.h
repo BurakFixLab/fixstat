@@ -55,6 +55,14 @@ CFArrayRef _Nullable FSHIDClientCopyReadings(CFTypeRef client, int64_t eventType
 /// device that supports it. `outLog512` must hold 512 bytes.
 kern_return_t FSNVMeReadSMARTLog(uint8_t *outLog512);
 
+// MARK: - ATA / SATA SMART (read-only)
+
+/// Reads the 512-byte ATA SMART data and threshold structures of a SMART capable ATA block
+/// device (IOBlockStorageDevice with "SMART Capable"). `outExceeded`: 1 when the drive
+/// reports a threshold exceeded condition, 0 when not, -1 when unknown.
+kern_return_t FSATAReadSMART(io_service_t device, uint8_t *outData512, uint8_t *outThresholds512,
+                             int *outExceeded);
+
 // MARK: - Multitouch (private MultitouchSupport, loaded at runtime)
 
 #define FSTouchMax 16
