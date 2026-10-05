@@ -81,6 +81,32 @@ public enum PowerText {
         L("Read from the SMC and IOReport every second, without administrator rights. Rails are the outputs of the power management chips; which part a rail feeds differs per board. A rail that draws clearly more current at idle than on a good Mac of the same model points to a leak or a short on that rail.")
     }
 
+    /// Cluster rows: name, active share, mean frequency while active, highest frequency.
+    public static func clusters(_ list: [ClusterActivity]) -> [[String]] {
+        list.map { cluster in
+            [component(cluster.name), Format.percent(cluster.active * 100),
+             cluster.averageMHz.map(megahertz) ?? "–", cluster.maximumMHz.map(megahertz) ?? "–"]
+        }
+    }
+
+    static func megahertz(_ value: Double) -> String {
+        L("%@ MHz", Format.number(value.rounded()))
+    }
+
+    /// "Nominal", and on Intel "CPU speed limit 80 %" (throttled below 100 %).
+    public static func thermal(_ status: ThermalStatus) -> (state: String, limit: String?, throttled: Bool) {
+        let state: String
+        switch status.state {
+        case .nominal: state = L("Normal")
+        case .fair: state = L("Slightly raised")
+        case .serious: state = L("High: macOS slows the Mac down")
+        case .critical: state = L("Critical: macOS slows the Mac down hard")
+        }
+        let limit = status.cpuSpeedLimit.map { Format.percent(Double($0)) }
+        let throttled = (status.cpuSpeedLimit ?? 100) < 100 || status.state == .serious || status.state == .critical
+        return (state, limit, throttled)
+    }
+
     static func number(in text: String, pattern: String) -> Int? {
         guard let regex = try? NSRegularExpression(pattern: pattern),
               let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),

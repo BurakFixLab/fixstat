@@ -8,6 +8,9 @@ public final class PowerAnalyzer: NSObject {
     public private(set) var totals: [String: Double] = [:]
     public private(set) var components: [ComponentPower] = []
     public private(set) var rails: [PowerRail] = []
+    /// CPU clusters' activity and frequency (Apple Silicon).
+    public private(set) var clusters: [ClusterActivity] = []
+    public private(set) var thermal: ThermalStatus?
     /// False until the rail keys are known.
     public private(set) var ready = false
     public var onChange: () -> Void = {}
@@ -15,6 +18,8 @@ public final class PowerAnalyzer: NSObject {
     private var smc: SMC?
     private var railKeys: [PowerRails.Keys] = []
     private var energy: EnergySampler?
+    private var activity: ClusterActivitySampler?
+    private var ticks = 0
     private var timer: Timer?
 
     public var isRunning: Bool { timer != nil }
@@ -34,6 +39,7 @@ public final class PowerAnalyzer: NSObject {
                 self.smc = smc
                 self.railKeys = keys
                 self.energy = EnergySampler()
+                self.activity = ClusterActivitySampler()
                 self.ready = true
                 self.tick()
             }
@@ -52,6 +58,10 @@ public final class PowerAnalyzer: NSObject {
             rails = PowerRails.read(smc: smc, keys: railKeys)
         }
         if let energy { components = energy.sample() }
+        if let activity { clusters = activity.sample() }
+        // pmset is a process: every 5 s is enough for a limit that changes slowly.
+        if ticks % 5 == 0 { thermal = ThermalStatus.read() }
+        ticks += 1
         onChange()
     }
 }

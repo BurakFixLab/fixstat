@@ -11,6 +11,8 @@ final class PowerAnalysisModel {
     private(set) var totals: [String: Double] = [:]
     private(set) var components: [ComponentPower] = []
     private(set) var rails: [PowerRail] = []
+    private(set) var clusters: [ClusterActivity] = []
+    private(set) var thermal: ThermalStatus?
 
     @ObservationIgnored private let analyzer = PowerAnalyzer()
 
@@ -28,6 +30,8 @@ final class PowerAnalysisModel {
         if analyzer.totals != totals { totals = analyzer.totals }
         if analyzer.components != components { components = analyzer.components }
         if analyzer.rails != rails { rails = analyzer.rails }
+        if analyzer.clusters != clusters { clusters = analyzer.clusters }
+        if analyzer.thermal != thermal { thermal = analyzer.thermal }
     }
 }
 
@@ -91,6 +95,51 @@ struct PowerView: View {
                             Text(row[0]).gridColumnAlignment(.leading)
                             Text(row[1])
                         }
+                    }
+                }
+            }
+        }
+
+        let clusters = PowerText.clusters(model.clusters)
+        if !clusters.isEmpty || model.thermal != nil {
+            group("CPU") {
+                if !clusters.isEmpty {
+                    Grid(alignment: .trailing, horizontalSpacing: 18, verticalSpacing: 5) {
+                        GridRow {
+                            Text("Cluster").gridColumnAlignment(.leading)
+                            Text("Active")
+                            Text("Average while active")
+                            Text("Highest")
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        ForEach(clusters, id: \.self) { row in
+                            GridRow {
+                                Text(row[0]).gridColumnAlignment(.leading)
+                                Text(row[1])
+                                Text(row[2])
+                                Text(row[3]).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+                if let status = model.thermal {
+                    let thermal = PowerText.thermal(status)
+                    HStack {
+                        Text("Thermal state").foregroundStyle(.secondary)
+                        Spacer()
+                        Text(thermal.state)
+                    }
+                    if let limit = thermal.limit {
+                        HStack {
+                            Text("CPU speed limit").foregroundStyle(.secondary)
+                            Spacer()
+                            Text(limit)
+                        }
+                    }
+                    if thermal.throttled {
+                        Label("The CPU is held back for heat or power.", systemImage: "exclamationmark.triangle.fill")
+                            .foregroundStyle(TemperatureColor.hot)
                     }
                 }
             }

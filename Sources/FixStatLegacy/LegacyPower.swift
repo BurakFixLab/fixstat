@@ -28,6 +28,21 @@ final class LegacyPower {
             ]))
         }
 
+        var cpu: [Block] = []
+        let clusters = PowerText.clusters(analyzer.clusters)
+        if !clusters.isEmpty {
+            cpu.append(.table(header: [L("Cluster"), L("Active"), L("Average while active"), L("Highest")], rows: clusters,
+                              tones: clusters.map { _ in [nil, nil, nil, .neutral] }, leading: false))
+        }
+        if let status = analyzer.thermal {
+            let thermal = PowerText.thermal(status)
+            var rows = [DocRow(title: L("Thermal state"), value: thermal.state)]
+            if let limit = thermal.limit { rows.append(DocRow(title: L("CPU speed limit"), value: limit)) }
+            cpu.append(.rows(rows, labelWidth: 200))
+            if thermal.throttled { cpu.append(.status(L("The CPU is held back for heat or power."), .bad)) }
+        }
+        if !cpu.isEmpty { blocks.append(.group(L("CPU"), cpu)) }
+
         let rails = PowerText.rails(analyzer.rails)
         if rails.isEmpty, analyzer.rails.isEmpty {
             blocks.append(.status(L("This Mac reports no power rails."), .neutral))

@@ -116,7 +116,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   from bench recordings, which keep the mean of every rail per phase. SoC component power from
   IOReport's "Energy Model" group (`EnergySampler`, private libIOReport via dlopen, no root; M1:
   CPU + clusters, GPU, PCIe). Tools > Power analysis (`PowerAnalyzer` in the core, 1 s, only
-  while open; `PowerView` / `LegacyPower`; snapshot `--power` / `--tool power`).
+  while open; `PowerView` / `LegacyPower`; snapshot `--power` / `--tool power`). CPU section:
+  cluster active share and mean frequency while active from IOReport "CPU Stats" (complex
+  performance states) with MHz from the `pmgr` tables `voltage-states1-sram` (E) /
+  `voltage-states5-sram` (P) (Hz on M1, kHz assumed when smaller); the thermal state, and on
+  Intel the CPU speed limit from `pmset -g therm` (`ThermalStatus`; below 100 % = throttled).
 - HID power page (0xff08) voltage/current events return implausible raw values; they are
   behind `sensordump --hid-power` and marked experimental.
 - Battery (`AppleSmartBattery`): health = `AppleRawMaxCapacity / DesignCapacity`;

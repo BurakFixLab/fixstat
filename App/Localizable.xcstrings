@@ -54,6 +54,16 @@
         }
       }
     },
+    "%@ MHz" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ MHz"
+          }
+        }
+      }
+    },
     "%@ above good Macs of this model (%@ – %@, %lld Macs): a busy process (see CPU) or a leak on a powered rail." : {
       "localizations" : {
         "en" : {
@@ -610,6 +620,16 @@
         }
       }
     },
+    "Active" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktif"
+          }
+        }
+      }
+    },
     "Adapter %@" : {
       "localizations" : {
         "tr" : {
@@ -982,6 +1002,16 @@
         }
       }
     },
+    "Average while active" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktifken ortalama"
+          }
+        }
+      }
+    },
     "Back to sleep after maintenance" : {
       "localizations" : {
         "tr" : {
@@ -1310,6 +1340,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "CPU çekirdekleri"
+          }
+        }
+      }
+    },
+    "CPU speed limit" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU hız sınırı"
           }
         }
       }
@@ -1776,6 +1816,16 @@
         }
       }
     },
+    "Cluster" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Küme"
+          }
+        }
+      }
+    },
     "Code meanings come from the repair community, not from Apple, and can differ between models." : {
       "localizations" : {
         "tr" : {
@@ -1972,6 +2022,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FixStat %@ ile oluşturuldu — github.com/BurakFixLab/fixstat. Seri numaraları maskelenmiştir."
+          }
+        }
+      }
+    },
+    "Critical: macOS slows the Mac down hard" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kritik: macOS Mac'i ciddi yavaşlatıyor"
           }
         }
       }
@@ -3168,6 +3228,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uyanma olmadan, kapalıyken de yüksek tüketim: always-on raylar (G3H / AON) veya pil paketi şüpheli. Akım ölçer ve termal kamerayla doğrulayın."
+          }
+        }
+      }
+    },
+    "High: macOS slows the Mac down" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yüksek: macOS Mac'i yavaşlatıyor"
+          }
+        }
+      }
+    },
+    "Highest" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek"
           }
         }
       }
@@ -6314,6 +6394,16 @@
         }
       }
     },
+    "Slightly raised" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hafif yüksek"
+          }
+        }
+      }
+    },
     "Slow charging reason" : {
       "localizations" : {
         "tr" : {
@@ -6740,6 +6830,16 @@
         }
       }
     },
+    "The CPU is held back for heat or power." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU ısı ya da güç nedeniyle kısıtlanıyor."
+          }
+        }
+      }
+    },
     "The Mac is set never to sleep." : {
       "localizations" : {
         "tr" : {
@@ -7062,6 +7162,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Termal izleyici"
+          }
+        }
+      }
+    },
+    "Thermal state" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termal durum"
           }
         }
       }
