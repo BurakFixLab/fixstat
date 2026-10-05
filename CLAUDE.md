@@ -109,6 +109,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   not from key names (the triplets are not aligned to the key alphabet on M4).
 - While the panel is closed, the menu bar CPU temperature reads HID plus the SMC keys of the
   cpu / gpu groups (Intel and Apple Silicon after M1 have no HID die sensors).
+- Power rails (`PowerRails`, `sensordump --rails`): SMC keys `V…` / `I…` / `P…` sharing their
+  last three characters are one rail (V / A / W); on Apple Silicon the PMU's bucks (`P0b`…) and
+  LDOs (`P0l`…), `R` = second PMU, plus `PSTR` (system), `PDTR` (DC in), `PPBR` (battery rail).
+  M1: `P0b` = P-cluster CPU, `P1b` = GPU (from load tests); names differ per chip, so they come
+  from bench recordings, which keep the mean of every rail per phase.
 - HID power page (0xff08) voltage/current events return implausible raw values; they are
   behind `sensordump --hid-power` and marked experimental.
 - Battery (`AppleSmartBattery`): health = `AppleRawMaxCapacity / DesignCapacity`;
@@ -393,7 +398,7 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 ```
 swift build
 swift test
-.build/debug/sensordump [--json] [--raw] [--smc-all] [--hid-power] [--all] [--include-serial]
+.build/debug/sensordump [--json] [--raw] [--smc-all] [--hid-power] [--all] [--include-serial] [--rails]
 scripts/build-app.sh            # → build/FixStat.app (ad-hoc signed; release = universal arm64 + x86_64)
 scripts/package-release.sh      # → build/FixStat.dmg (drag-to-Applications window + INSTALL.txt) for Releases
 scripts/make-artwork.sh         # App/AppIcon.svg → AppIcon.icns, packaging/dmg-background.svg → App/DMGBackground.tiff

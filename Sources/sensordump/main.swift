@@ -12,6 +12,7 @@ let usage = """
       --raw             Include all raw AppleSmartBattery registry properties
       --smc-all         Include every SMC key with its decoded value
       --hid-power       Include HID voltage/current sensors (raw, experimental)
+      --rails           Print the SMC power rails (V / A / W) and exit
       --all             Also list SMC temperature keys with implausible values
       -h, --help        Show this help
     """
@@ -28,6 +29,17 @@ for argument in CommandLine.arguments.dropFirst() {
     case "--smc-all": options.includeAllSMCKeys = true
     case "--hid-power": options.includeHIDPower = true
     case "--all": showAllTemperatures = true
+    case "--rails":
+        guard let smc = try? SMC() else { print("SMC not available"); exit(1) }
+        let keys = PowerRails.discover(smc: smc)
+        func f(_ v: Double?, _ unit: String) -> String { v.map { String(format: "%8.3f %@", $0, unit) } ?? String(repeating: " ", count: 10) }
+        for (key, value) in PowerRails.readTotals(smc: smc).sorted(by: { $0.key < $1.key }) {
+            print(String(format: "%@  %8.3f W", key, value))
+        }
+        for rail in PowerRails.read(smc: smc, keys: keys) {
+            print(rail.name.padding(toLength: 5, withPad: " ", startingAt: 0), f(rail.volts, "V"), f(rail.amps, "A"), f(rail.watts, "W"))
+        }
+        exit(0)
     case "-h", "--help":
         print(usage)
         exit(0)
