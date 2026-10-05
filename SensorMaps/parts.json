@@ -10,6 +10,14 @@
       "cellVendors": ["COS"],
       "samples": 1
     },
+    "Mac14,7": {
+      "designCapacity": [5103],
+      "chemistryIDs": [9216],
+      "gauges": ["bq20z451"],
+      "cellCount": 3,
+      "cellVendors": ["ATL"],
+      "samples": 1
+    },
     "Mac14,9": {
       "designCapacity": [6075],
       "chemistryIDs": [20882],
@@ -32,7 +40,23 @@
       "gauges": ["bq20z451"],
       "cellCount": 3,
       "cellVendors": ["ATL"],
-      "samples": 2
+      "samples": 4
+    },
+    "MacBookAir7,2": {
+      "designCapacity": [7150],
+      "chemistryIDs": [],
+      "gauges": ["bq20z451"],
+      "cellCount": 2,
+      "cellVendors": ["LGC"],
+      "samples": 1
+    },
+    "MacBookPro15,2": {
+      "designCapacity": [5088],
+      "chemistryIDs": [6262],
+      "gauges": ["bq20z451"],
+      "cellCount": 3,
+      "cellVendors": ["ATL"],
+      "samples": 1
     },
     "MacBookPro18,3": {
       "designCapacity": [6075],
@@ -51,7 +75,15 @@
       "watts": 94,
       "profiles": [[5000, 3000], [9000, 3000], [15000, 3000], [20000, 4700]],
       "firmware": ["01070051"],
-      "samples": 4
+      "samples": 7
+    },
+    {
+      "id": "0x1656",
+      "name": "87W USB-C Power Adapter",
+      "manufacturer": "Apple Inc.",
+      "watts": 86,
+      "firmware": ["01070069"],
+      "samples": 1
     }
   ]
 }

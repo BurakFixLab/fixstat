@@ -8,9 +8,9 @@ import Foundation
 /// raw reading, the calibrated reading (raw + a constant offset, the one to show) and a
 /// noisier peak; GPU keys in pairs (raw, calibrated). The triplets are not aligned to the
 /// key alphabet on every chip (M4), so they are found from the data: neighbours (in key
-/// order) whose difference stays constant. Exact copies of other keys (cluster maxima) are
-/// derived; constant keys are calibration values and ignored. What fits no rule is listed
-/// for review (e.g. the cluster averages `Tp3*` on M4).
+/// order) whose difference stays constant (within `Family.tolerance`). Exact copies of
+/// other keys (cluster maxima) are derived; constant keys are calibration values and
+/// ignored. What fits no rule is listed for review (e.g. the cluster averages `Tp3*` on M4).
 public enum ChipZoneAnalyzer {
     public struct Result: Codable, Sendable, Equatable {
         public var chip: String
@@ -24,12 +24,16 @@ public enum ChipZoneAnalyzer {
         let id: String
         let group: SensorMap.Group
         let what: String
+        /// Allowed standard deviation of the raw → calibrated difference (°C). GPU pairs
+        /// wander more (M3: ≈ 0.6) than CPU triplets; a looser CPU limit would take the
+        /// cluster averages of M4 (`Tp3*`, `Te0U–X`) for zones.
+        var tolerance = 0.25
     }
 
     static let families = [
         Family(prefix: "Tp", id: "cpu.pcluster", group: .cpu, what: "performance cluster"),
         Family(prefix: "Te", id: "cpu.ecluster", group: .cpu, what: "efficiency cluster"),
-        Family(prefix: "Tg", id: "gpu.cluster", group: .gpu, what: "GPU"),
+        Family(prefix: "Tg", id: "gpu.cluster", group: .gpu, what: "GPU", tolerance: 0.7),
     ]
     /// Further SoC keys of these chips: only their constants are classified (ignored).
     static let otherPrefixes = ["Tf"]
@@ -62,12 +66,12 @@ public enum ChipZoneAnalyzer {
                 return q - p
             }
         }
-        func constantOffset(_ a: String, _ b: String) -> Bool {
+        func constantOffset(_ a: String, _ b: String, tolerance: Double) -> Bool {
             let d = pairs(a, b)
             guard d.count > 20 else { return false }
             let mean = d.reduce(0, +) / Double(d.count)
             let deviation = (d.map { ($0 - mean) * ($0 - mean) }.reduce(0, +) / Double(d.count)).squareRoot()
-            return deviation < 0.25 && (0.3..<15).contains(mean)
+            return deviation < tolerance && (0.3..<15).contains(mean)
         }
         func sameAs(_ a: String, _ b: String) -> Bool {
             let d = pairs(a, b)
@@ -105,14 +109,14 @@ public enum ChipZoneAnalyzer {
                     used.insert(key)
                     continue
                 }
-                if i + 1 < keys.count, constantOffset(key, keys[i + 1]) {
+                if i + 1 < keys.count, constantOffset(key, keys[i + 1], tolerance: family.tolerance) {
                     let calibrated = keys[i + 1]
                     used.formUnion([key, calibrated])
                     derived.append(key)
                     // A third key of the same block that does not start the next pair: the peak.
                     if i + 2 < keys.count {
                         let next = keys[i + 2]
-                        let startsPair = i + 3 < keys.count && constantOffset(next, keys[i + 3])
+                        let startsPair = i + 3 < keys.count && constantOffset(next, keys[i + 3], tolerance: family.tolerance)
                         if !startsPair, !isConstant(next), next.prefix(3) == calibrated.prefix(3) {
                             used.insert(next)
                             derived.append(next)

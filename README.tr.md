@@ -70,7 +70,7 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
 | `MacBookAir10,1` | MacBook Air (M1, 2020) | Apple M1 | J313 | 69'da 64 | 16 | 26.6 |
 
 Diğer Mac'lerde de çalışır; o durumda sensörler çip ve anahtar kalıplarından
-isimlendirilir ve "tahmini" olarak işaretlenir. **M1 Pro / Max, M2, M2 Pro / Max ve M4**
+isimlendirilir ve "tahmini" olarak işaretlenir. **M1 Pro / Max, M2, M2 Pro / Max, M3 ve M4**
 çiplerinin CPU ve GPU bölgeleri tezgâh kayıtlarından çip bazında isimlendirildi (bu çiplerde
 yalnızca SMC anahtarı olarak bulunurlar); bu çipe sahip her Mac, iMac ve Mac mini dahil,
 CPU sıcaklığını gösterir. Kendi modelinizi eklemek için

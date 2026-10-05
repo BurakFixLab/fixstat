@@ -68,7 +68,7 @@ battery gauge data you normally dig out of `ioreg`.
 | `MacBookAir10,1` | MacBook Air (M1, 2020) | Apple M1 | J313 | 64 of 69 | 16 | 26.6 |
 
 Other Macs work too: sensors are then named from chip and key patterns and marked as
-estimated. The CPU and GPU zones of **M1 Pro / Max, M2, M2 Pro / Max and M4** are named per
+estimated. The CPU and GPU zones of **M1 Pro / Max, M2, M2 Pro / Max, M3 and M4** are named per
 chip from bench recordings (on these chips they exist only as SMC keys), so every Mac with
 one of these chips, including iMacs and Mac minis, shows its CPU temperature. Please help add your model — see [CONTRIBUTING.md](CONTRIBUTING.md) or open a
 [new model issue](../../issues/new?template=new-model-sensor-data.yml).

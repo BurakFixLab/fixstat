@@ -1,6 +1,10 @@
 {
   "models" : {
-
+    "MacBookAir6,1" : {
+      "idleDisplayOffW" : [
+        5.8
+      ]
+    }
   },
   "note" : "Idle system power with the display off (W), measured at the bench on Macs known to be good. One value per Mac.",
   "schemaVersion" : 1

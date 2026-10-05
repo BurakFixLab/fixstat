@@ -40,6 +40,20 @@ import Testing
         #expect(result.review.isEmpty)
     }
 
+    @Test func gpuPairsMayWanderMoreThanCPUTriplets() throws {
+        // M3: the GPU raw → calibrated difference wanders by ≈ 0.6 °C; the same on a CPU pair
+        // (like the cluster averages of M4) is not a zone.
+        var recording = Self.recording()
+        for i in recording.samples.indices {
+            let wobble = i % 2 == 0 ? 0.6 : -0.6
+            recording.samples[i].values[8] = recording.samples[i].values[7].map { $0 + 5.7 + wobble }
+            recording.samples[i].values[5] = recording.samples[i].values[4].map { $0 + 6.1 + wobble }
+        }
+        let result = try #require(ChipZoneAnalyzer.analyze(recording))
+        #expect(result.entry.sensors.map(\.key) == ["Tp01", "Tg0f"])
+        #expect(result.review.contains("Te04"))
+    }
+
     @Test func notForIntelOrHIDDieSensors() {
         #expect(ChipZoneAnalyzer.analyze(Self.recording(apple: false)) == nil)
         #expect(ChipZoneAnalyzer.analyze(Self.recording(hidDie: true)) == nil)

@@ -45,6 +45,15 @@ import Testing
         #expect(warned.isSuperset(of: ["ref.gauge", "ref.designCapacity", "gaugeData", "cycleReset"]))
     }
 
+    @Test func emptyReferenceListsAreNotChecked() {
+        // No chemistry id was recorded for this model (older Intel gauges): no warning for it.
+        var reference = Self.reference
+        reference.batteries["MacBookAir10,1"]?.chemistryIDs = []
+        let check = PartCheck.battery(Self.genuineBattery, model: "MacBookAir10,1", reference: reference)
+        #expect(!check.items.contains { $0.id == "ref.chemistry" })
+        #expect(check.verdict == .consistent)
+    }
+
     @Test func unknownModelNeedsReference() {
         let check = PartCheck.battery(Self.genuineBattery, model: "Mac15,3", reference: Self.reference)
         #expect(check.verdict == .unknown)

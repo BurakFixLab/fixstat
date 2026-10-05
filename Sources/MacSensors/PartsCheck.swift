@@ -116,12 +116,15 @@ public struct PartCheck: Codable, Sendable, Equatable {
         let gauge = b.gaugeDeviceName ?? ""
 
         if let ref {
-            items.append(Item(id: "ref.gauge", status: ref.gauges.contains(gauge) ? .pass : .warn, detail: gauge))
-            if let chem = b.identity?.chemistryID {
+            // An empty list means no reference value was recorded: no check.
+            if !ref.gauges.isEmpty {
+                items.append(Item(id: "ref.gauge", status: ref.gauges.contains(gauge) ? .pass : .warn, detail: gauge))
+            }
+            if let chem = b.identity?.chemistryID, !ref.chemistryIDs.isEmpty {
                 items.append(Item(id: "ref.chemistry", status: ref.chemistryIDs.contains(chem) ? .pass : .warn,
                                   detail: String(chem)))
             }
-            if let design = b.designCapacity {
+            if let design = b.designCapacity, !ref.designCapacity.isEmpty {
                 let ok = ref.designCapacity.contains { abs($0 - design) <= max(1, $0 / 100) }
                 items.append(Item(id: "ref.designCapacity", status: ok ? .pass : .warn,
                                   detail: "\(design) / \(ref.designCapacity.map(String.init).joined(separator: ", ")) mAh"))

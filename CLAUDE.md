@@ -60,7 +60,8 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 - Chip entries also carry `ignored` / `derived` (hidden and not polled unless the model
   entry names the key). They name the SMC-only CPU / GPU die zones of Apple Silicon after
   M1 (see Hardware findings); M1 Max / M2 Max reuse the CPU entries of the Pro chip
-  (assumed, not recorded). M3 is not covered yet (no recording).
+  (assumed, not recorded). M3 GPU pairs wander more (≈ 0.6 °C), so the analyzer allows a looser
+  offset for `Tg` than for `Tp` / `Te`; its `Tp1*` / `Te0O–P` are cluster aggregates (derived).
 - Model entries also carry `ignored` (never plausible / constant calibration keys) and
   `derived` (SMC aggregates of other sensors, e.g. Apple Silicon `Tp2a/b/x/z`, `Tc*`);
   both appear only in raw lists and are never polled by the app.
@@ -97,7 +98,7 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   TCHP=TP7d (charger), TW0P=TP4d (Wi-Fi), TIOP=TP3d (I/O), TPMP=TP5d (PMU), TMVR=TP8d
   (memory VR), TPSP=TR5d (power input), TSCD=TR4d, TH0T/TH0x=TR2d (SSD), TB2T=TG2B.
 - Unpopulated NTC channels read ≈ −22 °C and are listed as `ignored`.
-- **Apple Silicon after M1** (M1 Pro, M2, M2 Pro, M4 recorded): no pACC / eACC / GPU MTR HID
+- **Apple Silicon after M1** (M1 Pro, M2, M2 Pro, M3, M4 recorded): no pACC / eACC / GPU MTR HID
   services; the CPU / GPU die zones exist only as SMC keys `Tp..` (P clusters), `Te..`
   (E cluster, active at idle), `Tg..` (GPU). CPU keys come in triplets: raw, calibrated
   (= raw + a constant offset, the value shown) and a noisier peak; GPU keys in pairs (raw,
