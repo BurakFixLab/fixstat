@@ -27,7 +27,7 @@ public struct SensorSnapshot: Encodable, Sendable {
 }
 
 public enum MacSensors {
-    public static let version = "1.1.0" // keep in sync with CFBundleShortVersionString
+    public static let version = "1.2.0" // keep in sync with CFBundleShortVersionString
 
     public struct Options: Sendable {
         public var includeSerial = false
