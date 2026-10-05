@@ -336,6 +336,13 @@ final class LegacySSD: LegacySnapshotStartable {
                                           rows: SSDText.ataRows(ata), attributes: SSDText.ataTable(ata)))
             } else {
                 blocks.append(.secondary(L("SMART data is not available for this SSD.")))
+                if SSDText.needsFullDiskAccess(info) {
+                    blocks.append(.status(SSDText.fullDiskAccessHint, .neutral))
+                    blocks.append(.actions([DocAction(title: L("Open System Settings")) {
+                        if let url = FullSSDRunner.fullDiskAccessSettingsURL { NSWorkspace.shared.open(url) }
+                    }]))
+                }
+                if let problem = info.smartProblem { blocks.append(.mono(problem)) }
             }
             if !info.otherDrives.isEmpty {
                 blocks.append(.group(L("Other internal drives"), info.otherDrives.map { drive in

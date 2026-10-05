@@ -69,6 +69,14 @@ struct SSDView: View {
                     } else {
                         Text("SMART data is not available for this SSD.")
                             .foregroundStyle(.secondary)
+                        if SSDText.needsFullDiskAccess(info) {
+                            Label(SSDText.fullDiskAccessHint, systemImage: "lock.shield")
+                                .fixedSize(horizontal: false, vertical: true)
+                            Button("Open System Settings") { FullSSDTestRunner.openFullDiskAccessSettings() }
+                        }
+                        if let problem = info.smartProblem {
+                            Text(verbatim: problem).font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled)
+                        }
                     }
                     if !info.otherDrives.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {

@@ -68,6 +68,9 @@ Disk Erişimi** gerekir: Sistem Ayarları › Gizlilik ve Güvenlik › Tam Disk
 açın (macOS 12 ve öncesinde: Sistem Tercihleri › Güvenlik ve Gizlilik › Gizlilik › Tam Disk
 Erişimi; macOS 10.13'te bu ayar yoktur). Tarama diski yalnızca okur.
 
+AHCI / SATA SSD'li eski Intel Mac'lerde macOS, SSD'nin SMART verisini (sağlık) de yalnızca Tam
+Disk Erişimi olan uygulamalara gösterir; SSD penceresi bunu söyler ve ayarı açar.
+
 <a id="menu-cubugu"></a>
 
 ## 3. Menü çubuğunda bulma

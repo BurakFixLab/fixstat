@@ -253,7 +253,7 @@ if let ssd = snapshot.ssd {
             ("Critical warning", h.criticalWarning == 0 ? "none" : h.warnings.joined(separator: ", ")),
         ]
     } else if ssd.ata == nil {
-        rows.append(("SMART", "not available"))
+        rows.append(("SMART", "not available" + (ssd.smartProblem.map { ": \($0)" } ?? "")))
     }
     keyValues(rows)
 }

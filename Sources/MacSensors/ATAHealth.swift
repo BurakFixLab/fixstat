@@ -117,6 +117,8 @@ public struct ATADrive: Codable, Sendable, Equatable {
     /// Bytes.
     public var capacity: Double?
     public var health: ATAHealth?
+    /// Why SMART could not be read (IOKit return code), for the technician and bug reports.
+    public var smartError: String?
 
     public var isSolidState: Bool { medium?.localizedCaseInsensitiveContains("solid") ?? true }
 
@@ -146,8 +148,12 @@ public struct ATADrive: Codable, Sendable, Equatable {
             var data = [UInt8](repeating: 0, count: 512)
             var thresholds = [UInt8](repeating: 0, count: 512)
             var exceeded: Int32 = -1
-            if FSATAReadSMART(service, &data, &thresholds, &exceeded) == KERN_SUCCESS {
+            let result = FSATAReadSMART(service, &data, &thresholds, &exceeded)
+            if result == KERN_SUCCESS {
                 drive.health = ATAHealth.parse(data: data, thresholds: thresholds, exceeded: exceeded)
+                if drive.health == nil { drive.smartError = "empty attribute table" }
+            } else {
+                drive.smartError = String(format: "0x%08x", UInt32(bitPattern: result))
             }
             drives.append(drive)
         }

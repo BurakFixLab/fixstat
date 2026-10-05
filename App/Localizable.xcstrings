@@ -44,6 +44,22 @@
         }
       }
     },
+    "%@ above good Macs of this model (%@ – %@, %lld Macs): a busy process (see CPU) or a leak on a powered rail." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ above good Macs of this model (%2$@ – %3$@, %4$lld Macs): a busy process (see CPU) or a leak on a powered rail."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu modelin sağlam Mac'lerinden %1$@ fazla (%2$@ – %3$@, %4$lld Mac): meşgul bir işlem (CPU'ya bakın) veya enerjili bir rayda kaçak."
+          }
+        }
+      }
+    },
     "%@ frames · average brightness %@" : {
       "localizations" : {
         "en" : {
@@ -3176,6 +3192,16 @@
         }
       }
     },
+    "Idle power, display off" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boşta güç, ekran kapalı"
+          }
+        }
+      }
+    },
     "Idle sleep" : {
       "localizations" : {
         "tr" : {
@@ -3718,6 +3744,16 @@
         }
       }
     },
+    "Measure idle power (display off, about 2 min)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boşta gücü ölç (ekran kapalı, yaklaşık 2 dk)"
+          }
+        }
+      }
+    },
     "Measured capacity (extrapolated to 100 %)" : {
       "localizations" : {
         "tr" : {
@@ -3734,6 +3770,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ölçülen: FixStat kapanırken batarya gauge'unu kaydetti ve açılıştan sonra okudu (FixStat'ın oturum açılışında başlaması gerekir). Günlükten: güç günlüğündeki tam sayı yüzdeler, bu yüzden kısa süreler kabadır."
+          }
+        }
+      }
+    },
+    "Measuring idle power with the display off · %@ left. Do not touch the Mac." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekran kapalıyken boşta güç ölçülüyor · %@ kaldı. Mac'e dokunmayın."
           }
         }
       }
@@ -4114,6 +4160,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu model için henüz referans verisi yok"
+          }
+        }
+      }
+    },
+    "No reference values for this model yet: compare with the same Mac after the repair or with another one of the model." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu model için henüz referans değer yok: onarımdan sonra aynı Mac'le veya aynı modelden başka bir Mac'le karşılaştırın."
           }
         }
       }
@@ -6590,6 +6646,16 @@
         }
       }
     },
+    "The display was woken during the measurement. Start again and do not touch the Mac for two minutes." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ölçüm sırasında ekran uyandı. Yeniden başlatın ve iki dakika Mac'e dokunmayın."
+          }
+        }
+      }
+    },
     "The drain while asleep comes from the Mac waking up (dark wakes): software, settings or a device that wakes it, not the board." : {
       "localizations" : {
         "tr" : {
@@ -6686,6 +6752,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sensör feneri gördü ama kamera karanlık kaldı; kamerayı da kontrol edin."
+          }
+        }
+      }
+    },
+    "The system power cannot be read with the adapter connected on this Mac: unplug the power adapter and start again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Mac'te adaptör takılıyken sistem gücü okunamıyor: güç adaptörünü çıkarıp yeniden başlatın."
           }
         }
       }
@@ -6836,6 +6912,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SSD'nin tamamını okuyabilmek için Gizlilik ve Güvenlik › Tam Disk Erişimi'nde FixStat'ı açın, ardından FixStat'tan çıkıp yeniden açın ve testi tekrar başlatın."
+          }
+        }
+      }
+    },
+    "Too few power readings: the battery gauge did not report the power." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çok az güç okuması: pil gauge'u gücü bildirmedi."
           }
         }
       }
@@ -7350,6 +7436,22 @@
         }
       }
     },
+    "Within the range of good Macs of this model (%@ – %@, %lld Macs)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Within the range of good Macs of this model (%1$@ – %2$@, %3$lld Macs)."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu modelin sağlam Mac'lerinin aralığında (%1$@ – %2$@, %3$lld Mac)."
+          }
+        }
+      }
+    },
     "Without camera access the flashlight is confirmed by hand." : {
       "localizations" : {
         "tr" : {
@@ -7712,6 +7814,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS'ta Mac bataryaları için orijinal parça bayrağı yoktur ve kopyalar dijital verileri taklit edebilir; bu nedenle bu, bilinen orijinal parçalarla bir tutarlılık kontrolüdür, kesin kanıt değildir."
+          }
+        }
+      }
+    },
+    "macOS lets apps read the SMART data of this SSD only with Full Disk Access: System Settings › Privacy & Security › Full Disk Access › turn FixStat on, then open this window again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS bu SSD'nin SMART verisini yalnızca Tam Disk Erişimi olan uygulamalara açıyor: Sistem Ayarları › Gizlilik ve Güvenlik › Tam Disk Erişimi › FixStat'ı açın, sonra bu pencereyi yeniden açın."
           }
         }
       }

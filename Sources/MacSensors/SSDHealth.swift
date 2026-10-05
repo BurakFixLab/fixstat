@@ -75,6 +75,8 @@ public struct SSDInfo: Codable, Sendable, Equatable {
     public var space: VolumeSpace?
     /// Further internal ATA drives, e.g. the hard disk of a Fusion Drive iMac.
     public var otherDrives: [ATADrive] = []
+    /// Why there is no SMART data: "no SMART capable drive" or the read's IOKit return code.
+    public var smartProblem: String?
 
     /// Health in %: 100 − NVMe "percentage used", or the life attribute of ATA SMART. A
     /// vendor estimate of the remaining rated endurance.
@@ -127,6 +129,9 @@ public struct SSDInfo: Codable, Sendable, Equatable {
             info.capacity = drive.capacity ?? info.capacity
             info.interconnect = drive.interconnect ?? info.interconnect
             info.ata = drive.health
+            info.smartProblem = drive.smartError.map { "SMART read failed (\($0))" }
+        } else if info.health == nil {
+            info.smartProblem = "no SMART capable drive (\(Self.storageClasses()))"
         }
         info.otherDrives = drives
         info.space = VolumeSpace.startup()
@@ -143,6 +148,24 @@ public struct SSDInfo: Codable, Sendable, Equatable {
 }
 
 extension SSDInfo {
+    /// Classes of the block storage devices, e.g. "IOAHCIBlockStorageDevice": which driver the
+    /// Mac uses when no SMART capable drive was found.
+    static func storageClasses() -> String {
+        var iterator: io_iterator_t = 0
+        guard IOServiceGetMatchingServices(ioMainPort, IOServiceMatching("IOBlockStorageDevice"), &iterator) == KERN_SUCCESS
+        else { return "none" }
+        defer { IOObjectRelease(iterator) }
+        var names: [String] = []
+        while case let service = IOIteratorNext(iterator), service != IO_OBJECT_NULL {
+            var name = [CChar](repeating: 0, count: 128)
+            IOObjectGetClass(service, &name)
+            let smart = (Registry.properties(of: service)?["SMART Capable"] as? NSNumber).map { $0.boolValue ? " SMART" : "" } ?? ""
+            names.append(String(cString: name) + smart)
+            IOObjectRelease(service)
+        }
+        return names.isEmpty ? "none" : names.joined(separator: ", ")
+    }
+
     /// `-FixStatSampleATA YES`: a made-up AHCI SSD with a Fusion-style hard disk, for checking
     /// the AHCI screens on a Mac with an NVMe SSD.
     static func sampleATA(space: VolumeSpace?) -> SSDInfo {

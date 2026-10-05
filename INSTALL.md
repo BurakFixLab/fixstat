@@ -62,6 +62,9 @@ stores it) and **Full Disk Access**: System Settings › Privacy & Security › 
 Access › turn FixStat on (macOS 12 and earlier: System Preferences › Security & Privacy ›
 Privacy › Full Disk Access; macOS 10.13 has no such setting). The scan only reads the disk.
 
+On older Intel Macs with an AHCI / SATA SSD, macOS also shows the SSD's SMART data (health)
+only to apps with Full Disk Access; the SSD window says so and opens the setting.
+
 ## 3. Find it in the menu bar
 
 FixStat opens no window at start — it lives in the **menu bar** at the top right (battery

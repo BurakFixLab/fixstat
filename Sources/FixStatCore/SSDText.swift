@@ -53,6 +53,17 @@ public enum SSDText {
         return nil
     }
 
+    /// SMART of an AHCI / SATA drive could not be read and FixStat has no Full Disk Access:
+    /// macOS opens the ATA SMART interface only to apps with it (DriveDx asks for it too).
+    public static func needsFullDiskAccess(_ info: SSDInfo) -> Bool {
+        info.health == nil && info.ata == nil && info.smartProblem?.hasPrefix("SMART read failed") == true
+            && !FullSSDRunner.hasFullDiskAccess
+    }
+
+    public static var fullDiskAccessHint: String {
+        L("macOS lets apps read the SMART data of this SSD only with Full Disk Access: System Settings › Privacy & Security › Full Disk Access › turn FixStat on, then open this window again.")
+    }
+
     /// "162 GB used of 245 GB · 83 GB free" (startup volume).
     public static func space(_ space: VolumeSpace) -> String {
         L("%@ used of %@ · %@ free", Format.bytes(space.used), Format.bytes(space.total), Format.bytes(space.available))
