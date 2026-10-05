@@ -15,11 +15,11 @@ struct KeyboardTestView: View {
     @State private var retry: Timer?
 
     private let kind = KeyLegend.kind
-    private var total: Int { KeyboardLayout.codes(kind).count }
+    private var total: Int { KeyboardLayout.codes(kind, touchBar: monitor.profile.touchBar).count }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            KeyboardDrawing(kind: kind, pressed: pressed, held: held)
+            KeyboardDrawing(kind: kind, touchBar: monitor.profile.touchBar, pressed: pressed, held: held)
                 .frame(maxWidth: 720)
             HStack {
                 Text(verbatim: KeyboardLayout.progress(pressed.count, of: total))
@@ -138,7 +138,7 @@ struct KeyboardTestView: View {
     }
 
     private func register(_ code: Int, down: Bool) {
-        guard KeyboardLayout.codes(kind).contains(code) else { return }
+        guard KeyboardLayout.codes(kind, touchBar: monitor.profile.touchBar).contains(code) else { return }
         if down {
             held.insert(code)
             if pressed.insert(code).inserted {
@@ -182,6 +182,7 @@ final class KeyTap {
 @available(macOS 14.0, *)
 struct KeyboardDrawing: View {
     let kind: KeyboardLayout.Kind
+    let touchBar: HardwareProfile.TouchBar?
     let pressed: Set<Int>
     let held: Set<Int>
     @State private var legends = KeyLegend.legends()
@@ -191,7 +192,7 @@ struct KeyboardDrawing: View {
             let unit = proxy.size.width / 14.5
             let gap = unit * 0.1
             VStack(spacing: gap) {
-                ForEach(Array(KeyboardLayout.rows(kind).enumerated()), id: \.offset) { index, row in
+                ForEach(Array(KeyboardLayout.rows(kind, touchBar: touchBar).enumerated()), id: \.offset) { index, row in
                     rowView(row, unit: unit, gap: gap, height: (index == 0 ? 0.55 : 0.9) * unit)
                 }
             }
@@ -232,7 +233,7 @@ struct KeyboardDrawing: View {
     }
 
     private func keyView(_ key: KeyboardLayout.Key, width: CGFloat, height: CGFloat) -> some View {
-        let isPlaceholder = key.code == KeyboardLayout.touchIDPlaceholder
+        let isPlaceholder = key.code < 0 // Touch ID, Touch Bar
         let isPressed = pressed.contains(key.code)
         let isHeld = held.contains(key.code)
         let legend = key.legend ?? legends[key.code] ?? ""

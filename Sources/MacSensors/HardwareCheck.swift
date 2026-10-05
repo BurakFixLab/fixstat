@@ -6,7 +6,7 @@ import Foundation
 /// measure something fill in `detail` (e.g. "78 / 78 keys", "−38 dBFS peak").
 public struct HardwareCheck: Codable, Sendable, Equatable {
     public enum Item: String, CaseIterable, Codable, Sendable {
-        case keyboard, trackpad, display, ambientLight, speakers, microphone, camera, fans, wifi, bluetooth, ports, lid
+        case keyboard, touchBar, trackpad, display, ambientLight, speakers, microphone, camera, fans, wifi, bluetooth, ports, lid
     }
 
     public enum Status: String, Codable, Sendable {
@@ -55,6 +55,7 @@ public struct HardwareCheck: Codable, Sendable, Equatable {
             case .camera: return profile.hasBuiltInCamera
             case .lid: return profile.hasLid
             case .fans: return profile.hasFans
+            case .touchBar: return profile.touchBar != nil
             case .speakers, .wifi, .bluetooth, .ports: return true
             }
         }
@@ -110,11 +111,22 @@ public enum KeyboardLayout {
     /// Key code used for the Touch ID / power button position (not a real key code: that
     /// button never reaches apps).
     public static let touchIDPlaceholder = -1
+    /// The Touch Bar in place of the function keys (tested on its own, not a key).
+    public static let touchBarPlaceholder = -2
 
-    public static func rows(_ kind: Kind) -> [[Key]] {
-        let function: [Key] = [Key(53, 1.5, "esc")]
-            + [122, 120, 99, 118, 96, 97, 98, 100, 101, 109, 103, 111].enumerated().map { Key($1, 1, "F\($0 + 1)") }
-            + [Key(touchIDPlaceholder, 1, "⏻")]
+    /// - Parameter touchBar: the function row is a Touch Bar (with or without a physical Esc).
+    public static func rows(_ kind: Kind, touchBar: HardwareProfile.TouchBar? = nil) -> [[Key]] {
+        let function: [Key]
+        switch touchBar {
+        case nil:
+            function = [Key(53, 1.5, "esc")]
+                + [122, 120, 99, 118, 96, 97, 98, 100, 101, 109, 103, 111].enumerated().map { Key($1, 1, "F\($0 + 1)") }
+                + [Key(touchIDPlaceholder, 1, "⏻")]
+        case .withEscapeKey?:
+            function = [Key(53, 1, "esc"), Key(touchBarPlaceholder, 12.5, "Touch Bar"), Key(touchIDPlaceholder, 1, "⏻")]
+        case .withoutEscapeKey?:
+            function = [Key(touchBarPlaceholder, 13.5, "Touch Bar"), Key(touchIDPlaceholder, 1, "⏻")]
+        }
         let letters1 = [12, 13, 14, 15, 17, 16, 32, 34, 31, 35, 33, 30].map { Key($0) }
         let letters2 = [0, 1, 2, 3, 5, 4, 38, 40, 37, 41, 39].map { Key($0) }
         let letters3 = [6, 7, 8, 9, 11, 45, 46, 43, 47, 44].map { Key($0) }
@@ -146,8 +158,8 @@ public enum KeyboardLayout {
         }
     }
 
-    /// Every testable key code of the layout (Touch ID excluded).
-    public static func codes(_ kind: Kind) -> Set<Int> {
-        Set(rows(kind).joined().map(\.code).filter { $0 != touchIDPlaceholder })
+    /// Every testable key code of the layout (Touch ID and the Touch Bar excluded).
+    public static func codes(_ kind: Kind, touchBar: HardwareProfile.TouchBar? = nil) -> Set<Int> {
+        Set(rows(kind, touchBar: touchBar).joined().map(\.code).filter { $0 >= 0 })
     }
 }

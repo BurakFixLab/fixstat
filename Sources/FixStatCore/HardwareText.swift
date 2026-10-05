@@ -5,6 +5,7 @@ public enum HardwareText {
     public static func title(_ item: HardwareCheck.Item) -> String {
         switch item {
         case .keyboard: L("Keyboard")
+        case .touchBar: L("Touch Bar")
         case .trackpad: L("Trackpad")
         case .display: L("Display")
         case .ambientLight: L("Ambient light sensor")
@@ -22,6 +23,7 @@ public enum HardwareText {
     public static func symbol(_ item: HardwareCheck.Item) -> String {
         switch item {
         case .keyboard: "keyboard"
+        case .touchBar: "rectangle.and.pencil.and.ellipsis"
         case .trackpad: "rectangle.and.hand.point.up.left"
         case .display: "display"
         case .ambientLight: "sun.max"
@@ -40,6 +42,8 @@ public enum HardwareText {
         switch item {
         case .keyboard:
             L("Press every key. A key turns blue once it registers; a key that stays grey did not respond. Hold fn for the top row, otherwise macOS uses those keys itself. Touch ID / power cannot be tested here.")
+        case .touchBar:
+            L("Touch test: slide a finger along the whole Touch Bar, Esc and Control Strip area included; cells that stay grey did not register a touch. Colours: solid colours on the Touch Bar to spot dead pixels, lines and stains. Touch ID is not tested here.")
         case .trackpad:
             L("Run a finger over the whole trackpad surface; the pointer can be anywhere. Cells that stay empty did not register touches. Then click once in each of the nine zones and secondary-click (two fingers) in each zone, keeping the pointer in this window. Also force click, scroll and pinch.")
         case .display:

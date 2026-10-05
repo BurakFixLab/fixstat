@@ -99,6 +99,7 @@ private struct CheckDetail: View {
             Group {
                 switch item {
                 case .keyboard: KeyboardTestView()
+                case .touchBar: TouchBarTestView()
                 case .trackpad: TrackpadTestView()
                 case .display: DisplayTestView()
                 case .ambientLight: AmbientLightTestView()

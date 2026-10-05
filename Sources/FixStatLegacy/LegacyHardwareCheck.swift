@@ -188,6 +188,7 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
                 return !(window.firstResponder is NSText)
             }
             return pane
+        case .touchBar: return LegacyTouchBarPane(core: core)
         case .trackpad: return LegacyTrackpadPane(core: core)
         case .display: return LegacyDisplayPane(core: core)
         case .ambientLight: return LegacyAmbientLightPane(core: core)
@@ -725,5 +726,66 @@ final class LegacyFanPane: BlockPane, LegacySnapshotStartable {
             }]))
         }
         return blocks
+    }
+}
+
+/// Touch Bar: touch cells and solid colours on the bar (core `TouchBarTester`).
+final class LegacyTouchBarPane: BlockPane {
+    private let tester = TouchBarTester()
+
+    override init(core: MonitorCore) {
+        super.init(core: core)
+        tester.onChange = { [weak self] in
+            guard let self else { return }
+            if tester.mode == .touch {
+                core.recordCheck(.touchBar, detail: TouchBarText.progress(tester), passed: tester.allTouched)
+            }
+            refresh()
+        }
+    }
+
+    override func deactivate() {
+        tester.stop()
+    }
+
+    override func blocks() -> [Block] {
+        var blocks: [Block] = [.view(TouchBarMirrorView(touched: tester.touched)), .secondary(TouchBarText.progress(tester))]
+        if tester.mode != .off, !tester.fullWidth {
+            blocks.append(.status(L("The Touch Bar could not be shown full width: keep this window in front."), .neutral))
+        }
+        var actions = [DocAction(title: L("Start touch test")) { [unowned self] in tester.startTouchTest() }]
+        actions += TouchBarTester.colours.indices.map { index in
+            DocAction(title: TouchBarText.colourName(index)) { [unowned self] in tester.showColour(index) }
+        }
+        if tester.mode != .off {
+            actions.append(DocAction(title: L("Stop")) { [unowned self] in tester.stop() })
+        }
+        blocks.append(.actions(actions))
+        return blocks
+    }
+}
+
+/// The Touch Bar's cells in the window: green where it registered a touch.
+final class TouchBarMirrorView: NSView {
+    private let touched: Set<Int>
+
+    init(touched: Set<Int>) {
+        self.touched = touched
+        super.init(frame: .zero)
+        translatesAutoresizingMaskIntoConstraints = false
+        heightAnchor.constraint(equalToConstant: 26).isActive = true
+        widthAnchor.constraint(equalToConstant: 560).isActive = true
+    }
+
+    required init?(coder: NSCoder) { fatalError("not used") }
+
+    override func draw(_ dirtyRect: NSRect) {
+        let count = TouchBarTester.cellCount
+        let width = bounds.width / CGFloat(count)
+        for index in 0..<count {
+            let cell = NSRect(x: CGFloat(index) * width + 1, y: 2, width: width - 2, height: bounds.height - 4)
+            (touched.contains(index) ? LegacyStyle.cool : NSColor.labelColor.withAlphaComponent(0.12)).setFill()
+            NSBezierPath(roundedRect: cell, xRadius: 3, yRadius: 3).fill()
+        }
     }
 }

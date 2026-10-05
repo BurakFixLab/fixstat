@@ -17,11 +17,12 @@ final class LegacyKeyboardPane: BlockPane {
     /// True while the hardware check window is key and no text field is being edited.
     var isFocused: () -> Bool = { false }
 
-    private var total: Int { KeyboardLayout.codes(kind).count }
+    private var total: Int { KeyboardLayout.codes(kind, touchBar: core.profile.touchBar).count }
 
     override init(core: MonitorCore) {
         super.init(core: core)
         drawing.kind = kind
+        drawing.touchBarKind = core.profile.touchBar
         drawing.translatesAutoresizingMaskIntoConstraints = false
         drawing.heightAnchor.constraint(equalTo: drawing.widthAnchor, multiplier: 5.65 / 14.5).isActive = true
     }
@@ -128,7 +129,7 @@ final class LegacyKeyboardPane: BlockPane {
     }
 
     private func register(_ code: Int, down: Bool) {
-        guard KeyboardLayout.codes(kind).contains(code) else { return }
+        guard KeyboardLayout.codes(kind, touchBar: core.profile.touchBar).contains(code) else { return }
         if down {
             held.insert(code)
             if pressed.insert(code).inserted {
@@ -146,6 +147,7 @@ final class LegacyKeyboardPane: BlockPane {
 /// Draws the keyboard rows, 14.5 units wide.
 final class KeyboardDrawingView: NSView {
     var kind = KeyboardLayout.Kind.ansi { didSet { needsDisplay = true } }
+    var touchBarKind: HardwareProfile.TouchBar? { didSet { needsDisplay = true } }
     var pressed: Set<Int> = [] { didSet { if pressed != oldValue { needsDisplay = true } } }
     var held: Set<Int> = [] { didSet { if held != oldValue { needsDisplay = true } } }
     var legends: [Int: String] = [:] { didSet { needsDisplay = true } }
@@ -156,7 +158,7 @@ final class KeyboardDrawingView: NSView {
         let unit = bounds.width / 14.5
         let gap = unit * 0.1
         var y: CGFloat = 0
-        for (index, row) in KeyboardLayout.rows(kind).enumerated() {
+        for (index, row) in KeyboardLayout.rows(kind, touchBar: touchBarKind).enumerated() {
             let height = (index == 0 ? 0.55 : 0.9) * unit
             var x: CGFloat = 0
             var halfColumn: (x: CGFloat, count: Int)?
@@ -191,7 +193,7 @@ final class KeyboardDrawingView: NSView {
             NSColor.labelColor.withAlphaComponent(0.1).setFill()
         }
         path.fill()
-        if key.code == KeyboardLayout.touchIDPlaceholder {
+        if key.code < 0 { // Touch ID, Touch Bar
             NSColor.tertiaryLabelColor.setStroke()
             path.setLineDash([3, 3], count: 2, phase: 0)
             path.stroke()

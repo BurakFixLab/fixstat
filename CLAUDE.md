@@ -306,7 +306,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   MultitouchSupport framework via `dlopen` in `multitouch.c`, independent of the
   pointer → 16×10 surface grid; clicks assigned to 3×3 zones by the pressing finger /
   the centre of two fingers; force click / scroll / pinch, haptic pulses), display
-  (full-screen colours on the built-in screen), fans (`FanCheck` / `FanTestRunner`: CPU + GPU load
+  (full-screen colours on the built-in screen), Touch Bar (`TouchBarTester`: 32 touch cells
+  and solid colours, shown full width through the private system-modal NSTouchBar class
+  methods, falling back to the key window's bar; models in `HardwareProfile.touchBar`, with
+  or without a physical Esc, and the keyboard layout drops the F-keys there;
+  `-FixStatTouchBar withEscapeKey|withoutEscapeKey` pretends one), fans (`FanCheck` / `FanTestRunner`: CPU + GPU load
   for 90 s, every fan must follow its SMC target `F<n>Tg`; stalled or far below the target
   fails; no target rise = no verdict; `-FixStatSimulateFans N` fakes fans on a fanless Mac),
   speakers (L/R tones, sweep), microphone

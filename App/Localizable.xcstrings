@@ -269,6 +269,22 @@
         }
       }
     },
+    "%lld / %lld zones touched" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / %2$lld zones touched"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / %2$lld bölgeye dokunuldu"
+          }
+        }
+      }
+    },
     "%lld bits per cell" : {
       "localizations" : {
         "tr" : {
@@ -1090,12 +1106,32 @@
         }
       }
     },
+    "Black" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siyah"
+          }
+        }
+      }
+    },
     "Block" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Blok"
+          }
+        }
+      }
+    },
+    "Blue" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mavi"
           }
         }
       }
@@ -2662,6 +2698,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Genel"
+          }
+        }
+      }
+    },
+    "Green" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeşil"
           }
         }
       }
@@ -5058,6 +5104,16 @@
         }
       }
     },
+    "Red" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kırmızı"
+          }
+        }
+      }
+    },
     "Refresh" : {
       "localizations" : {
         "tr" : {
@@ -5904,6 +5960,16 @@
         }
       }
     },
+    "Start touch test" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dokunma testini başlat"
+          }
+        }
+      }
+    },
     "Startup volume" : {
       "localizations" : {
         "tr" : {
@@ -6232,6 +6298,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SSD kritik uyarı bildiriyor (kod %lld)."
+          }
+        }
+      }
+    },
+    "The Touch Bar could not be shown full width: keep this window in front." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touch Bar tam genişlikte gösterilemedi: bu pencereyi önde tutun."
           }
         }
       }
@@ -6592,6 +6668,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yazılan toplam LBA"
+          }
+        }
+      }
+    },
+    "Touch Bar" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touch Bar"
+          }
+        }
+      }
+    },
+    "Touch test: slide a finger along the whole Touch Bar, Esc and Control Strip area included; cells that stay grey did not register a touch. Colours: solid colours on the Touch Bar to spot dead pixels, lines and stains. Touch ID is not tested here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dokunma testi: parmağınızı Esc ve Control Strip alanı dahil Touch Bar'ın tamamında kaydırın; gri kalan hücreler dokunmayı algılamadı. Renkler: ölü piksel, çizgi ve lekeleri görmek için Touch Bar'da düz renkler. Touch ID burada test edilmez."
           }
         }
       }
@@ -7012,6 +7108,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Menü kapalıyken değerler enerji tasarrufu için en fazla 5 saniyede bir yenilenir."
+          }
+        }
+      }
+    },
+    "White" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beyaz"
           }
         }
       }

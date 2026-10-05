@@ -53,7 +53,7 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
   (deşarj) testi, uykuda ve kapalıyken batarya tüketimiyle uyku / uyanma analizi, cihaz
   kartı (Aktivasyon Kilidi, MDM, parça numarası) ve donanım kontrolü
   (klavye, trackpad yüzeyi, ekran, hoparlör, mikrofon, kamera,
-  yük altında fanlar, Wi-Fi, Bluetooth, arıza
+  Touch Bar, yük altında fanlar, Wi-Fi, Bluetooth, arıza
   sayaçlı USB-C portları, kapak sensörü).
 - **Mac'e uyum.** iMac, Mac mini veya Mac Studio'da batarya araçları gizlenir; donanım
   kontrolü yalnızca o Mac'te bulunan parçaları listeler.

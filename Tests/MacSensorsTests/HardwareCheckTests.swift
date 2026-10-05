@@ -43,6 +43,33 @@ import Testing
         #expect(try! JSONDecoder().decode(HardwareCheck.self, from: data) == check)
     }
 
+    @Test func touchBarLayouts() {
+        let full = KeyboardLayout.codes(.ansi)
+        let withEscape = KeyboardLayout.codes(.ansi, touchBar: .withEscapeKey)
+        let withoutEscape = KeyboardLayout.codes(.ansi, touchBar: .withoutEscapeKey)
+        let fKeys: Set<Int> = [122, 120, 99, 118, 96, 97, 98, 100, 101, 109, 103, 111]
+        #expect(full.isSuperset(of: fKeys))
+        #expect(withEscape == full.subtracting(fKeys))
+        #expect(withoutEscape == full.subtracting(fKeys).subtracting([53]))
+        for touchBar in [HardwareProfile.TouchBar.withEscapeKey, .withoutEscapeKey] {
+            for kind in [KeyboardLayout.Kind.ansi, .iso] {
+                // The function row stays 14.5 units wide.
+                #expect(KeyboardLayout.rows(kind, touchBar: touchBar)[0].map(\.width).reduce(0, +) == 14.5)
+            }
+        }
+    }
+
+    @Test func touchBarModels() {
+        #expect(HardwareProfile.touchBar(model: "MacBookPro15,2") == .withoutEscapeKey) // A1989, butterfly
+        #expect(HardwareProfile.touchBar(model: "MacBookPro17,1") == .withEscapeKey)    // A2338
+        #expect(HardwareProfile.touchBar(model: "MacBookPro16,3") == .withEscapeKey)    // A2289
+        #expect(HardwareProfile.touchBar(model: "MacBookPro14,1") == nil)               // no Touch Bar
+        #expect(HardwareProfile.touchBar(model: "Mac14,2") == nil)
+        let items = HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true, touchBar: .withEscapeKey))
+        #expect(items.prefix(2) == [.keyboard, .touchBar])
+        #expect(!HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true)).contains(.touchBar))
+    }
+
     @Test func hardwareKind() {
         #expect(HardwareProfile.kind(marketingName: "MacBook Air (M2, 2022)", model: "Mac14,2") == .notebook)
         #expect(HardwareProfile.kind(marketingName: "iMac (24-inch, 2024)", model: "Mac16,2") == .allInOne)
@@ -59,9 +86,11 @@ import Testing
         #expect(mini == [.speakers, .wifi, .bluetooth, .ports])
         let iMac = HardwareCheck.items(for: HardwareProfile(kind: .allInOne, hasBattery: false))
         #expect(iMac == [.display, .ambientLight, .speakers, .microphone, .camera, .wifi, .bluetooth, .ports])
-        #expect(HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true, hasFans: true)) == HardwareCheck.Item.allCases)
-        // Fanless MacBook Air: everything but the fan test.
-        #expect(HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true)) == HardwareCheck.Item.allCases.filter { $0 != .fans })
+        #expect(HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true, hasFans: true, touchBar: .withEscapeKey))
+            == HardwareCheck.Item.allCases)
+        // Fanless MacBook Air: everything but the fan and Touch Bar tests.
+        #expect(HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true))
+            == HardwareCheck.Item.allCases.filter { $0 != .fans && $0 != .touchBar })
         let iMacWithFans = HardwareCheck.items(for: HardwareProfile(kind: .allInOne, hasBattery: false, hasFans: true))
         #expect(iMacWithFans == [.display, .ambientLight, .speakers, .microphone, .camera, .fans, .wifi, .bluetooth, .ports])
 

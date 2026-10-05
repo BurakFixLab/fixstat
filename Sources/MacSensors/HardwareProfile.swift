@@ -23,11 +23,34 @@ public struct HardwareProfile: Codable, Sendable, Equatable {
     /// The SMC reports fans (`FNum` > 0): MacBook Pro, iMac, Mac mini, Mac Studio, Mac Pro
     /// and older MacBook Airs; not the fanless Apple Silicon MacBook Airs.
     public var hasFans: Bool
+    /// MacBook Pros with a Touch Bar instead of the function keys.
+    public var touchBar: TouchBar?
 
-    public init(kind: Kind, hasBattery: Bool, hasFans: Bool = false) {
+    public enum TouchBar: String, Codable, Sendable {
+        /// Magic Keyboard models with a physical Esc key: 16-inch 2019 (A2141), 13-inch 2020
+        /// (A2251, A2289), 13-inch M1 / M2 (A2338).
+        case withEscapeKey
+        /// Butterfly keyboard models 2016 – 2019 (e.g. A1706, A1707, A1989, A1990, A2159):
+        /// Esc is on the Touch Bar.
+        case withoutEscapeKey
+    }
+
+    public init(kind: Kind, hasBattery: Bool, hasFans: Bool = false, touchBar: TouchBar? = nil) {
         self.kind = kind
         self.hasBattery = hasBattery
         self.hasFans = hasFans
+        self.touchBar = touchBar
+    }
+
+    /// Touch Bar models by identifier (a closed set: no Mac after 2022 has one).
+    public static func touchBar(model: String) -> TouchBar? {
+        let withoutEscape: Set<String> = ["MacBookPro13,2", "MacBookPro13,3", "MacBookPro14,2", "MacBookPro14,3",
+                                          "MacBookPro15,1", "MacBookPro15,2", "MacBookPro15,3", "MacBookPro15,4"]
+        let withEscape: Set<String> = ["MacBookPro16,1", "MacBookPro16,2", "MacBookPro16,3", "MacBookPro16,4",
+                                       "MacBookPro17,1", "Mac14,7"]
+        if withoutEscape.contains(model) { return .withoutEscapeKey }
+        if withEscape.contains(model) { return .withEscapeKey }
+        return nil
     }
 
     public var isNotebook: Bool { kind == .notebook }
@@ -47,12 +70,16 @@ public struct HardwareProfile: Codable, Sendable, Equatable {
     public static func current(system: SystemInfo = .current()) -> HardwareProfile {
         let battery = batteryInstalled()
         let fans = ((try? SMC())?.fans().count ?? 0) > 0 || UserDefaults.standard.integer(forKey: "FixStatSimulateFans") > 0
+        // `-FixStatTouchBar withEscapeKey|withoutEscapeKey` pretends a Touch Bar (UI checks).
+        let touchBar = UserDefaults.standard.string(forKey: "FixStatTouchBar").flatMap(TouchBar.init(rawValue:))
+            ?? Self.touchBar(model: system.model)
         if let raw = UserDefaults.standard.string(forKey: "FixStatHardwareKind"), let kind = Kind(rawValue: raw) {
-            return HardwareProfile(kind: kind, hasBattery: battery && kind == .notebook, hasFans: fans)
+            return HardwareProfile(kind: kind, hasBattery: battery && kind == .notebook, hasFans: fans,
+                                   touchBar: kind == .notebook ? touchBar : nil)
         }
         let kind = Self.kind(marketingName: system.marketingName, model: system.model)
             ?? (battery || LidSensor.isClosed() != nil ? .notebook : .desktop)
-        return HardwareProfile(kind: kind, hasBattery: battery, hasFans: fans)
+        return HardwareProfile(kind: kind, hasBattery: battery, hasFans: fans, touchBar: touchBar)
     }
 
     /// Kind from the product name ("MacBook Air (M2, 2022)", "iMac (24-inch, M4, 2024)",
