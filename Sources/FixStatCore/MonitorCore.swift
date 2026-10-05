@@ -81,6 +81,28 @@ public final class MonitorCore {
 
     public let history: BatteryHistoryStore
     public private(set) var offState: OffStateRecorder?
+    /// Gauge snapshots around sleeps (notebooks with a battery).
+    public private(set) var drainRecorder: DrainRecorder?
+
+    /// Drain detective over the measured sleeps and shutdowns; `analysis` adds the dark
+    /// wakes and settings from the power log.
+    public func drainReport(analysis: SleepAnalysis?) -> DrainReport {
+        DrainReport.make(segments: DrainRecorder.load(from: Self.dataDirectory) + Self.sampleDrainSegments(), analysis: analysis)
+    }
+
+    /// `-FixStatSampleDrain YES`: a made-up night (high drain asleep, normal shut down) for
+    /// checking the screens.
+    static func sampleDrainSegments() -> [DrainSegment] {
+        guard UserDefaults.standard.bool(forKey: "FixStatSampleDrain") else { return [] }
+        let night = Date().addingTimeInterval(-86_400)
+        func snapshot(_ date: Date, _ remaining: Int) -> GaugeSnapshot {
+            GaugeSnapshot(date: date, remaining: remaining, charge: nil, externalConnected: false, isCharging: false,
+                          cellQmax: nil, cellDOD0: nil, cellVoltages: nil)
+        }
+        return [DrainSegment(kind: .sleep, start: snapshot(night, 3000), end: snapshot(night.addingTimeInterval(8 * 3600), 2440)),
+                DrainSegment(kind: .off, start: snapshot(night.addingTimeInterval(10 * 3600), 2400),
+                             end: snapshot(night.addingTimeInterval(20 * 3600), 2370))]
+    }
     private var sampler: TemperatureSampler?
     private var dieSMCKeys: [String] = []
     private let stats = SystemStats()
@@ -100,6 +122,7 @@ public final class MonitorCore {
         history = BatteryHistoryStore(directory: Self.dataDirectory)
         if !CommandLine.arguments.contains("--snapshot") && !CommandLine.arguments.contains("--export") {
             offState = OffStateRecorder(directory: Self.dataDirectory)
+            if profile.hasBattery { drainRecorder = DrainRecorder(directory: Self.dataDirectory) }
             // Judged from the battery charge before the shutdown: notebooks only.
             if profile.hasBattery { UnexpectedShutdown.checkAtLaunch() }
         }

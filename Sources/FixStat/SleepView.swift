@@ -42,6 +42,10 @@ struct SleepView: View {
         }
         .font(.callout)
 
+        if monitor.profile.hasBattery {
+            DrainCard(report: monitor.core.drainReport(analysis: a))
+        }
+
         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 8) {
             Tile(title: "Sleeps", value: Format.number(Double(a.sleeps.count)))
             Tile(title: "Wakes", value: Format.number(Double(a.wakes.count)))
@@ -181,5 +185,37 @@ struct SleepView: View {
             Text(verbatim: value).foregroundStyle(.secondary)
         }
         .font(.callout)
+    }
+}
+
+/// Drain detective: drain while asleep / shut down and what it points to.
+@available(macOS 14.0, *)
+private struct DrainCard: View {
+    let report: DrainReport
+
+    var body: some View {
+        let headline = DrainText.headline(report)
+        VStack(alignment: .leading, spacing: 8) {
+            SectionTitle(title: "Drain detective")
+            Label(headline.text, systemImage: headline.problem == true ? "exclamationmark.triangle.fill"
+                  : headline.problem == false ? "checkmark.seal.fill" : "info.circle")
+                .foregroundStyle(headline.problem == true ? TemperatureColor.hot
+                                 : headline.problem == false ? TemperatureColor.cool : .secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 4) {
+                ForEach(Array(DrainText.rows(report).enumerated()), id: \.offset) { _, row in
+                    GridRow {
+                        Text(verbatim: row.0).foregroundStyle(.secondary)
+                        Text(verbatim: row.1)
+                    }
+                }
+            }
+            Text(verbatim: DrainText.guide).font(.caption).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .font(.callout)
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
     }
 }

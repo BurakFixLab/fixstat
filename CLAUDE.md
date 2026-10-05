@@ -279,6 +279,17 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   `NSWorkspace.willPowerOffNotification` (also sent for logout: only kept if a boot follows)
   and reads it at the next launch within 15 min of the boot. mAh per hour = mA while off.
   Log-based periods are only flagged with ≥ 3 points of drop (whole percentages).
+- Drain detective (`DrainDetective.swift`, `DrainRecorder`, `DrainText`; Sleep window and PDF):
+  `GaugeSnapshot` (remaining mAh, per-cell `Qmax` and `DOD0` from `BatteryData`) saved on
+  `willSleep` / read on `didWake` (`drain-segments.json`, last 60), and around shutdowns by
+  `OffStateRecorder` (`PowerOffMark.gauge`). Only segments ≥ 1 h on battery count. Cells are in
+  series, so a load drains every cell alike: when the gauge took a new open-circuit
+  measurement (DOD0 changed), loss per cell = ΔDOD0 / 16384 × Qmax, and a cell losing more than
+  the others self-discharges (unless it was the highest charged one: balancing). Verdict:
+  dark wakes (> 2 / h or > 10 % awake) → software; a self-discharging cell → battery; high
+  drain without wakes → hardware, `alwaysOn` when shutdowns drain too (G3H / AON) or only
+  asleep (sleep rails). Rough levels until reference values exist: asleep 20 / 50 mA, shut
+  down 10 / 30 mA. `-FixStatSampleDrain YES` adds a made-up night.
 - Capacity test runs can go to 0 %: samples are appended to `capacity-run.jsonl` in the data
   directory and recovered at the next launch if the Mac turned off (above 5 % that is an
   "unexpected shutdown" finding: the pack could not deliver what the gauge showed); a wake

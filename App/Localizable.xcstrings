@@ -1,6 +1,22 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ (%@; median of %lld, %@ in total)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (%2$@; median of %3$lld, %4$@ in total)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (%2$@; %3$lld ölçümün ortancası, toplam %4$@)"
+          }
+        }
+      }
+    },
     "%@ (raw)" : {
       "localizations" : {
         "tr" : {
@@ -61,6 +77,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ arayüz CRC hatası: SATA kablosunu / flex'i ve konnektörü kontrol edin."
+          }
+        }
+      }
+    },
+    "%@ lost beyond the other cells" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "diğer hücrelerden %@ fazla kayıp"
           }
         }
       }
@@ -425,6 +451,22 @@
         }
       }
     },
+    "%lld · %@ awake" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld · %2$@ awake"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld · %2$@ uyanık"
+          }
+        }
+      }
+    },
     "%lld. " : {
       "localizations" : {
         "tr" : {
@@ -457,6 +499,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld× · en çok %2$@ ms"
+          }
+        }
+      }
+    },
+    "(highest charged cell: may be cell balancing)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(en dolu hücre: hücre dengelemesi olabilir)"
           }
         }
       }
@@ -974,6 +1026,16 @@
         }
       }
     },
+    "Battery drain while asleep and shut down is normal." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uykuda ve kapalıyken pil tüketimi normal."
+          }
+        }
+      }
+    },
     "Battery empty" : {
       "localizations" : {
         "tr" : {
@@ -1288,6 +1350,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hücre %1$lld yük altında %2$@ değerine düştü (sınır %3$@)"
+          }
+        }
+      }
+    },
+    "Cell %lld loses charge by itself: the battery, not the board." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre %lld kendi kendine boşalıyor: sorun kartta değil, pilde."
           }
         }
       }
@@ -1898,6 +1970,16 @@
         }
       }
     },
+    "Dark wakes while asleep" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uykudayken DarkWake"
+          }
+        }
+      }
+    },
     "Data read" : {
       "localizations" : {
         "tr" : {
@@ -2084,6 +2166,16 @@
         }
       }
     },
+    "Drain detective" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drenaj dedektifi"
+          }
+        }
+      }
+    },
     "Drain while asleep" : {
       "localizations" : {
         "tr" : {
@@ -2094,12 +2186,32 @@
         }
       }
     },
+    "Drain while asleep (measured)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uykuda tüketim (ölçülen)"
+          }
+        }
+      }
+    },
     "Drain while shut down" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kapalıyken tüketim"
+          }
+        }
+      }
+    },
+    "Drain while shut down (measured)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapalıyken tüketim (ölçülen)"
           }
         }
       }
@@ -2894,12 +3006,42 @@
         }
       }
     },
+    "High drain only while asleep, without wakes: suspect a rail powered in sleep (memory, S2R) or a device that stays powered. Confirm with a current meter and a thermal camera." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyanma olmadan yalnızca uykuda yüksek tüketim: uykuda enerjili bir ray (bellek, S2R) veya enerjili kalan bir cihaz şüpheli. Akım ölçer ve termal kamerayla doğrulayın."
+          }
+        }
+      }
+    },
+    "High drain while asleep without wakes: suspect a leak on the board. Shut the Mac down for an hour to narrow it down, and confirm with a current meter and a thermal camera." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyanma olmadan uykuda yüksek tüketim: kartta kaçak şüphesi. Yeri daraltmak için Mac'i bir saat kapalı tutun; akım ölçer ve termal kamerayla doğrulayın."
+          }
+        }
+      }
+    },
     "High drain while shut down: %@. A Mac that is off should lose very little; suspect a leakage current on the board or a battery with high self-discharge." : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kapalıyken yüksek tüketim: %@. Kapalı bir Mac çok az kaybetmeli; kartta kaçak akımdan veya kendi kendine boşalması yüksek bir bataryadan şüphelenin."
+          }
+        }
+      }
+    },
+    "High drain without wakes, also while shut down: suspect the always-on rails (G3H / AON) or the battery pack. Confirm with a current meter and a thermal camera." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyanma olmadan, kapalıyken de yüksek tüketim: always-on raylar (G3H / AON) veya pil paketi şüpheli. Akım ölçer ve termal kamerayla doğrulayın."
           }
         }
       }
@@ -3120,6 +3262,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ağ bağlantılarını koru (TCP keepalive)"
+          }
+        }
+      }
+    },
+    "Keep the Mac awake" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac'i uyanık tutanlar"
           }
         }
       }
@@ -3892,6 +4044,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kernel panic raporu bulunamadı."
+          }
+        }
+      }
+    },
+    "No measurement yet. Unplug the adapter and let the Mac sleep for at least an hour (overnight is best) while FixStat runs. For the shutdown measurement, shut it down for at least an hour; FixStat must open at login." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz ölçüm yok. Adaptörü çıkarın ve FixStat çalışırken Mac'i en az bir saat uyutun (en iyisi bir gece). Kapalı ölçümü için Mac'i en az bir saat kapalı tutun; FixStat oturum açılışında başlamalı."
           }
         }
       }
@@ -5244,6 +5406,22 @@
         }
       }
     },
+    "Rough guide until reference values per model exist: asleep below %@, shut down below %@ is normal. Only sleeps and shutdowns of at least an hour on battery count." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rough guide until reference values per model exist: asleep below %1$@, shut down below %2$@ is normal. Only sleeps and shutdowns of at least an hour on battery count."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model başına referans değerler oluşana kadar kaba ölçü: uykuda %1$@, kapalıyken %2$@ altı normaldir. Yalnızca pilde en az bir saat süren uyku ve kapanmalar sayılır."
+          }
+        }
+      }
+    },
     "Rounds" : {
       "localizations" : {
         "tr" : {
@@ -5520,6 +5698,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayarlar"
+          }
+        }
+      }
+    },
+    "Settings that wake the Mac" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac'i uyandıran ayarlar"
           }
         }
       }
@@ -6398,6 +6586,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ekran hiç kapanmayacak şekilde ayarlı."
+          }
+        }
+      }
+    },
+    "The drain while asleep comes from the Mac waking up (dark wakes): software, settings or a device that wakes it, not the board." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uykudaki tüketim Mac'in uyanmasından geliyor (DarkWake): kart değil, yazılım, ayarlar veya onu uyandıran bir cihaz."
           }
         }
       }
@@ -7378,6 +7576,16 @@
         }
       }
     },
+    "elevated" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yüksekçe"
+          }
+        }
+      }
+    },
     "estimated" : {
       "localizations" : {
         "tr" : {
@@ -7414,6 +7622,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "günlükten, güç kesildi"
+          }
+        }
+      }
+    },
+    "high" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yüksek"
           }
         }
       }
@@ -7554,6 +7772,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "yok"
+          }
+        }
+      }
+    },
+    "normal" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "normal"
           }
         }
       }

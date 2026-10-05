@@ -25,6 +25,8 @@ public struct ReportData {
     public let sleep: SleepAnalysis?
     public let offPeriods: [OffPeriod]
     public let capacity: CapacityResult?
+    /// Drain detective (notebooks with a battery).
+    public let drain: DrainReport?
 
     /// Reads what the report needs (system_profiler, SMART, panics: about a second).
     public init(monitor: MonitorCore) {
@@ -50,6 +52,7 @@ public struct ReportData {
         sleep = monitor.lastSleepAnalysis
         offPeriods = monitor.lastSleepAnalysis.map(monitor.offPeriods) ?? []
         capacity = monitor.lastCapacityResult
+        drain = monitor.profile.hasBattery ? monitor.drainReport(analysis: monitor.lastSleepAnalysis) : nil
     }
 }
 
@@ -368,6 +371,10 @@ private final class ReportWriter {
         row(L("Drain while shut down"), OffStateDrain.summary(data.offPeriods).map(SleepText.offSummary))
         if let top = a.reasons(.wake, limit: 3).first {
             row(L("Most common wake reason"), "\(SleepText.category(top.name) ?? top.name) (\(top.count)×)")
+        }
+        if let drain = data.drain, drain.conclusion != .noData {
+            row(L("Drain detective"), DrainText.headline(drain).text)
+            twoColumns(DrainText.rows(drain))
         }
         let findings = SleepText.findings(a) + SleepText.offFindings(data.offPeriods)
         for f in findings { text("• " + f) }

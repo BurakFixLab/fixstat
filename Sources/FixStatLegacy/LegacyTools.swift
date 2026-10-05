@@ -456,6 +456,16 @@ final class LegacySleep {
             (L("Low battery warnings"), Format.number(Double(a.lowBatteryWarnings))),
         ], columns: 4))
 
+        if core.profile.hasBattery {
+            let drain = core.drainReport(analysis: a)
+            let headline = DrainText.headline(drain)
+            var inner: [Block] = [.status(headline.text, headline.problem.map { $0 ? .bad : .good } ?? .neutral)]
+            let rows = DrainText.rows(drain)
+            if !rows.isEmpty { inner.append(.rows(rows.map { DocRow(title: $0.0, value: $0.1) }, labelWidth: 220)) }
+            inner.append(.caption(DrainText.guide))
+            blocks.append(.group(L("Drain detective"), inner))
+        }
+
         let off = core.offPeriods(a)
         let findings = SleepText.findings(a) + SleepText.offFindings(off)
         if findings.isEmpty {

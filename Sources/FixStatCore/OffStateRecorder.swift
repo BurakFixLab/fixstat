@@ -36,8 +36,9 @@ public final class OffStateRecorder {
     /// Also posted for a logout; `completePendingMark` only keeps it if a boot followed.
     private func saveMark() {
         let b = BatteryReader.read()
-        let mark = OffStateDrain.PowerOffMark(date: Date(), remaining: b?.rawCurrentCapacity, charge: b?.stateOfCharge,
+        var mark = OffStateDrain.PowerOffMark(date: Date(), remaining: b?.rawCurrentCapacity, charge: b?.stateOfCharge,
                                               fullChargeCapacity: b?.rawMaxCapacity)
+        mark.gauge = GaugeSnapshot.read()
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -54,6 +55,10 @@ public final class OffStateRecorder {
               let period = OffStateDrain.measured(mark: mark, records: OffStateDrain.bootRecords(), now: Date(),
                                                   remaining: b.rawCurrentCapacity, charge: b.stateOfCharge)
         else { return }
+        // The same shutdown as a drain detective segment, with the per-cell split.
+        if let start = mark.gauge, let end = GaugeSnapshot.read() {
+            DrainRecorder.append(DrainSegment(kind: .off, start: start, end: end), in: directory)
+        }
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         encoder.outputFormatting = [.prettyPrinted]

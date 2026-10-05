@@ -60,8 +60,9 @@ public struct OffPeriod: Codable, Sendable, Equatable {
     }
 
     /// Average current while off, mA (= mAh per hour).
+    /// Mean drain in mA; nil when the battery was charged meanwhile (adapter connected).
     public var averageCurrent: Double? {
-        guard hours > 0, let mAh = lostMAh else { return nil }
+        guard hours > 0, let mAh = lostMAh, mAh >= 0 else { return nil }
         return mAh / hours
     }
 
@@ -149,6 +150,8 @@ public enum OffStateDrain {
         public var remaining: Int?
         public var charge: Double?
         public var fullChargeCapacity: Int?
+        /// The whole gauge (per-cell depth of discharge) for the drain detective.
+        public var gauge: GaugeSnapshot?
 
         public init(date: Date, remaining: Int?, charge: Double?, fullChargeCapacity: Int?) {
             self.date = date
