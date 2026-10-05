@@ -290,6 +290,14 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   drain without wakes → hardware, `alwaysOn` when shutdowns drain too (G3H / AON) or only
   asleep (sleep rails). Rough levels until reference values exist: asleep 20 / 50 mA, shut
   down 10 / 30 mA. `-FixStatSampleDrain YES` adds a made-up night.
+- Idle power, display off (`IdlePowerRunner`, `DisplayPower`, `PowerReference`; in the drain
+  detective): brightness 0 through DisplayServices (private) or the IODisplay brightness
+  parameter, restored on every way out (also at the next launch after a crash, from the
+  `idlePower.savedBrightness` default); display sleep only as fallback (the internal trackpad
+  or a touch wakes a sleeping display). 45 s settle, 90 s mean of the SMC's `PSTR` (total
+  system power, every second); the gauge's power (only every ~30 s) as fallback. Compared
+  with `SensorMaps/power-reference.json` (bench values per model, merged from lab records):
+  elevated above max(125 % of the highest, median + 0.5 W).
 - Capacity test runs can go to 0 %: samples are appended to `capacity-run.jsonl` in the data
   directory and recovered at the next launch if the Mac turned off (above 5 % that is an
   "unexpected shutdown" finding: the pack could not deliver what the gauge showed); a wake

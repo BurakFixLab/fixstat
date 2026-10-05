@@ -62,4 +62,33 @@ public enum DrainText {
         L("Rough guide until reference values per model exist: asleep below %@, shut down below %@ is normal. Only sleeps and shutdowns of at least an hour on battery count.",
           SleepText.milliamps(DrainReport.sleepElevated), SleepText.milliamps(DrainReport.offElevated))
     }
+
+    // MARK: Idle power (display off)
+
+    public static func idlePowerProgress(_ runner: IdlePowerRunner) -> String {
+        L("Measuring idle power with the display off · %@ left. Do not touch the Mac.", Format.duration(Double(runner.remaining)))
+    }
+
+    public static var idlePowerButton: String { L("Measure idle power (display off, about 2 min)") }
+
+    public static func idlePowerRows(_ result: IdlePowerResult) -> [(String, String)] {
+        [(L("Idle power, display off"),
+          [Format.watts(result.watts, digits: 1) + " (± " + Format.watts(result.spread, digits: 1) + ")",
+           result.cpu.map { L("CPU %@", Format.percent($0 * 100)) }].compactMap { $0 }.joined(separator: " · "))]
+    }
+
+    /// Compared with good Macs of the model (nil problem: no reference yet).
+    public static func idlePowerVerdict(_ result: IdlePowerResult, reference: PowerReference, model: String) -> (text: String, problem: Bool?) {
+        switch reference.verdict(model: model, watts: result.watts) {
+        case .noReference:
+            return (L("No reference values for this model yet: compare with the same Mac after the repair or with another one of the model."), nil)
+        case let .normal(range, samples):
+            return (L("Within the range of good Macs of this model (%@ – %@, %lld Macs).",
+                      Format.watts(range.lowerBound, digits: 1), Format.watts(range.upperBound, digits: 1), samples), false)
+        case let .elevated(excess, range, samples):
+            return (L("%@ above good Macs of this model (%@ – %@, %lld Macs): a busy process (see CPU) or a leak on a powered rail.",
+                      Format.watts(excess, digits: 1), Format.watts(range.lowerBound, digits: 1),
+                      Format.watts(range.upperBound, digits: 1), samples), true)
+        }
+    }
 }

@@ -24,6 +24,14 @@ public final class MonitorCore {
             ?? URL(fileURLWithPath: "SensorMaps/parts.json")
         return (try? PartsReference.load(from: url)) ?? PartsReference()
     }()
+    /// Idle power with the display off of good Macs per model (`power-reference.json`).
+    public let powerReference: PowerReference = {
+        let url = Bundle.main.url(forResource: "power-reference", withExtension: "json")
+            ?? URL(fileURLWithPath: "SensorMaps/power-reference.json")
+        return PowerReference.load(from: url) ?? PowerReference()
+    }()
+    /// Result of the last idle power measurement (session, for reports).
+    public var lastIdlePower: IdlePowerResult?
 
     /// Called on the main thread after each refresh and after the sensor list changed.
     public var onUpdate: (() -> Void)?
@@ -122,6 +130,7 @@ public final class MonitorCore {
         history = BatteryHistoryStore(directory: Self.dataDirectory)
         if !CommandLine.arguments.contains("--snapshot") && !CommandLine.arguments.contains("--export") {
             offState = OffStateRecorder(directory: Self.dataDirectory)
+            IdlePowerRunner.restoreAfterCrash()
             if profile.hasBattery { drainRecorder = DrainRecorder(directory: Self.dataDirectory) }
             // Judged from the battery charge before the shutdown: notebooks only.
             if profile.hasBattery { UnexpectedShutdown.checkAtLaunch() }

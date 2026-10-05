@@ -8,6 +8,7 @@ struct SleepView: View {
     static let windowID = "sleep"
 
     @Environment(Monitor.self) private var monitor
+    @State private var idleTester: IdlePowerTester?
 
     var body: some View {
         ScrollView {
@@ -24,6 +25,7 @@ struct SleepView: View {
         .frame(minWidth: 640, minHeight: 560)
         .monospacedDigit()
         .task { await reload() }
+        .onAppear { if idleTester == nil { idleTester = IdlePowerTester(core: monitor.core) } }
     }
 
     private func reload() async {
@@ -43,7 +45,7 @@ struct SleepView: View {
         .font(.callout)
 
         if monitor.profile.hasBattery {
-            DrainCard(report: monitor.core.drainReport(analysis: a))
+            DrainCard(report: monitor.core.drainReport(analysis: a), tester: idleTester)
         }
 
         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 8) {
@@ -192,6 +194,7 @@ struct SleepView: View {
 @available(macOS 14.0, *)
 private struct DrainCard: View {
     let report: DrainReport
+    let tester: IdlePowerTester?
 
     var body: some View {
         let headline = DrainText.headline(report)
@@ -212,10 +215,89 @@ private struct DrainCard: View {
             }
             Text(verbatim: DrainText.guide).font(.caption).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
+            if let tester {
+                IdlePowerSection(tester: tester)
+            }
         }
         .font(.callout)
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+/// Idle power with the display off, compared with good Macs of the model.
+@available(macOS 14.0, *)
+private struct IdlePowerSection: View {
+    let tester: IdlePowerTester
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Divider()
+            if tester.running {
+                HStack(spacing: 8) {
+                    ProgressView().controlSize(.small)
+                    Text(verbatim: tester.progress)
+                }
+                Button("Stop") { tester.cancel() }
+            } else {
+                if let failure = tester.failure {
+                    Label(failure, systemImage: "exclamationmark.triangle.fill").foregroundStyle(TemperatureColor.hot)
+                }
+                if let result = tester.result {
+                    ForEach(Array(DrainText.idlePowerRows(result).enumerated()), id: \.offset) { _, row in
+                        HStack {
+                            Text(verbatim: row.0).foregroundStyle(.secondary)
+                            Text(verbatim: row.1)
+                        }
+                    }
+                    if let verdict = tester.verdict {
+                        Label(verdict.text, systemImage: verdict.problem == true ? "exclamationmark.triangle.fill"
+                              : verdict.problem == false ? "checkmark.seal.fill" : "info.circle")
+                            .foregroundStyle(verdict.problem == true ? TemperatureColor.hot
+                                             : verdict.problem == false ? TemperatureColor.cool : .secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                Button(DrainText.idlePowerButton) { tester.start() }
+            }
+        }
+    }
+}
+
+/// SwiftUI view of the core `IdlePowerRunner`.
+@available(macOS 14.0, *)
+@MainActor
+@Observable
+final class IdlePowerTester {
+    private(set) var running = false
+    private(set) var progress = ""
+    private(set) var failure: String?
+    private(set) var result: IdlePowerResult?
+    private(set) var verdict: (text: String, problem: Bool?)?
+
+    @ObservationIgnored private let runner: IdlePowerRunner
+    @ObservationIgnored private let core: MonitorCore
+
+    init(core: MonitorCore) {
+        self.core = core
+        runner = IdlePowerRunner(monitor: core)
+        runner.onChange = { [weak self] in
+            MainActor.assumeIsolated { self?.sync() }
+        }
+        sync()
+    }
+
+    func start() { runner.start() }
+    func cancel() { runner.cancel() }
+
+    private func sync() {
+        running = runner.isRunning
+        progress = running ? DrainText.idlePowerProgress(runner) : ""
+        if case let .failed(message) = runner.state { failure = message } else { failure = nil }
+        if core.lastIdlePower != result {
+            result = core.lastIdlePower
+            verdict = result.map { DrainText.idlePowerVerdict($0, reference: core.powerReference, model: core.system.model) }
+        }
     }
 }

@@ -63,6 +63,11 @@ public final class TemperatureSampler {
         smc?.fans() ?? []
     }
 
+    /// Total system power from the SMC (`PSTR`, W).
+    public func systemPower() -> Double? {
+        smc?.systemPower()
+    }
+
     /// Only the HID sensors (one IPC call), keyed by uid. Cheaper than `sample()`.
     public func sampleHID() -> [String: Double] {
         var values: [String: Double] = [:]

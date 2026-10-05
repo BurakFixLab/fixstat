@@ -1,0 +1,7 @@
+{
+  "models" : {
+
+  },
+  "note" : "Idle system power with the display off (W), measured at the bench on Macs known to be good. One value per Mac.",
+  "schemaVersion" : 1
+}

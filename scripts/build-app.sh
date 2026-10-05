@@ -102,6 +102,7 @@ lipo -create "$work"/*/fixstat-diskscan -output "$app/Contents/MacOS/fixstat-dis
 cp App/Info.plist "$app/Contents/Info.plist"
 cp SensorMaps/sensor-map.json "$app/Contents/Resources/sensor-map.json"
 cp SensorMaps/parts.json "$app/Contents/Resources/parts.json"
+cp SensorMaps/power-reference.json "$app/Contents/Resources/power-reference.json"
 cp App/AppIcon.icns "$app/Contents/Resources/AppIcon.icns"
 cp App/DMGBackground.tiff "$app/Contents/Resources/DMGBackground.tiff" # used by package-release.sh
 # Permission prompts (Info.plist usage descriptions); English comes from Info.plist.

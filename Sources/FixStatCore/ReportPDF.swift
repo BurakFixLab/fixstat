@@ -27,6 +27,9 @@ public struct ReportData {
     public let capacity: CapacityResult?
     /// Drain detective (notebooks with a battery).
     public let drain: DrainReport?
+    /// Idle power with the display off (rows) and its comparison with good Macs.
+    public let idlePower: [(String, String)]
+    public let idlePowerVerdict: String?
 
     /// Reads what the report needs (system_profiler, SMART, panics: about a second).
     public init(monitor: MonitorCore) {
@@ -53,6 +56,10 @@ public struct ReportData {
         offPeriods = monitor.lastSleepAnalysis.map(monitor.offPeriods) ?? []
         capacity = monitor.lastCapacityResult
         drain = monitor.profile.hasBattery ? monitor.drainReport(analysis: monitor.lastSleepAnalysis) : nil
+        idlePower = monitor.lastIdlePower.map(DrainText.idlePowerRows) ?? []
+        idlePowerVerdict = monitor.lastIdlePower.map {
+            DrainText.idlePowerVerdict($0, reference: monitor.powerReference, model: monitor.system.model).text
+        }
     }
 }
 
@@ -376,6 +383,8 @@ private final class ReportWriter {
             row(L("Drain detective"), DrainText.headline(drain).text)
             twoColumns(DrainText.rows(drain))
         }
+        for line in data.idlePower { row(line.0, line.1) }
+        if let verdict = data.idlePowerVerdict { text(verdict) }
         let findings = SleepText.findings(a) + SleepText.offFindings(data.offPeriods)
         for f in findings { text("• " + f) }
         if findings.isEmpty { text(L("No sleep or wake problems found.")) }

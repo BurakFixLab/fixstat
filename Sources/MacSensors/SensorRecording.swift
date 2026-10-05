@@ -22,6 +22,8 @@ public struct SensorRecording: Codable, Sendable {
         /// System power in W without battery charging (input − charging − adapter loss, or
         /// what the battery delivers on battery).
         public var systemPower: Double?
+        /// The SMC's total system power (`PSTR`, W), updated every second.
+        public var smcPower: Double?
         /// User and system shares of all CPUs (0…1), and the share this process used.
         public var cpuUser: Double?
         public var cpuSystem: Double?
@@ -84,6 +86,7 @@ public final class SensorRecorder {
                                             fans: sampler.fans().compactMap(\.actual),
                                             powerIn: input,
                                             systemPower: battery?.systemPowerWatts.map { ($0 * 100).rounded() / 100 },
+                                            smcPower: sampler.systemPower().map { ($0 * 100).rounded() / 100 },
                                             cpuUser: load.map { ($0.user * 1000).rounded() / 1000 },
                                             cpuSystem: load.map { ($0.system * 1000).rounded() / 1000 },
                                             ownCPU: own.map { (min(1, $0) * 1000).rounded() / 1000 })

@@ -419,14 +419,43 @@ final class LegacyCrashHistory {
 
 // MARK: - Sleep and wake
 
-final class LegacySleep {
+final class LegacySleep: LegacySnapshotStartable {
     private let core: MonitorCore
     private(set) var window: LegacyToolWindow!
+    private lazy var idlePower = IdlePowerRunner(monitor: core)
 
     init(core: MonitorCore) {
         self.core = core
         window = LegacyToolWindow(title: L("Sleep and wake"), contentWidth: 680, height: 720) { [unowned self] in blocks() }
         window.onOpen = { [unowned self] in reload() }
+        idlePower.onChange = { [weak self] in self?.window.reload() }
+    }
+
+    /// `--start-test` (snapshots): starts the idle power measurement.
+    func start(seconds: TimeInterval) {
+        idlePower.start()
+    }
+
+    /// Idle power measurement (display off) inside the drain detective.
+    private func idlePowerBlocks() -> [Block] {
+        var blocks: [Block] = []
+        switch idlePower.state {
+        case .settling, .measuring:
+            blocks.append(.progress(DrainText.idlePowerProgress(idlePower)))
+            blocks.append(.actions([DocAction(title: L("Stop")) { [unowned self] in idlePower.cancel() }]))
+            return blocks
+        case let .failed(message):
+            blocks.append(.status(message, .bad))
+        default:
+            break
+        }
+        if let result = core.lastIdlePower {
+            blocks.append(.rows(DrainText.idlePowerRows(result).map { DocRow(title: $0.0, value: $0.1) }, labelWidth: 220))
+            let verdict = DrainText.idlePowerVerdict(result, reference: core.powerReference, model: core.system.model)
+            blocks.append(.status(verdict.text, verdict.problem.map { $0 ? .bad : .good } ?? .neutral))
+        }
+        blocks.append(.actions([DocAction(title: DrainText.idlePowerButton) { [unowned self] in idlePower.start() }]))
+        return blocks
     }
 
     private func reload() {
@@ -463,6 +492,7 @@ final class LegacySleep {
             let rows = DrainText.rows(drain)
             if !rows.isEmpty { inner.append(.rows(rows.map { DocRow(title: $0.0, value: $0.1) }, labelWidth: 220)) }
             inner.append(.caption(DrainText.guide))
+            inner += idlePowerBlocks()
             blocks.append(.group(L("Drain detective"), inner))
         }
 

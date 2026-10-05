@@ -57,6 +57,13 @@ public extension SMC {
         }
     }
 
+    /// Total system power in W (`PSTR`), updated about every second on Apple Silicon and many
+    /// Intel Macs; nil when missing or implausible. The battery gauge reports only every ~30 s.
+    func systemPower() -> Double? {
+        guard let value = (try? read("PSTR"))?.doubleValue, value > 0, value < 500 else { return nil }
+        return value
+    }
+
     /// Fans reported by `FNum`. Empty on fanless Macs.
     func fans() -> [FanReading] {
         guard let count = try? read("FNum").doubleValue, count > 0 else { return [] }
