@@ -36,6 +36,10 @@ public enum BatteryDetailText {
 
     public static func finding(_ cell: CellAnalysis.Cell) -> String {
         var parts: [String] = []
+        if cell.lowVoltage, let voltage = cell.voltage {
+            parts.append(L("%1$@, below %2$@: over-discharged", Format.volts(millivolts: voltage, digits: 3),
+                           Format.volts(millivolts: CellAnalysis.minimumVoltage, digits: 1)))
+        }
         if cell.highResistance, let dev = cell.resistanceDeviation {
             parts.append(L("resistance %@ vs. average", Format.signedPercent(dev)))
         }
@@ -43,6 +47,11 @@ public enum BatteryDetailText {
             parts.append(L("Qmax %@ vs. average", Format.signedPercent(dev)))
         }
         return L("Cell %lld: %@", cell.number, parts.joined(separator: ", "))
+    }
+
+    /// Shown instead of "Cells are consistent." when the Qmax values are the gauge's defaults.
+    public static var defaultQmax: String {
+        L("Every Qmax equals the design capacity: the gauge has not learned the cells yet (new pack, or a gauge that lost power), so they cannot be compared.")
     }
 
     // MARK: Charger

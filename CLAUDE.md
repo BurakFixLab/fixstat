@@ -118,6 +118,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   Telemetry `BatteryPower` is negative both while charging and discharging, and
   `SystemLoad` = SystemPowerIn − BatteryPower, so neither is used directly; system power
   is derived as input − battery V×I − AdapterEfficiencyLoss.
+- `CellAnalysis` flags a cell below 2.5 V as over-discharged whatever the spread, and says the
+  cells cannot be compared when every Qmax equals the design capacity (gauge defaults: a new
+  pack or a gauge that lost power, e.g. a pack left flat for months: cycle 1, 0 mA on the
+  adapter). `-FixStatSampleCells 300,3600,3600` fakes cell voltages for checking the panels.
 - Cell spread grows while charging near the top of charge (≈ 100 mV is possible on an aged
   pack), hence the default imbalance warning threshold of 50 mV.
 

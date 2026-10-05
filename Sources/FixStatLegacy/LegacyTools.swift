@@ -246,15 +246,19 @@ final class LegacyBatteryDetails {
              BatteryDetailText.deviation(cell)]
         }
         let tones: [[Tone?]] = analysis.cells.map { cell in
-            [nil, nil, cell.lowCapacity ? .bad : nil, cell.highResistance ? .bad : nil, cell.isSuspect ? .bad : .neutral]
+            [nil, cell.lowVoltage ? .bad : nil, cell.lowCapacity ? .bad : nil, cell.highResistance ? .bad : nil, cell.isSuspect ? .bad : .neutral]
         }
         var blocks: [Block] = [
             .table(header: [L("Cell"), L("Voltage"), L("Qmax"), L("Resistance"), L("vs. average")],
                    rows: rows, tones: tones, leading: false),
         ]
-        if analysis.suspects.isEmpty {
+        if analysis.suspects.isEmpty, !analysis.defaultQmax {
             blocks.append(.status(L("Cells are consistent."), .good))
-        } else {
+        }
+        if analysis.defaultQmax {
+            blocks.append(.status(BatteryDetailText.defaultQmax, .neutral))
+        }
+        if !analysis.suspects.isEmpty {
             blocks.append(.list(analysis.suspects.map { .status(BatteryDetailText.finding($0), .bad) }))
         }
         blocks.append(.caption(L("Resistance is the gauge's weighted cell resistance; its unit is not documented, compare the cells with each other.")))

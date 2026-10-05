@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%1$@, below %2$@: over-discharged" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$@ altında: aşırı deşarj olmuş"
+          }
+        }
+      }
+    },
     "%@ (%@; median of %lld, %@ in total)" : {
       "localizations" : {
         "en" : {
@@ -2358,6 +2368,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hatalar"
+          }
+        }
+      }
+    },
+    "Every Qmax equals the design capacity: the gauge has not learned the cells yet (new pack, or a gauge that lost power), so they cannot be compared." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm Qmax değerleri tasarım kapasitesine eşit: gauge hücreleri henüz öğrenmemiş (yeni pil ya da enerjisiz kalıp sıfırlanmış gauge), bu yüzden hücreler karşılaştırılamaz."
           }
         }
       }

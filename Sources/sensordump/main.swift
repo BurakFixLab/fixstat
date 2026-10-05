@@ -130,11 +130,17 @@ if let b = snapshot.battery {
     if let resistance = b.cellResistance {
         pairs.append(("Cell resistance", resistance.map { "\($0)" }.joined(separator: " / ") + " (WeightedRa, gauge units)"))
     }
+    if CellAnalysis(battery: b).defaultQmax {
+        pairs.append(("Cell Qmax note", "every Qmax equals the design capacity: gauge defaults, not learned"))
+    }
     for cell in CellAnalysis(battery: b).suspects {
         var notes: [String] = []
-        if cell.highResistance, let d = cell.resistanceDeviation { notes.append(String(format: "resistance %+.0f %%", d * 100)) }
-        if cell.lowCapacity, let d = cell.qmaxDeviation { notes.append(String(format: "Qmax %+.0f %%", d * 100)) }
-        pairs.append(("Suspect cell", "\(cell.number): " + notes.joined(separator: ", ") + " vs. pack average"))
+        if cell.lowVoltage, let v = cell.voltage { notes.append("\(v) mV, below \(CellAnalysis.minimumVoltage) mV (over-discharged)") }
+        if cell.highResistance, let d = cell.resistanceDeviation {
+            notes.append(String(format: "resistance %+.0f %% vs. pack average", d * 100))
+        }
+        if cell.lowCapacity, let d = cell.qmaxDeviation { notes.append(String(format: "Qmax %+.0f %% vs. pack average", d * 100)) }
+        pairs.append(("Suspect cell", "\(cell.number): " + notes.joined(separator: ", ")))
     }
     if let id = b.identity {
         pairs.append(("Chemistry ID", fmt(id.chemistryID)))

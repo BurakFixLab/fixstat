@@ -240,9 +240,13 @@ private final class ReportWriter {
                       cell.qmax.map(Format.milliampHours) ?? "–", cell.resistance.map { Format.number(Double($0)) } ?? "–"],
                      font: cell.isSuspect ? bold : body, color: black)
         }
-        if analysis.suspects.isEmpty {
+        if analysis.suspects.isEmpty, !analysis.defaultQmax {
             rightY += draw(L("Cells are consistent."), at: x, width: columnWidth, font: body, color: gray, top: rightY) + 3
-        } else {
+        }
+        if analysis.defaultQmax {
+            rightY += draw(BatteryDetailText.defaultQmax, at: x, width: columnWidth, font: body, color: gray, top: rightY) + 3
+        }
+        if !analysis.suspects.isEmpty {
             for cell in analysis.suspects {
                 rightY += draw("⚠︎ " + BatteryDetailText.finding(cell), at: x, width: columnWidth, font: bold, top: rightY) + 3
             }

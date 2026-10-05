@@ -184,6 +184,7 @@ private struct CellsSection: View {
                     GridRow {
                         Text("Cell \(cell.number)").gridColumnAlignment(.leading)
                         Text(cell.voltage.map { Format.volts(millivolts: $0, digits: 3) } ?? "–")
+                            .foregroundStyle(cell.lowVoltage ? TemperatureColor.hot : .primary)
                         Text(cell.qmax.map(Format.milliampHours) ?? "–")
                             .foregroundStyle(cell.lowCapacity ? TemperatureColor.hot : .primary)
                         Text(cell.resistance.map { Format.number(Double($0)) } ?? "–")
@@ -195,10 +196,15 @@ private struct CellsSection: View {
                 }
             }
             Divider().padding(.vertical, 2)
-            if analysis.suspects.isEmpty {
+            if analysis.suspects.isEmpty, !analysis.defaultQmax {
                 Label("Cells are consistent.", systemImage: "checkmark.circle")
                     .foregroundStyle(TemperatureColor.cool)
-            } else {
+            }
+            if analysis.defaultQmax {
+                Label(BatteryDetailText.defaultQmax, systemImage: "questionmark.circle")
+                    .foregroundStyle(.secondary)
+            }
+            if !analysis.suspects.isEmpty {
                 ForEach(analysis.suspects, id: \.number) { cell in
                     Label {
                         Text(BatteryDetailText.finding(cell))

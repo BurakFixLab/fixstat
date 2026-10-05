@@ -462,6 +462,9 @@ TR = {
     "Cell disconnects": "Hücre kopmaları",
     "Cells": "Hücreler",
     "Cells are consistent.": "Hücreler birbiriyle tutarlı.",
+    "%1$@, below %2$@: over-discharged": "%1$@, %2$@ altında: aşırı deşarj olmuş",
+    "Every Qmax equals the design capacity: the gauge has not learned the cells yet (new pack, or a gauge that lost power), so they cannot be compared.":
+        "Tüm Qmax değerleri tasarım kapasitesine eşit: gauge hücreleri henüz öğrenmemiş (yeni pil ya da enerjisiz kalıp sıfırlanmış gauge), bu yüzden hücreler karşılaştırılamaz.",
     "Charger inhibit reason": "Şarj engelleme nedeni",
     "Charger target current": "Şarj hedef akımı",
     "Charger target voltage": "Şarj hedef voltajı",

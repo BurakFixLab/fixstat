@@ -302,6 +302,21 @@ public final class MonitorCore {
         self.timer = timer
     }
 
+    /// `-FixStatSampleCells 300,3600,3600`: made-up cell voltages (mV) for checking how the
+    /// panels show a dead or drifting cell. Not written to the battery history.
+    static let sampledCells: [Int]? = UserDefaults.standard.string(forKey: "FixStatSampleCells")
+        .map { $0.split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) } }
+        .flatMap { $0.isEmpty ? nil : $0 }
+    static var samplingCells: Bool { sampledCells != nil }
+
+    static func sampleCells(_ info: BatteryInfo) -> BatteryInfo {
+        guard let cells = sampledCells else { return info }
+        var info = info
+        info.cellVoltages = cells
+        info.cellImbalance = (cells.max() ?? 0) - (cells.min() ?? 0)
+        return info
+    }
+
     public func refresh() {
         let defaults = UserDefaults.standard
         let now = Date()
@@ -309,9 +324,9 @@ public final class MonitorCore {
         let needsBattery = panelVisible || detailsVisible || testRunning || historyDue || AlertManager.enabled
             || defaults.bool(forKey: Pref.menuBarBatteryIcon) || defaults.bool(forKey: Pref.menuBarBatteryPercent)
         if needsBattery {
-            let latest = profile.hasBattery ? BatteryReader.read() : nil
+            let latest = profile.hasBattery ? BatteryReader.read().map(Self.sampleCells) : nil
             if latest != battery { battery = latest }
-            if historyDue, let latest {
+            if historyDue, let latest, !Self.samplingCells {
                 history.record(latest, at: now)
                 lastHistorySample = now
                 if now.timeIntervalSince(lastPrune) > 24 * 3600 {
