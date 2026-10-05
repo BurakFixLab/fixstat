@@ -50,8 +50,9 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
 - **Tek uygulamada tanı araçları.** Tamir sonrası stres testi, yüzde olarak SSD sağlığı (NVMe ve AHCI / SATA SMART, kapasite ve boş alan),
   yaz–doğrula stres testi ve isteğe bağlı tam yüzey taraması, bellek testi, kernel panic
   ve kapanma nedeni geçmişi, batarya ve adaptör orijinallik kontrolü, batarya kapasite
-  (deşarj) testi, uykuda ve kapalıyken batarya tüketimiyle uyku / uyanma analizi, cihaz
-  kartı (Aktivasyon Kilidi, MDM, parça numarası) ve donanım kontrolü
+  (deşarj) testi, uykuda ve kapalıyken batarya tüketimiyle uyku / uyanma analizi, canlı
+  güç analizi (sistem toplamı, CPU / GPU gücü, Apple Silicon'da her güç rayının voltaj ve
+  akımı, root gerektirmeden), cihaz kartı (Aktivasyon Kilidi, MDM, parça numarası) ve donanım kontrolü
   (klavye, trackpad yüzeyi, ekran, hoparlör, mikrofon, kamera,
   Touch Bar, yük altında fanlar, Wi-Fi, Bluetooth, arıza
   sayaçlı USB-C portları, kapak sensörü).

@@ -113,7 +113,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   last three characters are one rail (V / A / W); on Apple Silicon the PMU's bucks (`P0b`…) and
   LDOs (`P0l`…), `R` = second PMU, plus `PSTR` (system), `PDTR` (DC in), `PPBR` (battery rail).
   M1: `P0b` = P-cluster CPU, `P1b` = GPU (from load tests); names differ per chip, so they come
-  from bench recordings, which keep the mean of every rail per phase.
+  from bench recordings, which keep the mean of every rail per phase. SoC component power from
+  IOReport's "Energy Model" group (`EnergySampler`, private libIOReport via dlopen, no root; M1:
+  CPU + clusters, GPU, PCIe). Tools > Power analysis (`PowerAnalyzer` in the core, 1 s, only
+  while open; `PowerView` / `LegacyPower`; snapshot `--power` / `--tool power`).
 - HID power page (0xff08) voltage/current events return implausible raw values; they are
   behind `sensordump --hid-power` and marked experimental.
 - Battery (`AppleSmartBattery`): health = `AppleRawMaxCapacity / DesignCapacity`;

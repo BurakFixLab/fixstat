@@ -425,6 +425,16 @@
         }
       }
     },
+    "%lld rails carry no current now." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld rayda şu an akım yok."
+          }
+        }
+      }
+    },
     "%lld read / write errors" : {
       "localizations" : {
         "tr" : {
@@ -1102,6 +1112,16 @@
         }
       }
     },
+    "Battery pack" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya paketi"
+          }
+        }
+      }
+    },
     "Battery percentage" : {
       "localizations" : {
         "tr" : {
@@ -1118,6 +1138,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya sorunu"
+          }
+        }
+      }
+    },
+    "Battery rail" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya rayı"
           }
         }
       }
@@ -1766,6 +1796,26 @@
         }
       }
     },
+    "Component" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bileşen"
+          }
+        }
+      }
+    },
+    "Components" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bileşenler"
+          }
+        }
+      }
+    },
     "Compressed: %@" : {
       "localizations" : {
         "tr" : {
@@ -1952,6 +2002,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Döngü"
+          }
+        }
+      }
+    },
+    "DC in" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DC girişi"
           }
         }
       }
@@ -2182,6 +2242,16 @@
         }
       }
     },
+    "Display backlight" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekran arka ışığı"
+          }
+        }
+      }
+    },
     "Display off after" : {
       "localizations" : {
         "tr" : {
@@ -2258,6 +2328,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Düzen"
+          }
+        }
+      }
+    },
+    "Efficiency cluster" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verimlilik kümesi"
+          }
+        }
+      }
+    },
+    "Efficiency cluster %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verimlilik kümesi %lld"
           }
         }
       }
@@ -3352,12 +3442,32 @@
         }
       }
     },
+    "Key" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anahtar"
+          }
+        }
+      }
+    },
     "Keyboard" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Klavye"
+          }
+        }
+      }
+    },
+    "Keyboard backlight" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klavye arka ışığı"
           }
         }
       }
@@ -3854,6 +3964,16 @@
         }
       }
     },
+    "Memory (DRAM)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bellek (DRAM)"
+          }
+        }
+      }
+    },
     "Memory errors found" : {
       "localizations" : {
         "tr" : {
@@ -3990,6 +4110,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ağ veya Bluetooth"
+          }
+        }
+      }
+    },
+    "Neural Engine" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neural Engine"
           }
         }
       }
@@ -4640,6 +4770,46 @@
         }
       }
     },
+    "PMU LDO %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU LDO %@"
+          }
+        }
+      }
+    },
+    "PMU buck %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU buck %@"
+          }
+        }
+      }
+    },
+    "PMU2 LDO %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU2 LDO %@"
+          }
+        }
+      }
+    },
+    "PMU2 buck %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU2 buck %@"
+          }
+        }
+      }
+    },
     "Pack" : {
       "localizations" : {
         "tr" : {
@@ -4746,6 +4916,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bekleyen sektörler"
+          }
+        }
+      }
+    },
+    "Performance cluster" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performans kümesi"
+          }
+        }
+      }
+    },
+    "Performance cluster %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performans kümesi %lld"
           }
         }
       }
@@ -4940,12 +5130,32 @@
         }
       }
     },
+    "Power adapter input" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptör girişi"
+          }
+        }
+      }
+    },
     "Power adapter · now %@" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Güç adaptörü · şu an %@"
+          }
+        }
+      }
+    },
+    "Power analysis" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç analizi"
           }
         }
       }
@@ -5022,6 +5232,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Güç profilleri orijinal adaptörle uyuşuyor"
+          }
+        }
+      }
+    },
+    "Power rails" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç rayları"
           }
         }
       }
@@ -5146,6 +5366,16 @@
         }
       }
     },
+    "Rail" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ray"
+          }
+        }
+      }
+    },
     "Random data" : {
       "localizations" : {
         "tr" : {
@@ -5226,6 +5456,16 @@
         }
       }
     },
+    "Read from the SMC and IOReport every second, without administrator rights. Rails are the outputs of the power management chips; which part a rail feeds differs per board. A rail that draws clearly more current at idle than on a good Mac of the same model points to a leak or a short on that rail." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SMC ve IOReport'tan saniyede bir, yönetici izni olmadan okunur. Raylar güç yönetim çiplerinin çıkışlarıdır; bir rayın hangi parçayı beslediği karta göre değişir. Boştayken aynı modelin sağlam bir Mac'ine göre belirgin fazla akım çeken bir ray, o rayda kaçak ya da kısa devreye işaret eder."
+          }
+        }
+      }
+    },
     "Read speed" : {
       "localizations" : {
         "tr" : {
@@ -5252,6 +5492,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Okunuyor ve doğrulanıyor…"
+          }
+        }
+      }
+    },
+    "Reading the power rails…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç rayları okunuyor…"
           }
         }
       }
@@ -6380,6 +6630,16 @@
         }
       }
     },
+    "System total" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem toplamı"
+          }
+        }
+      }
+    },
     "Technician" : {
       "localizations" : {
         "tr" : {
@@ -6852,6 +7112,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu Mac'te kapak sensörü yok."
+          }
+        }
+      }
+    },
+    "This Mac reports no power rails." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Mac güç rayı bildirmiyor."
           }
         }
       }

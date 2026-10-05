@@ -271,7 +271,7 @@ enum LegacySnapshot {
         let toolNames: [String: LegacyTools.Tool] = ["device": .deviceInfo, "details": .batteryDetails,
                                                      "crash": .crashHistory, "sleep": .sleep, "history": .history,
                                                      "stress": .stressTest, "memory": .memory, "ssd": .ssd, "capacity": .capacity,
-                                                     "hardware": .hardware]
+                                                     "hardware": .hardware, "power": .power]
         if let i = arguments.firstIndex(of: "--item"), i + 1 < arguments.count,
            let item = HardwareCheck.Item(rawValue: arguments[i + 1]) {
             LegacyHardwareCheck.initialItem = item

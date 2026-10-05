@@ -50,7 +50,8 @@ battery gauge data you normally dig out of `ioreg`.
   write–verify stress test and an optional full surface scan, memory test, kernel panic
   and shutdown cause history, battery and power adapter originality check, battery
   capacity (discharge) test, sleep / wake analysis with battery drain while asleep and
-  while shut down, a device card (Activation Lock, MDM, part number), and a
+  while shut down, live power analysis (system total, CPU / GPU power, every power rail's
+  voltage and current on Apple Silicon, without root), a device card (Activation Lock, MDM, part number), and a
   hardware check (keyboard, trackpad surface, display, speakers, microphone, camera,
   Touch Bar, fans under load, Wi-Fi, Bluetooth, USB-C ports with fault counters, lid sensor).
 - **Fits the Mac.** On an iMac, Mac mini or Mac Studio the battery tools disappear and the
