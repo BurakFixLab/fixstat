@@ -16,6 +16,13 @@ public final class SystemStats {
 
     /// Total CPU usage in 0…1 since the previous call (nil on the first call).
     public func cpuUsage() -> Double? {
+        cpuLoad().map { $0.user + $0.system }
+    }
+
+    /// User (incl. nice) and system shares of all CPUs in 0…1 since the previous call. A high
+    /// system share under a user load means the kernel takes the CPU (e.g. kernel_task
+    /// keeping a hot or sensor-less Intel CPU idle).
+    public func cpuLoad() -> (user: Double, system: Double)? {
         var count: natural_t = 0
         var info: processor_info_array_t?
         var infoCount: mach_msg_type_number_t = 0
@@ -39,7 +46,15 @@ public final class SystemStats {
         let delta = zip(ticks, previous).map { Double($0 &- $1) }
         let total = delta.reduce(0, +)
         guard total > 0 else { return nil }
-        return 1 - delta[Int(CPU_STATE_IDLE)] / total
+        return ((delta[Int(CPU_STATE_USER)] + delta[Int(CPU_STATE_NICE)]) / total, delta[Int(CPU_STATE_SYSTEM)] / total)
+    }
+
+    /// CPU time used by this process so far (user + system), in seconds.
+    public static func ownCPUTime() -> Double {
+        var usage = rusage()
+        getrusage(RUSAGE_SELF, &usage)
+        func seconds(_ t: timeval) -> Double { Double(t.tv_sec) + Double(t.tv_usec) / 1_000_000 }
+        return seconds(usage.ru_utime) + seconds(usage.ru_stime)
     }
 
     public func memory() -> Memory? {

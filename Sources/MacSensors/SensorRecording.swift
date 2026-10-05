@@ -19,6 +19,13 @@ public struct SensorRecording: Codable, Sendable {
         public var fans: [Double]?
         /// Adapter input power in W (`SystemPowerIn`, Apple Silicon notebooks on power).
         public var powerIn: Double?
+        /// System power in W without battery charging (input − charging − adapter loss, or
+        /// what the battery delivers on battery).
+        public var systemPower: Double?
+        /// User and system shares of all CPUs (0…1), and the share this process used.
+        public var cpuUser: Double?
+        public var cpuSystem: Double?
+        public var ownCPU: Double?
     }
 
     public var tool = "sensormap"
@@ -58,14 +65,28 @@ public final class SensorRecorder {
 
     public var now: Double { Date().timeIntervalSince(start) }
 
+    private let stats = SystemStats()
+    private var lastOwnCPU: (time: Double, at: Date)?
+
     public func takeSample() {
         let battery = BatteryReader.read()
         let input = battery?.powerTelemetry?.systemPowerIn.flatMap { $0 > 0 ? Double($0) / 1000 : nil }
+        let load = stats.cpuLoad()
+        let ownTime = SystemStats.ownCPUTime(), date = Date()
+        var own: Double?
+        if let last = lastOwnCPU, date > last.at {
+            own = (ownTime - last.time) / date.timeIntervalSince(last.at) / Double(ProcessInfo.processInfo.activeProcessorCount)
+        }
+        lastOwnCPU = (ownTime, date)
         let sample = SensorRecording.Sample(t: now, values: sampler.sample(),
                                             batteryAmperage: battery?.amperage,
                                             externalConnected: battery?.externalConnected,
                                             fans: sampler.fans().compactMap(\.actual),
-                                            powerIn: input)
+                                            powerIn: input,
+                                            systemPower: battery?.systemPowerWatts.map { ($0 * 100).rounded() / 100 },
+                                            cpuUser: load.map { ($0.user * 1000).rounded() / 1000 },
+                                            cpuSystem: load.map { ($0.system * 1000).rounded() / 1000 },
+                                            ownCPU: own.map { (min(1, $0) * 1000).rounded() / 1000 })
         recording.samples.append(sample)
         onSample(sample)
     }
