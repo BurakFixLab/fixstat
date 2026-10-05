@@ -105,7 +105,7 @@ public struct SleepAnalysis: Codable, Sendable, Equatable {
         return analysis
     }
 
-    static let dateFormatter: DateFormatter = {
+    public static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
         f.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
