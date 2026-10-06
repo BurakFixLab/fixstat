@@ -44,7 +44,7 @@ struct PowerView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 12) {
                 if !model.ready {
                     ProgressView("Reading the power rails…").controlSize(.small)
                 } else {
@@ -63,48 +63,29 @@ struct PowerView: View {
     @ViewBuilder private var content: some View {
         let totals = PowerText.totals(model.totals)
         if !totals.isEmpty {
-            VStack(alignment: .leading, spacing: 6) {
-                SectionTitle(title: "System")
-                HStack(spacing: 8) {
-                    ForEach(totals, id: \.0) { title, value in
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(title).font(.caption).foregroundStyle(.secondary)
-                            Text(value).font(.title3.weight(.semibold))
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
-                        .background(.quaternary.opacity(0.6), in: RoundedRectangle(cornerRadius: 8))
-                    }
+            HStack(spacing: Design.cardSpacing) {
+                ForEach(totals, id: \.0) { title, value in
+                    MetricTile(verbatim: title, value: value)
                 }
             }
         }
 
         let components = PowerText.components(model.components)
         if !components.isEmpty {
-            group("Components") {
-                Grid(alignment: .trailing, horizontalSpacing: 18, verticalSpacing: 5) {
-                    GridRow {
-                        Text("Component").gridColumnAlignment(.leading)
-                        Text("Power")
-                    }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    ForEach(components, id: \.self) { row in
-                        GridRow {
-                            Text(row[0]).gridColumnAlignment(.leading)
-                            Text(row[1])
-                        }
-                    }
+            Card {
+                CardHeader("Components", systemImage: "square.stack.3d.up")
+                ForEach(components, id: \.self) { row in
+                    CardRow(title: Text(verbatim: row[0]), value: row[1])
                 }
             }
         }
 
         let clusters = PowerText.clusters(model.clusters)
         if !clusters.isEmpty || model.thermal != nil {
-            group("CPU") {
+            Card {
+                CardHeader("CPU", systemImage: "cpu")
                 if !clusters.isEmpty {
-                    Grid(alignment: .trailing, horizontalSpacing: 18, verticalSpacing: 5) {
+                    Grid(alignment: .trailing, horizontalSpacing: 18, verticalSpacing: Design.rowSpacing) {
                         GridRow {
                             Text("Cluster").gridColumnAlignment(.leading)
                             Text("Active")
@@ -122,24 +103,17 @@ struct PowerView: View {
                             }
                         }
                     }
+                    .padding(.bottom, 4)
                 }
                 if let status = model.thermal {
                     let thermal = PowerText.thermal(status)
-                    HStack {
-                        Text("Thermal state").foregroundStyle(.secondary)
-                        Spacer()
-                        Text(thermal.state)
-                    }
+                    CardRow(title: Text("Thermal state"), value: thermal.state)
                     if let limit = thermal.limit {
-                        HStack {
-                            Text("CPU speed limit").foregroundStyle(.secondary)
-                            Spacer()
-                            Text(limit)
-                        }
+                        CardRow(title: Text("CPU speed limit"), value: limit,
+                                valueStyle: thermal.throttled ? TemperatureColor.hot : nil)
                     }
                     if thermal.throttled {
-                        Label("The CPU is held back for heat or power.", systemImage: "exclamationmark.triangle.fill")
-                            .foregroundStyle(TemperatureColor.hot)
+                        FindingRow(text: String(localized: "The CPU is held back for heat or power."))
                     }
                 }
             }
@@ -150,8 +124,13 @@ struct PowerView: View {
             Label("This Mac reports no power rails.", systemImage: "info.circle")
                 .foregroundStyle(.secondary)
         } else {
-            group("Power rails") {
-                Grid(alignment: .trailing, horizontalSpacing: 18, verticalSpacing: 5) {
+            Card {
+                CardHeader("Power rails", systemImage: "bolt") {
+                    if let idle = PowerText.idleRails(model.rails) {
+                        Text(idle).foregroundStyle(.secondary)
+                    }
+                }
+                Grid(alignment: .trailing, horizontalSpacing: 18, verticalSpacing: Design.rowSpacing) {
                     GridRow {
                         Text("Rail").gridColumnAlignment(.leading)
                         Text("Key").gridColumnAlignment(.leading)
@@ -164,15 +143,12 @@ struct PowerView: View {
                     ForEach(rails, id: \.self) { row in
                         GridRow {
                             Text(row[0]).gridColumnAlignment(.leading)
-                            Text(row[1]).font(.callout.monospaced()).foregroundStyle(.secondary)
+                            Text(row[1]).font(.caption.monospaced()).foregroundStyle(.tertiary)
                             Text(row[2])
                             Text(row[3])
                             Text(row[4])
                         }
                     }
-                }
-                if let idle = PowerText.idleRails(model.rails) {
-                    Text(idle).font(.caption).foregroundStyle(.secondary)
                 }
             }
         }
@@ -181,15 +157,5 @@ struct PowerView: View {
             .font(.caption)
             .foregroundStyle(.secondary)
             .fixedSize(horizontal: false, vertical: true)
-    }
-
-    private func group<Content: View>(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            SectionTitle(title: title)
-            VStack(alignment: .leading, spacing: 8) { content() }
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
-        }
     }
 }

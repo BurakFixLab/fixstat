@@ -175,13 +175,26 @@ struct StatusDot: View {
 /// A large number with a small label above it (window summaries).
 @available(macOS 14.0, *)
 struct MetricTile: View {
-    let title: LocalizedStringKey
+    let title: Text
     let value: String
     var unit: String? = nil
 
+    init(title: LocalizedStringKey, value: String, unit: String? = nil) {
+        self.title = Text(title)
+        self.value = value
+        self.unit = unit
+    }
+
+    /// A title that is already localized (core texts).
+    init(verbatim title: String, value: String, unit: String? = nil) {
+        self.title = Text(verbatim: title)
+        self.value = value
+        self.unit = unit
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(title).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+            title.font(.caption).foregroundStyle(.secondary).lineLimit(1)
             HStack(alignment: .firstTextBaseline, spacing: 3) {
                 Text(value).font(.title2.weight(.medium)).monospacedDigit()
                 if let unit { Text(unit).font(.caption).foregroundStyle(.secondary) }
