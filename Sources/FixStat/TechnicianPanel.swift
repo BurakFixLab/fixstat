@@ -96,7 +96,7 @@ struct TechnicianPanel: View {
                     }
                 }
                 if let cells = b.cellVoltages, !cells.isEmpty {
-                    Divider().gridCellUnsizedAxes(.horizontal)
+                    Color.clear.frame(height: 4).gridCellUnsizedAxes(.horizontal)
                     ForEach(Array(stride(from: 0, to: cells.count, by: 2)), id: \.self) { index in
                         GridRow {
                             cellRow(index, cells[index])

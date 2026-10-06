@@ -67,9 +67,8 @@ struct SleepView: View {
         if !findings.isEmpty {
             Card {
                 CardHeader("To check", systemImage: "exclamationmark.triangle")
-                ForEach(Array(findings.enumerated()), id: \.offset) { index, finding in
-                    if index > 0 { Divider() }
-                    FindingRow(text: finding)
+                ForEach(Array(findings.enumerated()), id: \.offset) { _, finding in
+                    FindingRow(text: finding).padding(.vertical, 2)
                 }
             }
         }
@@ -175,8 +174,7 @@ struct SleepView: View {
             if counts.isEmpty {
                 Text("none").foregroundStyle(.secondary)
             }
-            ForEach(Array(counts.enumerated()), id: \.offset) { index, c in
-                if index > 0 { Divider() }
+            ForEach(Array(counts.enumerated()), id: \.offset) { _, c in
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
                     Text(verbatim: "\(c.count)×")
                         .foregroundStyle(.secondary)
@@ -231,7 +229,6 @@ private struct IdlePowerSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Divider()
             if tester.running {
                 HStack(spacing: 8) {
                     ProgressView().controlSize(.small)
@@ -260,6 +257,7 @@ private struct IdlePowerSection: View {
                 Button(DrainText.idlePowerButton) { tester.start() }
             }
         }
+        .padding(.top, 6)
     }
 }
 

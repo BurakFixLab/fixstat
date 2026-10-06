@@ -106,7 +106,7 @@ struct Card<Content: View>: View {
             .padding(Design.cardPadding)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(.fill.quinary, in: RoundedRectangle(cornerRadius: Design.cardRadius))
-            .overlay(RoundedRectangle(cornerRadius: Design.cardRadius).strokeBorder(.separator, lineWidth: 0.5))
+            .overlay(RoundedRectangle(cornerRadius: Design.cardRadius).strokeBorder(.separator.opacity(0.5), lineWidth: 0.5))
     }
 }
 
