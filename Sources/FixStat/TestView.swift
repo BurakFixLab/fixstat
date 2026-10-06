@@ -152,6 +152,6 @@ struct ResultView: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.fill.quinary, in: RoundedRectangle(cornerRadius: Design.cardRadius))
+        .background(Design.cardFill, in: RoundedRectangle(cornerRadius: Design.cardRadius))
     }
 }

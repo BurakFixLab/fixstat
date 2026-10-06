@@ -115,7 +115,7 @@ struct CrashHistoryView: View {
                                 .font(.caption.monospaced())
                                 .textSelection(.enabled)
                                 .padding(8)
-                                .background(.fill.quinary, in: RoundedRectangle(cornerRadius: 6))
+                                .background(Design.cardFill, in: RoundedRectangle(cornerRadius: 6))
                             Button("Copy") {
                                 NSPasteboard.general.clearContents()
                                 NSPasteboard.general.setString(panic.panicString, forType: .string)

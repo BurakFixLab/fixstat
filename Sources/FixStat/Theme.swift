@@ -70,7 +70,7 @@ struct Tile: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 10)
         .padding(.vertical, 7)
-        .background(.fill.quinary, in: RoundedRectangle(cornerRadius: Design.cardRadius))
+        .background(Design.cardFill, in: RoundedRectangle(cornerRadius: Design.cardRadius))
         .accessibilityElement(children: .combine)
     }
 }
@@ -94,6 +94,8 @@ enum Design {
     static let cardPadding = EdgeInsets(top: 9, leading: 12, bottom: 10, trailing: 12)
     /// Space between rows inside a card.
     static let rowSpacing: CGFloat = 5
+    /// Fill of cards and tiles: clearly lighter (dark) / darker (light) than the window.
+    static let cardFill = AnyShapeStyle(.fill.tertiary)
 }
 
 /// A topic of the panel or a window: a softly filled, rounded box.
@@ -105,8 +107,8 @@ struct Card<Content: View>: View {
         VStack(alignment: .leading, spacing: Design.rowSpacing) { content }
             .padding(Design.cardPadding)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.fill.quinary, in: RoundedRectangle(cornerRadius: Design.cardRadius))
-            .overlay(RoundedRectangle(cornerRadius: Design.cardRadius).strokeBorder(.separator.opacity(0.5), lineWidth: 0.5))
+            .background(Design.cardFill, in: RoundedRectangle(cornerRadius: Design.cardRadius))
+            .overlay(RoundedRectangle(cornerRadius: Design.cardRadius).strokeBorder(.separator, lineWidth: 0.5))
     }
 }
 
@@ -203,7 +205,7 @@ struct MetricTile: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 12)
         .padding(.vertical, 9)
-        .background(.fill.quinary, in: RoundedRectangle(cornerRadius: Design.cardRadius))
+        .background(Design.cardFill, in: RoundedRectangle(cornerRadius: Design.cardRadius))
         .accessibilityElement(children: .combine)
     }
 }
