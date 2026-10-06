@@ -171,3 +171,42 @@ struct StatusDot: View {
             .accessibilityHidden(true)
     }
 }
+
+/// A large number with a small label above it (window summaries).
+@available(macOS 14.0, *)
+struct MetricTile: View {
+    let title: LocalizedStringKey
+    let value: String
+    var unit: String? = nil
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+            HStack(alignment: .firstTextBaseline, spacing: 3) {
+                Text(value).font(.title2.weight(.medium)).monospacedDigit()
+                if let unit { Text(unit).font(.caption).foregroundStyle(.secondary) }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .background(.fill.quinary, in: RoundedRectangle(cornerRadius: Design.cardRadius))
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// A finding: warning icon, text; rows of a card separated by hairlines.
+@available(macOS 14.0, *)
+struct FindingRow: View {
+    let text: String
+    var problem = true
+
+    var body: some View {
+        Label {
+            Text(verbatim: text).fixedSize(horizontal: false, vertical: true)
+        } icon: {
+            Image(systemName: problem ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
+                .foregroundStyle(problem ? TemperatureColor.hot : TemperatureColor.cool)
+        }
+    }
+}

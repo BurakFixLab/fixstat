@@ -12,7 +12,7 @@ struct SleepView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 12) {
                 if let a = monitor.lastSleepAnalysis {
                     content(a)
                 } else {
@@ -34,112 +34,122 @@ struct SleepView: View {
 
     @ViewBuilder
     private func content(_ a: SleepAnalysis) -> some View {
-        HStack {
+        let off = monitor.offPeriods(a)
+        let findings = SleepText.findings(a) + SleepText.offFindings(off)
+
+        // Header: what the log covers, refresh.
+        HStack(alignment: .firstTextBaseline) {
             if let from = a.from, let to = a.to {
-                Text("Power log from \(from.formatted(date: .abbreviated, time: .shortened)) to \(to.formatted(date: .abbreviated, time: .shortened))")
+                Text("Power log · \(from.formatted(date: .abbreviated, time: .shortened)) – \(to.formatted(date: .abbreviated, time: .shortened))")
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Button("Refresh") { Task { await reload() } }
+            Button("Refresh", systemImage: "arrow.clockwise") { Task { await reload() } }
         }
-        .font(.callout)
+
+        // One line: the verdict.
+        FindingRow(text: findings.isEmpty ? String(localized: "No sleep or wake problems found.")
+                                          : String(localized: "\(findings.count) things to check, listed below."),
+                   problem: !findings.isEmpty)
+            .font(.title3)
+
+        // Four numbers that matter, the rest in one quiet line.
+        HStack(spacing: Design.cardSpacing) {
+            MetricTile(title: "Sleeps", value: Format.number(Double(a.sleeps.count)))
+            MetricTile(title: "Wakes", value: Format.number(Double(a.wakes.count)))
+            MetricTile(title: "Dark wakes", value: Format.number(Double(a.darkWakes.count)))
+            MetricTile(title: "Drain while asleep", value: a.sleepDrain.map { SleepText.drain($0.percentPerHour) } ?? "–")
+        }
+        Text("Battery ran empty \(a.lowPowerSleeps) · Failures \(a.failures.count) · Average wake \(a.averageWakeTime.map { Format.seconds($0) } ?? "–") · Low battery warnings \(a.lowBatteryWarnings)")
+            .font(.callout)
+            .foregroundStyle(.secondary)
+
+        if !findings.isEmpty {
+            Card {
+                CardHeader("To check", systemImage: "exclamationmark.triangle")
+                ForEach(Array(findings.enumerated()), id: \.offset) { index, finding in
+                    if index > 0 { Divider() }
+                    FindingRow(text: finding)
+                }
+            }
+        }
 
         if monitor.profile.hasBattery {
             DrainCard(report: monitor.core.drainReport(analysis: a), tester: idleTester)
         }
 
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 8) {
-            Tile(title: "Sleeps", value: Format.number(Double(a.sleeps.count)))
-            Tile(title: "Wakes", value: Format.number(Double(a.wakes.count)))
-            Tile(title: "Dark wakes", value: Format.number(Double(a.darkWakes.count)))
-            Tile(title: "Drain while asleep", value: a.sleepDrain.map { SleepText.drain($0.percentPerHour) } ?? "–")
-            Tile(title: "Battery ran empty", value: Format.number(Double(a.lowPowerSleeps)))
-            Tile(title: "Sleep / wake failures", value: Format.number(Double(a.failures.count)))
-            Tile(title: "Average wake time", value: a.averageWakeTime.map { Format.seconds($0) } ?? "–")
-            Tile(title: "Low battery warnings", value: Format.number(Double(a.lowBatteryWarnings)))
+        HStack(alignment: .top, spacing: Design.cardSpacing) {
+            reasonCard("Wake reasons", a.reasons(.wake))
+            reasonCard("Dark wake reasons", a.reasons(.darkWake))
         }
 
-        let off = monitor.offPeriods(a)
-        let findings = SleepText.findings(a) + SleepText.offFindings(off)
-        VStack(alignment: .leading, spacing: 6) {
-            if findings.isEmpty {
-                Label("No sleep or wake problems found.", systemImage: "checkmark.seal.fill")
-                    .foregroundStyle(TemperatureColor.cool)
-                    .font(.headline)
-            }
-            ForEach(Array(findings.enumerated()), id: \.offset) { _, finding in
-                Label(finding, systemImage: "exclamationmark.triangle.fill")
-                    .foregroundStyle(TemperatureColor.hot)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-
-        HStack(alignment: .top, spacing: 24) {
-            countList("Wake reasons", a.reasons(.wake))
-            countList("Dark wake reasons", a.reasons(.darkWake))
-        }
-
-        offSection(off)
+        offCard(off)
 
         if !a.preventingNow.isEmpty || !a.preventers.isEmpty {
-            VStack(alignment: .leading, spacing: 6) {
-                SectionTitle(title: "What keeps the Mac awake")
+            Card {
+                CardHeader("What keeps the Mac awake", systemImage: "cup.and.saucer")
                 if !a.preventingNow.isEmpty {
-                    Text("Now: \(a.preventingNow.joined(separator: ", "))").font(.callout)
+                    CardRow(title: Text("Now"), value: a.preventingNow.joined(separator: ", "))
                 }
                 ForEach(a.preventers, id: \.process) { p in
-                    row(p.process, String(localized: "\(p.count) times, longest \(Format.duration(Double(p.longestSeconds)))"))
+                    CardRow(title: Text(verbatim: p.process),
+                            value: String(localized: "\(p.count) times, longest \(Format.duration(Double(p.longestSeconds)))"))
                 }
             }
         }
 
         if !a.slowDrivers.isEmpty {
-            VStack(alignment: .leading, spacing: 6) {
-                SectionTitle(title: "Slow drivers during sleep / wake")
+            Card {
+                CardHeader("Slow drivers during sleep / wake", systemImage: "tortoise")
                 ForEach(a.slowDrivers, id: \.driver) { d in
-                    row(d.driver, String(localized: "\(d.count)× · up to \(Format.number(Double(d.maxMilliseconds))) ms"))
+                    CardRow(title: Text(verbatim: d.driver),
+                            value: String(localized: "\(d.count)× · up to \(Format.number(Double(d.maxMilliseconds))) ms"))
                 }
             }
         }
 
-        VStack(alignment: .leading, spacing: 6) {
-            SectionTitle(title: "Settings")
-            ForEach(SleepText.settingRows(a.settings), id: \.0) { r in row(r.0, r.1) }
+        Card {
+            CardHeader("Settings", systemImage: "gearshape")
+            ForEach(SleepText.settingRows(a.settings), id: \.0) { r in
+                CardRow(title: Text(verbatim: r.0), value: r.1)
+            }
         }
 
-        VStack(alignment: .leading, spacing: 6) {
-            SectionTitle(title: "Recent events")
-            Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 3) {
-                ForEach(Array(a.events.suffix(40).reversed().enumerated()), id: \.offset) { _, e in
-                    GridRow {
-                        Text(e.date.formatted(date: .abbreviated, time: .shortened)).foregroundStyle(.secondary)
-                        Text(verbatim: SleepText.kind(e.kind))
-                        Text(verbatim: SleepText.describe(e.reason)).lineLimit(1)
-                        Text(verbatim: [e.charge.map { Format.percent(Double($0)) },
-                                        e.onBattery.map { $0 ? String(localized: "battery") : String(localized: "adapter") }]
-                            .compactMap { $0 }.joined(separator: " · "))
-                            .foregroundStyle(.secondary)
-                        Text(verbatim: e.duration.map { Format.duration(Double($0)) } ?? "").foregroundStyle(.secondary)
+        Card {
+            DisclosureGroup {
+                Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 4) {
+                    ForEach(Array(a.events.suffix(40).reversed().enumerated()), id: \.offset) { _, e in
+                        GridRow {
+                            Text(e.date.formatted(date: .abbreviated, time: .shortened)).foregroundStyle(.secondary)
+                            Text(verbatim: SleepText.kind(e.kind))
+                            Text(verbatim: SleepText.describe(e.reason)).lineLimit(1)
+                            Text(verbatim: [e.charge.map { Format.percent(Double($0)) },
+                                            e.onBattery.map { $0 ? String(localized: "battery") : String(localized: "adapter") }]
+                                .compactMap { $0 }.joined(separator: " · "))
+                                .foregroundStyle(.secondary)
+                            Text(verbatim: e.duration.map { Format.duration(Double($0)) } ?? "").foregroundStyle(.secondary)
+                        }
                     }
                 }
+                .font(.callout)
+                .padding(.top, 6)
+            } label: {
+                Label("Recent events (\(min(a.events.count, 40)))", systemImage: "list.bullet")
+                    .foregroundStyle(.secondary)
             }
-            .font(.caption)
         }
     }
 
-    private func offSection(_ periods: [OffPeriod]) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            SectionTitle(title: "While shut down")
+    private func offCard(_ periods: [OffPeriod]) -> some View {
+        Card {
+            CardHeader("While shut down", systemImage: "power")
             if let summary = OffStateDrain.summary(periods) {
                 Text(verbatim: SleepText.offSummary(summary))
-                    .font(.callout.weight(.semibold))
             }
             if periods.isEmpty {
-                Text("No shutdowns with a known charge in the log yet.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
+                Text("No shutdowns with a known charge in the log yet.").foregroundStyle(.secondary)
             }
-            Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 3) {
+            Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 4) {
                 ForEach(Array(periods.reversed().enumerated()), id: \.offset) { _, p in
                     GridRow {
                         Text(p.shutdown.formatted(date: .abbreviated, time: .shortened)).foregroundStyle(.secondary)
@@ -148,10 +158,9 @@ struct SleepView: View {
                         Text(verbatim: p.averageCurrent.map { SleepText.milliamps($0) } ?? "")
                         Text(verbatim: SleepText.source(p)).foregroundStyle(.secondary)
                     }
-                    .opacity(p.isUsable ? 1 : 0.5)
+                    .foregroundStyle(p.isUsable ? .primary : .tertiary)
                 }
             }
-            .font(.caption)
             Text("Measured: FixStat saved the battery gauge at power off and read it after the boot (needs FixStat to open at login). From log: whole percentages from the power log, so short periods are rough.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -159,34 +168,32 @@ struct SleepView: View {
         }
     }
 
-    private func countList(_ title: LocalizedStringKey, _ counts: [SleepAnalysis.Count]) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            SectionTitle(title: title)
+    /// Reasons with a count; the raw reason from the log in small mono under the plain one.
+    private func reasonCard(_ title: LocalizedStringKey, _ counts: [SleepAnalysis.Count]) -> some View {
+        Card {
+            CardHeader(title, systemImage: "bolt.horizontal")
             if counts.isEmpty {
-                Text("none").foregroundStyle(.secondary).font(.callout)
+                Text("none").foregroundStyle(.secondary)
             }
-            ForEach(counts, id: \.name) { c in
-                HStack(alignment: .firstTextBaseline) {
-                    Text(verbatim: "\(c.count)×").frame(width: 34, alignment: .trailing)
-                    VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(counts.enumerated()), id: \.offset) { index, c in
+                if index > 0 { Divider() }
+                HStack(alignment: .firstTextBaseline, spacing: 10) {
+                    Text(verbatim: "\(c.count)×")
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                        .frame(width: 32, alignment: .trailing)
+                    VStack(alignment: .leading, spacing: 1) {
                         Text(verbatim: SleepText.category(c.name) ?? c.name)
                         if SleepText.category(c.name) != nil {
-                            Text(verbatim: c.name).font(.caption).foregroundStyle(.secondary)
+                            Text(verbatim: c.name)
+                                .font(.caption.monospaced())
+                                .foregroundStyle(.tertiary)
+                                .lineLimit(2)
                         }
                     }
                 }
-                .font(.callout)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private func row(_ title: String, _ value: String) -> some View {
-        HStack(alignment: .firstTextBaseline) {
-            Text(verbatim: title).frame(width: 220, alignment: .leading)
-            Text(verbatim: value).foregroundStyle(.secondary)
-        }
-        .font(.callout)
     }
 }
 
@@ -198,20 +205,15 @@ private struct DrainCard: View {
 
     var body: some View {
         let headline = DrainText.headline(report)
-        VStack(alignment: .leading, spacing: 8) {
-            SectionTitle(title: "Drain detective")
+        Card {
+            CardHeader("Drain detective", systemImage: "magnifyingglass")
             Label(headline.text, systemImage: headline.problem == true ? "exclamationmark.triangle.fill"
-                  : headline.problem == false ? "checkmark.seal.fill" : "info.circle")
+                  : headline.problem == false ? "checkmark.circle.fill" : "info.circle")
                 .foregroundStyle(headline.problem == true ? TemperatureColor.hot
                                  : headline.problem == false ? TemperatureColor.cool : .secondary)
                 .fixedSize(horizontal: false, vertical: true)
-            Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 4) {
-                ForEach(Array(DrainText.rows(report).enumerated()), id: \.offset) { _, row in
-                    GridRow {
-                        Text(verbatim: row.0).foregroundStyle(.secondary)
-                        Text(verbatim: row.1)
-                    }
-                }
+            ForEach(Array(DrainText.rows(report).enumerated()), id: \.offset) { _, row in
+                CardRow(title: Text(verbatim: row.0), value: row.1)
             }
             Text(verbatim: DrainText.guide).font(.caption).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -219,10 +221,6 @@ private struct DrainCard: View {
                 IdlePowerSection(tester: tester)
             }
         }
-        .font(.callout)
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
     }
 }
 

@@ -525,6 +525,16 @@
         }
       }
     },
+    "%lld things to check, listed below." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontrol edilecek %lld nokta var, aşağıda listelendi."
+          }
+        }
+      }
+    },
     "%lld times, longest %@" : {
       "localizations" : {
         "en" : {
@@ -1248,6 +1258,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya bitti"
+          }
+        }
+      }
+    },
+    "Battery ran empty %lld · Failures %lld · Average wake %@ · Low battery warnings %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battery ran empty %1$lld · Failures %2$lld · Average wake %3$@ · Low battery warnings %4$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya bitti %1$lld · Hatalar %2$lld · Ort. uyanma %3$@ · Düşük batarya uyarısı %4$lld"
           }
         }
       }
@@ -4710,6 +4736,16 @@
         }
       }
     },
+    "Now" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şu an"
+          }
+        }
+      }
+    },
     "Now: %@" : {
       "localizations" : {
         "tr" : {
@@ -5406,6 +5442,22 @@
         }
       }
     },
+    "Power log · %@ – %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Power log · %1$@ – %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç günlüğü · %1$@ – %2$@"
+          }
+        }
+      }
+    },
     "Power lost" : {
       "localizations" : {
         "tr" : {
@@ -5778,6 +5830,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Son olaylar"
+          }
+        }
+      }
+    },
+    "Recent events (%lld)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son olaylar (%lld)"
           }
         }
       }
@@ -7492,6 +7554,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Durma seviyesine kalan"
+          }
+        }
+      }
+    },
+    "To check" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontrol edilecekler"
           }
         }
       }

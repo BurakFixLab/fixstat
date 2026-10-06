@@ -464,6 +464,13 @@ TR = {
     "Cells are consistent.": "Hücreler birbiriyle tutarlı.",
     "Power analysis": "Güç analizi",
     "Temperatures": "Sıcaklıklar",
+    "%lld things to check, listed below.": "Kontrol edilecek %lld nokta var, aşağıda listelendi.",
+    "Battery ran empty %lld · Failures %lld · Average wake %@ · Low battery warnings %lld":
+        "Batarya bitti %1$lld · Hatalar %2$lld · Ort. uyanma %3$@ · Düşük batarya uyarısı %4$lld",
+    "Now": "Şu an",
+    "Power log · %@ – %@": "Güç günlüğü · %1$@ – %2$@",
+    "Recent events (%lld)": "Son olaylar (%lld)",
+    "To check": "Kontrol edilecekler",
     "%@ · balanced": "%@ · dengeli",
     "%@ · imbalanced": "%@ · dengesiz",
     "Spread between the highest and the lowest cell": "En yüksek ve en düşük hücre arasındaki fark",

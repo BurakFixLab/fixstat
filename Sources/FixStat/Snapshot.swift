@@ -9,7 +9,7 @@ import FixStatCore
 ///       [--dark|--light] [-AppleLanguages "(tr)"]
 ///
 /// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead,
-/// `--details` the battery details window, `--power` the power analysis window, `--hardware [keyboard|trackpad|…]` the hardware check, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
+/// `--details` the battery details window, `--power` the power analysis window, `--sleep-window` the sleep and wake window, `--hardware [keyboard|trackpad|…]` the hardware check, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
 ///
 ///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check] [--sample-capacity] [--sleep]
 ///
@@ -40,6 +40,11 @@ enum Snapshot {
             root = AnyView(HardwareCheckView(initialItem: item)
                 .environment(monitor)
                 .frame(width: 900, height: 680)
+                .background(Color(nsColor: .windowBackgroundColor)))
+        } else if arguments.contains("--sleep-window") {
+            root = AnyView(SleepView()
+                .environment(monitor)
+                .frame(width: 720, height: 1500)
                 .background(Color(nsColor: .windowBackgroundColor)))
         } else if arguments.contains("--power") {
             root = AnyView(PowerView()
