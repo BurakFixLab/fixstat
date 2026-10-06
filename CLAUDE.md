@@ -381,8 +381,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   false while charging on M1 / macOS 26. Intel Macs publish no `IOPort`: the external ports
   come from the XHCI root hub ports instead (`UsbConnector` from ACPI _UPC: 0 / 3 Type-A,
   9 / 10 Type-C, 255 internal), USB 2 and USB 3 lanes paired in ACPI order per controller,
-  devices by the root port they hang off, enumeration failures and USB 3 `link-error-count`
-  (MacBookAir6,1: HS01 / HS02 + SSP1 / SSP2). `-FixStatSampleUSBA YES` shows two made-up ports.
+  devices by the root port they hang off, enumeration failures (MacBookAir6,1: HS01 / HS02 +
+  SSP1 / SSP2; its `link-error-count` grew by hundreds with normal use, so it is not shown).
+  `PortHistory` keeps each device's fastest link per port: a device seen at ≥ 5 Gb/s elsewhere
+  but ≤ 480 Mb/s on a port flags that port's USB 3 lane (Air 2014: USB-A 1). `-FixStatSampleUSBA YES` shows two made-up ports.
 - Lid: `IOPMrootDomain.AppleClamshellState` polled, plus the last `pmset -g log` sleep
   reason ("Clamshell Sleep") after a wake. No lid angle sensor on MacBookAir10,1.
 - USB-C PD: the active profile is macOS' selection (`AdapterDetails.UsbHvcMenu` /

@@ -463,7 +463,9 @@ TR = {
     "Cells": "Hücreler",
     "Cells are consistent.": "Hücreler birbiriyle tutarlı.",
     "Power analysis": "Güç analizi",
-    "USB 3 link errors": "USB 3 bağlantı hataları",
+    "USB 2 speed only": "yalnızca USB 2 hızı",
+    "%1$@ linked at %2$@ here but at %3$@ in another port: this port's USB 3 lane may be faulty (pins, connector, redriver), or the plug was not fully in.":
+        "%1$@ bu portta %2$@, başka bir portta %3$@ hızında bağlandı: bu portun USB 3 hattı arızalı olabilir (pinler, konnektör, redriver) ya da fiş tam takılmamıştı.",
     "Erase count (average, highest, lowest)": "Silme sayısı (ortalama, en yüksek, en düşük)",
     "Host reads (MiB)": "Okunan veri (MiB)",
     "Host writes (MiB)": "Yazılan veri (MiB)",

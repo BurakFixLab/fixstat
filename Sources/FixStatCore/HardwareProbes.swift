@@ -313,6 +313,11 @@ public enum PortText {
         return parts.joined(separator: ", ")
     }
 
+    public static func slowLane(_ s: (device: String, here: Int, elsewhere: Int)) -> String {
+        L("%1$@ linked at %2$@ here but at %3$@ in another port: this port's USB 3 lane may be faulty (pins, connector, redriver), or the plug was not fully in.",
+          s.device, speed(s.here), speed(s.elsewhere))
+    }
+
     public static func speed(_ megabits: Int) -> String {
         megabits >= 1000 ? Format.number(Double(megabits) / 1000) + "\u{00A0}Gb/s"
             : Format.number(Double(megabits)) + "\u{00A0}Mb/s"
@@ -322,6 +327,12 @@ public enum PortText {
 /// Remembers per port which transports and power were seen during this session.
 public struct PortHistory {
     public private(set) var seen: [String: Set<String>] = [:]
+
+    /// Highest link speed (Mb/s) per USB device ("vendor:product"), on any port and per port.
+    public private(set) var fastest: [String: Int] = [:]
+    public private(set) var fastestOnPort: [String: [String: Int]] = [:]
+    /// Device names for the messages.
+    private var names: [String: String] = [:]
 
     public init() {}
 
@@ -338,12 +349,42 @@ public struct PortHistory {
                 seen[port.id] = set
                 changed = true
             }
+            for device in port.devices {
+                guard let key = Self.key(device), let speed = device.megabitsPerSecond else { continue }
+                names[key] = device.name
+                if speed > fastest[key] ?? 0 { fastest[key] = speed; changed = true }
+                if speed > fastestOnPort[port.id]?[key] ?? 0 { fastestOnPort[port.id, default: [:]][key] = speed; changed = true }
+            }
         }
         return changed
     }
 
+    static func key(_ device: USBDeviceInfo) -> String? {
+        guard let vendor = device.vendorID, let product = device.productID else { return nil }
+        return "\(vendor):\(product)"
+    }
+
+    /// A device that linked at USB 3 speed on another port but only at USB 2 speed on this one:
+    /// the port's USB 3 lane (pins, connector, redriver) may be faulty, or the plug was not fully in.
+    public func slowLane(_ port: PortStatus) -> (device: String, here: Int, elsewhere: Int)? {
+        for (key, here) in fastestOnPort[port.id] ?? [:] {
+            if here <= 480, let best = fastest[key], best >= 5_000 {
+                return (names[key] ?? L("USB device"), here, best)
+            }
+        }
+        return nil
+    }
+
     public func detail(_ ports: [PortStatus]) -> String {
-        ports.map { "\(PortText.name($0)): " + PortText.seenSummary(seen[$0.id] ?? []) }.joined(separator: " · ")
+        ports.map { port in
+            "\(PortText.name(port)): " + PortText.seenSummary(seen[port.id] ?? [])
+                + (slowLane(port) != nil ? " (" + L("USB 2 speed only") + ")" : "")
+        }.joined(separator: " · ")
+    }
+
+    /// Every data port was tested and none linked a USB 3 device at USB 2 speed only.
+    public func passed(_ ports: [PortStatus]) -> Bool {
+        allDataTested(ports) && ports.allSatisfy { slowLane($0) == nil }
     }
 
     /// Every USB-C / USB-A port carried data at least once.

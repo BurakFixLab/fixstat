@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%1$@ linked at %2$@ here but at %3$@ in another port: this port's USB 3 lane may be faulty (pins, connector, redriver), or the plug was not fully in." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ bu portta %2$@, başka bir portta %3$@ hızında bağlandı: bu portun USB 3 hattı arızalı olabilir (pinler, konnektör, redriver) ya da fiş tam takılmamıştı."
+          }
+        }
+      }
+    },
     "%1$@, below %2$@: over-discharged" : {
       "localizations" : {
         "tr" : {
@@ -7536,12 +7546,12 @@
         }
       }
     },
-    "USB 3 link errors" : {
+    "USB 2 speed only" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "USB 3 bağlantı hataları"
+            "value" : "yalnızca USB 2 hızı"
           }
         }
       }

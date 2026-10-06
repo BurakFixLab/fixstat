@@ -25,8 +25,6 @@ public struct PortStatus: Codable, Sendable, Equatable, Identifiable {
     /// USB-PD port controller counters (Apple Silicon `PortControllerInfo`).
     public var controller: PortControllerCounters?
     public var devices: [USBDeviceInfo]
-    /// USB 3 link errors since boot (XHCI `link-error-count`; ports read without `IOPort`).
-    public var linkErrors: Int?
 
     public var id: String { "\(type)@\(number)" }
 
@@ -162,7 +160,6 @@ public enum PortReader {
         var connector: Int
         var superSpeed: Bool
         var enumerationFailures: Int? = nil
-        var linkErrors: Int? = nil
     }
 
     /// External ports from the XHCI root hubs (`UsbConnector` from ACPI _UPC: 0 Type-A,
@@ -175,8 +172,7 @@ public enum PortReader {
                   let location = p.int("locationID"), isRootHubPort(service) else { return }
             roots.append(RootPort(location: location, name: p.string("name") ?? "", connector: connector,
                                   superSpeed: Registry.className(of: service).contains("30"),
-                                  enumerationFailures: p.dict("port-statistics")?.int("kPortStatEnumerationFailureCount"),
-                                  linkErrors: p.int("link-error-count")))
+                                  enumerationFailures: p.dict("port-statistics")?.int("kPortStatEnumerationFailureCount")))
         }
         let devices = usbDevicesByRootPort()
         var counters: [String: Int] = [:]
@@ -184,12 +180,10 @@ public enum PortReader {
             counters[kind, default: 0] += 1
             let attached = lanes.flatMap { devices[$0.location] ?? [] }
             func sum(_ values: [Int?]) -> Int? { values.contains { $0 != nil } ? values.compactMap { $0 }.reduce(0, +) : nil }
-            var port = PortStatus(type: kind, number: counters[kind]!, connected: !attached.isEmpty,
-                                  activeTransports: [], supportedTransports: [], powerIn: nil, overcurrentCount: nil,
-                                  connectionCount: nil, enumerationFailures: sum(lanes.map(\.enumerationFailures)),
-                                  devices: attached)
-            port.linkErrors = sum(lanes.map(\.linkErrors))
-            return port
+            return PortStatus(type: kind, number: counters[kind]!, connected: !attached.isEmpty,
+                              activeTransports: [], supportedTransports: [], powerIn: nil, overcurrentCount: nil,
+                              connectionCount: nil, enumerationFailures: sum(lanes.map(\.enumerationFailures)),
+                              devices: attached)
         }
     }
 
@@ -217,16 +211,16 @@ public enum PortReader {
     }
 
     /// `-FixStatSampleUSBA YES`: two made-up USB 3 Type-A ports as an Intel Mac shows them
-    /// (a memory stick in one, enumeration failures and link errors on the other).
+    /// (the same memory stick at USB 3 speed in one, at USB 2 speed in the other).
     static func sampleUSBA() -> [PortStatus] {
-        var first = PortStatus(type: "USB-A", number: 1, connected: true, activeTransports: [], supportedTransports: [],
+        let first = PortStatus(type: "USB-A", number: 1, connected: true, activeTransports: [], supportedTransports: [],
                                powerIn: nil, overcurrentCount: nil, connectionCount: nil, enumerationFailures: 0,
                                devices: [USBDeviceInfo(name: "USB Flash Drive", vendorID: 0x0781, productID: 0x5581,
                                                        speed: 3, portNumber: nil)])
-        first.linkErrors = 0
-        var second = PortStatus(type: "USB-A", number: 2, connected: false, activeTransports: [], supportedTransports: [],
-                                powerIn: nil, overcurrentCount: nil, connectionCount: nil, enumerationFailures: 3, devices: [])
-        second.linkErrors = 1
+        let second = PortStatus(type: "USB-A", number: 2, connected: true, activeTransports: [], supportedTransports: [],
+                                powerIn: nil, overcurrentCount: nil, connectionCount: nil, enumerationFailures: 3,
+                                devices: [USBDeviceInfo(name: "USB Flash Drive", vendorID: 0x0781, productID: 0x5581,
+                                                        speed: 2, portNumber: nil)])
         return [first, second]
     }
 

@@ -34,7 +34,7 @@ struct PortsTestView: View {
     private func update(_ current: [PortStatus]) {
         ports = current
         guard history.update(current) else { return }
-        monitor.recordCheck(.ports, detail: history.detail(current), passed: history.allDataTested(current))
+        monitor.recordCheck(.ports, detail: history.detail(current), passed: history.passed(current))
     }
 
     private func portCard(_ port: PortStatus) -> some View {
@@ -53,6 +53,11 @@ struct PortsTestView: View {
             if port.connected, !PortText.activity(port).isEmpty {
                 Text(verbatim: PortText.activity(port)).font(.callout)
             }
+            if let slow = self.history.slowLane(port) {
+                Label(PortText.slowLane(slow), systemImage: "exclamationmark.triangle.fill")
+                    .font(.callout).foregroundStyle(TemperatureColor.hot)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             ForEach(Array(port.devices.enumerated()), id: \.offset) { _, device in
                 Text(verbatim: "• " + (device.name ?? String(localized: "USB device"))
                      + (device.megabitsPerSecond.map { " · " + PortText.speed($0) } ?? ""))
@@ -66,9 +71,7 @@ struct PortsTestView: View {
                     if let count = port.enumerationFailures {
                         counter("USB enumeration failures", count)
                     }
-                    if let count = port.linkErrors {
-                        counter("USB 3 link errors", count)
-                    }
+
                     if let count = port.connectionCount {
                         Text("Plug-ins since start: \(count)").foregroundStyle(.secondary)
                     }
