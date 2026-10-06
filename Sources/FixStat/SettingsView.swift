@@ -192,15 +192,23 @@ private struct SensorSettings: View {
             Text("Hide sensors or give them your own name. Names are saved in your sensor map.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
-            List(monitor.sensors.sorted(by: SensorOrder.displayOrder)) { sensor in
-                SensorSettingsRow(sensor: sensor, isVisible: Binding(
-                    get: { !hidden.contains(sensor.id) },
-                    set: { visible in
-                        var set = Pref.hiddenSet(hiddenRaw)
-                        if visible { set.remove(sensor.id) } else { set.insert(sensor.id) }
-                        hiddenRaw = Pref.hiddenString(set)
+            let sorted = monitor.sensors.sorted(by: SensorOrder.displayOrder)
+            // Grouped by component, like the technician panel.
+            List {
+                ForEach(TechnicianPanel.groups, id: \.0) { group, title in
+                    let sensors = sorted.filter { $0.isMatched && $0.group == group }
+                    if !sensors.isEmpty {
+                        Section(title) {
+                            ForEach(sensors) { row($0, hidden: hidden) }
+                        }
                     }
-                ))
+                }
+                let unmatched = sorted.filter { !$0.isMatched }
+                if !unmatched.isEmpty {
+                    Section("Unmatched") {
+                        ForEach(unmatched) { row($0, hidden: hidden) }
+                    }
+                }
             }
             Text(verbatim: Monitor.userMapURL.path.replacingOccurrences(of: NSHomeDirectory(), with: "~"))
                 .font(.caption.monospaced())
@@ -208,6 +216,18 @@ private struct SensorSettings: View {
                 .textSelection(.enabled)
         }
         .padding()
+    }
+
+    private func row(_ sensor: DisplaySensor, hidden: Set<String>) -> some View {
+        SensorSettingsRow(sensor: sensor, isVisible: Binding(
+            get: { !hidden.contains(sensor.id) },
+            set: { visible in
+                var set = Pref.hiddenSet(hiddenRaw)
+                if visible { set.remove(sensor.id) } else { set.insert(sensor.id) }
+                hiddenRaw = Pref.hiddenString(set)
+            }
+        ))
+        .listRowSeparator(.hidden)
     }
 }
 
@@ -225,12 +245,14 @@ private struct SensorSettingsRow: View {
                 Text("Name")
             }
             .labelsHidden()
-            .textFieldStyle(.roundedBorder)
+            // Plain field: reads like a list row, edits in place (a box per row was noisy).
+            .textFieldStyle(.plain)
+            .foregroundStyle(isVisible ? .primary : .tertiary)
             .onSubmit { monitor.rename(sensor, to: name) }
             Text(verbatim: sensor.descriptor.rawLabel)
                 .font(.caption.monospaced())
-                .foregroundStyle(.secondary)
-                .frame(width: 44, alignment: .leading)
+                .foregroundStyle(.tertiary)
+                .frame(width: 44, alignment: .trailing)
         }
         .onAppear { name = sensor.resolved?.name ?? "" }
     }
