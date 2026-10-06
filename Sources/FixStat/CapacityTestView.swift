@@ -66,18 +66,20 @@ struct CapacityTestView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Discharges the battery under a steady load from the current charge down to the chosen level and compares the charge actually delivered with what the battery gauge reports. Start fully charged; the test takes one to several hours. The Mac stays awake and the display stays on.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                controls
-                loadLegend
-                if target == 0 && !busy {
-                    Label("At 0 % macOS puts the Mac to sleep or turns it off by itself. The measurements are saved while the test runs; if the Mac turns off — also early, as a weak battery does — the result appears here the next time FixStat opens. Full discharges wear the battery, so use them sparingly.",
-                          systemImage: "info.circle")
-                        .font(.callout)
+            VStack(alignment: .leading, spacing: 12) {
+                Card {
+                    CardHeader("Battery capacity test", systemImage: "battery.50percent")
+                    Text("Discharges the battery under a steady load from the current charge down to the chosen level and compares the charge actually delivered with what the battery gauge reports. Start fully charged; the test takes one to several hours. The Mac stays awake and the display stays on.")
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
+                    controls.padding(.top, 4)
+                    loadLegend
+                    if target == 0 && !busy {
+                        Label("At 0 % macOS puts the Mac to sleep or turns it off by itself. The measurements are saved while the test runs; if the Mac turns off — also early, as a weak battery does — the result appears here the next time FixStat opens. Full discharges wear the battery, so use them sparingly.",
+                              systemImage: "info.circle")
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 switch runner.state {
                 case .waitingForUnplug:

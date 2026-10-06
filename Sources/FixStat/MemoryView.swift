@@ -50,50 +50,57 @@ struct MemoryView: View {
     @State private var rounds = 3
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             if let info {
                 infoCard(info)
             } else {
                 ProgressView().controlSize(.small)
             }
-            SectionTitle(title: "Memory test")
-            Text("Writes several bit patterns into free memory and reads them back. Finds clear memory faults; it cannot reach memory used by macOS itself, so it does not replace a full diagnostic that runs outside macOS.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            HStack(spacing: 12) {
-                Picker("Size", selection: $gigabytes) {
-                    ForEach([0.5, 1.0, 2.0, 4.0], id: \.self) { size in
-                        Text(verbatim: Format.bytes(size * 1_000_000_000)).tag(size)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .fixedSize()
-                .disabled(runner.state == .running)
-                Picker("Rounds", selection: $rounds) {
-                    ForEach([1, 3, 10], id: \.self) { Text("\($0)×").tag($0) }
-                }
-                .pickerStyle(.segmented)
-                .fixedSize()
-                .disabled(runner.state == .running)
-                Text("\(Format.bytes(Double(testable))) usable")
-                    .font(.caption)
+            Card {
+                CardHeader("Memory test", systemImage: "memorychip")
+                Text("Writes several bit patterns into free memory and reads them back. Finds clear memory faults; it cannot reach memory used by macOS itself, so it does not replace a full diagnostic that runs outside macOS.")
                     .foregroundStyle(.secondary)
-                Spacer()
-                if runner.state == .running {
-                    Button("Stop", role: .cancel) { runner.stop() }
-                } else {
-                    Button("Start test") {
-                        let bytes = min(UInt64(gigabytes * 1_000_000_000), testable)
-                        runner.start(bytes: bytes, rounds: rounds)
+                    .fixedSize(horizontal: false, vertical: true)
+                // Two rows: the pickers, then what can be tested and the button, so no label
+                // is squeezed at the minimum window width.
+                HStack(spacing: 16) {
+                    Picker("Size", selection: $gigabytes) {
+                        ForEach([0.5, 1.0, 2.0, 4.0], id: \.self) { size in
+                            Text(verbatim: Format.bytes(size * 1_000_000_000)).tag(size)
+                        }
                     }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(testable < 100_000_000)
+                    .pickerStyle(.segmented)
+                    .fixedSize()
+                    Picker("Rounds", selection: $rounds) {
+                        ForEach([1, 3, 10], id: \.self) { Text("\($0)×").tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    .fixedSize()
+                    Spacer(minLength: 0)
                 }
-            }
-            if runner.state == .running {
-                ProgressView(value: runner.fraction) {
-                    Text(runner.pattern.map { MemoryText.pattern($0) } ?? "").font(.caption)
+                .disabled(runner.state == .running)
+                .padding(.top, 4)
+                HStack {
+                    Text("\(Format.bytes(Double(testable))) usable")
+                        .foregroundStyle(.secondary)
+                        .fixedSize()
+                    Spacer()
+                    if runner.state == .running {
+                        Button("Stop", role: .cancel) { runner.stop() }
+                    } else {
+                        Button("Start test") {
+                            let bytes = min(UInt64(gigabytes * 1_000_000_000), testable)
+                            runner.start(bytes: bytes, rounds: rounds)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .fixedSize()
+                        .disabled(testable < 100_000_000)
+                    }
+                }
+                if runner.state == .running {
+                    ProgressView(value: runner.fraction) {
+                        Text(runner.pattern.map { MemoryText.pattern($0) } ?? "").font(.caption)
+                    }
                 }
             }
             if let result = runner.result {

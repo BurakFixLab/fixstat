@@ -9,7 +9,7 @@ import FixStatCore
 ///       [--dark|--light] [-AppleLanguages "(tr)"]
 ///
 /// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead,
-/// `--details` the battery details window, `--power` the power analysis window, `--sleep-window` the sleep and wake window, `--ssd-window` the SSD window, `--hardware [keyboard|trackpad|…]` the hardware check, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
+/// `--details` the battery details window, `--power` the power analysis window, `--sleep-window` the sleep and wake window, `--ssd-window` the SSD window, `--memory-window`, `--test-window`, `--capacity-window` the test windows, `--hardware [keyboard|trackpad|…]` the hardware check, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
 ///
 ///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check] [--sample-capacity] [--sleep]
 ///
@@ -40,6 +40,23 @@ enum Snapshot {
             root = AnyView(HardwareCheckView(initialItem: item)
                 .environment(monitor)
                 .frame(width: 900, height: 680)
+                .background(Color(nsColor: .windowBackgroundColor)))
+        } else if arguments.contains("--memory-window") {
+            root = AnyView(MemoryView()
+                .environment(MemoryTestRunner(monitor: monitor))
+                .frame(width: 580, height: 480)
+                .background(Color(nsColor: .windowBackgroundColor)))
+        } else if arguments.contains("--test-window") {
+            root = AnyView(TestView()
+                .environment(monitor)
+                .environment(TestRunner(monitor: monitor))
+                .frame(width: 640, height: 640)
+                .background(Color(nsColor: .windowBackgroundColor)))
+        } else if arguments.contains("--capacity-window") {
+            root = AnyView(CapacityTestView()
+                .environment(monitor)
+                .environment(CapacityTestRunner(monitor: monitor))
+                .frame(width: 680, height: 760)
                 .background(Color(nsColor: .windowBackgroundColor)))
         } else if arguments.contains("--ssd-window") {
             root = AnyView(SSDView()

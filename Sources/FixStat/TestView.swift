@@ -15,12 +15,14 @@ struct TestView: View {
     @State private var gpu = true
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Loads the CPU and GPU for a few minutes and checks temperatures, cell voltages and power delivery. Run it after a repair with the case closed, on a desk.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            controls
+        VStack(alignment: .leading, spacing: 12) {
+            Card {
+                CardHeader("Post-repair test", systemImage: "flame")
+                Text("Loads the CPU and GPU for a few minutes and checks temperatures, cell voltages and power delivery. Run it after a repair with the case closed, on a desk.")
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                controls.padding(.top, 4)
+            }
             if runner.state != .idle {
                 liveValues
                 chart
