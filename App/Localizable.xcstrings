@@ -296,6 +296,26 @@
         }
       }
     },
+    "%@ · balanced" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · dengeli"
+          }
+        }
+      }
+    },
+    "%@ · imbalanced" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · dengesiz"
+          }
+        }
+      }
+    },
     "%@°" : {
       "comment" : "Compact temperature, e.g. 58°",
       "localizations" : {
@@ -1720,6 +1740,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Şarj oluyor · %@"
+          }
+        }
+      }
+    },
+    "Chassis" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kasa"
           }
         }
       }
@@ -4940,6 +4970,16 @@
         }
       }
     },
+    "PMU and board" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PMU ve kart"
+          }
+        }
+      }
+    },
     "PMU buck %@" : {
       "localizations" : {
         "tr" : {
@@ -6614,6 +6654,16 @@
         }
       }
     },
+    "Spread between the highest and the lowest cell" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En yüksek ve en düşük hücre arasındaki fark"
+          }
+        }
+      }
+    },
     "Standard" : {
       "localizations" : {
         "tr" : {
@@ -6886,6 +6936,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sıcaklık sınırı aşıldı (birden fazla sensör)"
+          }
+        }
+      }
+    },
+    "Temperatures" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıcaklıklar"
           }
         }
       }
@@ -7636,6 +7696,16 @@
         }
       }
     },
+    "Unmatched" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eşleşmeyen"
+          }
+        }
+      }
+    },
     "Unmatched sensors (%lld)" : {
       "localizations" : {
         "tr" : {
@@ -8228,6 +8298,16 @@
         }
       }
     },
+    "collapsed" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kapalı"
+          }
+        }
+      }
+    },
     "elevated" : {
       "localizations" : {
         "tr" : {
@@ -8244,6 +8324,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tahmini"
+          }
+        }
+      }
+    },
+    "expanded" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "açık"
           }
         }
       }
@@ -8284,6 +8374,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "yüksek"
+          }
+        }
+      }
+    },
+    "hottest %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "en sıcak %@"
           }
         }
       }

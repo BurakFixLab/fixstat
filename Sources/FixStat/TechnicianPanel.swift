@@ -2,7 +2,8 @@ import MacSensors
 import SwiftUI
 import FixStatCore
 
-/// Design B: raw battery data, cell voltages, every sensor with its raw key.
+/// Technician mode (2026-10 design "T2"): model card, battery and cells, every sensor grouped
+/// by component with each group's hottest reading, fans.
 @available(macOS 14.0, *)
 struct TechnicianPanel: View {
     @Environment(Monitor.self) private var monitor
@@ -10,19 +11,17 @@ struct TechnicianPanel: View {
     @AppStorage(Pref.hotThreshold) private var hot = Pref.defaultHot
     @AppStorage(Pref.cellImbalanceThreshold) private var imbalanceThreshold = Pref.defaultCellImbalance
     @AppStorage(Pref.hiddenSensors) private var hiddenRaw = ""
-    @State private var showUnmatched = false
+    /// Expanded sensor groups (group raw values, "unmatched").
+    @State private var expanded: Set<String> = [SensorMap.Group.cpu.rawValue]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Design.cardSpacing) {
             header
             if let battery = monitor.battery {
-                batteryGrid(battery)
-                if let cells = battery.cellVoltages, !cells.isEmpty {
-                    cellSection(cells)
-                }
+                batteryCard(battery)
             }
-            sensorSection
-            fanRow
+            sensorCard
+            fanCard
             // Four buttons on 360 pt: small controls, so nothing truncates or widens the panel.
             HStack(spacing: 6) {
                 SettingsButton()
@@ -32,6 +31,7 @@ struct TechnicianPanel: View {
                 QuitButton()
             }
             .controlSize(.small)
+            .padding(.top, 4)
         }
         .monospacedDigit()
     }
@@ -39,24 +39,22 @@ struct TechnicianPanel: View {
     // MARK: Header
 
     private var header: some View {
-        HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 2) {
+        Card {
+            HStack(alignment: .firstTextBaseline) {
                 Text(verbatim: monitor.system.marketingName ?? monitor.system.model)
                     .font(.headline)
-                Text(verbatim: modelLine)
-                    .font(.caption.monospaced())
+                Spacer()
+                Text("Technician")
+                    .font(.caption)
                     .foregroundStyle(.secondary)
-                // Desktops have an internal power supply, not an adapter.
-                if monitor.profile.hasBattery {
-                    Text(BatteryText.adapter(monitor.battery)).font(.caption).foregroundStyle(.secondary)
-                }
             }
-            Spacer()
-            Text("Technician")
-                .font(.caption2.weight(.medium))
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(.quaternary, in: RoundedRectangle(cornerRadius: 4))
+            Text(verbatim: modelLine)
+                .font(.caption.monospaced())
+                .foregroundStyle(.secondary)
+            // Desktops have an internal power supply, not an adapter.
+            if monitor.profile.hasBattery {
+                Text(BatteryText.adapter(monitor.battery)).font(.caption).foregroundStyle(.secondary)
+            }
         }
     }
 
@@ -66,154 +64,155 @@ struct TechnicianPanel: View {
             .joined(separator: " · ")
     }
 
-    // MARK: Battery
+    // MARK: Battery and cells
 
-    private func batteryGrid(_ b: BatteryInfo) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                SectionTitle(title: "Battery")
-                Spacer()
-                DetailsLink()
+    private func batteryCard(_ b: BatteryInfo) -> some View {
+        Card {
+            CardHeader("Battery", systemImage: "battery.75percent") {
+                HStack(spacing: 8) {
+                    if let cells = b.cellVoltages, !cells.isEmpty { balanceChip(cells) }
+                    DetailsLink().fixedSize()
+                }
             }
-            Grid(horizontalSpacing: 6, verticalSpacing: 6) {
+            Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: Design.rowSpacing) {
                 GridRow {
-                    TechCell(title: "Design cap.", value: b.designCapacity.map(Format.milliampHours))
-                    TechCell(title: "Max cap.", value: b.rawMaxCapacity.map(Format.milliampHours))
+                    CardRow(title: Text("Health"), value: b.healthPercent.map { Format.percent($0, digits: 1) })
+                    CardRow(title: Text("Cycles"), value: b.cycleCount.map { Format.number(Double($0)) })
                 }
                 GridRow {
-                    TechCell(title: "Health", value: b.healthPercent.map { Format.percent($0, digits: 1) })
-                    TechCell(title: "Cycles", value: b.cycleCount.map { Format.number(Double($0)) })
+                    CardRow(title: Text("Max cap."), value: b.rawMaxCapacity.map(Format.milliampHours))
+                    CardRow(title: Text("Design cap."), value: b.designCapacity.map(Format.milliampHours))
                 }
                 GridRow {
-                    TechCell(title: "Current", value: b.amperage.map { Format.milliamps($0) })
-                    TechCell(title: "Voltage", value: b.voltage.map { Format.volts(millivolts: $0) })
+                    CardRow(title: Text("Current"), value: b.amperage.map { Format.milliamps($0) })
+                    CardRow(title: Text("Voltage"), value: b.voltage.map { Format.volts(millivolts: $0) })
                 }
                 GridRow {
-                    TechCell(title: "Temperature", value: b.temperature.map { Format.temperature($0) })
+                    CardRow(title: Text("Temperature"), value: b.temperature.map { Format.temperature($0) })
                     if b.isCharging == true {
-                        TechCell(title: "Full in", value: b.timeToFull.map(Format.minutes))
+                        CardRow(title: Text("Full in"), value: b.timeToFull.map(Format.minutes))
                     } else {
-                        TechCell(title: "Remaining", value: (b.timeToEmpty ?? b.timeRemaining).map(Format.minutes))
+                        CardRow(title: Text("Remaining"), value: (b.timeToEmpty ?? b.timeRemaining).map(Format.minutes))
+                    }
+                }
+                if let cells = b.cellVoltages, !cells.isEmpty {
+                    Divider().gridCellUnsizedAxes(.horizontal)
+                    ForEach(Array(stride(from: 0, to: cells.count, by: 2)), id: \.self) { index in
+                        GridRow {
+                            cellRow(index, cells[index])
+                            if index + 1 < cells.count { cellRow(index + 1, cells[index + 1]) }
+                        }
                     }
                 }
             }
         }
     }
 
-    private func cellSection(_ cells: [Int]) -> some View {
+    private func cellRow(_ index: Int, _ millivolts: Int) -> some View {
+        CardRow(title: Text("Cell \(index + 1)"), value: Format.volts(millivolts: millivolts, digits: 3),
+                valueStyle: millivolts < CellAnalysis.minimumVoltage ? TemperatureColor.hot : nil)
+    }
+
+    private func balanceChip(_ cells: [Int]) -> some View {
         let spread = (cells.max() ?? 0) - (cells.min() ?? 0)
         let balanced = spread <= imbalanceThreshold
-        return VStack(alignment: .leading, spacing: 5) {
-            HStack {
-                SectionTitle(title: "Cell voltages")
-                Spacer()
-                Label {
-                    Text(balanced
-                         ? "Spread \(Format.millivolts(spread)) · balanced"
-                         : "Spread \(Format.millivolts(spread)) · imbalanced")
-                } icon: {
-                    Image(systemName: balanced ? "checkmark.circle" : "exclamationmark.triangle.fill")
-                }
-                .font(.caption.weight(.medium))
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .foregroundStyle(balanced ? TemperatureColor.cool : TemperatureColor.hot)
-                .background((balanced ? TemperatureColor.cool : TemperatureColor.hot).opacity(0.15),
-                            in: RoundedRectangle(cornerRadius: 4))
-            }
-            ForEach(Array(cells.enumerated()), id: \.offset) { index, millivolts in
-                HStack(spacing: 10) {
-                    Text("Cell \(index + 1)").font(.callout).frame(width: 64, alignment: .leading)
-                    // Scale 3.0 V … 4.35 V
-                    LevelBar(fraction: (Double(millivolts) - 3000) / 1350, color: TemperatureColor.cool)
-                    Text(Format.volts(millivolts: millivolts, digits: 3))
-                        .font(.callout.monospaced())
-                        .frame(width: 72, alignment: .trailing)
-                }
-                .accessibilityElement(children: .combine)
-            }
+        let color = balanced ? TemperatureColor.cool : TemperatureColor.hot
+        return Label {
+            Text(balanced ? "\(Format.millivolts(spread)) · balanced" : "\(Format.millivolts(spread)) · imbalanced")
+        } icon: {
+            Image(systemName: balanced ? "checkmark.circle" : "exclamationmark.triangle.fill")
         }
+        .font(.caption)
+        .lineLimit(1)
+        .fixedSize()
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
+        .foregroundStyle(color)
+        .help(Text("Spread between the highest and the lowest cell"))
+        .background(color.opacity(0.12), in: RoundedRectangle(cornerRadius: 5))
     }
 
     // MARK: Sensors
 
-    private var sensorSection: some View {
+    /// Display order and names of the sensor groups.
+    static let groups: [(SensorMap.Group, LocalizedStringKey)] = [
+        (.cpu, "CPU"), (.gpu, "GPU"), (.other, "PMU and board"), (.ssd, "SSD"), (.battery, "Battery"), (.chassis, "Chassis"),
+    ]
+
+    private var sensorCard: some View {
         let hidden = Pref.hiddenSet(hiddenRaw)
         let shown = monitor.sensors.filter { !hidden.contains($0.id) && monitor.value(of: $0) != nil }
         let matched = shown.filter(\.isMatched).sorted(by: SensorOrder.displayOrder)
         let unmatched = shown.filter { !$0.isMatched }.sorted { $0.name < $1.name }
         let modelMatches = shown.filter(\.isModelMatch).count
+        let sections = Self.groups.compactMap { group, title -> (String, LocalizedStringKey, [DisplaySensor])? in
+            let sensors = matched.filter { $0.group == group }
+            return sensors.isEmpty ? nil : (group.rawValue, title, sensors)
+        } + (unmatched.isEmpty ? [] : [("unmatched", LocalizedStringKey("Unmatched"), unmatched)])
+        let rows = sections.reduce(0) { $0 + 1 + (expanded.contains($1.0) ? $1.2.count : 0) }
 
-        return VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                SectionTitle(title: "Sensors")
-                Spacer()
-                Text("\(modelMatches) / \(shown.count) matched on this model")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        return Card {
+            CardHeader("Sensors", systemImage: "thermometer.medium") {
+                Text("\(modelMatches) / \(shown.count) matched on this model").foregroundStyle(.secondary)
             }
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(matched) { sensor in
-                        TechSensorRow(sensor: sensor, value: monitor.value(of: sensor), warm: warm, hot: hot)
-                        Divider()
-                    }
-                    if !unmatched.isEmpty {
-                        DisclosureGroup(isExpanded: $showUnmatched) {
-                            ForEach(unmatched) { sensor in
+                    ForEach(sections, id: \.0) { id, title, sensors in
+                        groupHeader(id: id, title: title, sensors: sensors)
+                        if expanded.contains(id) {
+                            ForEach(sensors) { sensor in
                                 TechSensorRow(sensor: sensor, value: monitor.value(of: sensor), warm: warm, hot: hot)
                             }
-                        } label: {
-                            Text("Unmatched sensors (\(unmatched.count))").font(.callout)
                         }
-                        .padding(.top, 6)
                     }
                 }
             }
             // Explicit height, see DefaultPanel: a ScrollView in the menu bar
             // window would otherwise collapse.
-            .frame(height: min(CGFloat(matched.count + (unmatched.isEmpty ? 0 : 1)) * 29, 300))
+            .frame(height: min(CGFloat(rows) * 27, 320))
         }
     }
 
-    private var fanRow: some View {
-        HStack {
-            if monitor.fans.isEmpty {
-                Text("No fans").foregroundStyle(.secondary)
-            } else {
-                ForEach(monitor.fans, id: \.index) { fan in
-                    Text("Fan \(fan.index + 1)").foregroundStyle(.secondary)
-                    Text(fan.actual.map(Format.rpm) ?? "–").font(.callout.monospaced())
-                    if fan.index < monitor.fans.count - 1 { Spacer() }
+    private func groupHeader(id: String, title: LocalizedStringKey, sensors: [DisplaySensor]) -> some View {
+        let hottest = sensors.compactMap { monitor.value(of: $0) }.max()
+        let color = TemperatureColor.color(for: hottest, warm: warm, hot: hot)
+        let isOpen = expanded.contains(id)
+        return Button {
+            if isOpen { expanded.remove(id) } else { expanded.insert(id) }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .rotationEffect(.degrees(isOpen ? 90 : 0))
+                    .foregroundStyle(.tertiary)
+                    .frame(width: 12)
+                Text(title).foregroundStyle(.secondary)
+                Text(verbatim: "\(sensors.count)").font(.caption).foregroundStyle(.tertiary)
+                Spacer(minLength: 8)
+                if let hottest {
+                    Text("hottest \(Format.degrees(hottest, digits: 1))")
+                        .foregroundStyle(hottest >= warm ? color : .secondary)
                 }
             }
-            Spacer(minLength: 0)
+            .padding(.vertical, 5)
+            .contentShape(Rectangle())
         }
-        .font(.callout)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 7)
-        .background(.quaternary.opacity(0.6), in: RoundedRectangle(cornerRadius: 6))
+        .buttonStyle(.plain)
+        .accessibilityValue(isOpen ? Text("expanded") : Text("collapsed"))
     }
-}
 
-/// Label / value cell of the battery grid.
-@available(macOS 14.0, *)
-private struct TechCell: View {
-    let title: LocalizedStringKey
-    let value: String?
+    // MARK: Fans
 
-    var body: some View {
-        HStack {
-            Text(title).foregroundStyle(.secondary).lineLimit(1)
-            Spacer(minLength: 4)
-            Text(value ?? "–").font(.callout.monospaced()).lineLimit(1)
+    private var fanCard: some View {
+        Card {
+            if monitor.fans.isEmpty {
+                CardRow(title: Text("Fans"), value: String(localized: "No fans"))
+            } else {
+                ForEach(monitor.fans, id: \.index) { fan in
+                    CardRow(title: Text("Fan \(fan.index + 1)"), value: fan.actual.map(Format.rpm))
+                }
+            }
         }
-        .font(.callout)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .frame(maxWidth: .infinity)
-        .background(.quaternary.opacity(0.6), in: RoundedRectangle(cornerRadius: 6))
-        .accessibilityElement(children: .combine)
     }
 }
 
@@ -227,10 +226,9 @@ struct TechSensorRow: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Circle()
-                .fill(TemperatureColor.color(for: value, warm: warm, hot: hot))
-                .frame(width: 7, height: 7)
-            Text(verbatim: sensor.name).font(.callout).lineLimit(1)
+            StatusDot(color: TemperatureColor.color(for: value, warm: warm, hot: hot),
+                      level: value.map { $0 >= hot ? 2 : $0 >= warm ? 1 : 0 } ?? 0)
+            Text(verbatim: sensor.name).lineLimit(1)
             if sensor.isMatched && sensor.isEstimated {
                 Text("estimated")
                     .font(.caption2)
@@ -245,10 +243,11 @@ struct TechSensorRow: View {
                 .foregroundStyle(.tertiary)
                 .lineLimit(1)
             Text(value.map { Format.degrees($0, digits: 1) } ?? "–")
-                .font(.callout.monospaced())
-                .frame(width: 52, alignment: .trailing)
+                .monospacedDigit()
+                .frame(width: 48, alignment: .trailing)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 3)
+        .padding(.leading, 18)
         .accessibilityElement(children: .combine)
     }
 }

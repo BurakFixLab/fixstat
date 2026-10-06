@@ -80,3 +80,94 @@ extension Double {
     /// Maps a temperature onto a bar fraction (20 °C → 0, 100 °C → 1).
     var temperatureFraction: Double { (self - 20) / 80 }
 }
+
+// MARK: - Cards (2026-10 design: one soft card per topic)
+
+/// Shared spacing and shapes of the card layout.
+@available(macOS 14.0, *)
+enum Design {
+    /// Corner radius of a card.
+    static let cardRadius: CGFloat = 10
+    /// Space between cards.
+    static let cardSpacing: CGFloat = 8
+    /// Padding inside a card.
+    static let cardPadding = EdgeInsets(top: 9, leading: 12, bottom: 10, trailing: 12)
+    /// Space between rows inside a card.
+    static let rowSpacing: CGFloat = 5
+}
+
+/// A topic of the panel or a window: a softly filled, rounded box.
+@available(macOS 14.0, *)
+struct Card<Content: View>: View {
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Design.rowSpacing) { content }
+            .padding(Design.cardPadding)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.fill.quinary, in: RoundedRectangle(cornerRadius: Design.cardRadius))
+            .overlay(RoundedRectangle(cornerRadius: Design.cardRadius).strokeBorder(.separator, lineWidth: 0.5))
+    }
+}
+
+/// Card title with an icon, and optional text or a control on the right.
+@available(macOS 14.0, *)
+struct CardHeader<Trailing: View>: View {
+    let title: LocalizedStringKey
+    let systemImage: String
+    @ViewBuilder let trailing: Trailing
+
+    init(_ title: LocalizedStringKey, systemImage: String, @ViewBuilder trailing: () -> Trailing = { EmptyView() }) {
+        self.title = title
+        self.systemImage = systemImage
+        self.trailing = trailing()
+    }
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline) {
+            Label(title, systemImage: systemImage)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .accessibilityAddTraits(.isHeader)
+            Spacer(minLength: 8)
+            trailing
+                .font(.callout)
+        }
+        .padding(.bottom, 2)
+    }
+}
+
+/// Label on the left (secondary), value right-aligned.
+@available(macOS 14.0, *)
+struct CardRow: View {
+    let title: Text
+    let value: String?
+    var valueStyle: Color? = nil
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline) {
+            title.foregroundStyle(.secondary).lineLimit(1)
+            Spacer(minLength: 8)
+            Text(value ?? "–")
+                .monospacedDigit()
+                .foregroundStyle(valueStyle ?? .primary)
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// Status of a reading: normal, attention, problem. Colour plus a shape, so it does not
+/// rely on colour alone.
+@available(macOS 14.0, *)
+struct StatusDot: View {
+    let color: Color
+    var level = 0
+
+    var body: some View {
+        Image(systemName: level >= 2 ? "exclamationmark.triangle.fill" : "circle.fill")
+            .font(.system(size: level >= 2 ? 9 : 7))
+            .foregroundStyle(color)
+            .frame(width: 12)
+            .accessibilityHidden(true)
+    }
+}
