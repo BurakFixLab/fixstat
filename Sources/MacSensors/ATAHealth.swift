@@ -23,6 +23,12 @@ public struct ATAHealth: Codable, Sendable, Equatable {
     public var attributes: [ATASMARTAttribute]
     /// The drive reports a threshold exceeded condition (nil: not reported).
     public var thresholdExceeded: Bool?
+    /// Product name, for vendor specific attributes (set by the reader).
+    public var model: String?
+
+    /// Apple's SanDisk based AHCI SSDs ("APPLE SSD SD0128F" …): 174 / 175 count host reads /
+    /// writes in MiB (DriveDx names 175 "Host Writes MiB"), 173 packs erase counts.
+    public var isAppleSanDisk: Bool { model?.hasPrefix("APPLE SSD SD") == true }
 
     /// Well-known attribute ids.
     public enum ID {
@@ -89,8 +95,25 @@ public struct ATAHealth: Codable, Sendable, Equatable {
         attribute(ID.temperature).map { Double($0.raw & 0xFF) }.flatMap { (1...120).contains($0) ? $0 : nil }
     }
 
-    /// Total data written, assuming 512-byte LBAs (most SSDs; some count in larger units).
-    public var bytesWritten: Double? { attribute(ID.totalLBAsWritten).map { Double($0.raw) * 512 } }
+    /// Total data written: LBAs × 512 bytes (most SSDs; some count in larger units), or
+    /// MiB on Apple's SanDisk SSDs.
+    public var bytesWritten: Double? {
+        if let lbas = attribute(ID.totalLBAsWritten) { return Double(lbas.raw) * 512 }
+        return isAppleSanDisk ? attribute(175).map { Double($0.raw & 0xFFFF_FFFF_FFFF) * 1_048_576 } : nil
+    }
+
+    public var bytesRead: Double? {
+        if let lbas = attribute(ID.totalLBAsRead) { return Double(lbas.raw) * 512 }
+        return isAppleSanDisk ? attribute(174).map { Double($0.raw & 0xFFFF_FFFF_FFFF) * 1_048_576 } : nil
+    }
+
+    /// NAND erase counts of Apple's SanDisk SSDs (attribute 173 raw: average, maximum, minimum
+    /// as 16-bit words from the low end).
+    public var eraseCounts: (average: Int, maximum: Int, minimum: Int)? {
+        guard isAppleSanDisk, let a = attribute(173), a.raw > 0 else { return nil }
+        let word = { (shift: UInt64) in Int((a.raw >> shift) & 0xFFFF) }
+        return (word(0), word(16), word(32))
+    }
 
     /// Remaining life in % from the first life attribute whose normalized value is a
     /// percentage, and that attribute's id. A vendor estimate, like NVMe's percentage used.
@@ -155,6 +178,7 @@ public struct ATADrive: Codable, Sendable, Equatable {
             let result = FSATAReadSMART(service, &data, &thresholds, &exceeded, &steps)
             if result == KERN_SUCCESS {
                 drive.health = ATAHealth.parse(data: data, thresholds: thresholds, exceeded: exceeded)
+                drive.health?.model = drive.model
                 if drive.health == nil { drive.smartError = "empty attribute table" }
             } else {
                 drive.smartError = Self.describe(steps: steps)

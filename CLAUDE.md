@@ -260,7 +260,9 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   (`ata.c`, the public ATASMARTLib CFPlugIn on IOBlockStorageDevice with "SMART Capable":
   only IDENTIFY / READ DATA / READ THRESHOLDS / RETURN STATUS, never enable or self-test; on a
   failure it retries once and tries the parent service, and every step's IOKit code is shown,
-  e.g. `kIOReturnIOError` 0xe00002ca on an SD0128F that DriveDx reads) → `ATAHealth`;
+  e.g. `kIOReturnIOError` 0xe00002ca on an SD0128F that DriveDx reads, fixed by IDENTIFY first)
+  → `ATAHealth`; Apple's SanDisk SSDs ("APPLE SSD SD…"): 174 / 175 = host reads / writes in
+  MiB, 173 raw = erase counts (average, maximum, minimum 16-bit words), life from 169;
   every internal ATA drive is read (`ATADrive`, e.g. a Fusion Drive's hard disk). Health % =
   100 − NVMe percentage used, or the normalized value of the first ATA life attribute
   (231, 169, 233, 177, 202, 173; vendor specific, to be confirmed with bench recordings). Startup

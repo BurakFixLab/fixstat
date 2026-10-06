@@ -23,6 +23,22 @@ import Testing
         return (data, limits)
     }
 
+    @Test func appleSanDiskCountersInMiB() throws {
+        // APPLE SSD SD0128F (MacBookAir6,1): values as DriveDx and FixStat read them.
+        let (data, limits) = Self.smart([(169, 100, 100, 863_462_491_872), (173, 176, 176, 2_319_331_033_727),
+                                         (174, 100, 100, 67_315_794), (175, 100, 100, 50_407_295)],
+                                        thresholds: [169: 10, 173: 100])
+        var health = try #require(ATAHealth.parse(data: data, thresholds: limits, exceeded: 0))
+        #expect(health.bytesWritten == nil)
+        health.model = "APPLE SSD SD0128F"
+        #expect(health.bytesWritten == Double(50_407_295) * 1_048_576)
+        #expect(health.bytesRead == Double(67_315_794) * 1_048_576)
+        #expect(health.eraseCounts?.average == 639)
+        #expect(health.eraseCounts?.maximum == 743)
+        #expect(health.eraseCounts?.minimum == 540)
+        #expect(health.lifeLeft?.attribute == 169)
+    }
+
     @Test func parsesASamsungStyleSSD() throws {
         // Power-on hours with minutes packed above the low 32 bits, 241 in LBAs.
         let (data, limits) = Self.smart([(9, 95, 95, 0x0012_0000_1F40), (12, 99, 99, 1503), (177, 97, 97, 112),

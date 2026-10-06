@@ -2522,6 +2522,16 @@
         }
       }
     },
+    "Erase count (average, highest, lowest)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silme sayısı (ortalama, en yüksek, en düşük)"
+          }
+        }
+      }
+    },
     "Erase fails" : {
       "localizations" : {
         "tr" : {
@@ -3372,6 +3382,26 @@
         }
       }
     },
+    "Host reads (MiB)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okunan veri (MiB)"
+          }
+        }
+      }
+    },
+    "Host writes (MiB)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazılan veri (MiB)"
+          }
+        }
+      }
+    },
     "Hot" : {
       "localizations" : {
         "tr" : {
@@ -4190,6 +4220,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yazma ömrünün büyük kısmı kullanılmış (%%%lld)."
+          }
+        }
+      }
+    },
+    "NAND erase cycles" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NAND silme döngüsü"
           }
         }
       }
@@ -8078,6 +8118,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "adaptör"
+          }
+        }
+      }
+    },
+    "average %1$lld (lowest %2$lld, highest %3$lld)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ortalama %1$lld (en düşük %2$lld, en yüksek %3$lld)"
           }
         }
       }

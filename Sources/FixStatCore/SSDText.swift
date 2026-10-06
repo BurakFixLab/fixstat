@@ -130,7 +130,14 @@ public enum SSDText {
         add(L("Pending sectors"), h.pendingSectors)
         add(L("Uncorrectable sectors"), h.uncorrectableSectors)
         add(L("Interface CRC errors"), h.crcErrors)
-        if let written = h.bytesWritten { rows.append((L("Data written (estimate)"), Format.bytes(written))) }
+        if let written = h.bytesWritten {
+            rows.append((h.isAppleSanDisk ? L("Data written") : L("Data written (estimate)"), Format.bytes(written)))
+        }
+        if let read = h.bytesRead, h.isAppleSanDisk { rows.append((L("Data read"), Format.bytes(read))) }
+        if let erase = h.eraseCounts {
+            rows.append((L("NAND erase cycles"), L("average %1$lld (lowest %2$lld, highest %3$lld)",
+                                                     erase.average, erase.minimum, erase.maximum)))
+        }
         if let temperature = h.temperature { rows.append((L("Temperature"), Format.temperature(temperature, digits: 0))) }
         return rows
     }
@@ -138,7 +145,7 @@ public enum SSDText {
     /// All attributes: id, name, current, worst, threshold, raw.
     public static func ataTable(_ h: ATAHealth) -> [[String]] {
         h.attributes.map { a in
-            [String(a.id), attributeName(a.id), String(a.current), String(a.worst),
+            [String(a.id), attributeName(a.id, appleSanDisk: h.isAppleSanDisk), String(a.current), String(a.worst),
              a.threshold > 0 ? String(a.threshold) : "–", String(a.raw)]
         }
     }
@@ -147,7 +154,15 @@ public enum SSDText {
         [L("ID"), L("Attribute"), L("Value"), L("Worst"), L("Threshold"), L("Raw")]
     }
 
-    public static func attributeName(_ id: Int) -> String {
+    public static func attributeName(_ id: Int, appleSanDisk: Bool = false) -> String {
+        if appleSanDisk {
+            switch id {
+            case 173: return L("Erase count (average, highest, lowest)")
+            case 174: return L("Host reads (MiB)")
+            case 175: return L("Host writes (MiB)")
+            default: break
+            }
+        }
         switch id {
         case 1: return L("Read error rate")
         case 5: return L("Reallocated sectors")
