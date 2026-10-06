@@ -13,15 +13,15 @@ struct BatteryDetailsView: View {
     var body: some View {
         ScrollView {
             if let battery = monitor.battery {
-                VStack(alignment: .leading, spacing: 18) {
+                VStack(alignment: .leading, spacing: 12) {
                     OriginalitySection(battery: battery, model: monitor.system.model,
                                        reference: monitor.partsReference, macOSHealth: macOSHealth)
                     CellsSection(battery: battery)
-                    HStack(alignment: .top, spacing: 18) {
+                    HStack(alignment: .top, spacing: Design.cardSpacing) {
                         PackSection(battery: battery)
                         LifetimeSection(lifetime: battery.lifetime)
                     }
-                    HStack(alignment: .top, spacing: 18) {
+                    HStack(alignment: .top, spacing: Design.cardSpacing) {
                         ChargingSection(battery: battery)
                         PowerDeliverySection(battery: battery)
                     }
@@ -45,21 +45,19 @@ struct BatteryDetailsView: View {
 
 // MARK: - Building blocks
 
-/// A titled group of label / value rows.
+/// A titled group of label / value rows: a card with an icon in its header.
 @available(macOS 14.0, *)
 private struct DetailGroup<Content: View>: View {
     let title: LocalizedStringKey
+    let systemImage: String
     @ViewBuilder let content: Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            SectionTitle(title: title)
-            VStack(alignment: .leading, spacing: 5) { content }
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
+        Card {
+            CardHeader(title, systemImage: systemImage)
+            content
         }
-        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .frame(maxHeight: .infinity, alignment: .top)
     }
 }
 
@@ -74,11 +72,10 @@ private struct DetailRow: View {
             Text(title).foregroundStyle(.secondary)
             Spacer(minLength: 8)
             Text(value ?? "–")
-                .font(.callout.monospaced())
+                .monospacedDigit()
                 .foregroundStyle(highlight ? TemperatureColor.hot : .primary)
                 .multilineTextAlignment(.trailing)
         }
-        .font(.callout)
         .accessibilityElement(children: .combine)
     }
 }
@@ -95,7 +92,7 @@ private struct OriginalitySection: View {
     var body: some View {
         let batteryCheck = PartCheck.battery(battery, model: model, reference: reference)
         let adapterCheck = PartCheck.adapter(battery, reference: reference)
-        DetailGroup(title: "Originality check") {
+        DetailGroup(title: "Originality check", systemImage: "checkmark.shield") {
             HStack(alignment: .top, spacing: 18) {
                 PartCheckColumn(title: "Battery", check: batteryCheck)
                 if let adapterCheck {
@@ -109,7 +106,6 @@ private struct OriginalitySection: View {
                 }
             }
             if let condition = macOSHealth?.condition {
-                Divider()
                 Label {
                     let text = String(localized: "macOS battery condition: \(PartText.condition(condition))")
                     Text(verbatim: text + (macOSHealth?.maximumCapacity.map { " · \($0)" } ?? ""))
@@ -148,7 +144,7 @@ private struct PartCheckColumn: View {
                         .foregroundStyle(item.status == .pass ? TemperatureColor.cool : item.status == .warn ? TemperatureColor.hot : .secondary)
                         .frame(width: 14)
                     VStack(alignment: .leading, spacing: 1) {
-                        Text(verbatim: PartText.item(item.id))
+                        Text(verbatim: PartText.item(item.id)).fixedSize(horizontal: false, vertical: true)
                         if !item.detail.isEmpty {
                             Text(verbatim: item.detail).font(.caption.monospaced()).foregroundStyle(.secondary)
                         }
@@ -169,7 +165,7 @@ private struct CellsSection: View {
 
     var body: some View {
         let analysis = CellAnalysis(battery: battery)
-        DetailGroup(title: "Cells") {
+        DetailGroup(title: "Cells", systemImage: "square.stack.3d.up") {
             Grid(alignment: .trailing, horizontalSpacing: 18, verticalSpacing: 6) {
                 GridRow {
                     Text("Cell").gridColumnAlignment(.leading)
@@ -192,10 +188,10 @@ private struct CellsSection: View {
                         Text(BatteryDetailText.deviation(cell))
                             .foregroundStyle(cell.isSuspect ? TemperatureColor.hot : .secondary)
                     }
-                    .font(.callout.monospaced())
+                    .monospacedDigit()
                 }
             }
-            Divider().padding(.vertical, 2)
+            .padding(.bottom, 4)
             if analysis.suspects.isEmpty, !analysis.defaultQmax {
                 Label("Cells are consistent.", systemImage: "checkmark.circle")
                     .foregroundStyle(TemperatureColor.cool)
@@ -229,7 +225,7 @@ private struct PackSection: View {
     let battery: BatteryInfo
 
     var body: some View {
-        DetailGroup(title: "Pack") {
+        DetailGroup(title: "Pack", systemImage: "battery.100percent") {
             DetailRow(title: "Gauge", value: battery.gaugeDeviceName)
             DetailRow(title: "Chemistry ID", value: battery.identity?.chemistryID.map { String($0) })
             DetailRow(title: "Manufacturer data", value: BatteryDetailText.manufacturer(battery))
@@ -254,7 +250,7 @@ private struct LifetimeSection: View {
     let lifetime: BatteryLifetime?
 
     var body: some View {
-        DetailGroup(title: "Lifetime (gauge)") {
+        DetailGroup(title: "Lifetime (gauge)", systemImage: "clock.arrow.circlepath") {
             DetailRow(title: "Operating time", value: lifetime?.totalOperatingTime.map(BatteryDetailText.hours))
             DetailRow(title: "Highest temperature", value: lifetime?.maximumTemperature.map { Format.temperature($0) })
             DetailRow(title: "Average temperature", value: lifetime?.averageTemperature.map { Format.temperature($0) })
@@ -276,7 +272,7 @@ private struct ChargingSection: View {
     var body: some View {
         let charger = battery.charger
         let telemetry = battery.powerTelemetry
-        DetailGroup(title: "Charger") {
+        DetailGroup(title: "Charger", systemImage: "bolt") {
             DetailRow(title: "State", value: BatteryText.state(battery))
             DetailRow(title: "Battery current", value: battery.amperage.map { Format.milliamps($0) })
             DetailRow(title: "Charger target current", value: charger?.chargingCurrent.map { Format.milliamps($0, signed: false) })
@@ -306,7 +302,7 @@ private struct PowerDeliverySection: View {
     var body: some View {
         let pd = battery.powerDelivery
         let connected = battery.externalConnected == true
-        DetailGroup(title: "USB-C Power Delivery") {
+        DetailGroup(title: "USB-C Power Delivery", systemImage: "cable.connector") {
             if let pd, let active = pd.activeProfile ?? pd.contract?.sourceObject {
                 if !connected {
                     Text("No power adapter — last contract:")
