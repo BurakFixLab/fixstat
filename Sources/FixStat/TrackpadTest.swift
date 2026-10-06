@@ -20,9 +20,9 @@ struct TrackpadTestView: View {
             surfaceMap
                 .aspectRatio(1.6, contentMode: .fit)
                 .frame(maxWidth: 560)
-                .background(.quaternary.opacity(0.4))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(.separator))
+                .background(Design.cardFill)
+                .clipShape(RoundedRectangle(cornerRadius: Design.cardRadius))
+                .overlay(RoundedRectangle(cornerRadius: Design.cardRadius).strokeBorder(.separator, lineWidth: 0.5))
             HStack(spacing: 14) {
                 Text("Click zones: left \(progress.leftZones.count) / \(TrackpadProgress.zoneCount) · right \(progress.rightZones.count) / \(TrackpadProgress.zoneCount)")
                 check("Force click", progress.forceClick)

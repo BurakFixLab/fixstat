@@ -88,6 +88,8 @@ private final class ReportWriter {
     private let margin: CGFloat = 36
     private var y: CGFloat = 0
     private var pageOpen = false
+    /// Title of the section being drawn, repeated when it continues on a new page.
+    private var currentGroup: String?
     private var width: CGFloat { ReportPDF.pageSize.width - 2 * margin }
     private var bottom: CGFloat { ReportPDF.pageSize.height - margin - 26 }
 
@@ -160,7 +162,10 @@ private final class ReportWriter {
 
     /// Starts a new page when `needed` points do not fit any more.
     private func ensure(_ needed: CGFloat) {
-        if y + needed > bottom { beginPage(subtitle: data.system.marketingName ?? data.system.model) }
+        guard y + needed > bottom else { return }
+        beginPage(subtitle: data.system.marketingName ?? data.system.model)
+        // A section that continues on the new page gets its title again.
+        if let title = currentGroup { drawGroupTitle(title) }
     }
 
     // MARK: Page 1
@@ -399,7 +404,13 @@ private final class ReportWriter {
     // MARK: Building blocks
 
     private func group(_ title: String) {
+        currentGroup = nil
         ensure(40)
+        currentGroup = title
+        drawGroupTitle(title)
+    }
+
+    private func drawGroupTitle(_ title: String) {
         let attributes: [NSAttributedString.Key: Any] = [.font: NSFont.systemFont(ofSize: 9, weight: .semibold),
                                                          .foregroundColor: gray, .kern: 0.3]
         let string = NSAttributedString(string: title.uppercased(with: .current), attributes: attributes)
@@ -408,6 +419,7 @@ private final class ReportWriter {
     }
 
     private func endGroup() {
+        currentGroup = nil
         y += 10
     }
 
@@ -424,13 +436,23 @@ private final class ReportWriter {
         return h + 3
     }
 
+    /// Rows side by side in two columns; a pair where either row does not fit its column on one
+    /// line is drawn as full-width rows instead, so long values do not wrap into narrow columns.
     private func twoColumns(_ rows: [(String, String)]) {
         let columnWidth = (width - 12) / 2
+        func fits(_ row: (String, String)) -> Bool {
+            size(row.0, font: body).width + 24 + size(row.1, font: body).width <= columnWidth
+        }
         for start in stride(from: 0, to: rows.count, by: 2) {
+            let pair = Array(rows[start..<min(start + 2, rows.count)])
+            guard pair.allSatisfy(fits) else {
+                for item in pair { row(item.0, item.1) }
+                continue
+            }
             ensure(15)
-            var h = row(rows[start].0, rows[start].1, x: margin, width: columnWidth, top: y)
-            if start + 1 < rows.count {
-                h = max(h, row(rows[start + 1].0, rows[start + 1].1, x: margin + columnWidth + 12, width: columnWidth, top: y))
+            var h = row(pair[0].0, pair[0].1, x: margin, width: columnWidth, top: y)
+            if pair.count > 1 {
+                h = max(h, row(pair[1].0, pair[1].1, x: margin + columnWidth + 12, width: columnWidth, top: y))
             }
             y += h
         }
