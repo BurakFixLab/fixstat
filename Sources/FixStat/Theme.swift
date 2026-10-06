@@ -21,15 +21,15 @@ enum TemperatureColor {
     }
 }
 
-/// Section title in small caps style, e.g. "BATTERY".
+/// Section title outside a card ("Charge" above a chart).
 @available(macOS 14.0, *)
 struct SectionTitle: View {
     let title: LocalizedStringKey
 
     var body: some View {
+        // Same look as a card header: sentence case, secondary (2026-10 design).
         Text(title)
-            .textCase(.uppercase)
-            .font(.caption.weight(.semibold))
+            .font(.callout)
             .foregroundStyle(.secondary)
             .accessibilityAddTraits(.isHeader)
     }
@@ -65,12 +65,12 @@ struct Tile: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title).font(.caption).foregroundStyle(.secondary)
-            Text(value).font(.callout.weight(.semibold)).monospacedDigit()
+            Text(value).font(.callout.weight(.medium)).monospacedDigit()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .background(.quaternary.opacity(0.6), in: RoundedRectangle(cornerRadius: 6))
+        .padding(.horizontal, 10)
+        .padding(.vertical, 7)
+        .background(.fill.quinary, in: RoundedRectangle(cornerRadius: Design.cardRadius))
         .accessibilityElement(children: .combine)
     }
 }

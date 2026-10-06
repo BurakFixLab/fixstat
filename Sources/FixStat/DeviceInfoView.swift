@@ -15,18 +15,18 @@ struct DeviceInfoView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 12) {
                 if let info = monitor.deviceInfo {
                     header(info)
-                    section("Configuration", DeviceText.configuration(info, ssd: ssd))
-                    SectionTitle(title: "Ownership and security")
-                    VStack(alignment: .leading, spacing: 6) {
+                    section("Configuration", systemImage: "list.bullet.rectangle", DeviceText.configuration(info, ssd: ssd))
+                    Card {
+                        CardHeader("Ownership and security", systemImage: "lock")
                         ForEach(DeviceText.security(info), id: \.0) { row in
                             SecurityRow(title: row.0, value: row.1, attention: row.2)
                         }
                     }
-                    SectionTitle(title: "Health summary")
-                    VStack(alignment: .leading, spacing: 6) {
+                    Card {
+                        CardHeader("Health summary", systemImage: "heart.text.square")
                         ForEach(Array(healthRows.enumerated()), id: \.offset) { _, row in
                             SecurityRow(title: row.0, value: row.1, attention: row.2)
                         }
@@ -61,20 +61,20 @@ struct DeviceInfoView: View {
     private func header(_ info: DeviceInfo) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(verbatim: info.system.marketingName ?? info.system.model)
-                .font(.title2.weight(.semibold))
+                .font(.title2.weight(.medium))
             Text(verbatim: [info.system.model, info.system.boardTarget, info.partNumber].compactMap { $0 }
                 .joined(separator: " · "))
                 .foregroundStyle(.secondary)
             if let serial = info.serial {
-                Text("Serial \(serial)").font(.callout).foregroundStyle(.secondary)
+                Text("Serial \(serial)").foregroundStyle(.secondary)
             }
         }
     }
 
-    private func section(_ title: LocalizedStringKey, _ rows: [(String, String)]) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            SectionTitle(title: title)
-            Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 4) {
+    private func section(_ title: LocalizedStringKey, systemImage: String, _ rows: [(String, String)]) -> some View {
+        Card {
+            CardHeader(title, systemImage: systemImage)
+            Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: Design.rowSpacing) {
                 ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                     GridRow {
                         Text(verbatim: row.0).foregroundStyle(.secondary)
@@ -82,7 +82,6 @@ struct DeviceInfoView: View {
                     }
                 }
             }
-            .font(.callout)
         }
     }
 
@@ -103,9 +102,8 @@ private struct SecurityRow: View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Image(systemName: attention ? "exclamationmark.triangle.fill" : "checkmark.circle")
                 .foregroundStyle(attention ? TemperatureColor.hot : TemperatureColor.cool)
-            Text(verbatim: title).frame(width: 190, alignment: .leading)
+            Text(verbatim: title).foregroundStyle(.secondary).frame(width: 190, alignment: .leading)
             Text(verbatim: value).foregroundStyle(attention ? AnyShapeStyle(TemperatureColor.hot) : AnyShapeStyle(.primary))
         }
-        .font(.callout)
     }
 }

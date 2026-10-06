@@ -16,7 +16,7 @@ struct CrashHistoryView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 12) {
                 shutdownSection
                 panicSection
             }
@@ -43,19 +43,18 @@ struct CrashHistoryView: View {
     }
 
     private var shutdownSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            SectionTitle(title: "Previous shutdown causes (last 30 days)")
+        Card {
+            CardHeader("Previous shutdown causes (last 30 days)", systemImage: "power")
             if loadingShutdowns {
                 HStack(spacing: 8) {
                     ProgressView().controlSize(.small)
                     Text("Searching the system log — this can take about a minute.")
-                        .font(.callout)
                         .foregroundStyle(.secondary)
                 }
             } else if shutdowns.isEmpty {
                 Text("No shutdown causes in the system log. macOS records one at every start; older entries are removed after a while.")
-                    .font(.callout)
                     .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             } else {
                 ForEach(shutdowns) { event in
                     HStack(alignment: .firstTextBaseline, spacing: 10) {
@@ -66,11 +65,11 @@ struct CrashHistoryView: View {
                             .frame(width: 150, alignment: .leading)
                         Text(verbatim: String(event.code))
                             .font(.callout.monospaced())
+                            .foregroundStyle(.secondary)
                             .frame(width: 44, alignment: .trailing)
                         Text(verbatim: CrashText.shutdownMeaning(event.meaning))
                             .foregroundStyle(event.meaning == nil ? .secondary : .primary)
                     }
-                    .font(.callout)
                 }
             }
             Text("Code meanings come from the repair community, not from Apple, and can differ between models.")
@@ -80,11 +79,10 @@ struct CrashHistoryView: View {
     }
 
     private var panicSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            SectionTitle(title: "Kernel panics")
+        Card {
+            CardHeader("Kernel panics", systemImage: "exclamationmark.octagon")
             if panics.isEmpty {
-                Label("No kernel panic reports found.", systemImage: "checkmark.circle")
-                    .foregroundStyle(TemperatureColor.cool)
+                FindingRow(text: String(localized: "No kernel panic reports found."), problem: false)
             } else {
                 ForEach(panics) { panic in
                     VStack(alignment: .leading, spacing: 4) {
@@ -114,10 +112,10 @@ struct CrashHistoryView: View {
                         }
                         if expanded == panic.id {
                             Text(verbatim: panic.panicString)
-                                .font(.caption2.monospaced())
+                                .font(.caption.monospaced())
                                 .textSelection(.enabled)
                                 .padding(8)
-                                .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 6))
+                                .background(.fill.quinary, in: RoundedRectangle(cornerRadius: 6))
                             Button("Copy") {
                                 NSPasteboard.general.clearContents()
                                 NSPasteboard.general.setString(panic.panicString, forType: .string)
@@ -125,8 +123,7 @@ struct CrashHistoryView: View {
                             .font(.caption)
                         }
                     }
-                    .padding(10)
-                    .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
+                    .padding(.vertical, 4)
                 }
             }
         }

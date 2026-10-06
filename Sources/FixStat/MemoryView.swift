@@ -155,6 +155,6 @@ struct MemoryResultView: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
+        .background(.fill.quinary, in: RoundedRectangle(cornerRadius: Design.cardRadius))
     }
 }
