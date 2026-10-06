@@ -258,12 +258,16 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
 
 - SSD: NVMe SMART via the NVMeSMARTLib CFPlugIn (no root); ATA SMART of AHCI / SATA drives
   (`ata.c`, the public ATASMARTLib CFPlugIn on IOBlockStorageDevice with "SMART Capable":
-  only READ DATA / READ THRESHOLDS / RETURN STATUS, never enable or self-test) → `ATAHealth`;
+  only IDENTIFY / READ DATA / READ THRESHOLDS / RETURN STATUS, never enable or self-test; on a
+  failure it retries once and tries the parent service, and every step's IOKit code is shown,
+  e.g. `kIOReturnIOError` 0xe00002ca on an SD0128F that DriveDx reads) → `ATAHealth`;
   every internal ATA drive is read (`ATADrive`, e.g. a Fusion Drive's hard disk). Health % =
   100 − NVMe percentage used, or the normalized value of the first ATA life attribute
   (231, 169, 233, 177, 202, 173; vendor specific, to be confirmed with bench recordings). Startup
   volume space from `URLResourceValues` (important-usage capacity, like Finder).
-  `-FixStatSampleATA YES` shows a made-up AHCI SSD + hard disk. Write–verify stress test on
+  `-FixStatSampleATA YES` shows a made-up AHCI SSD + hard disk. Read / write errors and
+  retries since startup from the IOBlockStorageDriver `Statistics` (`DiskIOStatistics`, no
+  SMART, no root) for every drive. Write–verify stress test on
   free space (`SSDStressTest`, keeps 10 GB free, speeds from per-block I/O time).
 - Full SSD test: `fixstat-diskscan` (in `Contents/MacOS`) reads `/dev/rdiskN` read-only
   (O_RDONLY + F_NOCACHE, 8 MiB chunks, 256 KB re-probe on errors) and writes JSON lines

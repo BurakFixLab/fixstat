@@ -328,6 +328,9 @@ final class LegacySSD: LegacySnapshotStartable {
             blocks.append(.headline(info.model ?? "SSD", nil))
             blocks.append(.secondary(SSDText.identity(info)))
             if let space = info.space { blocks.append(.secondary(SSDText.space(space))) }
+            if let io = info.io {
+                blocks.append(SSDText.ioFinding(io).map { .status($0, .bad) } ?? .secondary(SSDText.io(io)))
+            }
             if let health = info.health {
                 blocks.append(healthGroup(summary: SSDText.healthSummary(info), findings: SSDText.healthFindings(health),
                                           rows: SSDText.healthRows(health), attributes: nil))

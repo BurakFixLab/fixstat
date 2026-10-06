@@ -77,6 +77,8 @@ public struct SSDInfo: Codable, Sendable, Equatable {
     public var otherDrives: [ATADrive] = []
     /// Why there is no SMART data: "no SMART capable drive" or the read's IOKit return code.
     public var smartProblem: String?
+    /// Read / write errors and retries of the SSD since startup (no SMART needed).
+    public var io: DiskIOStatistics?
 
     /// Health in %: 100 − NVMe "percentage used", or the life attribute of ATA SMART. A
     /// vendor estimate of the remaining rated endurance.
@@ -129,11 +131,16 @@ public struct SSDInfo: Codable, Sendable, Equatable {
             info.capacity = drive.capacity ?? info.capacity
             info.interconnect = drive.interconnect ?? info.interconnect
             info.ata = drive.health
+            info.io = drive.io
             info.smartProblem = drive.smartError.map { "SMART read failed (\($0))" }
         } else if info.health == nil {
             info.smartProblem = "no SMART capable drive (\(Self.storageClasses()))"
         }
         info.otherDrives = drives
+        if info.io == nil {
+            let devices = DiskIOStatistics.internalDevices()
+            info.io = (devices.first { $0.model != nil && $0.model == info.model } ?? devices.first)?.statistics
+        }
         info.space = VolumeSpace.startup()
         if UserDefaults.standard.bool(forKey: "FixStatSampleATA") { info = sampleATA(space: info.space) }
         guard info.model != nil || info.health != nil || info.ata != nil else { return nil }

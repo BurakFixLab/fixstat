@@ -179,9 +179,24 @@ public enum SSDText {
     }
 
     /// One line for a further internal drive (Fusion Drive hard disk, second SSD).
+    /// "Since startup: no read or write errors · 170 GB read · 92 GB written".
+    public static func io(_ s: DiskIOStatistics) -> String {
+        let state = s.errors == 0 && s.retries == 0 ? L("no read or write errors")
+            : L("%1$lld read / write errors, %2$lld retries", s.errors, s.retries)
+        return L("Since startup: %@", [state, L("%@ read", Format.bytes(s.bytesRead)),
+                                       L("%@ written", Format.bytes(s.bytesWritten))].joined(separator: " · "))
+    }
+
+    /// A finding when the drive failed reads or writes since startup.
+    public static func ioFinding(_ s: DiskIOStatistics) -> String? {
+        guard s.errors > 0 || s.retries > 0 else { return nil }
+        return L("The drive failed %1$lld reads or writes since startup (%2$lld retries): back up the data and run the stress test.",
+                 s.errors, s.retries)
+    }
+
     public static func driveSummary(_ drive: ATADrive) -> String {
         let kind = drive.isSolidState ? L("SSD") : L("Hard disk")
-        let findings = drive.health.map(ataFindings) ?? []
+        let findings = (drive.health.map(ataFindings) ?? []) + [drive.io.flatMap(ioFinding)].compactMap { $0 }
         let state = drive.health == nil ? L("SMART not readable")
             : findings.isEmpty ? L("SMART: no problems") : findings.joined(separator: " ")
         return [kind, drive.capacity.map { Format.bytes($0) }, state].compactMap { $0 }.joined(separator: " · ")

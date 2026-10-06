@@ -11,6 +11,16 @@
         }
       }
     },
+    "%1$lld read / write errors, %2$lld retries" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld okuma / yazma hatası, %2$lld yeniden deneme"
+          }
+        }
+      }
+    },
     "%@ (%@; median of %lld, %@ in total)" : {
       "localizations" : {
         "en" : {
@@ -179,6 +189,16 @@
         }
       }
     },
+    "%@ read" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ okundu"
+          }
+        }
+      }
+    },
     "%@ reallocated sectors: the drive has replaced failing blocks." : {
       "localizations" : {
         "tr" : {
@@ -252,6 +272,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%2$@ alanın %1$@ kadarı dolu · %3$@ boş"
+          }
+        }
+      }
+    },
+    "%@ written" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ yazıldı"
           }
         }
       }
@@ -5526,6 +5556,16 @@
         }
       }
     },
+    "Read / write errors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okuma / yazma hataları"
+          }
+        }
+      }
+    },
     "Read error rate" : {
       "localizations" : {
         "tr" : {
@@ -6280,6 +6320,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ tarihinden beri"
+          }
+        }
+      }
+    },
+    "Since startup: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açılıştan beri: %@"
           }
         }
       }
@@ -7052,6 +7102,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uykudaki tüketim Mac'in uyanmasından geliyor (DarkWake): kart değil, yazılım, ayarlar veya onu uyandıran bir cihaz."
+          }
+        }
+      }
+    },
+    "The drive failed %1$lld reads or writes since startup (%2$lld retries): back up the data and run the stress test." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk açılıştan beri %1$lld okuma ya da yazmada hata verdi (%2$lld yeniden deneme): verileri yedekleyin ve stres testini çalıştırın."
           }
         }
       }
@@ -8284,6 +8344,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "hiçbir zaman"
+          }
+        }
+      }
+    },
+    "no read or write errors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "okuma / yazma hatası yok"
           }
         }
       }

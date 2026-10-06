@@ -60,8 +60,14 @@ kern_return_t FSNVMeReadSMARTLog(uint8_t *outLog512);
 /// Reads the 512-byte ATA SMART data and threshold structures of a SMART capable ATA block
 /// device (IOBlockStorageDevice with "SMART Capable"). `outExceeded`: 1 when the drive
 /// reports a threshold exceeded condition, 0 when not, -1 when unknown.
+///
+/// `outSteps` (FSATAStepCount entries) records each attempt for the technician: plugin,
+/// interface, IDENTIFY, READ DATA, READ DATA retry, then plugin and READ DATA on the parent
+/// service. FSATAStepNotRun marks steps that were not reached.
+#define FSATAStepCount 7
+#define FSATAStepNotRun ((kern_return_t)-1)
 kern_return_t FSATAReadSMART(io_service_t device, uint8_t *outData512, uint8_t *outThresholds512,
-                             int *outExceeded);
+                             int *outExceeded, kern_return_t *outSteps);
 
 // MARK: - Multitouch (private MultitouchSupport, loaded at runtime)
 

@@ -294,6 +294,7 @@ private final class ReportWriter {
                 + [findings.isEmpty ? L("SSD health is good.") : findings.joined(separator: " ")]).joined(separator: " · "))
             twoColumns(Array(SSDText.ataRows(a).prefix(8)))
         }
+        if let io = ssd.io { row(L("Read / write errors"), SSDText.ioFinding(io) ?? SSDText.io(io)) }
         for drive in ssd.otherDrives {
             row(drive.model ?? L("Other internal drives"), SSDText.driveSummary(drive))
         }

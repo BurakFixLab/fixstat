@@ -116,6 +116,15 @@ struct SSDView: View {
             if let space = info.space {
                 Text(verbatim: SSDText.space(space)).font(.callout).foregroundStyle(.secondary)
             }
+            if let io = info.io {
+                if let finding = SSDText.ioFinding(io) {
+                    Label(finding, systemImage: "exclamationmark.triangle.fill")
+                        .font(.callout).foregroundStyle(TemperatureColor.hot)
+                        .fixedSize(horizontal: false, vertical: true)
+                } else {
+                    Text(verbatim: SSDText.io(io)).font(.callout).foregroundStyle(.secondary)
+                }
+            }
         }
     }
 

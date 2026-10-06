@@ -119,6 +119,8 @@ public struct ATADrive: Codable, Sendable, Equatable {
     public var health: ATAHealth?
     /// Why SMART could not be read (IOKit return code), for the technician and bug reports.
     public var smartError: String?
+    /// Read / write errors and retries since startup (no SMART needed).
+    public var io: DiskIOStatistics?
 
     public var isSolidState: Bool { medium?.localizedCaseInsensitiveContains("solid") ?? true }
 
@@ -145,19 +147,31 @@ public struct ATADrive: Codable, Sendable, Equatable {
             drive.medium = device.string("Medium Type")
             drive.interconnect = protocolInfo.string("Physical Interconnect")
             drive.capacity = mediaSize(below: service)
+            drive.io = DiskIOStatistics.below(service)
             var data = [UInt8](repeating: 0, count: 512)
             var thresholds = [UInt8](repeating: 0, count: 512)
             var exceeded: Int32 = -1
-            let result = FSATAReadSMART(service, &data, &thresholds, &exceeded)
+            var steps = [kern_return_t](repeating: FSATAStepNotRun, count: Int(FSATAStepCount))
+            let result = FSATAReadSMART(service, &data, &thresholds, &exceeded, &steps)
             if result == KERN_SUCCESS {
                 drive.health = ATAHealth.parse(data: data, thresholds: thresholds, exceeded: exceeded)
                 if drive.health == nil { drive.smartError = "empty attribute table" }
             } else {
-                drive.smartError = String(format: "0x%08x", UInt32(bitPattern: result))
+                drive.smartError = Self.describe(steps: steps)
             }
             drives.append(drive)
         }
         return drives
+    }
+
+    /// "plugin ok · interface ok · identify ok · read 0xe00002ca · retry 0xe00002ca · parent plugin
+    /// 0xe00002c7": every attempt of `FSATAReadSMART`, for the technician and bug reports.
+    static func describe(steps: [kern_return_t]) -> String {
+        let names = ["plugin", "interface", "identify", "read", "retry", "parent plugin", "parent read"]
+        return zip(names, steps).compactMap { name, code in
+            guard code != FSATAStepNotRun else { return nil }
+            return name + " " + (code == KERN_SUCCESS ? "ok" : String(format: "0x%08x", UInt32(bitPattern: code)))
+        }.joined(separator: " · ")
     }
 
     /// Size of the whole-disk IOMedia below a block storage device.

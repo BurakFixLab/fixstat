@@ -463,6 +463,14 @@ TR = {
     "Cells": "Hücreler",
     "Cells are consistent.": "Hücreler birbiriyle tutarlı.",
     "Power analysis": "Güç analizi",
+    "%1$lld read / write errors, %2$lld retries": "%1$lld okuma / yazma hatası, %2$lld yeniden deneme",
+    "%@ read": "%@ okundu",
+    "%@ written": "%@ yazıldı",
+    "Read / write errors": "Okuma / yazma hataları",
+    "Since startup: %@": "Açılıştan beri: %@",
+    "The drive failed %1$lld reads or writes since startup (%2$lld retries): back up the data and run the stress test.":
+        "Disk açılıştan beri %1$lld okuma ya da yazmada hata verdi (%2$lld yeniden deneme): verileri yedekleyin ve stres testini çalıştırın.",
+    "no read or write errors": "okuma / yazma hatası yok",
     "Sleep is turned off on this Mac (pmset disablesleep 1): it has not slept, so there is nothing to analyse.":
         "Bu Mac'te uyku kapalı (pmset disablesleep 1): hiç uyumadığı için incelenecek bir uyku yok.",
     "The power log covers only %@: macOS starts it again after the Mac is erased or its clock is changed.":

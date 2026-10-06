@@ -1,3 +1,5 @@
+import CMacSensors
+import Foundation
 import Testing
 @testable import MacSensors
 
@@ -71,5 +73,25 @@ import Testing
         let (data, limits) = Self.smart([(177, 91, 91, 0)])
         ata.ata = ATAHealth.parse(data: data, thresholds: limits, exceeded: 0)
         #expect(ata.healthPercent == 91)
+    }
+}
+
+@Suite struct DiskIOStatisticsTests {
+    @Test func countersFromTheDriver() throws {
+        let stats = try #require(DiskIOStatistics(["Operations (Read)": 4_540_273, "Bytes (Read)": 170_894_938_112,
+                                                   "Errors (Read)": 2, "Retries (Read)": 5, "Errors (Write)": 0,
+                                                   "Bytes (Write)": 92_284_043_264] as [String: Any]))
+        #expect(stats.errors == 2)
+        #expect(stats.retries == 5)
+        #expect(stats.bytesWritten == 92_284_043_264)
+        // A partition's statistics (no operation counts) are not the driver's.
+        #expect(DiskIOStatistics(["Foo": 1] as [String: Any]) == nil)
+    }
+
+    @Test func smartStepsForTheTechnician() {
+        let steps: [kern_return_t] = [0, 0, 0, kern_return_t(bitPattern: 0xe00002ca), kern_return_t(bitPattern: 0xe00002ca),
+                                      kern_return_t(bitPattern: 0xe00002c7), FSATAStepNotRun]
+        #expect(ATADrive.describe(steps: steps)
+            == "plugin ok · interface ok · identify ok · read 0xe00002ca · retry 0xe00002ca · parent plugin 0xe00002c7")
     }
 }
