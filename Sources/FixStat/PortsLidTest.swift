@@ -89,7 +89,7 @@ struct PortsTestView: View {
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
+        .background(Design.cardFill, in: RoundedRectangle(cornerRadius: Design.cardRadius))
     }
 
     private func counter(_ title: LocalizedStringKey, _ count: Int) -> some View {

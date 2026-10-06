@@ -91,9 +91,8 @@ private struct CheckDetail: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text(HardwareText.title(item)).font(.title2.weight(.semibold))
+            Text(HardwareText.title(item)).font(.title2.weight(.medium))
             Text(HardwareText.instructions(item))
-                .font(.callout)
                 .foregroundStyle(.secondary)
                 .lineLimit(4)
             Group {
@@ -130,11 +129,9 @@ private struct ResultBar: View {
 
     var body: some View {
         let entry = monitor.hardwareCheck[item]
-        VStack(alignment: .leading, spacing: 8) {
-            Divider()
+        Card {
             if let detail = entry.detail {
                 Label(detail, systemImage: "gauge.with.dots.needle.33percent")
-                    .font(.callout)
                     .foregroundStyle(.secondary)
             }
             HStack(spacing: 8) {
@@ -159,8 +156,6 @@ private struct ResultBar: View {
         }
         .buttonStyle(.bordered)
         .tint(entry.status == status ? (status == .failed ? TemperatureColor.hot : TemperatureColor.cool) : nil)
-        .background(entry.status == status ? AnyShapeStyle(.tint.opacity(0.15)) : AnyShapeStyle(.clear),
-                    in: RoundedRectangle(cornerRadius: 6))
     }
 }
 
