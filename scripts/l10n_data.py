@@ -463,6 +463,7 @@ TR = {
     "Cells": "Hücreler",
     "Cells are consistent.": "Hücreler birbiriyle tutarlı.",
     "Power analysis": "Güç analizi",
+    "USB 3 link errors": "USB 3 bağlantı hataları",
     "Erase count (average, highest, lowest)": "Silme sayısı (ortalama, en yüksek, en düşük)",
     "Host reads (MiB)": "Okunan veri (MiB)",
     "Host writes (MiB)": "Yazılan veri (MiB)",

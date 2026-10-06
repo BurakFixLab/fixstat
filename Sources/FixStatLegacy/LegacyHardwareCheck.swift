@@ -606,11 +606,7 @@ final class LegacyPortsPane: BlockPane {
             .headline(PortText.name(port) + "  ·  " + (port.connected ? L("Connected") : L("Empty")), port.connected ? .good : nil),
             .status(L("Tested: ") + PortText.seenSummary(seen), seen.isEmpty ? .neutral : .good),
         ]
-        if port.connected {
-            blocks.append(.text(port.activeTransports.map(PortText.transport).joined(separator: ", ")
-                + (port.powerIn == true ? " · " + L("charging the Mac") : "")
-                + (port.powerIn == true ? port.controller?.maxPowerWatts.map { " (\(Format.watts($0)))" } ?? "" : "")))
-        }
+        if port.connected, !PortText.activity(port).isEmpty { blocks.append(.text(PortText.activity(port))) }
         for device in port.devices {
             blocks.append(.text("• " + (device.name ?? L("USB device"))
                                 + (device.megabitsPerSecond.map { " · " + PortText.speed($0) } ?? "")))
@@ -618,6 +614,7 @@ final class LegacyPortsPane: BlockPane {
         var counters: [DocRow] = []
         if let count = port.overcurrentCount { counters.append(counter(L("Overcurrent"), count)) }
         if let count = port.enumerationFailures { counters.append(counter(L("USB enumeration failures"), count)) }
+        if let count = port.linkErrors { counters.append(counter(L("USB 3 link errors"), count)) }
         if let c = port.controller {
             counters += [counter(L("Short circuit detections"), c.shortDetect), counter(L("PD hard resets"), c.hardReset),
                          counter(L("Input FET failures"), c.inputFETFailures), counter(L("I²C errors"), c.i2cErrors)]

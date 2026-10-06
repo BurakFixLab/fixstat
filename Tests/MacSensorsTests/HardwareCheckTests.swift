@@ -197,3 +197,31 @@ import Testing
         #expect(check.verdict == .notAsked)
     }
 }
+
+@Suite struct XHCIPortTests {
+    @Test func usbAPortsOfAnAir2014() {
+        // MacBookAir6,1 root hub: HS01 / HS02 + SSP1 / SSP2 are the two USB 3 Type-A ports;
+        // HS03 (Bluetooth hub) and HS05 (camera) are internal (255) and not passed in.
+        let roots = [
+            PortReader.RootPort(location: 0x1410_0000, name: "HS01", connector: 3, superSpeed: false, enumerationFailures: 0, linkErrors: nil),
+            PortReader.RootPort(location: 0x1420_0000, name: "HS02", connector: 3, superSpeed: false, enumerationFailures: 2, linkErrors: nil),
+            PortReader.RootPort(location: 0x1450_0000, name: "SSP1", connector: 3, superSpeed: true, enumerationFailures: nil, linkErrors: 0),
+            PortReader.RootPort(location: 0x1460_0000, name: "SSP2", connector: 3, superSpeed: true, enumerationFailures: nil, linkErrors: 1),
+        ]
+        let connectors = PortReader.connectors(from: roots)
+        #expect(connectors.count == 2)
+        #expect(connectors.map(\.kind) == ["USB-A", "USB-A"])
+        #expect(connectors[0].lanes.map(\.name) == ["HS01", "SSP1"])
+        #expect(connectors[1].lanes.map(\.name) == ["HS02", "SSP2"])
+    }
+
+    @Test func typeCPortsOnTheirOwnController() {
+        let roots = [
+            PortReader.RootPort(location: 0x1410_0000, name: "HS01", connector: 3, superSpeed: false),
+            PortReader.RootPort(location: 0x0110_0000, name: "HS01", connector: 9, superSpeed: false),
+            PortReader.RootPort(location: 0x0130_0000, name: "SS01", connector: 9, superSpeed: true),
+        ]
+        let kinds = PortReader.connectors(from: roots).map(\.kind)
+        #expect(kinds.sorted() == ["USB-A", "USB-C"])
+    }
+}

@@ -378,7 +378,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   `AppleUSBHostPort` `port-statistics`, devices below `UsbCPortNumber`, and
   AppleSmartBattery `PortControllerInfo[n-1]` (charging = active contract; short detect,
   PD hard reset, input FET and I²C error counters). `IOPortFeaturePowerIn.Active` stayed
-  false while charging on M1 / macOS 26.
+  false while charging on M1 / macOS 26. Intel Macs publish no `IOPort`: the external ports
+  come from the XHCI root hub ports instead (`UsbConnector` from ACPI _UPC: 0 / 3 Type-A,
+  9 / 10 Type-C, 255 internal), USB 2 and USB 3 lanes paired in ACPI order per controller,
+  devices by the root port they hang off, enumeration failures and USB 3 `link-error-count`
+  (MacBookAir6,1: HS01 / HS02 + SSP1 / SSP2). `-FixStatSampleUSBA YES` shows two made-up ports.
 - Lid: `IOPMrootDomain.AppleClamshellState` polled, plus the last `pmset -g log` sleep
   reason ("Clamshell Sleep") after a wake. No lid angle sensor on MacBookAir10,1.
 - USB-C PD: the active profile is macOS' selection (`AdapterDetails.UsbHvcMenu` /

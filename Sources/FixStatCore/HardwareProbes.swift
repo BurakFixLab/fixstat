@@ -280,6 +280,17 @@ public enum PortText {
         "\(port.type) \(port.number)"
     }
 
+    /// "USB 3, DisplayPort · charging the Mac (96 W)"; empty for ports read from the XHCI
+    /// root hub (no transports: the devices below tell what is plugged in).
+    public static func activity(_ port: PortStatus) -> String {
+        var text = port.activeTransports.map(transport).joined(separator: ", ")
+        if port.powerIn == true {
+            text += (text.isEmpty ? "" : " · ") + L("charging the Mac")
+            if let watts = port.controller?.maxPowerWatts { text += " (\(Format.watts(watts)))" }
+        }
+        return text
+    }
+
     public static func transport(_ t: String) -> String {
         switch t {
         case "CC": return L("cable detected")
@@ -335,10 +346,10 @@ public struct PortHistory {
         ports.map { "\(PortText.name($0)): " + PortText.seenSummary(seen[$0.id] ?? []) }.joined(separator: " · ")
     }
 
-    /// Every USB-C port carried data at least once.
+    /// Every USB-C / USB-A port carried data at least once.
     public func allDataTested(_ ports: [PortStatus]) -> Bool {
-        let usbC = ports.filter { $0.type == "USB-C" }
-        return !usbC.isEmpty && usbC.allSatisfy { !(seen[$0.id] ?? []).subtracting(["power"]).isEmpty }
+        let data = ports.filter { $0.type == "USB-C" || $0.type == "USB-A" }
+        return !data.isEmpty && data.allSatisfy { !(seen[$0.id] ?? []).subtracting(["power"]).isEmpty }
     }
 }
 

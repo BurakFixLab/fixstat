@@ -50,11 +50,8 @@ struct PortsTestView: View {
                     .font(.callout)
                     .foregroundStyle(history.isEmpty ? AnyShapeStyle(.secondary) : AnyShapeStyle(TemperatureColor.cool))
             }
-            if port.connected {
-                Text(verbatim: port.activeTransports.map(PortText.transport).joined(separator: ", ")
-                     + (port.powerIn == true ? " · " + String(localized: "charging the Mac") : "")
-                     + (port.powerIn == true ? port.controller?.maxPowerWatts.map { " (\(Format.watts($0)))" } ?? "" : ""))
-                    .font(.callout)
+            if port.connected, !PortText.activity(port).isEmpty {
+                Text(verbatim: PortText.activity(port)).font(.callout)
             }
             ForEach(Array(port.devices.enumerated()), id: \.offset) { _, device in
                 Text(verbatim: "• " + (device.name ?? String(localized: "USB device"))
@@ -68,6 +65,9 @@ struct PortsTestView: View {
                     }
                     if let count = port.enumerationFailures {
                         counter("USB enumeration failures", count)
+                    }
+                    if let count = port.linkErrors {
+                        counter("USB 3 link errors", count)
                     }
                     if let count = port.connectionCount {
                         Text("Plug-ins since start: \(count)").foregroundStyle(.secondary)

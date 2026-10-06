@@ -15,6 +15,13 @@ enum Registry {
         return properties(of: service)
     }
 
+    /// IOKit class name of a registry entry ("AppleUSB30XHCIPort").
+    static func className(of entry: io_registry_entry_t) -> String {
+        var name = [CChar](repeating: 0, count: 128)
+        guard IOObjectGetClass(entry, &name) == KERN_SUCCESS else { return "" }
+        return String(cString: name)
+    }
+
     static func properties(of entry: io_registry_entry_t) -> [String: Any]? {
         var unmanaged: Unmanaged<CFMutableDictionary>?
         guard IORegistryEntryCreateCFProperties(entry, &unmanaged, kCFAllocatorDefault, 0) == KERN_SUCCESS,

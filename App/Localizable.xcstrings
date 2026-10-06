@@ -7536,6 +7536,16 @@
         }
       }
     },
+    "USB 3 link errors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB 3 bağlantı hataları"
+          }
+        }
+      }
+    },
     "USB device" : {
       "localizations" : {
         "tr" : {

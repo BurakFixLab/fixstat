@@ -25,6 +25,8 @@ public struct PortStatus: Codable, Sendable, Equatable, Identifiable {
     /// USB-PD port controller counters (Apple Silicon `PortControllerInfo`).
     public var controller: PortControllerCounters?
     public var devices: [USBDeviceInfo]
+    /// USB 3 link errors since boot (XHCI `link-error-count`; ports read without `IOPort`).
+    public var linkErrors: Int?
 
     public var id: String { "\(type)@\(number)" }
 
@@ -115,6 +117,13 @@ public struct USBDeviceInfo: Codable, Sendable, Equatable {
 
 public enum PortReader {
     public static func read() -> [PortStatus] {
+        if UserDefaults.standard.bool(forKey: "FixStatSampleUSBA") { return sampleUSBA() }
+        let ports = ioPorts()
+        // Intel Macs publish no IOPort services: the XHCI root hub ports instead.
+        return ports.isEmpty ? xhciPorts() : ports
+    }
+
+    static func ioPorts() -> [PortStatus] {
         let devices = usbDevices()
         let failures = enumerationFailures()
         let power = powerInPorts()
@@ -144,6 +153,119 @@ public enum PortReader {
             ))
         }
         return ports.sorted { ($0.type, $0.number) < ($1.type, $1.number) }
+    }
+
+    /// One XHCI root hub port: name ("HS01", "SSP1"), ACPI connector type, counters.
+    struct RootPort {
+        var location: Int
+        var name: String
+        var connector: Int
+        var superSpeed: Bool
+        var enumerationFailures: Int? = nil
+        var linkErrors: Int? = nil
+    }
+
+    /// External ports from the XHCI root hubs (`UsbConnector` from ACPI _UPC: 0 Type-A,
+    /// 3 USB 3 Standard-A, 9 / 10 Type-C, 255 internal). A USB 3 connector shows up as a
+    /// USB 2 port and a USB 3 port; they are paired in ACPI order per controller and type.
+    static func xhciPorts() -> [PortStatus] {
+        var roots: [RootPort] = []
+        forEachService(matching: "AppleUSBHostPort") { service, p in
+            guard let connector = p.int("UsbConnector"), connector != 255,
+                  let location = p.int("locationID"), isRootHubPort(service) else { return }
+            roots.append(RootPort(location: location, name: p.string("name") ?? "", connector: connector,
+                                  superSpeed: Registry.className(of: service).contains("30"),
+                                  enumerationFailures: p.dict("port-statistics")?.int("kPortStatEnumerationFailureCount"),
+                                  linkErrors: p.int("link-error-count")))
+        }
+        let devices = usbDevicesByRootPort()
+        var counters: [String: Int] = [:]
+        return connectors(from: roots).map { kind, lanes in
+            counters[kind, default: 0] += 1
+            let attached = lanes.flatMap { devices[$0.location] ?? [] }
+            func sum(_ values: [Int?]) -> Int? { values.contains { $0 != nil } ? values.compactMap { $0 }.reduce(0, +) : nil }
+            var port = PortStatus(type: kind, number: counters[kind]!, connected: !attached.isEmpty,
+                                  activeTransports: [], supportedTransports: [], powerIn: nil, overcurrentCount: nil,
+                                  connectionCount: nil, enumerationFailures: sum(lanes.map(\.enumerationFailures)),
+                                  devices: attached)
+            port.linkErrors = sum(lanes.map(\.linkErrors))
+            return port
+        }
+    }
+
+    /// Physical connectors from root hub ports: grouped by controller (locationID's top byte)
+    /// and kind, USB 2 and USB 3 lanes paired in order.
+    static func connectors(from roots: [RootPort]) -> [(kind: String, lanes: [RootPort])] {
+        var lanes: [String: (usb2: [RootPort], usb3: [RootPort])] = [:]
+        for root in roots.sorted(by: { $0.location < $1.location }) {
+            let kind = (root.connector == 9 || root.connector == 10) ? "USB-C" : "USB-A"
+            let key = "\(root.location >> 24)|\(kind)"
+            var entry = lanes[key] ?? ([], [])
+            if root.superSpeed { entry.usb3.append(root) } else { entry.usb2.append(root) }
+            lanes[key] = entry
+        }
+        var connectors: [(kind: String, lanes: [RootPort])] = []
+        for key in lanes.keys.sorted() {
+            let kind = String(key.split(separator: "|")[1])
+            let entry = lanes[key]!
+            for index in 0..<max(entry.usb2.count, entry.usb3.count) {
+                connectors.append((kind, [index < entry.usb2.count ? entry.usb2[index] : nil,
+                                          index < entry.usb3.count ? entry.usb3[index] : nil].compactMap { $0 }))
+            }
+        }
+        return connectors
+    }
+
+    /// `-FixStatSampleUSBA YES`: two made-up USB 3 Type-A ports as an Intel Mac shows them
+    /// (a memory stick in one, enumeration failures and link errors on the other).
+    static func sampleUSBA() -> [PortStatus] {
+        var first = PortStatus(type: "USB-A", number: 1, connected: true, activeTransports: [], supportedTransports: [],
+                               powerIn: nil, overcurrentCount: nil, connectionCount: nil, enumerationFailures: 0,
+                               devices: [USBDeviceInfo(name: "USB Flash Drive", vendorID: 0x0781, productID: 0x5581,
+                                                       speed: 3, portNumber: nil)])
+        first.linkErrors = 0
+        var second = PortStatus(type: "USB-A", number: 2, connected: false, activeTransports: [], supportedTransports: [],
+                                powerIn: nil, overcurrentCount: nil, connectionCount: nil, enumerationFailures: 3, devices: [])
+        second.linkErrors = 1
+        return [first, second]
+    }
+
+    /// A port of the XHCI root hub itself, not of a hub behind it.
+    static func isRootHubPort(_ service: io_registry_entry_t) -> Bool {
+        var parent: io_registry_entry_t = IO_OBJECT_NULL
+        guard IORegistryEntryGetParentEntry(service, kIOServicePlane, &parent) == KERN_SUCCESS else { return false }
+        defer { IOObjectRelease(parent) }
+        return Registry.className(of: parent).contains("XHCI")
+    }
+
+    /// USB devices keyed by the locationID of the root hub port they hang off.
+    static func usbDevicesByRootPort() -> [Int: [USBDeviceInfo]] {
+        var result: [Int: [USBDeviceInfo]] = [:]
+        forEachService(matching: "IOUSBHostDevice") { service, p in
+            guard let location = rootPortLocation(above: service) else { return }
+            result[location, default: []].append(USBDeviceInfo(
+                name: p.string("USB Product Name") ?? p.string("kUSBProductString"),
+                vendorID: p.int("idVendor"), productID: p.int("idProduct"), speed: p.int("Device Speed"), portNumber: nil))
+        }
+        return result
+    }
+
+    /// Walks up to the first XHCI root hub port with an external connector.
+    static func rootPortLocation(above service: io_registry_entry_t) -> Int? {
+        var current = service
+        IOObjectRetain(current)
+        defer { IOObjectRelease(current) }
+        for _ in 0..<16 {
+            var parent: io_registry_entry_t = IO_OBJECT_NULL
+            guard IORegistryEntryGetParentEntry(current, kIOServicePlane, &parent) == KERN_SUCCESS else { return nil }
+            IOObjectRelease(current)
+            current = parent
+            if isRootHubPort(current), let properties = Registry.properties(of: current),
+               let connector = properties.int("UsbConnector") {
+                return connector == 255 ? nil : properties.int("locationID")
+            }
+        }
+        return nil
     }
 
     /// USB devices that are not internal (keyboard/trackpad and hubs inside the Mac
