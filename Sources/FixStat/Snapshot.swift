@@ -91,6 +91,8 @@ enum Snapshot {
                 .environment(monitor)
                 .background(Color(nsColor: .windowBackgroundColor)))
         } else {
+            // As if the panel were open, so CPU and memory are polled too.
+            monitor.panelVisible = true
             root = AnyView(PanelView()
                 .environment(monitor)
                 .environment(TestRunner(monitor: monitor))
@@ -103,8 +105,15 @@ enum Snapshot {
         window.setFrameOrigin(NSPoint(x: -10_000, y: -10_000)) // off screen
         window.orderFrontRegardless()
 
-        // Wait for two refreshes (CPU usage needs a delta).
+        // Wait for two refreshes after the sensors are ready (CPU usage needs a delta). The
+        // panel's window observer sees the off-screen window as hidden, so mark it open again.
+        let panel = monitor.panelVisible  // set above for the panel only
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            if panel { monitor.panelVisible = true }
+            monitor.refresh()
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            if panel { monitor.panelVisible = true }
             monitor.refresh()
             window.setContentSize(host.fittingSize)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

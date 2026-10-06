@@ -40,7 +40,8 @@ battery gauge data you normally dig out of `ioreg`.
 - **Technician mode.** Design and raw maximum capacity, health to one decimal, cycle
   count, signed current, voltage, cell voltages with an imbalance warning, the
   adapter's rating and what it actually delivers right now (`SystemPowerIn`), every
-  sensor with its raw SMC / HID key, and the unmatched sensors in a separate list.
+  sensor with its raw SMC / HID key, grouped by component (CPU, GPU, PMU and board, SSD …)
+  with the hottest one in each group, and the unmatched sensors in a separate list.
 - **Board-level details.** HID sensors are joined with their SMC keys (the HID
   `LocationID` is the SMC key), so e.g. `TCHP` shows up as the charger-side NTC read
   through `PMU tdev7`.
@@ -53,7 +54,8 @@ battery gauge data you normally dig out of `ioreg`.
   while shut down, live power analysis (system total, CPU / GPU power, every power rail's
   voltage and current on Apple Silicon, without root), a device card (Activation Lock, MDM, part number), and a
   hardware check (keyboard, trackpad surface, display, speakers, microphone, camera,
-  Touch Bar, fans under load, Wi-Fi, Bluetooth, USB-C ports with fault counters, lid sensor).
+  Touch Bar, fans under load, Wi-Fi, Bluetooth, USB-C / USB-A ports with fault counters and
+  slow USB 3 lane detection, lid sensor).
 - **Fits the Mac.** On an iMac, Mac mini or Mac Studio the battery tools disappear and the
   hardware check lists only the parts that Mac has.
 - **Reports.** PDF / CSV / JSON export for customer devices, serial numbers masked unless you

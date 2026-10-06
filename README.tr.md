@@ -40,8 +40,9 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
   çekirdek olarak değil, kümedeki termal bölge olarak adlandırılır ("Performans kümesi 3").
 - **Teknisyen modu.** Tasarım ve ham maksimum kapasite, ondalıklı sağlık, döngü sayısı,
   işaretli akım, voltaj, dengesizlik uyarılı hücre voltajları, adaptörün etiket değeri
-  ve şu an gerçekte verdiği güç (`SystemPowerIn`), her sensörün ham SMC / HID anahtarı ve
-  eşleşmeyen sensörler için ayrı bir liste.
+  ve şu an gerçekte verdiği güç (`SystemPowerIn`), bileşene göre gruplanmış (CPU, GPU, PMU
+  ve kart, SSD …) ve her grubun en sıcağı gösterilen sensörler, her birinin ham SMC / HID
+  anahtarıyla, ve eşleşmeyen sensörler için ayrı bir liste.
 - **Kart seviyesi ayrıntılar.** HID sensörleri SMC anahtarlarıyla eşleştirilir (HID
   `LocationID` değeri SMC anahtarıdır). Örneğin `TCHP`, `PMU tdev7` üzerinden okunan
   şarj devresi NTC'si olarak görünür.
@@ -55,7 +56,7 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
   akımı, root gerektirmeden), cihaz kartı (Aktivasyon Kilidi, MDM, parça numarası) ve donanım kontrolü
   (klavye, trackpad yüzeyi, ekran, hoparlör, mikrofon, kamera,
   Touch Bar, yük altında fanlar, Wi-Fi, Bluetooth, arıza
-  sayaçlı USB-C portları, kapak sensörü).
+  sayaçlı ve yavaş USB 3 hattını yakalayan USB-C / USB-A portları, kapak sensörü).
 - **Mac'e uyum.** iMac, Mac mini veya Mac Studio'da batarya araçları gizlenir; donanım
   kontrolü yalnızca o Mac'te bulunan parçaları listeler.
 - **Raporlar.** Müşteri cihazları için PDF / CSV / JSON dışa aktarma; seri numaraları,
