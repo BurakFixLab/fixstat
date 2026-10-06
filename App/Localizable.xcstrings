@@ -2628,6 +2628,16 @@
         }
       }
     },
+    "Errors since startup" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açılıştan beri hata"
+          }
+        }
+      }
+    },
     "Every Qmax equals the design capacity: the gauge has not learned the cells yet (new pack, or a gauge that lost power), so they cannot be compared." : {
       "localizations" : {
         "tr" : {
@@ -2942,6 +2952,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ücretsiz ve açık kaynak (MIT Lisansı)."
+          }
+        }
+      }
+    },
+    "Free space" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boş alan"
           }
         }
       }

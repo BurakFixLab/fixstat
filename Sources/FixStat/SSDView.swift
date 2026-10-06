@@ -45,7 +45,7 @@ final class SSDTestRunner {
     }
 }
 
-/// SSD identity, NVMe health and the write–verify stress test.
+/// SSD identity, health (SMART), other drives, the write–verify stress test and the full test.
 @available(macOS 14.0, *)
 struct SSDView: View {
     static let windowID = "ssd"
@@ -57,7 +57,7 @@ struct SSDView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 12) {
                 if let info {
                     identity(info)
                     if let health = info.health {
@@ -67,29 +67,30 @@ struct SSDView: View {
                         HealthCard(summary: SSDText.healthSummary(info), findings: SSDText.ataFindings(ata),
                                    rows: SSDText.ataRows(ata), attributes: SSDText.ataTable(ata))
                     } else {
-                        Text("SMART data is not available for this SSD.")
-                            .foregroundStyle(.secondary)
-                        if SSDText.needsFullDiskAccess(info) {
-                            Label(SSDText.fullDiskAccessHint, systemImage: "lock.shield")
-                                .fixedSize(horizontal: false, vertical: true)
-                            Button("Open System Settings") { FullSSDTestRunner.openFullDiskAccessSettings() }
-                        }
-                        if let problem = info.smartProblem {
-                            Text(verbatim: problem).font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled)
+                        Card {
+                            CardHeader("Health (SMART)", systemImage: "heart.text.square")
+                            Text("SMART data is not available for this SSD.").foregroundStyle(.secondary)
+                            if SSDText.needsFullDiskAccess(info) {
+                                Label(SSDText.fullDiskAccessHint, systemImage: "lock.shield")
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Button("Open System Settings") { FullSSDTestRunner.openFullDiskAccessSettings() }
+                            }
+                            if let problem = info.smartProblem {
+                                Text(verbatim: problem).font(.caption.monospaced()).foregroundStyle(.tertiary)
+                                    .textSelection(.enabled)
+                            }
                         }
                     }
                     if !info.otherDrives.isEmpty {
-                        VStack(alignment: .leading, spacing: 6) {
-                            SectionTitle(title: "Other internal drives")
+                        Card {
+                            CardHeader("Other internal drives", systemImage: "internaldrive")
                             ForEach(Array(info.otherDrives.enumerated()), id: \.offset) { _, drive in
                                 let problems = drive.health.map(SSDText.ataFindings)?.isEmpty == false
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Label(drive.model ?? "–", systemImage: problems ? "exclamationmark.triangle.fill" : "internaldrive")
-                                        .fontWeight(.medium)
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text(verbatim: drive.model ?? "–")
                                         .foregroundStyle(problems ? TemperatureColor.hot : .primary)
-                                    Text(verbatim: SSDText.driveSummary(drive)).foregroundStyle(.secondary)
+                                    Text(verbatim: SSDText.driveSummary(drive)).font(.callout).foregroundStyle(.secondary)
                                 }
-                                .font(.callout)
                             }
                         }
                     }
@@ -97,6 +98,9 @@ struct SSDView: View {
                     Text("No internal SSD found.").foregroundStyle(.secondary)
                 }
                 stressTest
+                Card {
+                    FullSSDTestSection(writeVerifyGigabytes: gigabytes)
+                }
             }
             .padding(20)
         }
@@ -108,21 +112,28 @@ struct SSDView: View {
     }
 
     private func identity(_ info: SSDInfo) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(verbatim: info.model ?? "SSD").font(.headline)
-            Text(verbatim: SSDText.identity(info))
-                .font(.callout)
-                .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: Design.cardSpacing) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: info.model ?? "SSD").font(.title3.weight(.medium))
+                Text(verbatim: SSDText.identity(info)).foregroundStyle(.secondary)
+            }
+            HStack(spacing: Design.cardSpacing) {
+                MetricTile(title: "Health", value: info.healthPercent.map { Format.percent(Double($0)) } ?? "–")
+                if let space = info.space {
+                    MetricTile(title: "Free space", value: Format.bytes(space.available))
+                }
+                if let io = info.io {
+                    MetricTile(title: "Errors since startup", value: Format.number(Double(io.errors + io.retries)))
+                }
+            }
             if let space = info.space {
-                Text(verbatim: SSDText.space(space)).font(.callout).foregroundStyle(.secondary)
+                Text(verbatim: SSDText.space(space)).foregroundStyle(.secondary)
             }
             if let io = info.io {
                 if let finding = SSDText.ioFinding(io) {
-                    Label(finding, systemImage: "exclamationmark.triangle.fill")
-                        .font(.callout).foregroundStyle(TemperatureColor.hot)
-                        .fixedSize(horizontal: false, vertical: true)
+                    FindingRow(text: finding)
                 } else {
-                    Text(verbatim: SSDText.io(io)).font(.callout).foregroundStyle(.secondary)
+                    Text(verbatim: SSDText.io(io)).foregroundStyle(.secondary)
                 }
             }
         }
@@ -132,10 +143,9 @@ struct SSDView: View {
 
     private var stressTest: some View {
         let available = Double(SSDRunner.availableBytes) / 1_000_000_000
-        return VStack(alignment: .leading, spacing: 10) {
-            SectionTitle(title: "Write–verify stress test")
+        return Card {
+            CardHeader("Write–verify stress test", systemImage: "arrow.triangle.2.circlepath")
             Text("Writes a test file to free space, reads it back and compares every byte. Finds data corruption, I/O errors and stalling areas that point to failing NAND. Only free space can be tested, and the test uses some of the SSD's write endurance.")
-                .font(.callout)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 12) {
@@ -145,10 +155,11 @@ struct SSDView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+                .labelsHidden()
                 .fixedSize()
                 .disabled(runner.state == .running)
                 Text("\(Format.bytes(available * 1_000_000_000)) usable")
-                    .font(.caption)
+                    .font(.callout)
                     .foregroundStyle(.secondary)
                 Spacer()
                 if runner.state == .running {
@@ -159,6 +170,7 @@ struct SSDView: View {
                         .disabled(available < 1 || fullRunner.isRunning)
                 }
             }
+            .padding(.top, 4)
             if runner.state == .running {
                 ProgressView(value: runner.fraction) {
                     Text(runner.phase == .write ? "Writing…" : "Reading and verifying…").font(.caption)
@@ -170,8 +182,6 @@ struct SSDView: View {
             if let result = runner.result {
                 SSDResultView(result: result)
             }
-            Divider().padding(.vertical, 6)
-            FullSSDTestSection(writeVerifyGigabytes: gigabytes)
         }
     }
 
@@ -218,32 +228,31 @@ private struct HealthCard: View {
     let attributes: [[String]]?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            SectionTitle(title: "Health (SMART)")
+        Card {
+            CardHeader("Health (SMART)", systemImage: "heart.text.square")
             if let summary {
-                Text(verbatim: summary).font(.title3.weight(.semibold))
+                Text(verbatim: summary).font(.headline)
             }
             if findings.isEmpty {
-                Label("SSD health is good.", systemImage: "checkmark.seal.fill")
-                    .font(.headline)
-                    .foregroundStyle(TemperatureColor.cool)
+                FindingRow(text: String(localized: "SSD health is good."), problem: false)
             } else {
                 ForEach(Array(findings.enumerated()), id: \.offset) { _, finding in
-                    Label(finding, systemImage: "exclamationmark.triangle.fill")
-                        .foregroundStyle(TemperatureColor.hot)
+                    FindingRow(text: finding)
                 }
             }
-            Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 4) {
-                ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+            Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: Design.rowSpacing) {
+                ForEach(Array(stride(from: 0, to: rows.count, by: 2)), id: \.self) { index in
                     GridRow {
-                        Text(verbatim: row.0).foregroundStyle(.secondary)
-                        Text(verbatim: row.1).font(.callout.monospaced())
+                        CardRow(title: Text(verbatim: rows[index].0), value: rows[index].1)
+                        if index + 1 < rows.count {
+                            CardRow(title: Text(verbatim: rows[index + 1].0), value: rows[index + 1].1)
+                        }
                     }
                 }
             }
-            .font(.callout)
+            .padding(.top, 4)
             if let attributes {
-                DisclosureGroup("All SMART attributes") {
+                DisclosureGroup {
                     Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 3) {
                         GridRow {
                             ForEach(SSDText.ataTableHeader, id: \.self) { Text(verbatim: $0).foregroundStyle(.secondary) }
@@ -256,13 +265,11 @@ private struct HealthCard: View {
                     }
                     .font(.caption.monospaced())
                     .padding(.top, 4)
+                } label: {
+                    Text("All SMART attributes").foregroundStyle(.secondary)
                 }
-                .font(.callout)
             }
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
     }
 }
 
@@ -271,32 +278,18 @@ struct SSDResultView: View {
     let result: SSDStressTest.Result
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Design.rowSpacing) {
             let problems = result.findings.filter { $0 != .stoppedEarly }
-            if problems.isEmpty {
-                Label("No problems found", systemImage: "checkmark.seal.fill")
-                    .font(.headline)
-                    .foregroundStyle(TemperatureColor.cool)
-            } else {
-                Label("Needs attention", systemImage: "exclamationmark.triangle.fill")
-                    .font(.headline)
-                    .foregroundStyle(TemperatureColor.hot)
-            }
+            FindingRow(text: problems.isEmpty ? String(localized: "No problems found") : String(localized: "Needs attention"),
+                       problem: !problems.isEmpty)
+                .font(.headline)
             ForEach(Array(result.findings.enumerated()), id: \.offset) { _, finding in
-                Text(verbatim: "• " + SSDText.finding(finding)).font(.callout)
+                Text(verbatim: "• " + SSDText.finding(finding))
             }
-            Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 4) {
-                ForEach(Array(SSDText.resultRows(result).enumerated()), id: \.offset) { _, row in
-                    GridRow {
-                        Text(verbatim: row.0).foregroundStyle(.secondary)
-                        Text(verbatim: row.1).font(.callout.monospaced())
-                    }
-                }
+            ForEach(Array(SSDText.resultRows(result).enumerated()), id: \.offset) { _, row in
+                CardRow(title: Text(verbatim: row.0), value: row.1)
             }
-            .font(.callout)
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
+        .padding(.top, 6)
     }
 }

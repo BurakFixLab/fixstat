@@ -71,10 +71,9 @@ struct FullSSDTestSection: View {
     @State private var askForFullDiskAccess = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            SectionTitle(title: "Full test (administrator permission required)")
+        VStack(alignment: .leading, spacing: Design.rowSpacing) {
+            CardHeader("Full test (administrator permission required)", systemImage: "magnifyingglass")
             Text("Reads the entire SSD — including used space and the system partitions — and maps unreadable and slow areas, then runs the write–verify test on free space. The scan only reads. macOS asks for an administrator password; FixStat never sees or stores it.")
-                .font(.callout)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             Label("Also needs Full Disk Access: if the scan does not start, allow FixStat in System Settings › Privacy & Security › Full Disk Access.",
@@ -166,31 +165,17 @@ struct FullSSDResultView: View {
 
     var body: some View {
         let findings = FullSSDText.findings(result)
-        VStack(alignment: .leading, spacing: 8) {
-            if findings.isEmpty {
-                Label("No problems found", systemImage: "checkmark.seal.fill")
-                    .font(.headline)
-                    .foregroundStyle(TemperatureColor.cool)
-            } else {
-                Label("Needs attention", systemImage: "exclamationmark.triangle.fill")
-                    .font(.headline)
-                    .foregroundStyle(TemperatureColor.hot)
-                ForEach(Array(findings.enumerated()), id: \.offset) { _, text in
-                    Text(verbatim: "• " + text).font(.callout)
-                }
+        VStack(alignment: .leading, spacing: Design.rowSpacing) {
+            FindingRow(text: findings.isEmpty ? String(localized: "No problems found") : String(localized: "Needs attention"),
+                       problem: !findings.isEmpty)
+                .font(.headline)
+            ForEach(Array(findings.enumerated()), id: \.offset) { _, text in
+                Text(verbatim: "• " + text)
             }
-            Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 4) {
-                ForEach(Array(FullSSDText.rows(result).enumerated()), id: \.offset) { _, row in
-                    GridRow {
-                        Text(verbatim: row.0).foregroundStyle(.secondary)
-                        Text(verbatim: row.1).font(.callout.monospaced())
-                    }
-                }
+            ForEach(Array(FullSSDText.rows(result).enumerated()), id: \.offset) { _, row in
+                CardRow(title: Text(verbatim: row.0), value: row.1)
             }
-            .font(.callout)
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
+        .padding(.top, 6)
     }
 }
