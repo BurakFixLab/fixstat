@@ -463,6 +463,10 @@ TR = {
     "Cells": "Hücreler",
     "Cells are consistent.": "Hücreler birbiriyle tutarlı.",
     "Power analysis": "Güç analizi",
+    "Sleep is turned off on this Mac (pmset disablesleep 1): it has not slept, so there is nothing to analyse.":
+        "Bu Mac'te uyku kapalı (pmset disablesleep 1): hiç uyumadığı için incelenecek bir uyku yok.",
+    "The power log covers only %@: macOS starts it again after the Mac is erased or its clock is changed.":
+        "Güç günlüğü yalnızca %@ süreyi kapsıyor: macOS, Mac silindikten ya da saati değiştirildikten sonra günlüğü baştan başlatır.",
     "%@ MHz": "%@ MHz",
     "Active": "Aktif",
     "Average while active": "Aktifken ortalama",

@@ -63,6 +63,12 @@ import Testing
         #expect(settings["displaysleep"] == "0")
         #expect(preventing == ["powerd", "Claude"])
     }
+
+    @Test func systemWideSleepDisabled() {
+        // `pmset -g` on a bench Mac set never to sleep (MacBookAir6,1, macOS 11): tab separated.
+        let text = "System-wide power settings:\n SleepDisabled\t\t1\nCurrently in use:\n sleep                1\n"
+        #expect(SleepAnalysis.parseSettings(text).settings["SleepDisabled"] == "1")
+    }
 }
 
 @Suite struct OffStateDrainTests {

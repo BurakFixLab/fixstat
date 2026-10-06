@@ -190,7 +190,8 @@ public struct SleepAnalysis: Codable, Sendable, Equatable {
                 preventing = list.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
                 body = String(body[..<open.lowerBound]).trimmingCharacters(in: .whitespaces)
             }
-            let parts = body.split(separator: " ", omittingEmptySubsequences: true)
+            // "SleepDisabled\t\t1" (system-wide settings) is tab separated.
+            let parts = body.split(whereSeparator: { $0 == " " || $0 == "\t" })
             guard parts.count >= 2 else { continue }
             settings[parts.dropLast().joined(separator: " ")] = String(parts.last!)
         }

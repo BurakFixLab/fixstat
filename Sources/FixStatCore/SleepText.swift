@@ -72,6 +72,15 @@ public enum SleepText {
         if a.settings["sleep"] == "0" {
             result.append(L("The Mac is set never to sleep."))
         }
+        // No sleeps at all: say why, so an empty analysis does not look like a fault.
+        if a.sleeps.isEmpty {
+            if a.settings["SleepDisabled"] == "1" {
+                result.append(L("Sleep is turned off on this Mac (pmset disablesleep 1): it has not slept, so there is nothing to analyse."))
+            } else if let from = a.from, let to = a.to, to.timeIntervalSince(from) < 86_400 {
+                result.append(L("The power log covers only %@: macOS starts it again after the Mac is erased or its clock is changed.",
+                                Format.duration(to.timeIntervalSince(from))))
+            }
+        }
         return result
     }
 
