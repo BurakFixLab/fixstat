@@ -13,6 +13,10 @@ public struct SensorFault: Codable, Sendable, Equatable {
         case frozen
         /// Plausible, but much colder than the rest of the Mac.
         case tooCold
+        /// Named by this model's map but not published by the Mac at all.
+        case missing
+        /// A CPU / GPU sensor that hardly moved under load while the others of its group heated up.
+        case noResponse
     }
 
     /// `SensorDescriptor.uid`.
@@ -149,6 +153,67 @@ public enum SensorFaultDetector {
             }
             if known, let warmth = macWarmth, warmth >= warmMac, typical < coldBelow {
                 fault(.tooCold, typical)
+            }
+        }
+        return faults
+    }
+
+    // MARK: Missing sensors
+
+    /// Sensors this model's map names but the Mac does not publish (a flex cable or a part not
+    /// connected). Only model entries: a chip entry also covers binned chips with fewer clusters.
+    public static func missing(map: SensorMap, model: String, present: [SensorDescriptor],
+                               hasBattery: Bool) -> [SensorFault] {
+        guard let entry = map.models[model] else { return [] }
+        let names = Set(present.flatMap { [$0.key, $0.hidName].compactMap { $0 } })
+        return entry.sensors.compactMap { sensor in
+            guard !names.contains(sensor.key), hasBattery || sensor.group != .battery else { return nil }
+            return SensorFault(uid: "missing:" + sensor.key, label: sensor.key, id: sensor.id, group: sensor.group,
+                               kind: .missing, value: nil, known: true)
+        }
+    }
+
+    // MARK: Under load
+
+    /// A group must warm up at least this much (median) for its sensors to be judged…
+    public static let loadGroupRise = 6.0
+    /// …and a sensor that rose less than this share of the group's median rise (and under
+    /// `loadMinimumRise`) does not follow the load.
+    public static let loadRiseShare = 0.2
+    public static let loadMinimumRise = 1.5
+
+    /// CPU / GPU sensors that do not follow a load. `before`: samples just before the load;
+    /// `during`: samples under load (per sensor, values over time).
+    public static func unresponsive(_ sensors: [Sensor], before: [[Double?]], during: [[Double?]],
+                                    groups: Set<SensorMap.Group> = [.cpu, .gpu]) -> [SensorFault] {
+        guard sensors.count == before.count, sensors.count == during.count else { return [] }
+        func median(_ values: [Double]) -> Double? {
+            guard !values.isEmpty else { return nil }
+            let sorted = values.sorted()
+            return sorted[sorted.count / 2]
+        }
+        func active(_ values: [Double?]) -> [Double] {
+            values.compactMap { $0 }.filter { SMC.plausibleTemperatureRange.contains($0) && $0 >= SMC.minimumActiveDieTemperature }
+        }
+        // Rise per sensor: the last quarter under load against the samples before it.
+        var rises: [Int: Double] = [:]
+        for index in sensors.indices where groups.contains(sensors[index].resolved.group) {
+            let end = active(Array(during[index].suffix(max(3, during[index].count / 4))))
+            guard let start = median(active(before[index])), let hot = median(end) else { continue }
+            rises[index] = hot - start
+        }
+        var faults: [SensorFault] = []
+        for group in groups.sorted(by: { $0.rawValue < $1.rawValue }) {
+            let members = rises.filter { sensors[$0.key].resolved.group == group }
+            guard members.count >= 2, let typical = median(Array(members.values)), typical >= loadGroupRise else { continue }
+            for (index, rise) in members.sorted(by: { $0.key < $1.key })
+            where rise < loadMinimumRise && rise < typical * loadRiseShare {
+                let sensor = sensors[index]
+                // A sensor that reads plausibly while its neighbours heat up exists on this Mac,
+                // even when its name is only guessed from the key.
+                faults.append(SensorFault(uid: sensor.descriptor.uid, label: sensor.descriptor.rawLabel,
+                                          id: sensor.resolved.id, group: group, kind: .noResponse, value: rise,
+                                          known: true))
             }
         }
         return faults

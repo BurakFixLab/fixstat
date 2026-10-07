@@ -11,13 +11,15 @@ public struct SensorCheckResult: Equatable {
     public var faults: [SensorFault]
     /// Display names by `SensorFault.uid`.
     public var names: [String: String]
-    /// Median of the hottest CPU sensor over the check.
+    /// Whether CPU and GPU were loaded to see which sensors follow.
+    public var underLoad: Bool
+    /// Median of the hottest CPU sensor while idle.
     public var hottestCPU: Double?
-    /// Fans at ≥ 85 % of their maximum while the CPU was cool: (actual, maximum) rpm.
+    /// Fans at ≥ 85 % of their maximum while idle with a cool CPU.
     public var fansNearMax: [FanSpeed]
     /// Intel: the CPU speed limit macOS applies (`pmset -g therm`), when below 100 %.
     public var cpuSpeedLimit: Int?
-    /// Mean shares of all CPUs during the check (0…1).
+    /// Mean shares of all CPUs while idle (0…1).
     public var systemShare: Double?
     public var userShare: Double?
 
@@ -26,7 +28,7 @@ public struct SensorCheckResult: Equatable {
         public var maximum: Double
     }
 
-    /// Faults of sensors this Mac certainly has (named by its model or chip entry).
+    /// Faults of sensors this Mac certainly has.
     public var known: [SensorFault] { faults.filter(\.known) }
     /// Faults of sensors only guessed from the key pattern: maybe not fitted on this model.
     public var unclear: [SensorFault] { faults.filter { !$0.known } }
@@ -48,7 +50,11 @@ public struct SensorCheckResult: Equatable {
 }
 
 public enum SensorCheck {
-    public static let duration: TimeInterval = 60
+    /// Idle only: one minute (a stuck sensor needs that long to show).
+    public static let idleDuration: TimeInterval = 60
+    /// With load: a short idle part (symptoms, the start values), then CPU and GPU load.
+    public static let idleBeforeLoad: TimeInterval = 20
+    public static let loadDuration: TimeInterval = 45
     /// Fans this close to their maximum…
     public static let fanNearMax = 0.85
     /// …while the CPU is below this many °C point to the firmware reacting to a sensor.
@@ -57,30 +63,42 @@ public enum SensorCheck {
     public static let kernelShare = 0.25
     public static let quietUserShare = 0.15
 
-    /// Builds the result from the samples (per sensor, values over time; per sample, the fans).
-    static func result(sensors: [DisplaySensor], series: [[Double?]], fans: [[FanReading]], seconds: Double,
+    /// - Parameters:
+    ///   - series: per sensor, its values over the whole check (idle first, then under load).
+    ///   - idleSamples: how many samples at the start were taken idle.
+    ///   - fans: per idle sample, the fans.
+    static func result(sensors: [DisplaySensor], series: [[Double?]], idleSamples: Int, fans: [[FanReading]],
+                       seconds: Double, missing: [SensorFault], missingNames: [String: String],
                        thermal: ThermalStatus?, load: (system: Double, user: Double)?) -> SensorCheckResult {
         var judged: [SensorFaultDetector.Sensor] = []
         var judgedSeries: [[Double?]] = []
-        var names: [String: String] = [:]
+        var names = missingNames
         for (sensor, values) in zip(sensors, series) {
             guard let resolved = sensor.resolved else { continue }
             judged.append(SensorFaultDetector.Sensor(descriptor: sensor.descriptor, resolved: resolved))
             judgedSeries.append(values)
             names[sensor.id] = sensor.name
         }
-        let faults = SensorFaultDetector.detect(judged, series: judgedSeries, seconds: seconds)
-
-        // Hottest active CPU zone per sample, then the median over the check.
-        let cpuColumns = sensors.indices.filter { sensors[$0].group == .cpu }
+        var faults = missing + SensorFaultDetector.detect(judged, series: judgedSeries, seconds: seconds)
         let samples = series.first?.count ?? 0
-        let hottest = (0..<samples).compactMap { index -> Double? in
+        let underLoad = samples > idleSamples
+        if underLoad {
+            let before = judgedSeries.map { Array($0.prefix(idleSamples).suffix(10)) }
+            let during = judgedSeries.map { Array($0.dropFirst(idleSamples)) }
+            let flagged = Set(faults.map(\.uid))
+            faults += SensorFaultDetector.unresponsive(judged, before: before, during: during)
+                .filter { !flagged.contains($0.uid) }
+        }
+
+        // Hottest active CPU zone per idle sample, then the median.
+        let cpuColumns = sensors.indices.filter { sensors[$0].group == .cpu }
+        let hottest = (0..<min(idleSamples, samples)).compactMap { index -> Double? in
             cpuColumns.compactMap { series[$0][index] }
                 .filter { SMC.plausibleTemperatureRange.contains($0) && $0 >= SMC.minimumActiveDieTemperature }.max()
         }.sorted()
         let hottestCPU = hottest.isEmpty ? nil : hottest[hottest.count / 2]
 
-        // Fans: mean over the last ten samples.
+        // Fans: mean over the last ten idle samples.
         var fansNearMax: [SensorCheckResult.FanSpeed] = []
         let recent = fans.suffix(10)
         if let count = recent.last?.count, (hottestCPU ?? 0) < fanCoolCPU {
@@ -93,53 +111,72 @@ public enum SensorCheck {
         }
 
         return SensorCheckResult(date: Date(), seconds: seconds, sensorCount: judged.count, faults: faults, names: names,
-                                 hottestCPU: hottestCPU, fansNearMax: fansNearMax,
+                                 underLoad: underLoad, hottestCPU: hottestCPU, fansNearMax: fansNearMax,
                                  cpuSpeedLimit: thermal?.cpuSpeedLimit.flatMap { $0 < 100 ? $0 : nil },
                                  systemShare: load?.system, userShare: load?.user)
     }
 }
 
-/// Watches every sensor once per second for `SensorCheck.duration` without putting load on the
-/// Mac; the result goes to `MonitorCore.lastSensorCheck` and the hardware check.
+/// Watches every sensor once per second with the Mac idle and, optionally, under CPU and GPU
+/// load; the result goes to `MonitorCore.lastSensorCheck` and the hardware check.
 public final class SensorCheckRunner {
     public enum State: Equatable { case idle, running, finished }
+    public enum Phase: Equatable { case idle, load }
 
     public private(set) var state = State.idle
+    public private(set) var phase = Phase.idle
     public private(set) var elapsed: TimeInterval = 0
-    /// Seconds to watch (shorter for snapshots: `-FixStatSensorCheckSeconds N`).
-    public var duration: TimeInterval = {
-        let seconds = UserDefaults.standard.double(forKey: "FixStatSensorCheckSeconds")
-        return seconds > 0 ? seconds : SensorCheck.duration
-    }()
+    /// Put CPU and GPU under load after a short idle part.
+    public var underLoad = true
     public var onChange: (() -> Void)?
+
+    /// Shortens the check (snapshots): this many seconds idle and as many under load. Also set
+    /// by `-FixStatSensorCheckSeconds N`.
+    public var shortened: TimeInterval? = {
+        let seconds = UserDefaults.standard.double(forKey: "FixStatSensorCheckSeconds")
+        return seconds > 0 ? seconds : nil
+    }()
+    private var idleSeconds: TimeInterval {
+        shortened ?? (underLoad ? SensorCheck.idleBeforeLoad : SensorCheck.idleDuration)
+    }
+    private var loadSeconds: TimeInterval { underLoad ? shortened ?? SensorCheck.loadDuration : 0 }
+    public var duration: TimeInterval { idleSeconds + loadSeconds }
 
     private let monitor: MonitorCore
     private var timer: Timer?
     private var startedAt = Date()
     private var sensors: [DisplaySensor] = []
     private var series: [[Double?]] = []
+    private var idleSamples = 0
     private var fans: [[FanReading]] = []
     private var stats = SystemStats()
     private var loads: [(user: Double, system: Double)] = []
+    private var flag: StopFlag?
+    private var activity: NSObjectProtocol?
 
     public init(monitor: MonitorCore) {
         self.monitor = monitor
     }
 
     public var fraction: Double { min(elapsed / duration, 1) }
+    public var remaining: TimeInterval { max(duration - elapsed, 0) }
 
     public func start() {
         guard state != .running else { return }
         state = .running
+        phase = .idle
         startedAt = Date()
         elapsed = 0
         sensors = []
         series = []
+        idleSamples = 0
         fans = []
         loads = []
         stats = SystemStats()
         _ = stats.cpuLoad()
         monitor.testRunning = true
+        activity = ProcessInfo.processInfo.beginActivity(options: [.userInitiated, .idleSystemSleepDisabled],
+                                                         reason: "Sensor check")
         let timer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in self?.tick() }
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
@@ -148,11 +185,19 @@ public final class SensorCheckRunner {
 
     public func stop() {
         guard state == .running else { return }
-        timer?.invalidate()
-        timer = nil
-        monitor.testRunning = false
+        end()
         state = .idle
         onChange?()
+    }
+
+    private func end() {
+        timer?.invalidate()
+        timer = nil
+        flag?.stop()
+        flag = nil
+        if let activity { ProcessInfo.processInfo.endActivity(activity) }
+        activity = nil
+        monitor.testRunning = false
     }
 
     private func tick() {
@@ -167,15 +212,24 @@ public final class SensorCheckRunner {
         for index in sensors.indices {
             series[index].append(values[sensors[index].id])
         }
-        // `-FixStatSampleSensorFault YES`: the first SSD (or board) sensor reads as an open circuit.
-        if UserDefaults.standard.bool(forKey: "FixStatSampleSensorFault"),
-           let index = sensors.firstIndex(where: { $0.group == .ssd && $0.resolved != nil })
-            ?? sensors.firstIndex(where: { $0.group == .other && $0.resolved != nil }) {
-            series[index][series[index].count - 1] = -54.0
+        // `-FixStatSampleSensorFault YES`: the first SSD (or board) sensor reads as an open circuit,
+        // and the first CPU sensor stays at its last idle value under load.
+        if UserDefaults.standard.bool(forKey: "FixStatSampleSensorFault") {
+            if let index = sensors.firstIndex(where: { $0.group == .ssd && $0.resolved != nil })
+                ?? sensors.firstIndex(where: { $0.group == .other && $0.resolved != nil }) {
+                series[index][series[index].count - 1] = -54.0
+            }
+            if phase == .load, idleSamples > 0, let index = sensors.firstIndex(where: { $0.group == .cpu }) {
+                series[index][series[index].count - 1] = series[index][idleSamples - 1]
+            }
         }
-        fans.append(monitor.fans)
-        if let load = stats.cpuLoad() { loads.append(load) }
         elapsed = Date().timeIntervalSince(startedAt)
+        if phase == .idle {
+            idleSamples += 1
+            fans.append(monitor.fans)
+            if let load = stats.cpuLoad() { loads.append(load) }
+            if elapsed >= idleSeconds, loadSeconds > 0 { startLoad() }
+        }
         if elapsed >= duration {
             finish()
         } else {
@@ -183,18 +237,32 @@ public final class SensorCheckRunner {
         }
     }
 
+    private func startLoad() {
+        phase = .load
+        let flag = StopFlag()
+        self.flag = flag
+        // Leave one core for feeding the GPU, sampling and the UI.
+        LoadGenerator.cpu(threads: max(1, ProcessInfo.processInfo.activeProcessorCount - 1), flag: flag)
+        _ = LoadGenerator.gpu(flag: flag)
+    }
+
     private func finish() {
-        timer?.invalidate()
-        timer = nil
-        monitor.testRunning = false
+        end()
         let sensors = self.sensors, series = self.series, fans = self.fans, seconds = elapsed
+        let idleSamples = self.idleSamples
         let load = loads.isEmpty ? nil : (system: loads.map(\.system).reduce(0, +) / Double(loads.count),
                                           user: loads.map(\.user).reduce(0, +) / Double(loads.count))
+        let missing = SensorFaultDetector.missing(map: monitor.map, model: monitor.system.model,
+                                                  present: sensors.map(\.descriptor),
+                                                  hasBattery: monitor.profile.hasBattery)
+        var missingNames: [String: String] = [:]
+        for fault in missing { missingNames[fault.uid] = fault.id.flatMap(SensorNames.localizedName(id:)) }
         let isAppleSilicon = monitor.system.isAppleSilicon
         // `pmset -g therm` (Intel speed limit) runs a process: off the main thread.
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let thermal = isAppleSilicon ? nil : ThermalStatus.read()
-            let result = SensorCheck.result(sensors: sensors, series: series, fans: fans, seconds: seconds,
+            let result = SensorCheck.result(sensors: sensors, series: series, idleSamples: idleSamples, fans: fans,
+                                            seconds: seconds, missing: missing, missingNames: missingNames,
                                             thermal: thermal, load: load)
             DispatchQueue.main.async {
                 guard let self else { return }
@@ -224,6 +292,11 @@ public enum SensorCheckText {
             return L("%1$@ stays at exactly %2$@ while the sensors around it change: stuck reading.", sensor, value)
         case .tooCold:
             return L("%1$@ reads %2$@, far colder than the rest of the Mac: sensor or connection.", sensor, value)
+        case .missing:
+            return L("%@ is missing: this model has it, but the Mac does not report it (flex cable, connector or the part).", sensor)
+        case .noResponse:
+            return L("%1$@ hardly moved under load (%2$@) while the other sensors of its group heated up: stuck or badly placed sensor.",
+                     sensor, f.value.map { Format.degreesChange($0) } ?? "–")
         }
     }
 
@@ -248,7 +321,8 @@ public enum SensorCheckText {
     public static func verdict(_ r: SensorCheckResult) -> String {
         if !r.known.isEmpty { return L("Suspicious sensors: %lld.", r.known.count) }
         if r.hasSymptoms { return L("No broken sensor found, but the Mac behaves as if one were missing.") }
-        return L("All %lld sensors read plausible values.", r.sensorCount)
+        return r.underLoad ? L("All %lld sensors read plausible values and followed the load.", r.sensorCount)
+            : L("All %lld sensors read plausible values.", r.sensorCount)
     }
 
     /// Evidence for the hardware check and the report.

@@ -8,6 +8,11 @@ the ".n" variants take one integer (%lld) — the index from the sensor map id.
 """
 
 TR = {
+    'All %lld sensors read plausible values and followed the load.': '%lld sensörün tamamı makul değerler okuyor ve yüke tepki verdi.',
+    '%@ is missing: this model has it, but the Mac does not report it (flex cable, connector or the part).': '%@ yok: bu modelde bulunur ama Mac onu bildirmiyor (flex kablo, konnektör ya da parçanın kendisi).',
+    '%1$@ hardly moved under load (%2$@) while the other sensors of its group heated up: stuck or badly placed sensor.': '%1$@ yük altında neredeyse hiç değişmedi (%2$@), oysa grubundaki diğer sensörler ısındı: takılı kalmış veya yerinden oynamış sensör.',
+    'Also under CPU and GPU load (45 s)': 'CPU ve GPU yükü altında da (45 sn.)',
+    'Under load… %@': 'Yük altında… %@',
     'Suspicious sensor (hardware check)': 'Şüpheli sensör (donanım kontrolü)',
     '%1$@ reads %2$@, far colder than the rest of the Mac: sensor or connection.': "%1$@ %2$@ okuyor, Mac'in geri kalanından çok daha soğuk: sensör veya bağlantısı.",
     '%1$@ reads %2$@: open circuit — the sensor or its connection (flex cable, connector).': '%1$@ %2$@ okuyor: açık devre — sensör veya bağlantısı (flex kablo, konnektör).',
@@ -26,7 +31,7 @@ TR = {
     'The system (kernel_task) takes %@ of the CPU while little else runs: macOS keeps the CPU idle, often because of a missing sensor or a battery or power problem.': "Başka pek bir şey çalışmazken sistem (kernel_task) CPU'nun %@ kadarını alıyor: macOS CPU'yu boşta tutuyor; sebebi çoğu zaman eksik bir sensör ya da pil veya güç sorunudur.",
     'Unclear': 'Belirsiz',
     'Unclear: %@': 'Belirsiz: %@',
-    'Watches every temperature sensor for a minute with the Mac idle. Finds sensors that read like an open or short circuit, give no reading or are stuck, and what a missing sensor causes: fans at full speed, a CPU held back (kernel_task).': 'Mac boştayken bir dakika boyunca her sıcaklık sensörünü izler. Açık veya kısa devre gibi okuyan, hiç değer vermeyen ya da takılı kalan sensörleri ve eksik bir sensörün yol açtıklarını bulur: tam devirde fanlar, kısılan CPU (kernel_task).',
+    'Watches every temperature sensor for about a minute, idle and optionally under CPU and GPU load. Finds sensors that read like an open or short circuit, give no reading, are stuck, do not follow the load or are missing, and what a missing sensor causes: fans at full speed, a CPU held back (kernel_task).': 'Her sıcaklık sensörünü yaklaşık bir dakika izler: boştayken ve isteğe bağlı olarak CPU ve GPU yükü altında. Açık veya kısa devre gibi okuyan, hiç değer vermeyen, takılı kalan, yüke tepki vermeyen ya da hiç görünmeyen sensörleri ve eksik bir sensörün yol açtıklarını bulur: tam devirde fanlar, kısılan CPU (kernel_task).',
     'Watching the sensors… %@': 'Sensörler izleniyor… %@',
     'What the Mac does': "Mac'in davranışı",
     'macOS holds the CPU at %1$@ of its speed although it is not hot (%2$@). A missing or broken sensor is a common cause, as are battery and power adapter problems.': 'macOS, CPU sıcak olmadığı hâlde (%2$@) onu hızının %1$@ kadarında tutuyor. Sık görülen sebepler eksik veya bozuk bir sensör, pil ve güç adaptörü sorunlarıdır.',

@@ -35,6 +35,11 @@ public enum Format {
         L("%@°", number(celsius, digits: digits))
     }
 
+    /// "+0.4°" / "−1.2°": a signed temperature change.
+    public static func degreesChange(_ celsius: Double) -> String {
+        (celsius > 0 ? "+" : "") + degrees(celsius, digits: 1)
+    }
+
     public static func milliampHours(_ value: Int) -> String {
         if #available(macOS 12, *), !forceLegacy {
             return Measurement(value: Double(value), unit: UnitElectricCharge.milliampereHours)

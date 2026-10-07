@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%1$@ hardly moved under load (%2$@) while the other sensors of its group heated up: stuck or badly placed sensor." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ yük altında neredeyse hiç değişmedi (%2$@), oysa grubundaki diğer sensörler ısındı: takılı kalmış veya yerinden oynamış sensör."
+          }
+        }
+      }
+    },
     "%1$@ linked at %2$@ here but at %3$@ in another port: this port's USB 3 lane may be faulty (pins, connector, redriver), or the plug was not fully in." : {
       "localizations" : {
         "tr" : {
@@ -213,6 +223,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ arayüz CRC hatası: SATA kablosunu / flex'i ve konnektörü kontrol edin."
+          }
+        }
+      }
+    },
+    "%@ is missing: this model has it, but the Mac does not report it (flex cable, connector or the part)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ yok: bu modelde bulunur ama Mac onu bildirmiyor (flex kablo, konnektör ya da parçanın kendisi)."
           }
         }
       }
@@ -886,6 +906,16 @@
         }
       }
     },
+    "All %lld sensors read plausible values and followed the load." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld sensörün tamamı makul değerler okuyor ve yüke tepki verdi."
+          }
+        }
+      }
+    },
     "All %lld sensors read plausible values." : {
       "localizations" : {
         "tr" : {
@@ -972,6 +1002,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tam Disk Erişimi de gerekir: tarama başlamazsa Sistem Ayarları › Gizlilik ve Güvenlik › Tam Disk Erişimi'nde FixStat'a izin verildiğini kontrol edin."
+          }
+        }
+      }
+    },
+    "Also under CPU and GPU load (45 s)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU ve GPU yükü altında da (45 sn.)"
           }
         }
       }
@@ -8038,6 +8078,16 @@
         }
       }
     },
+    "Under load… %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yük altında… %@"
+          }
+        }
+      }
+    },
     "Unexpected power losses" : {
       "localizations" : {
         "tr" : {
@@ -8328,12 +8378,12 @@
         }
       }
     },
-    "Watches every temperature sensor for a minute with the Mac idle. Finds sensors that read like an open or short circuit, give no reading or are stuck, and what a missing sensor causes: fans at full speed, a CPU held back (kernel_task)." : {
+    "Watches every temperature sensor for about a minute, idle and optionally under CPU and GPU load. Finds sensors that read like an open or short circuit, give no reading, are stuck, do not follow the load or are missing, and what a missing sensor causes: fans at full speed, a CPU held back (kernel_task)." : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mac boştayken bir dakika boyunca her sıcaklık sensörünü izler. Açık veya kısa devre gibi okuyan, hiç değer vermeyen ya da takılı kalan sensörleri ve eksik bir sensörün yol açtıklarını bulur: tam devirde fanlar, kısılan CPU (kernel_task)."
+            "value" : "Her sıcaklık sensörünü yaklaşık bir dakika izler: boştayken ve isteğe bağlı olarak CPU ve GPU yükü altında. Açık veya kısa devre gibi okuyan, hiç değer vermeyen, takılı kalan, yüke tepki vermeyen ya da hiç görünmeyen sensörleri ve eksik bir sensörün yol açtıklarını bulur: tam devirde fanlar, kısılan CPU (kernel_task)."
           }
         }
       }

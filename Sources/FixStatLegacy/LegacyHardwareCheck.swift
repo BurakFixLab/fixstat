@@ -737,38 +737,48 @@ final class LegacyLidPane: BlockPane {
 
 final class LegacySensorCheckPane: BlockPane, LegacySnapshotStartable {
     private lazy var runner = SensorCheckRunner(monitor: core)
+    private let loadBox = NSButton(checkboxWithTitle: L("Also under CPU and GPU load (45 s)"), target: nil, action: nil)
 
     override init(core: MonitorCore) {
         super.init(core: core)
         runner.onChange = { [weak self] in self?.refresh() }
+        let stored = UserDefaults.standard.object(forKey: "sensorCheck.underLoad") as? Bool ?? true
+        loadBox.state = stored ? .on : .off
+        loadBox.target = self
+        loadBox.action = #selector(loadChanged)
     }
 
-    override func activate() {
-        super.activate()
-        // Passive and harmless: start right away the first time.
-        if core.lastSensorCheck == nil, runner.state == .idle { runner.start() }
+    @objc private func loadChanged() {
+        UserDefaults.standard.set(loadBox.state == .on, forKey: "sensorCheck.underLoad")
     }
 
     override func deactivate() {
         runner.stop()
     }
 
-    /// `--start-test SECONDS` (snapshots): a shortened run.
+    /// `--start-test SECONDS` (snapshots): a shortened run (that long idle and under load).
     func start(seconds: TimeInterval) {
         runner.stop()
-        runner.duration = seconds
+        runner.shortened = seconds
+        start()
+    }
+
+    private func start() {
+        runner.underLoad = loadBox.state == .on
         runner.start()
     }
 
     override func blocks() -> [Block] {
         var blocks: [Block] = []
         if runner.state == .running {
-            blocks.append(.progress(L("Watching the sensors… %@", Format.duration(max(runner.duration - runner.elapsed, 0).rounded(.up)))))
+            let left = Format.duration(runner.remaining.rounded(.up))
+            blocks.append(.progress(runner.phase == .load ? L("Under load… %@", left) : L("Watching the sensors… %@", left)))
             blocks.append(.actions([DocAction(title: L("Stop")) { [unowned self] in runner.stop() }]))
         } else {
-            blocks.append(.actions([DocAction(title: core.lastSensorCheck == nil ? L("Check sensors") : L("Check again")) {
-                [unowned self] in runner.start()
-            }]))
+            let button = ActionButton(title: core.lastSensorCheck == nil ? L("Check sensors") : L("Check again")) {
+                [unowned self] in start()
+            }
+            blocks.append(.view(hStack([button, loadBox, makeSpacer()], spacing: 16)))
         }
         guard let result = core.lastSensorCheck else { return blocks }
         blocks.append(.status(SensorCheckText.verdict(result), result.passed ? .good : .bad))

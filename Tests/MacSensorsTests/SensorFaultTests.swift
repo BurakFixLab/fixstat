@@ -71,4 +71,42 @@ import Testing
         let faults = Self.detect(sensors, [Self.ramp(4, rise: 1), Self.ramp(38), Self.ramp(32)])
         #expect(faults.map(\.kind) == [.tooCold])
     }
+
+    @Test func cpuSensorThatIgnoresTheLoad() {
+        let sensors = [Self.sensor("Tp01", .cpu), Self.sensor("Tp05", .cpu), Self.sensor("Tp09", .cpu),
+                       Self.sensor("Tg05", .gpu)]
+        let before: [[Double?]] = [Array(repeating: 40, count: 10), Array(repeating: 41, count: 10),
+                                   Array(repeating: 40.5, count: 10), Array(repeating: 35, count: 10)]
+        let during: [[Double?]] = [Self.ramp(40, rise: 40), Self.ramp(41, rise: 38), Array(repeating: 40.5, count: 90),
+                                   Self.ramp(35, rise: 2)]
+        let faults = SensorFaultDetector.unresponsive(sensors, before: before, during: during)
+        #expect(faults.map(\.label) == ["Tp09"])
+        #expect(faults.first?.kind == .noResponse)
+        // A guessed (pattern) name counts too: the sensor reads plausibly, so it exists.
+        let guessed = sensors.map { Self.sensor($0.descriptor.key!, $0.resolved.group, level: .pattern) }
+        #expect(SensorFaultDetector.unresponsive(guessed, before: before, during: during).first?.known == true)
+    }
+
+    @Test func noJudgementWhenTheGroupDidNotWarm() {
+        // The load barely warmed the CPU (e.g. a throttled Mac): nothing to compare against.
+        let sensors = [Self.sensor("Tp01", .cpu), Self.sensor("Tp05", .cpu)]
+        let before: [[Double?]] = [Array(repeating: 40, count: 10), Array(repeating: 41, count: 10)]
+        let during: [[Double?]] = [Self.ramp(40, rise: 3), Array(repeating: 41, count: 90)]
+        #expect(SensorFaultDetector.unresponsive(sensors, before: before, during: during).isEmpty)
+    }
+
+    @Test func missingModelSensors() {
+        var map = SensorMap()
+        map.models["MacBookAir10,1"] = SensorMap.ModelMap(chip: "Apple M1", board: nil, description: nil, sensors: [
+            .init(key: "TN0n", id: "ssd.nand.1", group: .ssd, confidence: .verified),
+            .init(key: "TB0T", id: "battery.1", group: .battery, confidence: .verified),
+        ], ignored: nil)
+        let present = [SensorDescriptor(source: .smc, key: "TB0T", hidName: nil)]
+        let missing = SensorFaultDetector.missing(map: map, model: "MacBookAir10,1", present: present, hasBattery: true)
+        #expect(missing.map(\.label) == ["TN0n"])
+        #expect(SensorFaultDetector.missing(map: map, model: "Mac14,2", present: present, hasBattery: true).isEmpty)
+        // Without a battery its sensors are not expected.
+        #expect(SensorFaultDetector.missing(map: map, model: "MacBookAir10,1", present: [], hasBattery: false)
+            .map(\.label) == ["TN0n"])
+    }
 }

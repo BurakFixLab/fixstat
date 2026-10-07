@@ -11,7 +11,7 @@ let usage = """
       sensormap report FILE...
       sensormap propose FILE... [--write PATH]
       sensormap ssd [--gb N]
-      sensormap faults FILE... [--map PATH]
+      sensormap faults FILE... [--map PATH] [--break KEY]
 
     record   Idle baseline, then each test (default 45 s) with cooldown in between.
              --quick: all cores, GPU and SSD for 30 s each (about 3 minutes).
@@ -21,8 +21,9 @@ let usage = """
     propose  Proposes sensor-map entries for this model from recordings.
     ssd      Write–verify stress test of the internal SSD on free space (default 4 GB).
              Uses write endurance; at least 10 GB are always left free.
-    faults   Runs the broken-sensor detector over recordings (whole recording, and
-             the idle baseline alone).
+    faults   Runs the broken-sensor detector over recordings (whole recording, the
+             idle baseline alone, each load phase). --break KEY holds that sensor at
+             its first value, to see what a dead sensor looks like.
     """
 
 func fail(_ message: String) -> Never {
@@ -225,14 +226,24 @@ case "ssd":
 case "faults":
     var files: [String] = []
     var mapPath = "SensorMaps/sensor-map.json"
+    var broken: String?
     var iterator = arguments.makeIterator()
     while let argument = iterator.next() {
-        if argument == "--map" { mapPath = iterator.next() ?? mapPath } else { files.append(argument) }
+        switch argument {
+        case "--map": mapPath = iterator.next() ?? mapPath
+        case "--break": broken = iterator.next()
+        default: files.append(argument)
+        }
     }
     guard !files.isEmpty else { fail("faults needs at least one recording") }
     let map: SensorMap
     do { map = try SensorMap.load(from: URL(fileURLWithPath: mapPath)) } catch { fail("cannot load \(mapPath): \(error)") }
-    for (path, recording) in zip(files, loadRecordings(files)) {
+    for (path, original) in zip(files, loadRecordings(files)) {
+        var recording = original
+        if let broken, let column = recording.sensors.firstIndex(where: { $0.key == broken || $0.hidName == broken }),
+           let first = recording.samples.first?.values[column] {
+            for index in recording.samples.indices { recording.samples[index].values[column] = first }
+        }
         let model = recording.system.model, chip = recording.system.chip
         var sensors: [SensorFaultDetector.Sensor] = []
         var columns: [Int] = []
@@ -251,6 +262,21 @@ case "faults":
         let baseline = recording.phases.first { $0.name == "baseline" }
         let idle = baseline.map { b in recording.samples.filter { $0.t >= b.start && $0.t <= b.end } } ?? []
         print("\(URL(fileURLWithPath: path).lastPathComponent)  \(model)  \(sensors.count) named sensors, \(recording.samples.count) samples")
+        let missing = SensorFaultDetector.missing(map: map, model: model, present: recording.sensors, hasBattery: true)
+        if !missing.isEmpty { print("  missing: " + missing.map(\.label).joined(separator: " ")) }
+        // Load phases: the 10 s before each load against the load itself.
+        for phase in recording.phases where ["all", "single", "gpu"].contains(phase.name) {
+            let before = recording.samples.filter { $0.t >= phase.start - 10 && $0.t < phase.start }
+            let during = recording.samples.filter { $0.t >= phase.start && $0.t <= phase.end }
+            func columnsOf(_ samples: [SensorRecording.Sample]) -> [[Double?]] {
+                columns.map { column in samples.map { column < $0.values.count ? $0.values[column] : nil } }
+            }
+            let groups: Set<SensorMap.Group> = phase.name == "gpu" ? [.gpu] : [.cpu]
+            let faults = SensorFaultDetector.unresponsive(sensors, before: columnsOf(before), during: columnsOf(during),
+                                                           groups: groups)
+            let text = faults.map { "\($0.label)\($0.known ? "" : "?")" + ($0.value.map { String(format: "(%+.1f)", $0) } ?? "") }
+            print("  load \(phase.name): " + (text.isEmpty ? "ok" : "no response " + text.joined(separator: " ")))
+        }
         for (title, faults) in [("whole", run(recording.samples)), ("idle", run(idle))] {
             let text = faults.map { "\($0.label)=\($0.kind.rawValue)\($0.known ? "" : "?")"
                 + ($0.value.map { String(format: "(%.1f)", $0) } ?? "") }

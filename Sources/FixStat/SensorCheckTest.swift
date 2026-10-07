@@ -8,6 +8,7 @@ import SwiftUI
 struct SensorCheckView: View {
     @Environment(Monitor.self) private var monitor
     @State private var checker: SensorChecker?
+    @AppStorage("sensorCheck.underLoad") private var underLoad = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -15,13 +16,20 @@ struct SensorCheckView: View {
                 if checker.running {
                     HStack(spacing: 8) {
                         ProgressView(value: checker.fraction).frame(maxWidth: 240)
-                        Text("Watching the sensors… \(Format.duration(max(checker.duration - checker.elapsed, 0).rounded(.up)))")
+                        Text(checker.underLoadNow ? "Under load… \(Format.duration(checker.remaining.rounded(.up)))"
+                                                  : "Watching the sensors… \(Format.duration(checker.remaining.rounded(.up)))")
                             .foregroundStyle(.secondary)
                         Spacer()
                         Button("Stop", role: .cancel) { checker.stop() }
                     }
                 } else {
-                    Button(monitor.lastSensorCheck == nil ? "Check sensors" : "Check again") { checker.start() }
+                    HStack(spacing: 16) {
+                        Button(monitor.lastSensorCheck == nil ? "Check sensors" : "Check again") {
+                            checker.start(underLoad: underLoad)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        Toggle("Also under CPU and GPU load (45 s)", isOn: $underLoad)
+                    }
                 }
             }
             if let result = monitor.lastSensorCheck {
@@ -29,12 +37,7 @@ struct SensorCheckView: View {
             }
         }
         .font(.callout)
-        .onAppear {
-            let checker = checker ?? SensorChecker(monitor: monitor)
-            self.checker = checker
-            // Passive and harmless: start right away the first time.
-            if monitor.lastSensorCheck == nil, !checker.running { checker.start() }
-        }
+        .onAppear { if checker == nil { checker = SensorChecker(monitor: monitor) } }
         .onDisappear { checker?.stop() }
     }
 }
@@ -86,9 +89,9 @@ struct SensorCheckResultView: View {
 @Observable
 final class SensorChecker {
     private(set) var running = false
-    private(set) var elapsed: TimeInterval = 0
+    private(set) var underLoadNow = false
+    private(set) var remaining: TimeInterval = 0
     private(set) var fraction = 0.0
-    var duration: TimeInterval { runner.duration }
 
     @ObservationIgnored private let runner: SensorCheckRunner
 
@@ -105,13 +108,18 @@ final class SensorChecker {
         }
     }
 
-    func start() { runner.start() }
+    func start(underLoad: Bool) {
+        runner.underLoad = underLoad
+        runner.start()
+    }
     func stop() { runner.stop() }
 
     private func sync() {
         let nowRunning = runner.state == .running
         if nowRunning != running { running = nowRunning }
-        elapsed = runner.elapsed
+        remaining = runner.remaining
         fraction = runner.fraction
+        let load = runner.phase == .load
+        if load != underLoadNow { underLoadNow = load }
     }
 }

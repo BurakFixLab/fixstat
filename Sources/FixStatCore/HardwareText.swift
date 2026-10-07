@@ -59,7 +59,7 @@ public enum HardwareText {
         case .camera:
             L("Shows the built-in camera image. Check sharpness, colours and that the green camera light turns on.")
         case .sensors:
-            L("Watches every temperature sensor for a minute with the Mac idle. Finds sensors that read like an open or short circuit, give no reading or are stuck, and what a missing sensor causes: fans at full speed, a CPU held back (kernel_task).")
+            L("Watches every temperature sensor for about a minute, idle and optionally under CPU and GPU load. Finds sensors that read like an open or short circuit, give no reading, are stuck, do not follow the load or are missing, and what a missing sensor causes: fans at full speed, a CPU held back (kernel_task).")
         case .fans:
             L("Puts load on the CPU and GPU for 90 seconds and checks that every fan follows the speed the system asks for, then watches it slow down again. Listen for grinding, rattling or a whine while the fans speed up. FixStat never sets fan speeds itself.")
         case .wifi:
