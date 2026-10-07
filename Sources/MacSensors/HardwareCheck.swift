@@ -6,7 +6,7 @@ import Foundation
 /// measure something fill in `detail` (e.g. "78 / 78 keys", "−38 dBFS peak").
 public struct HardwareCheck: Codable, Sendable, Equatable {
     public enum Item: String, CaseIterable, Codable, Sendable {
-        case keyboard, touchBar, trackpad, display, ambientLight, speakers, microphone, camera, fans, wifi, bluetooth, ports, lid
+        case keyboard, touchBar, trackpad, display, ambientLight, speakers, microphone, camera, sensors, fans, wifi, bluetooth, ports, lid
     }
 
     public enum Status: String, Codable, Sendable {
@@ -56,7 +56,7 @@ public struct HardwareCheck: Codable, Sendable, Equatable {
             case .lid: return profile.hasLid
             case .fans: return profile.hasFans
             case .touchBar: return profile.touchBar != nil
-            case .speakers, .wifi, .bluetooth, .ports: return true
+            case .speakers, .sensors, .wifi, .bluetooth, .ports: return true
             }
         }
     }

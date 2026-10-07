@@ -21,6 +21,46 @@
         }
       }
     },
+    "%1$@ reads %2$@, far colder than the rest of the Mac: sensor or connection." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@ okuyor, Mac'in geri kalanından çok daha soğuk: sensör veya bağlantısı."
+          }
+        }
+      }
+    },
+    "%1$@ reads %2$@: open circuit — the sensor or its connection (flex cable, connector)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@ okuyor: açık devre — sensör veya bağlantısı (flex kablo, konnektör)."
+          }
+        }
+      }
+    },
+    "%1$@ reads %2$@: short circuit — the sensor or its line." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@ okuyor: kısa devre — sensör veya hattı."
+          }
+        }
+      }
+    },
+    "%1$@ stays at exactly %2$@ while the sensors around it change: stuck reading." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, çevresindeki sensörler değişirken tam %2$@ değerinde sabit kalıyor: takılı kalmış okuma."
+          }
+        }
+      }
+    },
     "%1$@, below %2$@: over-discharged" : {
       "localizations" : {
         "tr" : {
@@ -142,6 +182,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ boş"
+          }
+        }
+      }
+    },
+    "%@ gives no reading: the sensor or its connection is missing." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hiç değer vermiyor: sensör veya bağlantısı yok."
           }
         }
       }
@@ -670,6 +720,16 @@
         }
       }
     },
+    "A fan runs at %1$@ of %2$@ rpm although the CPU is only at %3$@. Macs speed their fans up like this when a temperature sensor is missing or broken." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir fan %2$@ rpm'nin %1$@ kadarında dönüyor, oysa CPU yalnızca %3$@. Mac'ler bir sıcaklık sensörü eksik veya bozuk olduğunda fanları böyle hızlandırır."
+          }
+        }
+      }
+    },
     "A notification is sent when a condition lasts from 30 seconds to 3 minutes, and repeated at most every 15 minutes." : {
       "localizations" : {
         "tr" : {
@@ -822,6 +882,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uyarı sınırı"
+          }
+        }
+      }
+    },
+    "All %lld sensors read plausible values." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld sensörün tamamı makul değerler okuyor."
           }
         }
       }
@@ -1810,12 +1880,32 @@
         }
       }
     },
+    "Check again" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden kontrol et"
+          }
+        }
+      }
+    },
     "Check battery" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bataryayı kontrol et"
+          }
+        }
+      }
+    },
+    "Check sensors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensörleri kontrol et"
           }
         }
       }
@@ -4480,6 +4570,16 @@
         }
       }
     },
+    "No broken sensor found, but the Mac behaves as if one were missing." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bozuk sensör bulunamadı, ama Mac bir sensör eksikmiş gibi davranıyor."
+          }
+        }
+      }
+    },
     "No camera found." : {
       "localizations" : {
         "tr" : {
@@ -4932,6 +5032,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Açık — verilere erişmek için kullanıcı parolası gerekir"
+          }
+        }
+      }
+    },
+    "Only guessed from the key name, so they may simply not be fitted on this model. Compare with a good Mac of the same model." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yalnızca anahtar adından tahmin edildiler; bu modelde hiç takılı olmayabilirler. Aynı modelden sağlam bir Mac ile karşılaştırın."
           }
         }
       }
@@ -6992,6 +7102,36 @@
         }
       }
     },
+    "Suspicious sensor (hardware check)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şüpheli sensör (donanım kontrolü)"
+          }
+        }
+      }
+    },
+    "Suspicious sensors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şüpheli sensörler"
+          }
+        }
+      }
+    },
+    "Suspicious sensors: %lld." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şüpheli sensör: %lld."
+          }
+        }
+      }
+    },
     "Suspicious — check the part" : {
       "localizations" : {
         "tr" : {
@@ -7098,6 +7238,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sıcaklık sınırı aşıldı (birden fazla sensör)"
+          }
+        }
+      }
+    },
+    "Temperature sensors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıcaklık sensörleri"
           }
         }
       }
@@ -7498,6 +7648,16 @@
         }
       }
     },
+    "The system (kernel_task) takes %@ of the CPU while little else runs: macOS keeps the CPU idle, often because of a missing sensor or a battery or power problem." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başka pek bir şey çalışmazken sistem (kernel_task) CPU'nun %@ kadarını alıyor: macOS CPU'yu boşta tutuyor; sebebi çoğu zaman eksik bir sensör ya da pil veya güç sorunudur."
+          }
+        }
+      }
+    },
     "The system power cannot be read with the adapter connected on this Mac: unplug the power adapter and start again." : {
       "localizations" : {
         "tr" : {
@@ -7848,6 +8008,26 @@
         }
       }
     },
+    "Unclear" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belirsiz"
+          }
+        }
+      }
+    },
+    "Unclear: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belirsiz: %@"
+          }
+        }
+      }
+    },
     "Uncorrectable sectors" : {
       "localizations" : {
         "tr" : {
@@ -8148,6 +8328,26 @@
         }
       }
     },
+    "Watches every temperature sensor for a minute with the Mac idle. Finds sensors that read like an open or short circuit, give no reading or are stuck, and what a missing sensor causes: fans at full speed, a CPU held back (kernel_task)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac boştayken bir dakika boyunca her sıcaklık sensörünü izler. Açık veya kısa devre gibi okuyan, hiç değer vermeyen ya da takılı kalan sensörleri ve eksik bir sensörün yol açtıklarını bulur: tam devirde fanlar, kısılan CPU (kernel_task)."
+          }
+        }
+      }
+    },
+    "Watching the sensors… %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensörler izleniyor… %@"
+          }
+        }
+      }
+    },
     "Wear leveling" : {
       "localizations" : {
         "tr" : {
@@ -8174,6 +8374,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mac'i uyanık tutanlar"
+          }
+        }
+      }
+    },
+    "What the Mac does" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac'in davranışı"
           }
         }
       }
@@ -8666,6 +8876,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS'ta Mac bataryaları için orijinal parça bayrağı yoktur ve kopyalar dijital verileri taklit edebilir; bu nedenle bu, bilinen orijinal parçalarla bir tutarlılık kontrolüdür, kesin kanıt değildir."
+          }
+        }
+      }
+    },
+    "macOS holds the CPU at %1$@ of its speed although it is not hot (%2$@). A missing or broken sensor is a common cause, as are battery and power adapter problems." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS, CPU sıcak olmadığı hâlde (%2$@) onu hızının %1$@ kadarında tutuyor. Sık görülen sebepler eksik veya bozuk bir sensör, pil ve güç adaptörü sorunlarıdır."
           }
         }
       }

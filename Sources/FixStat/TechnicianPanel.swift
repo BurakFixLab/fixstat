@@ -141,7 +141,11 @@ struct TechnicianPanel: View {
 
     private var sensorCard: some View {
         let hidden = Pref.hiddenSet(hiddenRaw)
-        let shown = monitor.sensors.filter { !hidden.contains($0.id) && monitor.value(of: $0) != nil }
+        // Sensors the last sensor check flagged stay visible even without a plausible value.
+        let suspicious = Set(monitor.lastSensorCheck?.known.map(\.uid) ?? [])
+        let shown = monitor.sensors.filter {
+            !hidden.contains($0.id) && (monitor.value(of: $0) != nil || suspicious.contains($0.id))
+        }
         let matched = shown.filter(\.isMatched).sorted(by: SensorOrder.displayOrder)
         let unmatched = shown.filter { !$0.isMatched }.sorted { $0.name < $1.name }
         let modelMatches = shown.filter(\.isModelMatch).count
@@ -161,7 +165,8 @@ struct TechnicianPanel: View {
                         groupHeader(id: id, title: title, sensors: sensors)
                         if expanded.contains(id) {
                             ForEach(sensors) { sensor in
-                                TechSensorRow(sensor: sensor, value: monitor.value(of: sensor), warm: warm, hot: hot)
+                                TechSensorRow(sensor: sensor, value: monitor.value(of: sensor), warm: warm, hot: hot,
+                                              suspicious: suspicious.contains(sensor.id))
                             }
                         }
                     }
@@ -223,6 +228,8 @@ struct TechSensorRow: View {
     let value: Double?
     let warm: Double
     let hot: Double
+    /// Flagged by the last sensor check.
+    var suspicious = false
 
     var body: some View {
         HStack(spacing: 8) {
@@ -238,6 +245,12 @@ struct TechSensorRow: View {
                     .background(TemperatureColor.warm.opacity(0.15), in: RoundedRectangle(cornerRadius: 3))
             }
             Spacer(minLength: 6)
+            if suspicious {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.caption)
+                    .foregroundStyle(TemperatureColor.hot)
+                    .help(Text("Suspicious sensor (hardware check)"))
+            }
             Text(verbatim: sensor.descriptor.rawLabel)
                 .font(.caption.monospaced())
                 .foregroundStyle(.tertiary)

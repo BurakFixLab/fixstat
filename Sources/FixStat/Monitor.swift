@@ -77,6 +77,11 @@ final class Monitor {
         set { withMutation(keyPath: \.lastMemoryResult) { core.lastMemoryResult = newValue } }
     }
     /// Result of the last SSD write–verify test (for reports).
+    /// Last broken-sensor check.
+    var lastSensorCheck: SensorCheckResult? {
+        get { access(keyPath: \.lastSensorCheck); return core.lastSensorCheck }
+        set { withMutation(keyPath: \.lastSensorCheck) { core.lastSensorCheck = newValue } }
+    }
     /// USB drive speed tests of this session (ports check).
     var usbSpeedResults: [USBSpeedResult] {
         get { access(keyPath: \.usbSpeedResults); return core.usbSpeedResults }
@@ -108,6 +113,13 @@ final class Monitor {
         core = MonitorCore()
         core.onUpdate = { [weak self] in
             MainActor.assumeIsolated { self?.sync() }
+        }
+        // Core test runners (fan test, sensor check) record into the checklist themselves.
+        core.onHardwareCheckChange = { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                self.withMutation(keyPath: \.hardwareCheck) {}
+            }
         }
         sync()
         defaultsObserver = NotificationCenter.default.addObserver(

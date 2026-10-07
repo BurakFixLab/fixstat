@@ -55,7 +55,8 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
   güç analizi (sistem toplamı, CPU / GPU gücü, Apple Silicon'da her güç rayının voltaj ve
   akımı, root gerektirmeden), cihaz kartı (Aktivasyon Kilidi, MDM, parça numarası) ve donanım kontrolü
   (klavye, trackpad yüzeyi, ekran, hoparlör, mikrofon, kamera,
-  Touch Bar, yük altında fanlar, Wi-Fi, Bluetooth, arıza
+  Touch Bar, yük altında fanlar, sıcaklık sensörleri (açık / kısa devre / takılı kalmış sensörler
+  ve eksik sensörün yol açtıkları: tam devirde fanlar, CPU'yu kısan kernel_task), Wi-Fi, Bluetooth, arıza
   sayaçlı, yavaş USB 3 hattını yakalayan ve port başına USB sürücü hız testi yapılan
   USB-C / USB-A portları, kapak sensörü).
 - **Mac'e uyum.** iMac, Mac mini veya Mac Studio'da batarya araçları gizlenir; donanım

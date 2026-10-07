@@ -71,6 +71,8 @@ public final class MonitorCore {
         hardwareCheck = HardwareCheck(profile: profile)
         usbSpeedResults = []
     }
+    /// Last broken-sensor check.
+    public var lastSensorCheck: SensorCheckResult?
     /// USB drive speed tests of this session (ports check), oldest first.
     public var usbSpeedResults: [USBSpeedResult] = []
     /// Device card data (system_profiler takes about a second, so it is loaded on demand).

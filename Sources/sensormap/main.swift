@@ -11,6 +11,7 @@ let usage = """
       sensormap report FILE...
       sensormap propose FILE... [--write PATH]
       sensormap ssd [--gb N]
+      sensormap faults FILE... [--map PATH]
 
     record   Idle baseline, then each test (default 45 s) with cooldown in between.
              --quick: all cores, GPU and SSD for 30 s each (about 3 minutes).
@@ -20,6 +21,8 @@ let usage = """
     propose  Proposes sensor-map entries for this model from recordings.
     ssd      Write–verify stress test of the internal SSD on free space (default 4 GB).
              Uses write endurance; at least 10 GB are always left free.
+    faults   Runs the broken-sensor detector over recordings (whole recording, and
+             the idle baseline alone).
     """
 
 func fail(_ message: String) -> Never {
@@ -35,6 +38,9 @@ func loadRecordings(_ paths: [String]) -> [SensorRecording] {
         do {
             return try decoder.decode(SensorRecording.self, from: data)
         } catch {
+            // Bench records keep the recording under "sensors".
+            struct Wrapped: Decodable { var sensors: SensorRecording }
+            if let wrapped = try? decoder.decode(Wrapped.self, from: data) { return wrapped.sensors }
             fail("cannot parse \(path): \(error)")
         }
     }
@@ -215,6 +221,41 @@ case "ssd":
     if !writes.isEmpty, !reads.isEmpty {
         log(String(format: "chunk ms  write median %.1f max %.1f · read median %.1f max %.1f",
                    writes[writes.count / 2] * 1000, writes.last! * 1000, reads[reads.count / 2] * 1000, reads.last! * 1000))
+    }
+case "faults":
+    var files: [String] = []
+    var mapPath = "SensorMaps/sensor-map.json"
+    var iterator = arguments.makeIterator()
+    while let argument = iterator.next() {
+        if argument == "--map" { mapPath = iterator.next() ?? mapPath } else { files.append(argument) }
+    }
+    guard !files.isEmpty else { fail("faults needs at least one recording") }
+    let map: SensorMap
+    do { map = try SensorMap.load(from: URL(fileURLWithPath: mapPath)) } catch { fail("cannot load \(mapPath): \(error)") }
+    for (path, recording) in zip(files, loadRecordings(files)) {
+        let model = recording.system.model, chip = recording.system.chip
+        var sensors: [SensorFaultDetector.Sensor] = []
+        var columns: [Int] = []
+        for (index, descriptor) in recording.sensors.enumerated() {
+            guard !map.isIgnored(key: descriptor.key, hidName: descriptor.hidName, model: model, chip: chip),
+                  let resolved = map.resolve(key: descriptor.key, hidName: descriptor.hidName, model: model, chip: chip)
+            else { continue }
+            sensors.append(SensorFaultDetector.Sensor(descriptor: descriptor, resolved: resolved))
+            columns.append(index)
+        }
+        func run(_ samples: [SensorRecording.Sample]) -> [SensorFault] {
+            let series = columns.map { column in samples.map { column < $0.values.count ? $0.values[column] : nil } }
+            let seconds = (samples.last?.t ?? 0) - (samples.first?.t ?? 0)
+            return SensorFaultDetector.detect(sensors, series: series, seconds: seconds)
+        }
+        let baseline = recording.phases.first { $0.name == "baseline" }
+        let idle = baseline.map { b in recording.samples.filter { $0.t >= b.start && $0.t <= b.end } } ?? []
+        print("\(URL(fileURLWithPath: path).lastPathComponent)  \(model)  \(sensors.count) named sensors, \(recording.samples.count) samples")
+        for (title, faults) in [("whole", run(recording.samples)), ("idle", run(idle))] {
+            let text = faults.map { "\($0.label)=\($0.kind.rawValue)\($0.known ? "" : "?")"
+                + ($0.value.map { String(format: "(%.1f)", $0) } ?? "") }
+            print("  \(title): " + (text.isEmpty ? "none" : text.joined(separator: " ")))
+        }
     }
 case "-h", "--help":
     print(usage)

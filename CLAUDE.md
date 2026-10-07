@@ -365,6 +365,21 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   10.15 —, `MicrophoneLevel`, `CameraCapture`, `LightTestRunner`, `WiFiLink`,
   `BluetoothScan`, `PortHistory`, `LidWatcher`); camera / microphone permission exists
   from 10.14 (`MediaPermission`). Both interfaces show the same test panes.
+- Temperature sensors (`SensorFaultDetector` in MacSensors, `SensorCheckRunner` / `SensorCheckText`,
+  `SensorCheckView` / `LegacySensorCheckPane`): watches every named, not ignored sensor for 60 s
+  (Mac idle) and flags open (≤ −20 °C; pattern-only matches ≤ −30 °C, since Apple Silicon PMU
+  channels without an NTC read ≈ −22 °C), short (> 130 °C), no reading (−127 / missing, known
+  sensors only: TC3C / TC4C do not exist on a dual-core Intel CPU), frozen (exactly constant
+  ≥ 60 s while its group swung ≥ 3 °C) and too cold (< 10 °C while the board is ≥ 25 °C), each
+  for ≥ 80 % of the samples (Intel SMCs answer −127 now and then). Not judged: CPU / GPU / SoC
+  block dies (`soc.*`; M1 ANE / ISP read 30.0 while gated) and Apple Silicon `TV..` estimates.
+  Model / chip matches are "suspicious" (fail the item), pattern matches "unclear". Symptoms:
+  fans ≥ 85 % of max with the CPU < 65 °C, Intel speed limit < 100 % below 80 °C, system share
+  ≥ 25 % with user < 15 % (kernel_task). Lab recordings: `sensormap faults FILE...` (no false
+  positives on the bench records so far; the Air 2014 / 2015 `TH0F` / `TH0R` read below zero on
+  both units, so they are not taken as faults). Technician mode keeps flagged sensors visible
+  with a warning. `-FixStatSampleSensorFault YES` turns the first SSD sensor into an open circuit,
+  `-FixStatSensorCheckSeconds N` shortens the check.
 - Ambient light (`AmbientLightSensor`, `als.c`; test logic `LightCheck`, UI
   `AmbientLightTest.swift`): Apple Silicon lux from the SPU ALS HID service (usage page
   0xFF00 / usage 4, no Product name, event type 12, field 12 << 16); Intel raw channels from

@@ -195,6 +195,7 @@ final class LegacyHardwareCheck: NSObject, NSTableViewDataSource, NSTableViewDel
         case .speakers: return LegacySpeakerPane(core: core)
         case .microphone: return LegacyMicrophonePane(core: core)
         case .camera: return LegacyCameraPane(core: core)
+        case .sensors: return LegacySensorCheckPane(core: core)
         case .fans: return LegacyFanPane(core: core)
         case .wifi: return LegacyWiFiPane(core: core)
         case .bluetooth: return LegacyBluetoothPane(core: core)
@@ -732,6 +733,61 @@ final class LegacyLidPane: BlockPane {
 }
 
 /// Fan test: live speeds, then load and the verdict (core `FanTestRunner`).
+// MARK: - Temperature sensors
+
+final class LegacySensorCheckPane: BlockPane, LegacySnapshotStartable {
+    private lazy var runner = SensorCheckRunner(monitor: core)
+
+    override init(core: MonitorCore) {
+        super.init(core: core)
+        runner.onChange = { [weak self] in self?.refresh() }
+    }
+
+    override func activate() {
+        super.activate()
+        // Passive and harmless: start right away the first time.
+        if core.lastSensorCheck == nil, runner.state == .idle { runner.start() }
+    }
+
+    override func deactivate() {
+        runner.stop()
+    }
+
+    /// `--start-test SECONDS` (snapshots): a shortened run.
+    func start(seconds: TimeInterval) {
+        runner.stop()
+        runner.duration = seconds
+        runner.start()
+    }
+
+    override func blocks() -> [Block] {
+        var blocks: [Block] = []
+        if runner.state == .running {
+            blocks.append(.progress(L("Watching the sensors… %@", Format.duration(max(runner.duration - runner.elapsed, 0).rounded(.up)))))
+            blocks.append(.actions([DocAction(title: L("Stop")) { [unowned self] in runner.stop() }]))
+        } else {
+            blocks.append(.actions([DocAction(title: core.lastSensorCheck == nil ? L("Check sensors") : L("Check again")) {
+                [unowned self] in runner.start()
+            }]))
+        }
+        guard let result = core.lastSensorCheck else { return blocks }
+        blocks.append(.status(SensorCheckText.verdict(result), result.passed ? .good : .bad))
+        if !result.known.isEmpty {
+            blocks.append(.group(L("Suspicious sensors"),
+                                 result.known.map { .status(SensorCheckText.fault($0, name: result.names[$0.uid]), .bad) }))
+        }
+        let symptoms = SensorCheckText.symptoms(result)
+        if !symptoms.isEmpty {
+            blocks.append(.group(L("What the Mac does"), symptoms.map { .status($0, .bad) }))
+        }
+        if !result.unclear.isEmpty {
+            blocks.append(.group(L("Unclear"), [.secondary(SensorCheckText.unclearNote)]
+                + result.unclear.map { .text("• " + SensorCheckText.fault($0, name: result.names[$0.uid])) }))
+        }
+        return blocks
+    }
+}
+
 final class LegacyFanPane: BlockPane, LegacySnapshotStartable {
     private lazy var runner = FanTestRunner(monitor: core)
 

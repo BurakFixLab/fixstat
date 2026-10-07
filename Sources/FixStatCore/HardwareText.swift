@@ -12,6 +12,7 @@ public enum HardwareText {
         case .speakers: L("Speakers")
         case .microphone: L("Microphone")
         case .camera: L("Camera")
+        case .sensors: L("Temperature sensors")
         case .fans: L("Fans")
         case .wifi: L("Wi-Fi")
         case .bluetooth: L("Bluetooth")
@@ -30,6 +31,7 @@ public enum HardwareText {
         case .speakers: "speaker.wave.2"
         case .microphone: "mic"
         case .camera: "camera"
+        case .sensors: "thermometer.medium"
         case .fans: "fan"
         case .wifi: "wifi"
         case .bluetooth: "dot.radiowaves.left.and.right"
@@ -56,6 +58,8 @@ public enum HardwareText {
             L("Speak or tap near the microphones and watch the level. Record a few seconds and play them back to judge the sound.")
         case .camera:
             L("Shows the built-in camera image. Check sharpness, colours and that the green camera light turns on.")
+        case .sensors:
+            L("Watches every temperature sensor for a minute with the Mac idle. Finds sensors that read like an open or short circuit, give no reading or are stuck, and what a missing sensor causes: fans at full speed, a CPU held back (kernel_task).")
         case .fans:
             L("Puts load on the CPU and GPU for 90 seconds and checks that every fan follows the speed the system asks for, then watches it slow down again. Listen for grinding, rattling or a whine while the fans speed up. FixStat never sets fan speeds itself.")
         case .wifi:

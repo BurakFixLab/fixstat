@@ -83,21 +83,21 @@ import Testing
 
     @Test func checklistFollowsTheMac() {
         let mini = HardwareCheck.items(for: HardwareProfile(kind: .desktop, hasBattery: false))
-        #expect(mini == [.speakers, .wifi, .bluetooth, .ports])
+        #expect(mini == [.speakers, .sensors, .wifi, .bluetooth, .ports])
         let iMac = HardwareCheck.items(for: HardwareProfile(kind: .allInOne, hasBattery: false))
-        #expect(iMac == [.display, .ambientLight, .speakers, .microphone, .camera, .wifi, .bluetooth, .ports])
+        #expect(iMac == [.display, .ambientLight, .speakers, .microphone, .camera, .sensors, .wifi, .bluetooth, .ports])
         #expect(HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true, hasFans: true, touchBar: .withEscapeKey))
             == HardwareCheck.Item.allCases)
         // Fanless MacBook Air: everything but the fan and Touch Bar tests.
         #expect(HardwareCheck.items(for: HardwareProfile(kind: .notebook, hasBattery: true))
             == HardwareCheck.Item.allCases.filter { $0 != .fans && $0 != .touchBar })
         let iMacWithFans = HardwareCheck.items(for: HardwareProfile(kind: .allInOne, hasBattery: false, hasFans: true))
-        #expect(iMacWithFans == [.display, .ambientLight, .speakers, .microphone, .camera, .fans, .wifi, .bluetooth, .ports])
+        #expect(iMacWithFans == [.display, .ambientLight, .speakers, .microphone, .camera, .sensors, .fans, .wifi, .bluetooth, .ports])
 
         var check = HardwareCheck(items: mini)
         check[.keyboard].status = .passed // not part of this Mac's checklist
         #expect(check.isEmpty)
-        #expect(check.count(.untested) == 4)
+        #expect(check.count(.untested) == 5)
     }
 
     @Test func checklistFromAnEarlierVersionDecodes() throws {
