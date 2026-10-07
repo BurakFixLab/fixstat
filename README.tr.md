@@ -26,6 +26,12 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
 ![Batarya geçmişi (örnek veri)](docs/screenshots/tr/history.png)
 <sub>Batarya geçmişi penceresi, örnek veriyle.</sub>
 
+![Canlı izleyici](docs/screenshots/tr/live-monitor.png)
+<sub>Canlı izleyici: M1 işaretinde başlayan kısa bir CPU yükü sırasında sistem gücü, performans kümesinin CPU rayı (PMU buck 0) ve bir CPU bölgesi.</sub>
+
+![Sıcaklık sensörü kontrolü (yapay arıza)](docs/screenshots/tr/sensor-check.png)
+<sub>Donanım kontrolündeki sıcaklık sensörü kontrolü, iki yapay arızayla gösteriliyor.</sub>
+
 ## Stats ve iStat Menus'tan farkı
 
 - **Modele özel, doğrulanmış sensör isimleri.** Diğer uygulamalar ham anahtarları

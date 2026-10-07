@@ -26,6 +26,12 @@ battery gauge data you normally dig out of `ioreg`.
 ![Battery history (sample data)](docs/screenshots/en/history.png)
 <sub>Battery history window, shown with sample data.</sub>
 
+![Live monitor](docs/screenshots/en/live-monitor.png)
+<sub>Live monitor: system power, the performance-cluster CPU rail (PMU buck 0) and a CPU zone during a short CPU load that starts at marker M1.</sub>
+
+![Temperature sensor check (simulated faults)](docs/screenshots/en/sensor-check.png)
+<sub>Temperature sensor check in the hardware check, shown with two simulated faults.</sub>
+
 ## How it differs from Stats and iStat Menus
 
 - **Model-specific, verified sensor names.** Other monitors show raw keys

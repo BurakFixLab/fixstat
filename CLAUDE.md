@@ -477,6 +477,9 @@ build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png [--techn
     [--max-height N] [--dark|--light]      # --max-height: as on a small screen (11" Air: 722)
 build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png --tool device|history|details|crash|sleep|hardware \
     [--item keyboard…lid] [--wait SECONDS] [--range 0…6] [--start-test SECONDS]   # also stress|memory|ssd|capacity
+# One checklist pane (README): --check-item sensors [--sensor-check --wait 26 -FixStatSensorCheckSeconds 10
+#   -FixStatSampleSensorFault YES]; live monitor: --live-window --wait 36 -FixStatLiveChannels "smc:PSTR,smc:PP0b,hid:Tp2i"
+#   -FixStatLiveMarkAfter 14 (put a CPU load on the Mac after the marker for moving lines)
 # Write the report (same as "Export report") and exit (also with --legacy-ui; under the
 # Rosetta simulation give it time: SIM_WAIT=40 scripts/simulate-old-macos.sh … -- ARGS):
 build/FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check]

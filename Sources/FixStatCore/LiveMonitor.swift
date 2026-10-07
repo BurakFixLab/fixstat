@@ -89,9 +89,14 @@ public final class LiveMonitor {
             DispatchQueue.main.async {
                 self.channels = channels
                 self.ready = true
-                if self.selected.isEmpty { self.selected = Self.defaultSelection(channels) }
+                if self.selected.isEmpty { self.selected = Self.initialSelection(channels) }
                 self.applySelection()
                 self.schedule()
+                // `-FixStatLiveMarkAfter N` (screenshots): a marker N seconds after the start.
+                let markAfter = UserDefaults.standard.double(forKey: "FixStatLiveMarkAfter")
+                if markAfter > 0 {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + markAfter) { [weak self] in self?.addMarker() }
+                }
                 self.onChange?()
             }
         }
@@ -294,6 +299,15 @@ public final class LiveMonitor {
             }
         }
         return channels
+    }
+
+    /// `-FixStatLiveChannels id,id,…` (screenshots), else the default selection.
+    static func initialSelection(_ channels: [Channel]) -> [String] {
+        if let list = UserDefaults.standard.string(forKey: "FixStatLiveChannels") {
+            let ids = list.split(separator: ",").map(String.init).filter { id in channels.contains { $0.id == id } }
+            if !ids.isEmpty { return Array(ids.prefix(maximumChannels)) }
+        }
+        return defaultSelection(channels)
     }
 
     /// System total and DC in, else the hottest-named CPU sensor and the battery current.

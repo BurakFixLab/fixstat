@@ -86,7 +86,7 @@ struct StatusIcon: View {
 
 /// Title, instructions, the test itself and the result bar.
 @available(macOS 14.0, *)
-private struct CheckDetail: View {
+struct CheckDetail: View {
     let item: HardwareCheck.Item
 
     var body: some View {

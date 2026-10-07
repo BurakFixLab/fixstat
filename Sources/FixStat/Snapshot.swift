@@ -9,7 +9,7 @@ import FixStatCore
 ///       [--dark|--light] [-AppleLanguages "(tr)"]
 ///
 /// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead,
-/// `--details` the battery details window, `--power` the power analysis window, `--live-window` the live monitor, `--sleep-window` the sleep and wake window, `--ssd-window` the SSD window, `--memory-window`, `--test-window`, `--capacity-window` the test windows, `--hardware [keyboard|trackpad|…]` the hardware check, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
+/// `--details` the battery details window, `--power` the power analysis window, `--live-window` the live monitor, `--sleep-window` the sleep and wake window, `--ssd-window` the SSD window, `--memory-window`, `--test-window`, `--capacity-window` the test windows, `--hardware [keyboard|trackpad|…]` the hardware check, `--check-item NAME [--sensor-check]` one checklist pane, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
 ///
 ///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check] [--sample-capacity] [--sleep]
 ///
@@ -40,6 +40,14 @@ enum Snapshot {
             root = AnyView(HardwareCheckView(initialItem: item)
                 .environment(monitor)
                 .frame(width: 900, height: 680)
+                .background(Color(nsColor: .windowBackgroundColor)))
+        } else if let i = arguments.firstIndex(of: "--check-item"), i + 1 < arguments.count,
+                  let item = HardwareCheck.Item(rawValue: arguments[i + 1]) {
+            // One checklist pane without the sidebar (README screenshots).
+            if arguments.contains("--sensor-check") { runSensorCheck(monitor: monitor) }
+            root = AnyView(CheckDetail(item: item)
+                .environment(monitor)
+                .frame(width: 680, height: 470)
                 .background(Color(nsColor: .windowBackgroundColor)))
         } else if arguments.contains("--live-window") {
             root = AnyView(LiveMonitorView()
@@ -136,6 +144,20 @@ enum Snapshot {
                 }
             }
         }
+    }
+
+    /// `--sensor-check`: a shortened real sensor check (2 s idle, 2 s load) before the
+    /// snapshot is taken; use `--wait` so it can finish.
+    private static var sensorRunner: SensorCheckRunner?
+
+    static func runSensorCheck(monitor: Monitor) {
+        let runner = SensorCheckRunner(monitor: monitor.core)
+        runner.shortened = runner.shortened ?? 2  // or -FixStatSensorCheckSeconds N
+        runner.onChange = {
+            if runner.state == .finished { monitor.lastSensorCheck = monitor.core.lastSensorCheck }
+        }
+        sensorRunner = runner
+        runner.start()
     }
 
     /// Synthetic checklist for screenshots and PDF checks (`--sample-check`).
