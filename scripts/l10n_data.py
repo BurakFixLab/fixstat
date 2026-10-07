@@ -971,6 +971,7 @@ SENSORS = {
     "sensor.cpu.ecluster.n": ("Efficiency cluster %lld", "Verimlilik kümesi %lld"),
     "sensor.cpu.core.n": ("CPU core %lld", "CPU çekirdeği %lld"),
     "sensor.cpu.die": ("CPU die", "CPU die"),
+    "sensor.cpu.die.n": ("CPU die %lld", "CPU die %lld"),
     "sensor.cpu.proximity": ("CPU proximity", "CPU yakını"),
     "sensor.gpu.cluster.n": ("GPU cluster %lld", "GPU kümesi %lld"),
     "sensor.gpu.die": ("GPU die", "GPU die"),

@@ -161,13 +161,18 @@ public enum SensorFaultDetector {
     // MARK: Missing sensors
 
     /// Sensors this model's map names but the Mac does not publish (a flex cable or a part not
-    /// connected). Only model entries: a chip entry also covers binned chips with fewer clusters.
+    /// connected). Only model entries, and only board, chassis and battery sensors: CPU / GPU
+    /// zones differ between binned chips of one model (8- or 10-core GPU) and NAND channels
+    /// with the SSD size.
+    public static let missingGroups: Set<SensorMap.Group> = [.other, .chassis, .battery]
+
     public static func missing(map: SensorMap, model: String, present: [SensorDescriptor],
                                hasBattery: Bool) -> [SensorFault] {
         guard let entry = map.models[model] else { return [] }
         let names = Set(present.flatMap { [$0.key, $0.hidName].compactMap { $0 } })
         return entry.sensors.compactMap { sensor in
-            guard !names.contains(sensor.key), hasBattery || sensor.group != .battery else { return nil }
+            guard !names.contains(sensor.key), missingGroups.contains(sensor.group),
+                  hasBattery || sensor.group != .battery else { return nil }
             return SensorFault(uid: "missing:" + sensor.key, label: sensor.key, id: sensor.id, group: sensor.group,
                                kind: .missing, value: nil, known: true)
         }

@@ -9628,6 +9628,24 @@
         }
       }
     },
+    "sensor.cpu.die.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU die %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU die %lld"
+          }
+        }
+      }
+    },
     "sensor.cpu.ecluster.n" : {
       "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
       "extractionState" : "manual",

@@ -98,15 +98,18 @@ import Testing
     @Test func missingModelSensors() {
         var map = SensorMap()
         map.models["MacBookAir10,1"] = SensorMap.ModelMap(chip: "Apple M1", board: nil, description: nil, sensors: [
-            .init(key: "TN0n", id: "ssd.nand.1", group: .ssd, confidence: .verified),
+            .init(key: "TW0P", id: "board.wifi", group: .other, confidence: .estimated),
             .init(key: "TB0T", id: "battery.1", group: .battery, confidence: .verified),
+            // NAND channels and GPU zones vary with the configuration: never "missing".
+            .init(key: "TN1n", id: "ssd.nand.2", group: .ssd, confidence: .verified),
+            .init(key: "Tg0r", id: "gpu.cluster.3", group: .gpu, confidence: .verified),
         ], ignored: nil)
         let present = [SensorDescriptor(source: .smc, key: "TB0T", hidName: nil)]
         let missing = SensorFaultDetector.missing(map: map, model: "MacBookAir10,1", present: present, hasBattery: true)
-        #expect(missing.map(\.label) == ["TN0n"])
+        #expect(missing.map(\.label) == ["TW0P"])
         #expect(SensorFaultDetector.missing(map: map, model: "Mac14,2", present: present, hasBattery: true).isEmpty)
         // Without a battery its sensors are not expected.
         #expect(SensorFaultDetector.missing(map: map, model: "MacBookAir10,1", present: [], hasBattery: false)
-            .map(\.label) == ["TN0n"])
+            .map(\.label) == ["TW0P"])
     }
 }

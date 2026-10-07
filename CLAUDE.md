@@ -62,6 +62,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   M1 (see Hardware findings); M1 Max / M2 Max reuse the CPU entries of the Pro chip
   (assumed, not recorded). M3 GPU pairs wander more (≈ 0.6 °C), so the analyzer allows a looser
   offset for `Tg` than for `Tp` / `Te`; its `Tp1*` / `Te0O–P` are cluster aggregates (derived).
+- Model entries exist for the bench-recorded Macs (Mac14,2 / 14,7 / 14,9 / 15,12 / 16,12,
+  MacBookAir6,1 / 10,1, MacBookPro15,2 / 18,3; `sensormap propose` on the lab records, keys that
+  stayed constant through every test except SoC dies moved to `ignored`; only the M1 Air map was
+  reviewed by hand). Records of faulty units (MacBookAir7,2, MacBookAir9,1) are not used.
 - Model entries also carry `ignored` (never plausible / constant calibration keys) and
   `derived` (SMC aggregates of other sensors, e.g. Apple Silicon `Tp2a/b/x/z`, `Tc*`);
   both appear only in raw lists and are never polled by the app.
@@ -383,8 +387,9 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   block dies (`soc.*`; M1 ANE / ISP read 30.0 while gated) and Apple Silicon `TV..` estimates.
   Under load: a CPU / GPU sensor that rose < 1.5 °C and < 20 % of its group's median rise
   (group median ≥ 6 °C) does not follow the load, at any map level (it reads plausibly, so it
-  exists). Missing: sensors of this Mac's model entry that it does not publish (model entries
-  only; the M1 Air publishes the same 64 on macOS 13 and 26). Model / chip matches are
+  exists). Missing: board / chassis / battery sensors of this Mac's model entry that it does not
+  publish (model entries only; CPU / GPU zones vary with binned chips and NAND channels with the
+  SSD size; the M1 Air publishes the same 64 on macOS 13 and 26). Model / chip matches are
   "suspicious" (fail the item), pattern matches "unclear". Symptoms (idle samples only):
   fans ≥ 85 % of max with the CPU < 65 °C, Intel speed limit < 100 % below 80 °C, system share
   ≥ 25 % with user < 15 % (kernel_task). Lab recordings: `sensormap faults FILE... [--break KEY]`

@@ -69,7 +69,20 @@ battery gauge data you normally dig out of `ioreg`.
 
 | Model identifier | Mac | Chip | Board | Sensors named | Verified by test | macOS |
 |---|---|---|---|---|---|---|
-| `MacBookAir10,1` | MacBook Air (M1, 2020) | Apple M1 | J313 | 64 of 69 | 16 | 26.6 |
+| `Mac14,2` | MacBook Air (M2, 2022) | Apple M2 | J413 | 62 | 11 | 26.6 |
+| `Mac14,7` | MacBook Pro (13-inch, M2, 2022) | Apple M2 | J493 | 63 | 11 | 15.7 |
+| `Mac14,9` | MacBook Pro (14-inch, 2023) | Apple M2 Pro | J414s | 69 | 22 | 26.6 |
+| `Mac15,12` | MacBook Air (13-inch, M3, 2024) | Apple M3 | J613 | 76 | 6 | 27.0 |
+| `Mac16,12` | MacBook Air (13-inch, M4, 2025) | Apple M4 | J713 | 75 | 12 | 15.5 |
+| `MacBookAir10,1` | MacBook Air (M1, 2020) | Apple M1 | J313 | 64 | 16 | 26.6 |
+| `MacBookAir6,1` | MacBook Air (11-inch, Mid 2013 / Early 2014) | Intel Core i5 (Haswell) | – | 15 | 5 | 11.7 |
+| `MacBookPro15,2` | MacBook Pro (13-inch, 2018, four Thunderbolt 3 ports) | Intel Core i7 (Coffee Lake) | – | 17 | 7 | 15.8 |
+| `MacBookPro18,3` | MacBook Pro (14-inch, 2021) | Apple M1 Pro | J314s | 58 | 13 | 14.8 |
+
+Each map comes from bench recordings of one Mac (load tests on CPU, GPU, SSD and charger).
+"Verified by test" counts the sensors a test confirmed; the others are named from the chip
+and key patterns and shown as estimated. The MacBook Air M1 map was also checked by hand. These
+Macs report more temperature keys than are named (unnamed ones appear under "Unmatched").
 
 Other Macs work too: sensors are then named from chip and key patterns and marked as
 estimated. The CPU and GPU zones of **M1 Pro / Max, M2, M2 Pro / Max, M3 and M4** are named per
