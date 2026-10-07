@@ -54,8 +54,8 @@ battery gauge data you normally dig out of `ioreg`.
   while shut down, live power analysis (system total, CPU / GPU power, every power rail's
   voltage and current on Apple Silicon, without root), a device card (Activation Lock, MDM, part number), and a
   hardware check (keyboard, trackpad surface, display, speakers, microphone, camera,
-  Touch Bar, fans under load, Wi-Fi, Bluetooth, USB-C / USB-A ports with fault counters and
-  slow USB 3 lane detection, lid sensor).
+  Touch Bar, fans under load, Wi-Fi, Bluetooth, USB-C / USB-A ports with fault counters,
+  slow USB 3 lane detection and a USB drive speed test per port, lid sensor).
 - **Fits the Mac.** On an iMac, Mac mini or Mac Studio the battery tools disappear and the
   hardware check lists only the parts that Mac has.
 - **Reports.** PDF / CSV / JSON export for customer devices, serial numbers masked unless you

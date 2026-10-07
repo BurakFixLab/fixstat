@@ -8,6 +8,21 @@ the ".n" variants take one integer (%lld) — the index from the sensor map id.
 """
 
 TR = {
+    '%1$@ read %2$@ in %3$@ but %4$@ in %5$@: check %3$@ (connector, pins, USB 3 lane).': '%1$@, %3$@ portunda %2$@ okudu ama %5$@ portunda %4$@: %3$@ portunu kontrol edin (konnektör, pinler, USB 3 hattı).',
+    "%1$@: %2$@ read / write errors with %3$@. If the drive works without errors in another port, check this port's connector and pins.": '%1$@: %3$@ ile %2$@ okuma / yazma hatası. Sürücü başka bir portta hatasız çalışıyorsa bu portun konnektörünü ve pinlerini kontrol edin.',
+    '%@ free': '%@ boş',
+    'Drive': 'Sürücü',
+    'Drive speed: %@': 'Sürücü hızı: %@',
+    'Link': 'Bağlantı',
+    "Plug in a USB memory stick or SSD to test the ports' speed.": 'Portların hızını test etmek için bir USB bellek veya SSD takın.',
+    'Port': 'Port',
+    'Test speed': 'Hızı test et',
+    'USB drive speed': 'USB sürücü hızı',
+    "Writes 256 MB to the free space of a USB drive, reads it back and compares every byte; the drive's files are not touched. Test the same drive in each port: a port that is clearly slower or gives errors points to its connector or USB 3 lane.": 'USB sürücünün boş alanına 256 MB yazar, geri okur ve her baytı karşılaştırır; sürücüdeki dosyalara dokunulmaz. Aynı sürücüyü her portta test edin: belirgin şekilde yavaş kalan veya hata veren port, konnektörüne ya da USB 3 hattına işaret eder.',
+    'not enough free space': 'yeterli boş alan yok',
+    'read %@': 'okuma %@',
+    'stopped': 'durduruldu',
+    'unknown port': 'bilinmeyen port',
     "Show full serial numbers in reports": "Raporlarda seri numaralarını tam göster",
     "Applies to PDF, CSV and JSON. Reports often reach customers or the internet, and a serial number reveals ownership and warranty details: keep it masked in reports you share publicly, e.g. in bug reports.":
         "PDF, CSV ve JSON için geçerlidir. Raporlar çoğu zaman müşteriye veya internete ulaşır ve seri numarası sahiplik ile garanti bilgilerini açığa çıkarır: herkese açık paylaştığınız raporlarda (ör. hata bildirimlerinde) maskeli bırakın.",

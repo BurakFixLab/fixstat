@@ -69,7 +69,10 @@ public final class MonitorCore {
     /// Clears every mark of the hardware check.
     public func resetHardwareCheck() {
         hardwareCheck = HardwareCheck(profile: profile)
+        usbSpeedResults = []
     }
+    /// USB drive speed tests of this session (ports check), oldest first.
+    public var usbSpeedResults: [USBSpeedResult] = []
     /// Device card data (system_profiler takes about a second, so it is loaded on demand).
     public var deviceInfo: DeviceInfo?
     /// Last panic / shutdown cause scan.

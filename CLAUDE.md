@@ -385,6 +385,12 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   SSP1 / SSP2; its `link-error-count` grew by hundreds with normal use, so it is not shown).
   `PortHistory` keeps each device's fastest link per port: a device seen at ≥ 5 Gb/s elsewhere
   but ≤ 480 Mb/s on a port flags that port's USB 3 lane (Air 2014: USB-A 1). `-FixStatSampleUSBA YES` shows two made-up ports.
+  USB drive speed (`USBVolumes`, `USBSpeedRunner`, `USBSpeedText`): mounted writable volumes are
+  traced from their IOMedia up to the IOUSBHostDevice (and its port); the SSD write–verify test
+  runs 256 MB on the drive's free space (64 MB reserve, no internal SMART); the same drive
+  reading below 50 % of its best port, or any read / write error, flags that port. Results are
+  session state (`MonitorCore.usbSpeedResults`) and part of the ports evidence.
+  `-FixStatSampleUSBDrive YES` fakes a stick in USB-A 1 backed by a temporary folder.
 - Lid: `IOPMrootDomain.AppleClamshellState` polled, plus the last `pmset -g log` sleep
   reason ("Clamshell Sleep") after a wake. No lid angle sensor on MacBookAir10,1.
 - USB-C PD: the active profile is macOS' selection (`AdapterDetails.UsbHvcMenu` /

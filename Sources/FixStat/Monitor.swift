@@ -42,7 +42,9 @@ final class Monitor {
     var profile: HardwareProfile { core.profile }
 
     func resetHardwareCheck() {
-        withMutation(keyPath: \.hardwareCheck) { core.resetHardwareCheck() }
+        withMutation(keyPath: \.usbSpeedResults) {
+            withMutation(keyPath: \.hardwareCheck) { core.resetHardwareCheck() }
+        }
     }
 
     var hardwareCheck: HardwareCheck {
@@ -75,6 +77,11 @@ final class Monitor {
         set { withMutation(keyPath: \.lastMemoryResult) { core.lastMemoryResult = newValue } }
     }
     /// Result of the last SSD write–verify test (for reports).
+    /// USB drive speed tests of this session (ports check).
+    var usbSpeedResults: [USBSpeedResult] {
+        get { access(keyPath: \.usbSpeedResults); return core.usbSpeedResults }
+        set { withMutation(keyPath: \.usbSpeedResults) { core.usbSpeedResults = newValue } }
+    }
     var lastSSDResult: SSDStressTest.Result? {
         get { access(keyPath: \.lastSSDResult); return core.lastSSDResult }
         set { withMutation(keyPath: \.lastSSDResult) { core.lastSSDResult = newValue } }

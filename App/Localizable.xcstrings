@@ -11,12 +11,32 @@
         }
       }
     },
+    "%1$@ read %2$@ in %3$@ but %4$@ in %5$@: check %3$@ (connector, pins, USB 3 lane)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %3$@ portunda %2$@ okudu ama %5$@ portunda %4$@: %3$@ portunu kontrol edin (konnektör, pinler, USB 3 hattı)."
+          }
+        }
+      }
+    },
     "%1$@, below %2$@: over-discharged" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@, %2$@ altında: aşırı deşarj olmuş"
+          }
+        }
+      }
+    },
+    "%1$@: %2$@ read / write errors with %3$@. If the drive works without errors in another port, check this port's connector and pins." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: %3$@ ile %2$@ okuma / yazma hatası. Sürücü başka bir portta hatasız çalışıyorsa bu portun konnektörünü ve pinlerini kontrol edin."
           }
         }
       }
@@ -112,6 +132,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ kare · ortalama parlaklık %2$@"
+          }
+        }
+      }
+    },
+    "%@ free" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ boş"
           }
         }
       }
@@ -2468,6 +2498,26 @@
         }
       }
     },
+    "Drive" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sürücü"
+          }
+        }
+      }
+    },
+    "Drive speed: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sürücü hızı: %@"
+          }
+        }
+      }
+    },
     "Duration" : {
       "localizations" : {
         "tr" : {
@@ -3884,6 +3934,16 @@
         }
       }
     },
+    "Link" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlantı"
+          }
+        }
+      }
+    },
     "Little rated endurance left (%@)." : {
       "localizations" : {
         "tr" : {
@@ -5276,6 +5336,16 @@
         }
       }
     },
+    "Plug in a USB memory stick or SSD to test the ports' speed." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Portların hızını test etmek için bir USB bellek veya SSD takın."
+          }
+        }
+      }
+    },
     "Plug-ins / removals" : {
       "localizations" : {
         "tr" : {
@@ -5292,6 +5362,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Açılıştan beri takma: %lld"
+          }
+        }
+      }
+    },
+    "Port" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Port"
           }
         }
       }
@@ -7052,6 +7132,16 @@
         }
       }
     },
+    "Test speed" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hızı test et"
+          }
+        }
+      }
+    },
     "Test was stopped before the planned duration" : {
       "localizations" : {
         "tr" : {
@@ -7718,6 +7808,16 @@
         }
       }
     },
+    "USB drive speed" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB sürücü hızı"
+          }
+        }
+      }
+    },
     "USB enumeration failures" : {
       "localizations" : {
         "tr" : {
@@ -8194,6 +8294,16 @@
         }
       }
     },
+    "Writes 256 MB to the free space of a USB drive, reads it back and compares every byte; the drive's files are not touched. Test the same drive in each port: a port that is clearly slower or gives errors points to its connector or USB 3 lane." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB sürücünün boş alanına 256 MB yazar, geri okur ve her baytı karşılaştırır; sürücüdeki dosyalara dokunulmaz. Aynı sürücüyü her portta test edin: belirgin şekilde yavaş kalan veya hata veren port, konnektörüne ya da USB 3 hattına işaret eder."
+          }
+        }
+      }
+    },
     "Writes a test file to free space, reads it back and compares every byte. Finds data corruption, I/O errors and stalling areas that point to failing NAND. Only free space can be tested, and the test uses some of the SSD's write endurance." : {
       "localizations" : {
         "tr" : {
@@ -8660,6 +8770,16 @@
         }
       }
     },
+    "not enough free space" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yeterli boş alan yok"
+          }
+        }
+      }
+    },
     "nothing yet" : {
       "localizations" : {
         "tr" : {
@@ -8742,6 +8862,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "aralık %1$@–%2$@"
+          }
+        }
+      }
+    },
+    "read %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "okuma %@"
           }
         }
       }
@@ -9406,6 +9536,16 @@
         }
       }
     },
+    "stopped" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "durduruldu"
+          }
+        }
+      }
+    },
     "strongest %@" : {
       "localizations" : {
         "tr" : {
@@ -9442,6 +9582,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "bilinmiyor"
+          }
+        }
+      }
+    },
+    "unknown port" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bilinmeyen port"
           }
         }
       }

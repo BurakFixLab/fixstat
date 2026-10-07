@@ -558,11 +558,23 @@ final class LegacyBluetoothPane: BlockPane {
 
 // MARK: - Ports
 
-final class LegacyPortsPane: BlockPane {
+final class LegacyPortsPane: BlockPane, LegacySnapshotStartable {
     private var ports: [PortStatus] = []
+    private var volumes: [USBVolume] = []
     private var history = PortHistory()
     private var timer: Timer?
     private var reading = false
+    /// `--start-test` (snapshots): test the first USB drive once the volumes are read.
+    private var startWhenReady = false
+    private lazy var speed: USBSpeedRunner = {
+        let runner = USBSpeedRunner(monitor: core)
+        runner.onChange = { [weak self] in
+            guard let self else { return }
+            if runner.state == .finished { recordCheck() }
+            refresh()
+        }
+        return runner
+    }()
 
     override func activate() {
         super.activate()
@@ -581,23 +593,72 @@ final class LegacyPortsPane: BlockPane {
     private func poll() {
         guard !reading else { return }
         reading = true
-        background({ PortReader.read() }, done: { [weak self] current in
+        background({ (PortReader.read(), USBVolumes.mounted()) }, done: { [weak self] current, mounted in
             guard let self else { return }
             reading = false
-            let changedPorts = current != ports
+            let changed = current != ports || mounted != volumes
             ports = current
-            if history.update(current) {
-                core.recordCheck(.ports, detail: history.detail(current), passed: history.passed(current))
+            volumes = mounted
+            if history.update(current) { recordCheck() }
+            if startWhenReady, let volume = volumes.first {
+                startWhenReady = false
+                speed.start(volume, port: volume.port(in: ports))
             }
-            if changedPorts { refresh() }
+            if changed { refresh() }
         })
+    }
+
+    func start(seconds: TimeInterval) {
+        startWhenReady = true
+    }
+
+    private func recordCheck() {
+        let speeds = core.usbSpeedResults
+        core.recordCheck(.ports, detail: history.detail(ports, speeds: speeds), passed: history.passed(ports, speeds: speeds))
     }
 
     override func blocks() -> [Block] {
         if ports.isEmpty {
-            return [.secondary(L("This Mac does not publish its port state (IOPort). Check the ports by hand."))]
+            return [.secondary(L("This Mac does not publish its port state (IOPort). Check the ports by hand.")), speedGroup()]
         }
-        return ports.map(card)
+        return ports.map(card) + [speedGroup()]
+    }
+
+    /// USB drive speed: write–verify a scratch file on a USB drive, per port.
+    private func speedGroup() -> Block {
+        var blocks: [Block] = [
+            .secondary(L("Writes 256 MB to the free space of a USB drive, reads it back and compares every byte; the drive's files are not touched. Test the same drive in each port: a port that is clearly slower or gives errors points to its connector or USB 3 lane.")),
+        ]
+        if volumes.isEmpty {
+            blocks.append(.secondary(L("Plug in a USB memory stick or SSD to test the ports' speed.")))
+        }
+        let running = speed.state == .running
+        for volume in volumes {
+            let port = volume.port(in: ports)
+            let details = [port.map(PortText.name), volume.device.name, volume.device.megabitsPerSecond.map(PortText.speed),
+                           L("%@ free", Format.bytes(Double(volume.availableBytes)))].compactMap { $0 }
+            var row: [NSView] = [makeLabel(volume.name + "  ·  " + details.joined(separator: " · ")), makeSpacer()]
+            if USBSpeedRunner.hasSpace(volume) {
+                let button = ActionButton(title: L("Test speed")) { [unowned self] in speed.start(volume, port: port) }
+                button.isEnabled = !running
+                row.append(button)
+            } else {
+                row.append(makeLabel(L("not enough free space"), color: .secondaryLabelColor))
+            }
+            blocks.append(.view(hStack(row)))
+        }
+        if running {
+            let phase = speed.phase == .write ? L("Writing…") : L("Reading and verifying…")
+            blocks.append(.progress(phase + " " + Format.percent(speed.fraction * 100)))
+            blocks.append(.actions([DocAction(title: L("Stop")) { [unowned self] in speed.stop() }]))
+        }
+        let results = core.usbSpeedResults
+        if !results.isEmpty {
+            let rows = results.map(USBSpeedText.row)
+            blocks.append(.table(header: USBSpeedText.header, rows: rows, tones: rows.map { $0.map { _ in nil } }, leading: true))
+            for finding in USBSpeedText.findings(results) { blocks.append(.status(finding, .bad)) }
+        }
+        return .group(L("USB drive speed"), blocks)
     }
 
     private func card(_ port: PortStatus) -> Block {

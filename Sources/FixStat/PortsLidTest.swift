@@ -11,6 +11,8 @@ struct PortsTestView: View {
     @State private var ports: [PortStatus] = []
     /// Per port: data transports and power seen during this session.
     @State private var history = PortHistory()
+    @State private var volumes: [USBVolume] = []
+    @State private var speed = USBSpeedTestModel()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -21,10 +23,12 @@ struct PortsTestView: View {
             ForEach(ports) { port in
                 portCard(port)
             }
+            speedCard
         }
         .task {
             while !Task.isCancelled {
-                let current = await Task.detached { PortReader.read() }.value
+                let (current, mounted) = await Task.detached { (PortReader.read(), USBVolumes.mounted()) }.value
+                if mounted != volumes { volumes = mounted }
                 update(current)
                 try? await Task.sleep(for: .seconds(1))
             }
@@ -34,7 +38,77 @@ struct PortsTestView: View {
     private func update(_ current: [PortStatus]) {
         ports = current
         guard history.update(current) else { return }
-        monitor.recordCheck(.ports, detail: history.detail(current), passed: history.passed(current))
+        recordCheck()
+    }
+
+    private func recordCheck() {
+        let speeds = monitor.usbSpeedResults
+        monitor.recordCheck(.ports, detail: history.detail(ports, speeds: speeds), passed: history.passed(ports, speeds: speeds))
+    }
+
+    // MARK: Drive speed
+
+    private var speedCard: some View {
+        Card {
+            CardHeader("USB drive speed", systemImage: "speedometer")
+            Text("Writes 256 MB to the free space of a USB drive, reads it back and compares every byte; the drive's files are not touched. Test the same drive in each port: a port that is clearly slower or gives errors points to its connector or USB 3 lane.")
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            if volumes.isEmpty {
+                Text("Plug in a USB memory stick or SSD to test the ports' speed.").foregroundStyle(.secondary)
+            }
+            ForEach(volumes, id: \.bsdName) { volume in
+                volumeRow(volume)
+            }
+            if speed.running {
+                HStack {
+                    ProgressView(value: speed.fraction) {
+                        Text(speed.phase == .write ? "Writing…" : "Reading and verifying…").font(.caption)
+                    }
+                    Button("Stop", role: .cancel) { speed.stop() }
+                }
+            }
+            let results = monitor.usbSpeedResults
+            if !results.isEmpty {
+                Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 3) {
+                    GridRow {
+                        ForEach(USBSpeedText.header, id: \.self) { Text(verbatim: $0).foregroundStyle(.secondary) }
+                    }
+                    ForEach(Array(results.enumerated()), id: \.offset) { _, result in
+                        GridRow {
+                            ForEach(Array(USBSpeedText.row(result).enumerated()), id: \.offset) { _, cell in
+                                Text(verbatim: cell)
+                            }
+                        }
+                    }
+                }
+                .font(.callout)
+                .padding(.top, 4)
+                ForEach(Array(USBSpeedText.findings(results).enumerated()), id: \.offset) { _, finding in
+                    FindingRow(text: finding)
+                }
+            }
+        }
+        .onAppear { speed.onFinish = { recordCheck() } }
+    }
+
+    private func volumeRow(_ volume: USBVolume) -> some View {
+        let port = volume.port(in: ports)
+        let details = [port.map(PortText.name), volume.device.name, volume.device.megabitsPerSecond.map(PortText.speed),
+                       String(localized: "\(Format.bytes(Double(volume.availableBytes))) free")].compactMap { $0 }
+        return HStack {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(verbatim: volume.name)
+                Text(verbatim: details.joined(separator: " · ")).font(.callout).foregroundStyle(.secondary)
+            }
+            Spacer()
+            if USBSpeedRunner.hasSpace(volume) {
+                Button("Test speed") { speed.start(volume, port: port, monitor: monitor) }
+                    .disabled(speed.running)
+            } else {
+                Text("not enough free space").font(.callout).foregroundStyle(.secondary)
+            }
+        }
     }
 
     private func portCard(_ port: PortStatus) -> some View {
@@ -99,6 +173,45 @@ struct PortsTestView: View {
         }
         .foregroundStyle(count > 0 ? AnyShapeStyle(TemperatureColor.hot) : AnyShapeStyle(.secondary))
         .fontWeight(count > 0 ? .semibold : .regular)
+    }
+}
+
+/// SwiftUI view of the core `USBSpeedRunner`.
+@available(macOS 14.0, *)
+@MainActor
+@Observable
+final class USBSpeedTestModel {
+    private(set) var running = false
+    private(set) var fraction = 0.0
+    private(set) var phase = SSDStressTest.Phase.write
+
+    @ObservationIgnored private var runner: USBSpeedRunner?
+    @ObservationIgnored var onFinish: (() -> Void)?
+
+    func start(_ volume: USBVolume, port: PortStatus?, monitor: Monitor) {
+        let runner = self.runner ?? USBSpeedRunner(monitor: monitor.core)
+        self.runner = runner
+        runner.onChange = { [weak self] in
+            MainActor.assumeIsolated { self?.sync(monitor) }
+        }
+        runner.start(volume, port: port)
+    }
+
+    func stop() { runner?.stop() }
+
+    private func sync(_ monitor: Monitor) {
+        guard let runner else { return }
+        let nowRunning = runner.state == .running
+        fraction = runner.fraction
+        if runner.phase != phase { phase = runner.phase }
+        if nowRunning != running {
+            running = nowRunning
+            if !nowRunning {
+                // The core appended the result; let the views observe it.
+                monitor.usbSpeedResults = monitor.core.usbSpeedResults
+                onFinish?()
+            }
+        }
     }
 }
 

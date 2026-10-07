@@ -76,23 +76,27 @@ public final class SSDStressTest: @unchecked Sendable {
         return cancelled
     }
 
-    /// Bytes that may be used for the test in `directory`.
-    public static func availableBytes(in directory: URL) -> Int64 {
-        let values = try? directory.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
-        let free = values?.volumeAvailableCapacityForImportantUsage ?? 0
-        return max(0, free - reserveBytes)
+    /// Bytes that may be used for the test in `directory`, leaving `reserve` free.
+    public static func availableBytes(in directory: URL, reserve: Int64 = reserveBytes) -> Int64 {
+        let keys: Set<URLResourceKey> = [.volumeAvailableCapacityForImportantUsageKey, .volumeAvailableCapacityKey]
+        let values = try? directory.resourceValues(forKeys: keys)
+        // External (USB) volumes may not report the important-usage capacity.
+        let free = values?.volumeAvailableCapacityForImportantUsage ?? values?.volumeAvailableCapacity.map(Int64.init) ?? 0
+        return max(0, free - reserve)
     }
 
-    /// Runs synchronously; call from a background thread.
-    public func run(bytes requested: Int64, directory: URL, progress: @Sendable (Progress) -> Void) -> Result {
+    /// Runs synchronously; call from a background thread. `internalSSD` reads the internal
+    /// SSD's SMART values before and after (off for a USB drive).
+    public func run(bytes requested: Int64, directory: URL, reserve: Int64 = reserveBytes, internalSSD: Bool = true,
+                    progress: @Sendable (Progress) -> Void) -> Result {
         let started = Date()
         let chunk = Self.chunkSize
-        let available = Self.availableBytes(in: directory)
+        let available = Self.availableBytes(in: directory, reserve: reserve)
         let bytes = min(requested, available)
         let count = Int(bytes / Int64(chunk))
         var result = Result(startedAt: started, plannedBytes: Double(requested), testedBytes: 0, chunkSize: chunk,
                             timings: [], mismatchedChunks: [], ioErrors: 0,
-                            healthBefore: SSDInfo.readHealth(), healthAfter: nil, findings: [])
+                            healthBefore: internalSSD ? SSDInfo.readHealth() : nil, healthAfter: nil, findings: [])
         guard count > 0 else {
             result.findings = [.notEnoughSpace]
             return result
@@ -170,7 +174,7 @@ public final class SSDStressTest: @unchecked Sendable {
             result.ioErrors += 1
         }
 
-        result.healthAfter = SSDInfo.readHealth()
+        if internalSSD { result.healthAfter = SSDInfo.readHealth() }
         result.findings = Self.findings(for: result, cancelled: isCancelled || written < count)
         return result
     }
