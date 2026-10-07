@@ -220,7 +220,7 @@ public final class MonitorCore {
             install(make(), map: map)
             return
         }
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let sampler = make()
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }

@@ -31,7 +31,7 @@ public final class PowerAnalyzer: NSObject {
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
         guard smc == nil else { return tick() }
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let smc = try? SMC()
             let keys = smc.map(PowerRails.discover) ?? []
             DispatchQueue.main.async { [weak self] in

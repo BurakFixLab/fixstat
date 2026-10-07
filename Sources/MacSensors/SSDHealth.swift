@@ -167,7 +167,7 @@ extension SSDInfo {
             var name = [CChar](repeating: 0, count: 128)
             IOObjectGetClass(service, &name)
             let smart = (Registry.properties(of: service)?["SMART Capable"] as? NSNumber).map { $0.boolValue ? " SMART" : "" } ?? ""
-            names.append(String(cString: name) + smart)
+            names.append(Registry.string(from: name) + smart)
             IOObjectRelease(service)
         }
         return names.isEmpty ? "none" : names.joined(separator: ", ")

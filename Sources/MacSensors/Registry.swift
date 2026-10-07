@@ -19,7 +19,12 @@ enum Registry {
     static func className(of entry: io_registry_entry_t) -> String {
         var name = [CChar](repeating: 0, count: 128)
         guard IOObjectGetClass(entry, &name) == KERN_SUCCESS else { return "" }
-        return String(cString: name)
+        return string(from: name)
+    }
+
+    /// A NUL-terminated C string buffer as a String.
+    static func string(from buffer: [CChar]) -> String {
+        String(decoding: buffer.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }, as: UTF8.self)
     }
 
     static func properties(of entry: io_registry_entry_t) -> [String: Any]? {
