@@ -1066,6 +1066,16 @@
         }
       }
     },
+    "Asks GitHub once a day which FixStat release is the latest. Nothing about this Mac is sent." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günde bir kez GitHub'a en son FixStat sürümünün hangisi olduğunu sorar. Bu Mac hakkında hiçbir bilgi gönderilmez."
+          }
+        }
+      }
+    },
     "At 0 % macOS puts the Mac to sleep or turns it off by itself. The measurements are saved while the test runs; if the Mac turns off — also early, as a weak battery does — the result appears here the next time FixStat opens. Full discharges wear the battery, so use them sparingly." : {
       "localizations" : {
         "tr" : {
@@ -1940,6 +1950,26 @@
         }
       }
     },
+    "Check for updates automatically" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güncellemeleri otomatik denetle"
+          }
+        }
+      }
+    },
+    "Check now" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şimdi denetle"
+          }
+        }
+      }
+    },
     "Check sensors" : {
       "localizations" : {
         "tr" : {
@@ -1956,6 +1986,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dama tahtası"
+          }
+        }
+      }
+    },
+    "Checking…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Denetleniyor…"
           }
         }
       }
@@ -2218,6 +2258,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Metin olarak kopyala"
+          }
+        }
+      }
+    },
+    "Could not reach GitHub" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub'a ulaşılamadı"
           }
         }
       }
@@ -2574,6 +2624,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ekranın kapanması"
+          }
+        }
+      }
+    },
+    "Download" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İndir"
           }
         }
       }
@@ -3002,6 +3062,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FixStat"
+          }
+        }
+      }
+    },
+    "FixStat %@ is available" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FixStat %@ çıktı"
+          }
+        }
+      }
+    },
+    "FixStat %@ is available. Open the menu bar panel to download it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FixStat %@ çıktı. İndirmek için menü çubuğundaki paneli açın."
           }
         }
       }
@@ -4862,6 +4942,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Şarj olmama nedeni"
+          }
+        }
+      }
+    },
+    "Not checked yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz denetlenmedi"
           }
         }
       }
@@ -8164,6 +8254,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Güvenli olmayan kapanma"
+          }
+        }
+      }
+    },
+    "Up to date" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güncel"
+          }
+        }
+      }
+    },
+    "Up to date · checked %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güncel · %@ denetlendi"
           }
         }
       }

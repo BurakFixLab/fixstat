@@ -38,7 +38,9 @@ with the same features.
    Settings... > General > "Open at login" starts it automatically.
 
 FixStat needs no administrator rights and no special permissions. It only
-reads sensor values and never writes to the SMC. It has no network access.
+reads sensor values and never writes to the SMC. Its only network access is
+a daily look at GitHub for a newer FixStat release (nothing about your Mac
+is sent; it can be turned off in Settings).
 The hardware check asks for camera, microphone and Bluetooth access the
 first time you open those tests.
 Exception: the optional full SSD test asks for your administrator password
@@ -80,7 +82,9 @@ sade bir AppKit arayüzü açılır.
    Ayarlar... > Genel > "Oturum açılışında başlat" ile otomatik başlar.
 
 FixStat yönetici yetkisi veya özel izin gerektirmez. Yalnızca sensör
-değerlerini okur, SMC'ye asla yazmaz. Ağ erişimi yoktur.
+değerlerini okur, SMC'ye asla yazmaz. Tek ağ erişimi, günde bir kez
+GitHub'da yeni bir FixStat sürümü olup olmadığına bakmaktır (Mac'iniz
+hakkında hiçbir bilgi gönderilmez; Ayarlar'dan kapatılabilir).
 Donanım kontrolü, ilgili testleri ilk açtığınızda kamera, mikrofon ve
 Bluetooth izni ister.
 İstisna: isteğe bağlı tam SSD testi yönetici parolanızı sorar ve Tam Disk

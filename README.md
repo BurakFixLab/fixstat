@@ -132,9 +132,11 @@ FixStat and pick a language. Numbers and units follow your region settings.
 - **Private APIs.** Temperatures on Apple Silicon come from `IOHIDEventSystemClient`,
   which is not public API. This is why FixStat is not on the App Store.
 - **No data collection.** FixStat collects nothing and sends nothing: no analytics, no
-  telemetry, no update checks, no network access at all. Settings, custom sensor names and
-  battery history stay on your Mac in `~/Library/Application Support/FixStat/`; reports
-  are only created when you export them.
+  telemetry. Its only network access is the update check: once a day it asks GitHub's public
+  releases API which FixStat version is the latest (nothing about your Mac is sent; turn it
+  off under Settings › "Check for updates automatically"). FixStat never downloads or installs
+  anything itself. Settings, custom sensor names and battery history stay on your Mac in
+  `~/Library/Application Support/FixStat/`; reports are only created when you export them.
 - **Serial numbers** are masked in every output and export, unless you turn on
   "Show full serial numbers in reports" in Settings (off by default).
 

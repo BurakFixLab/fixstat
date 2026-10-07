@@ -51,7 +51,9 @@ This removes the "downloaded from the internet" flag; FixStat then opens normall
 also if macOS says the app *"is damaged and can't be opened"*.
 
 FixStat needs **no special permissions**: no administrator rights, no Accessibility or Full
-Disk Access, no network access. It only reads sensor values; it never writes to the SMC.
+Disk Access. It only reads sensor values; it never writes to the SMC. Its only network access
+is a daily look at GitHub for a newer FixStat release (nothing about your Mac is sent; it can be
+turned off in Settings).
 
 The **hardware check** asks macOS for camera, microphone and Bluetooth access the first time
 you open those tests; they only work while the test is on screen.

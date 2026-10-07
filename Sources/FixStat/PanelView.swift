@@ -9,7 +9,10 @@ struct PanelView: View {
     @AppStorage(Pref.technicianMode) private var technicianMode = false
 
     var body: some View {
-        Group {
+        VStack(spacing: Design.cardSpacing) {
+            if case let .available(release) = monitor.update {
+                UpdateBanner(release: release)
+            }
             if technicianMode {
                 TechnicianPanel()
             } else {
@@ -19,6 +22,25 @@ struct PanelView: View {
         .frame(width: 360)
         .padding(14)
         .background(PanelWindowObserver { visible in monitor.panelVisible = visible })
+    }
+}
+
+/// "FixStat 1.3 is available" with a link to the release page.
+@available(macOS 14.0, *)
+struct UpdateBanner: View {
+    let release: UpdateChecker.Release
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "arrow.down.circle.fill").foregroundStyle(.tint)
+            Text("FixStat \(release.version) is available")
+            Spacer(minLength: 4)
+            Link("Download", destination: release.url).fixedSize()
+        }
+        .font(.callout)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .background(Design.cardFill, in: RoundedRectangle(cornerRadius: Design.cardRadius))
     }
 }
 

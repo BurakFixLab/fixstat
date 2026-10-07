@@ -28,6 +28,8 @@ public enum Pref {
     public static let hiddenSensors = "hiddenSensors"
     /// Dock icon also while no FixStat window is open (see DockIcon).
     public static let showInDock = "dock.alwaysShow"
+    /// Ask GitHub once a day for a newer release (`UpdateChecker`).
+    public static let checkForUpdates = "update.check"
 
     public static let defaultWarm = 45.0
     public static let defaultHot = 55.0
@@ -48,6 +50,7 @@ public enum Pref {
             updateInterval: defaultInterval,
             hiddenSensors: "",
             showInDock: false,
+            checkForUpdates: true,
             reportFullSerial: false,
             alertsEnabled: false,
             alertChipTemperature: defaultAlertChipTemperature,

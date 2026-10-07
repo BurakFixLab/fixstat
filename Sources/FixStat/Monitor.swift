@@ -11,6 +11,8 @@ import FixStatCore
 final class Monitor {
     /// Polling and all data sources, shared with the AppKit interface.
     @ObservationIgnored let core: MonitorCore
+    /// Newer release on GitHub (`UpdateChecker`).
+    var update = UpdateChecker.Status.unknown
 
     var system: SystemInfo { core.system }
     var partsReference: PartsReference { core.partsReference }
@@ -114,6 +116,15 @@ final class Monitor {
         core.onUpdate = { [weak self] in
             MainActor.assumeIsolated { self?.sync() }
         }
+        UpdateChecker.shared.onChange = { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                let status = UpdateChecker.shared.status
+                if status != self.update { self.update = status }
+            }
+        }
+        update = UpdateChecker.shared.status
+        UpdateChecker.shared.start()
         // Core test runners (fan test, sensor check) record into the checklist themselves.
         core.onHardwareCheckChange = { [weak self] in
             MainActor.assumeIsolated {

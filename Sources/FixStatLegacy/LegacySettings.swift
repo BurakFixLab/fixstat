@@ -67,6 +67,11 @@ final class LegacySettingsController: NSWindowController, NSWindowDelegate {
         window?.makeFirstResponder(nil)
     }
 
+    /// The update checker's status changed.
+    func refreshUpdateStatus() {
+        refresh()
+    }
+
     private func refresh() {
         for update in updaters { update() }
     }
@@ -131,6 +136,9 @@ final class LegacySettingsController: NSWindowController, NSWindowDelegate {
                      width: Self.formWidth),
             spacer(),
             labeled(L("Version"), makeLabel("\(AboutInfo.version) (\(AboutInfo.build))")),
+            checkbox(L("Check for updates automatically"), key: Pref.checkForUpdates),
+            makeNote(UpdateText.privacy, width: Self.formWidth),
+            updateRow(),
             hStack([ActionButton(title: L("About FixStat")) { AboutInfo.show() }, makeSpacer(),
                     ActionButton.link(L("Project page")) { NSWorkspace.shared.open(AboutInfo.repositoryURL) }]),
         ]
@@ -359,6 +367,22 @@ final class LegacySettingsController: NSWindowController, NSWindowDelegate {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.heightAnchor.constraint(equalToConstant: 4).isActive = true
         return view
+    }
+
+    /// Update status, "Check now" and, when there is one, a link to the new release.
+    private func updateRow() -> NSView {
+        let status = makeLabel("", color: .secondaryLabelColor)
+        let check = ActionButton(title: L("Check now")) { UpdateChecker.shared.check() }
+        let download = ActionButton.link(L("Download")) {
+            if let release = UpdateChecker.shared.available { NSWorkspace.shared.open(release.url) }
+        }
+        updaters.append {
+            let checker = UpdateChecker.shared
+            status.stringValue = UpdateText.status(checker.status, lastCheck: checker.lastCheck)
+            check.isEnabled = checker.status != .checking
+            download.isHidden = checker.available == nil
+        }
+        return hStack([status, makeSpacer(), download, check])
     }
 
     private func labeled(_ title: String, _ control: NSView) -> NSView {

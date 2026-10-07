@@ -137,10 +137,13 @@ biçimleri bölge ayarınızı izler.
 - **Özel (private) API'ler.** Apple Silicon'da sıcaklıklar herkese açık olmayan
   `IOHIDEventSystemClient` API'sinden okunur. FixStat'ın App Store'da olmamasının
   sebebi budur.
-- **Veri toplamaz.** FixStat hiçbir veri toplamaz ve hiçbir yere göndermez: analiz,
-  telemetri, güncelleme kontrolü yoktur, ağ erişimi hiç yoktur. Ayarlar, özel sensör
-  isimleri ve batarya geçmişi Mac'inizde `~/Library/Application Support/FixStat/`
-  klasöründe kalır; raporlar yalnızca siz dışa aktardığınızda oluşturulur.
+- **Veri toplamaz.** FixStat hiçbir veri toplamaz ve hiçbir yere göndermez: analiz ve
+  telemetri yoktur. Tek ağ erişimi güncelleme denetimidir: günde bir kez GitHub'ın herkese açık
+  sürüm listesine en son FixStat sürümünün hangisi olduğunu sorar (Mac'iniz hakkında hiçbir
+  bilgi gönderilmez; Ayarlar › "Güncellemeleri otomatik denetle" ile kapatılabilir). FixStat
+  kendi başına hiçbir şey indirmez veya kurmaz. Ayarlar, özel sensör isimleri ve batarya
+  geçmişi Mac'inizde `~/Library/Application Support/FixStat/` klasöründe kalır; raporlar
+  yalnızca siz dışa aktardığınızda oluşturulur.
 - **Seri numaraları** her çıktıda ve dışa aktarmada maskelenir; Ayarlar'da "Raporlarda seri
   numaralarını tam göster" açılırsa raporlarda tam görünür (varsayılan kapalı).
 

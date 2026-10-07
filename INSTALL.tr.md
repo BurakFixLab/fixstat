@@ -56,8 +56,10 @@ xattr -dr com.apple.quarantine /Applications/FixStat.app
 Bu komut "internetten indirildi" işaretini kaldırır; FixStat sonra normal açılır. macOS
 uygulamanın *"hasarlı olduğu ve açılamayacağını"* söylerse de bunu kullanın.
 
-FixStat **özel bir izin gerektirmez**: yönetici yetkisi, Erişilebilirlik veya Tam Disk Erişimi,
-ağ erişimi yoktur. Yalnızca sensör değerlerini okur; SMC'ye asla yazmaz.
+FixStat **özel bir izin gerektirmez**: yönetici yetkisi, Erişilebilirlik veya Tam Disk Erişimi
+gerekmez. Yalnızca sensör değerlerini okur; SMC'ye asla yazmaz. Tek ağ erişimi, günde bir kez
+GitHub'da yeni bir FixStat sürümü olup olmadığına bakmaktır (Mac'iniz hakkında hiçbir bilgi
+gönderilmez; Ayarlar'dan kapatılabilir).
 
 **Donanım kontrolü**, ilgili testleri ilk açtığınızda macOS üzerinden kamera, mikrofon ve
 Bluetooth izni ister; bunlar yalnızca test ekrandayken kullanılır.

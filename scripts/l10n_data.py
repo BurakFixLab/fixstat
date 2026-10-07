@@ -8,6 +8,17 @@ the ".n" variants take one integer (%lld) — the index from the sensor map id.
 """
 
 TR = {
+    'Asks GitHub once a day which FixStat release is the latest. Nothing about this Mac is sent.': "Günde bir kez GitHub'a en son FixStat sürümünün hangisi olduğunu sorar. Bu Mac hakkında hiçbir bilgi gönderilmez.",
+    'Check for updates automatically': 'Güncellemeleri otomatik denetle',
+    'Check now': 'Şimdi denetle',
+    'Checking…': 'Denetleniyor…',
+    'Could not reach GitHub': "GitHub'a ulaşılamadı",
+    'Download': 'İndir',
+    'FixStat %@ is available': 'FixStat %@ çıktı',
+    'FixStat %@ is available. Open the menu bar panel to download it.': 'FixStat %@ çıktı. İndirmek için menü çubuğundaki paneli açın.',
+    'Not checked yet': 'Henüz denetlenmedi',
+    'Up to date': 'Güncel',
+    'Up to date · checked %@': 'Güncel · %@ denetlendi',
     'All %lld sensors read plausible values and followed the load.': '%lld sensörün tamamı makul değerler okuyor ve yüke tepki verdi.',
     '%@ is missing: this model has it, but the Mac does not report it (flex cable, connector or the part).': '%@ yok: bu modelde bulunur ama Mac onu bildirmiyor (flex kablo, konnektör ya da parçanın kendisi).',
     '%1$@ hardly moved under load (%2$@) while the other sensors of its group heated up: stuck or badly placed sensor.': '%1$@ yük altında neredeyse hiç değişmedi (%2$@), oysa grubundaki diğer sensörler ısındı: takılı kalmış veya yerinden oynamış sensör.',

@@ -9,11 +9,13 @@ public final class AlertManager {
         case chipTemperature, batteryTemperature, cellImbalance, chargingStopped
         /// Sent once, at launch after such a shutdown (see `UnexpectedShutdown`).
         case unexpectedShutdown
+        /// A newer FixStat release (see `UpdateChecker`); its own setting, not the alerts switch.
+        case updateAvailable
 
         public var enabledKey: String { "alerts.\(rawValue)" }
 
         /// Only offered on Macs with a battery.
-        public var needsBattery: Bool { self != .chipTemperature }
+        public var needsBattery: Bool { self != .chipTemperature && self != .updateAvailable }
 
         /// How long the condition must hold before notifying.
         public var delay: TimeInterval {
@@ -22,7 +24,7 @@ public final class AlertManager {
             case .batteryTemperature: return 30
             case .cellImbalance: return 60
             case .chargingStopped: return 180
-            case .unexpectedShutdown: return 0
+            case .unexpectedShutdown, .updateAvailable: return 0
             }
         }
     }

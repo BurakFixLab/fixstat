@@ -82,6 +82,7 @@ final class LegacyPanelController: NSViewController {
     private func currentStructureKey() -> String {
         let shown = shownSensors
         var parts = [technicianMode ? "tech" : "default", core.battery == nil ? "nobattery" : "battery",
+                     "update \(UpdateChecker.shared.available?.version ?? "")",
                      "fans \(core.fans.count)", "all \(showAll)", "unmatched \(showUnmatched)"]
         if technicianMode {
             parts.append("cells \(core.battery?.cellVoltages?.count ?? 0)")
@@ -103,7 +104,10 @@ final class LegacyPanelController: NSViewController {
             root.removeArrangedSubview(view)
             view.removeFromSuperview()
         }
-        let sections = technicianMode ? technicianSections() : defaultSections()
+        var sections = technicianMode ? technicianSections() : defaultSections()
+        if let release = UpdateChecker.shared.available {
+            sections.insert(contentsOf: [updateSection(release), makeSeparator()], at: 0)
+        }
         for section in sections {
             root.addArrangedSubview(section)
             section.widthAnchor.constraint(equalTo: root.widthAnchor).isActive = true
@@ -117,6 +121,12 @@ final class LegacyPanelController: NSViewController {
             }
         }
         onResize?(view.fittingSize)
+    }
+
+    /// "FixStat 1.3 is available" with a link to the release page.
+    private func updateSection(_ release: UpdateChecker.Release) -> NSView {
+        hStack([makeLabel(L("FixStat %@ is available", release.version), weight: .medium), makeSpacer(),
+                ActionButton.link(L("Download")) { NSWorkspace.shared.open(release.url) }])
     }
 
     // MARK: - Default panel

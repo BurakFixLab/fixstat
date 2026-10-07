@@ -58,6 +58,11 @@ public final class LegacyApp: NSObject, NSApplicationDelegate, NSPopoverDelegate
             updateStatusItem()
             if popover.isShown { panel.update() }
         }
+        UpdateChecker.shared.onChange = { [unowned self] in
+            if popover.isShown { panel.update() }
+            settings?.refreshUpdateStatus()
+        }
+        UpdateChecker.shared.start()
         defaultsObserver = NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification, object: nil, queue: .main
         ) { [unowned self] _ in
