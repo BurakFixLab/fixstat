@@ -86,7 +86,7 @@ typedef void (*FSTouchCallback)(const FSTouch *touches, int count, double timest
 
 /// Starts delivering contacts of the default (built-in) trackpad. false if unavailable.
 bool FSMultitouchStart(FSTouchCallback callback, void *_Nullable context);
-void FSMultitouchStop(void);
+void FSMultitouchStop(void *_Nullable context);
 
 // MARK: - Ambient light sensor (read-only)
 

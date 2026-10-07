@@ -77,18 +77,14 @@ public final class TrackpadRecorder {
     private var timer: Timer?
     private var monitors: [Any] = []
     private var running = false
+    private var ticksSinceRetry = 0
 
     public init() {}
 
     public func start() {
         guard !running else { return }
         running = true
-        let callback: FSTouchCallback = { touches, count, _, context in
-            guard let context else { return }
-            Unmanaged<TouchBuffer>.fromOpaque(context).takeUnretainedValue()
-                .store(Array(UnsafeBufferPointer(start: touches, count: Int(count))))
-        }
-        available = FSMultitouchStart(callback, Unmanaged.passUnretained(buffer).toOpaque())
+        openDevice()
         let timer = Timer(timeInterval: 1.0 / 30, repeats: true) { [weak self] _ in
             self?.pull()
         }
@@ -107,10 +103,22 @@ public final class TrackpadRecorder {
         }
     }
 
+    private var context: UnsafeMutableRawPointer { Unmanaged.passUnretained(buffer).toOpaque() }
+
+    private func openDevice() {
+        let callback: FSTouchCallback = { touches, count, _, context in
+            guard let context else { return }
+            Unmanaged<TouchBuffer>.fromOpaque(context).takeUnretainedValue()
+                .store(Array(UnsafeBufferPointer(start: touches, count: Int(count))))
+        }
+        available = FSMultitouchStart(callback, context)
+        ticksSinceRetry = 0
+    }
+
     public func stop() {
         guard running else { return }
         running = false
-        FSMultitouchStop()
+        FSMultitouchStop(context)
         timer?.invalidate()
         timer = nil
         monitors.forEach(NSEvent.removeMonitor)
@@ -121,10 +129,20 @@ public final class TrackpadRecorder {
     public func reset() {
         progress = TrackpadProgress()
         _ = buffer.take()
+        // Also a way out when the trackpad could not be opened: try again.
+        if running, available != true { openDevice() }
         onChange?()
     }
 
     private func pull() {
+        // The device can be briefly unavailable (e.g. right after a wake): retry every 2 s.
+        if available == false {
+            ticksSinceRetry += 1
+            if ticksSinceRetry >= 60 {
+                openDevice()
+                if available == true { onChange?() }
+            }
+        }
         let (cells, maxTouches, current) = buffer.take()
         var changed = false
         if current.map(\.identifier) != fingers.map(\.identifier)

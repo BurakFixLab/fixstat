@@ -39,6 +39,7 @@ static void (*pRegister)(MTDeviceRef, MTFrameCallback);
 static void (*pUnregister)(MTDeviceRef, MTFrameCallback);
 static int32_t (*pStart)(MTDeviceRef, int32_t);
 static int32_t (*pStop)(MTDeviceRef);
+static void (*pRelease)(MTDeviceRef);
 
 static MTDeviceRef device;
 static FSTouchCallback userCallback;
@@ -54,6 +55,7 @@ static int load(void) {
         pUnregister = dlsym(lib, "MTUnregisterContactFrameCallback");
         pStart = dlsym(lib, "MTDeviceStart");
         pStop = dlsym(lib, "MTDeviceStop");
+        pRelease = dlsym(lib, "MTDeviceRelease"); // optional
     }
     loaded = lib && pCreateDefault && pRegister && pUnregister && pStart && pStop;
     return loaded;
@@ -76,20 +78,39 @@ static void frameCallback(MTDeviceRef dev, const MTTouch *touches, size_t count,
     userCallback(out, n, timestamp, userContext);
 }
 
-bool FSMultitouchStart(FSTouchCallback callback, void *context) {
-    if (!load()) return false;
-    if (!device) device = pCreateDefault();
-    if (!device) return false;
-    userCallback = callback;
-    userContext = context;
-    pRegister(device, frameCallback);
-    return pStart(device, 0) == 0;
-}
-
-void FSMultitouchStop(void) {
-    if (!device || !load()) return;
+static void closeDevice(void) {
+    if (!device) return;
     pUnregister(device, frameCallback);
     pStop(device);
+    if (pRelease) pRelease(device);
+    device = NULL;
+}
+
+/// Opens the default multitouch device afresh on every start: a device kept from an earlier
+/// start can go stale (after sleep, or when the trackpad driver restarted) and then never
+/// starts again. A second start while running hands the frames to the new caller.
+bool FSMultitouchStart(FSTouchCallback callback, void *context) {
+    if (!load()) return false;
+    closeDevice();
+    userCallback = callback;
+    userContext = context;
+    for (int attempt = 0; attempt < 2; attempt++) {
+        device = pCreateDefault();
+        if (!device) continue;
+        pRegister(device, frameCallback);
+        if (pStart(device, 0) == 0) return true;
+        closeDevice();
+    }
+    userCallback = NULL;
+    userContext = NULL;
+    return false;
+}
+
+/// Stops only if `context` is the current caller: a test pane that closes after a new one
+/// opened must not stop the new one's frames.
+void FSMultitouchStop(void *context) {
+    if (!load() || context != userContext) return;
+    closeDevice();
     userCallback = NULL;
     userContext = NULL;
 }
