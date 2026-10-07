@@ -125,6 +125,13 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   performance states) with MHz from the `pmgr` tables `voltage-states1-sram` (E) /
   `voltage-states5-sram` (P) (Hz on M1, kHz assumed when smaller); the thermal state, and on
   Intel the CPU speed limit from `pmset -g therm` (`ThermalStatus`; below 100 % = throttled).
+- Live monitor (Tools › Live monitor; `LiveMonitor` in the core, `LiveMonitorView` / `LegacyLiveMonitor`,
+  snapshots `--live-window --wait N` / `--tool live --wait N`): up to six channels (PSTR / PDTR /
+  PPBR, every rail's V / A / W, named temperature sensors, fan actual / target, battery voltage,
+  current, temperature, cells), 4 / 2 / 1 samples a second on a background queue with its own SMC
+  connection, only the chosen channels read; last 10 min on screen, numbered markers, recording
+  (up to 2 h) and CSV export (ISO time, seconds, a column per channel, marker). The AppKit window
+  draws its charts by hand (Swift Charts needs macOS 13).
 - HID power page (0xff08) voltage/current events return implausible raw values; they are
   behind `sensordump --hid-power` and marked experimental.
 - Battery (`AppleSmartBattery`): health = `AppleRawMaxCapacity / DesignCapacity`;

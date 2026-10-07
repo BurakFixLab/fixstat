@@ -52,7 +52,9 @@ battery gauge data you normally dig out of `ioreg`.
   and shutdown cause history, battery and power adapter originality check, battery
   capacity (discharge) test, sleep / wake analysis with battery drain while asleep and
   while shut down, live power analysis (system total, CPU / GPU power, every power rail's
-  voltage and current on Apple Silicon, without root), a device card (Activation Lock, MDM, part number), and a
+  voltage and current on Apple Silicon, without root), a live monitor that charts up to six SMC
+  values (power, rails, temperatures, fans, battery) a few times a second with markers and CSV
+  recording, a device card (Activation Lock, MDM, part number), and a
   hardware check (keyboard, trackpad surface, display, speakers, microphone, camera,
   Touch Bar, fans under load, temperature sensors (open / shorted / stuck sensors and what a
   missing sensor causes: fans at full speed, kernel_task holding the CPU back), Wi-Fi, Bluetooth, USB-C / USB-A ports with fault counters,

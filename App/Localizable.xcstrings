@@ -740,6 +740,36 @@
         }
       }
     },
+    "1 per second" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saniyede 1"
+          }
+        }
+      }
+    },
+    "2 per second" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saniyede 2"
+          }
+        }
+      }
+    },
+    "4 per second" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saniyede 4"
+          }
+        }
+      }
+    },
     "A fan runs at %1$@ of %2$@ rpm although the CPU is only at %3$@. Macs speed their fans up like this when a temperature sensor is missing or broken." : {
       "localizations" : {
         "tr" : {
@@ -882,6 +912,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adres = veri"
+          }
+        }
+      }
+    },
+    "Adds a numbered marker (M1, M2 …) to the charts and the CSV, e.g. when you plug in the charger." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grafiklere ve CSV'ye numaralı bir işaret (M1, M2 …) ekler; örneğin şarj aletini taktığınız an."
           }
         }
       }
@@ -1444,6 +1484,16 @@
         }
       }
     },
+    "Battery temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya sıcaklığı"
+          }
+        }
+      }
+    },
     "Battery temperature %@ (limit %@)" : {
       "localizations" : {
         "en" : {
@@ -1486,6 +1536,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batarya çok ısındı"
+          }
+        }
+      }
+    },
+    "Battery voltage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batarya voltajı"
           }
         }
       }
@@ -2980,6 +3040,16 @@
         }
       }
     },
+    "Fan %lld target" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fan %lld hedef"
+          }
+        }
+      }
+    },
     "Fan %lld: %@ → %@ (max %@)" : {
       "localizations" : {
         "en" : {
@@ -4164,6 +4234,16 @@
         }
       }
     },
+    "Live monitor" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canlı izleyici"
+          }
+        }
+      }
+    },
     "Load" : {
       "localizations" : {
         "tr" : {
@@ -4346,6 +4426,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Üretici Apple olarak bildiriliyor"
+          }
+        }
+      }
+    },
+    "Mark" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İşaretle"
+          }
+        }
+      }
+    },
+    "Marker" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İşaret"
           }
         }
       }
@@ -5536,6 +5636,16 @@
         }
       }
     },
+    "Pick up to six values on the left." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soldan en fazla altı değer seçin."
+          }
+        }
+      }
+    },
     "Pinch" : {
       "localizations" : {
         "tr" : {
@@ -5988,6 +6098,16 @@
         }
       }
     },
+    "Rate" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hız"
+          }
+        }
+      }
+    },
     "Rated endurance used up (%lld %%)." : {
       "localizations" : {
         "tr" : {
@@ -6184,12 +6304,32 @@
         }
       }
     },
+    "Record" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydı başlat"
+          }
+        }
+      }
+    },
     "Record 4 s" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "4 sn kaydet"
+          }
+        }
+      }
+    },
+    "Recording %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydediliyor %@"
           }
         }
       }
@@ -6510,12 +6650,32 @@
         }
       }
     },
+    "Save as CSV…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CSV olarak kaydet…"
+          }
+        }
+      }
+    },
     "Save samples (CSV)…" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ölçümleri kaydet (CSV)…"
+          }
+        }
+      }
+    },
+    "Saves the last ten minutes shown here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burada görünen son on dakikayı kaydeder."
           }
         }
       }
@@ -6566,6 +6726,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaydırma"
+          }
+        }
+      }
+    },
+    "Search" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ara"
           }
         }
       }
@@ -7162,6 +7332,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Durdur"
+          }
+        }
+      }
+    },
+    "Stop and save…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durdur ve kaydet…"
           }
         }
       }
@@ -8324,6 +8504,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Değer"
+          }
+        }
+      }
+    },
+    "Values as the SMC reports them, a few times a second: slow changes show, microsecond dips and ripple do not (that needs an oscilloscope)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değerler SMC'nin bildirdiği gibi, saniyede birkaç kez: yavaş değişimler görünür, mikrosaniyelik düşüşler ve dalgalanma görünmez (onun için osiloskop gerekir)."
           }
         }
       }

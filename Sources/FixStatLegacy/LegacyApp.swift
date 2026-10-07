@@ -232,7 +232,7 @@ enum LegacyAppearance {
 }
 
 /// `--legacy-ui --snapshot out.png [--technician] [--settings 0|1|2] [--max-height N]
-/// [--tool device|history|details|crash|sleep|stress|memory|ssd|capacity|hardware [--wait SECONDS] [--range 0…6] [--start-test SECONDS] [--item NAME]]`: renders the AppKit
+/// [--tool device|history|details|crash|sleep|stress|memory|ssd|capacity|hardware|power|live [--wait SECONDS] [--range 0…6] [--start-test SECONDS] [--item NAME]]`: renders the AppKit
 /// panel or a Settings tab to PNG and exits (UI checks without clicking).
 enum LegacySnapshot {
     static func runIfRequested(core: MonitorCore, panel: LegacyPanelController, tools: LegacyTools,
@@ -276,7 +276,7 @@ enum LegacySnapshot {
         let toolNames: [String: LegacyTools.Tool] = ["device": .deviceInfo, "details": .batteryDetails,
                                                      "crash": .crashHistory, "sleep": .sleep, "history": .history,
                                                      "stress": .stressTest, "memory": .memory, "ssd": .ssd, "capacity": .capacity,
-                                                     "hardware": .hardware, "power": .power]
+                                                     "hardware": .hardware, "power": .power, "live": .liveMonitor]
         if let i = arguments.firstIndex(of: "--item"), i + 1 < arguments.count,
            let item = HardwareCheck.Item(rawValue: arguments[i + 1]) {
             LegacyHardwareCheck.initialItem = item

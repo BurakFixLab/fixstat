@@ -53,7 +53,8 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
   ve kapanma nedeni geçmişi, batarya ve adaptör orijinallik kontrolü, batarya kapasite
   (deşarj) testi, uykuda ve kapalıyken batarya tüketimiyle uyku / uyanma analizi, canlı
   güç analizi (sistem toplamı, CPU / GPU gücü, Apple Silicon'da her güç rayının voltaj ve
-  akımı, root gerektirmeden), cihaz kartı (Aktivasyon Kilidi, MDM, parça numarası) ve donanım kontrolü
+  akımı, root gerektirmeden), en fazla altı SMC değerini (güç, raylar, sıcaklıklar, fanlar, batarya)
+  saniyede birkaç kez grafikle gösteren, işaret koyup CSV'ye kaydedebilen canlı izleyici, cihaz kartı (Aktivasyon Kilidi, MDM, parça numarası) ve donanım kontrolü
   (klavye, trackpad yüzeyi, ekran, hoparlör, mikrofon, kamera,
   Touch Bar, yük altında fanlar, sıcaklık sensörleri (açık / kısa devre / takılı kalmış sensörler
   ve eksik sensörün yol açtıkları: tam devirde fanlar, CPU'yu kısan kernel_task), Wi-Fi, Bluetooth, arıza

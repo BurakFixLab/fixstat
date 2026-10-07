@@ -90,6 +90,12 @@ struct FixStatApp: App {
         }
         .defaultSize(width: 680, height: 720)
 
+        Window("Live monitor", id: LiveMonitorView.windowID) {
+            LiveMonitorView()
+                .environment(monitor)
+        }
+        .defaultSize(width: 940, height: 720)
+
         Window("Hardware check", id: HardwareCheckView.windowID) {
             HardwareCheckView()
                 .environment(monitor)

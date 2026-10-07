@@ -9,7 +9,7 @@ import FixStatCore
 ///       [--dark|--light] [-AppleLanguages "(tr)"]
 ///
 /// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead,
-/// `--details` the battery details window, `--power` the power analysis window, `--sleep-window` the sleep and wake window, `--ssd-window` the SSD window, `--memory-window`, `--test-window`, `--capacity-window` the test windows, `--hardware [keyboard|trackpad|…]` the hardware check, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
+/// `--details` the battery details window, `--power` the power analysis window, `--live-window` the live monitor, `--sleep-window` the sleep and wake window, `--ssd-window` the SSD window, `--memory-window`, `--test-window`, `--capacity-window` the test windows, `--hardware [keyboard|trackpad|…]` the hardware check, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
 ///
 ///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check] [--sample-capacity] [--sleep]
 ///
@@ -40,6 +40,11 @@ enum Snapshot {
             root = AnyView(HardwareCheckView(initialItem: item)
                 .environment(monitor)
                 .frame(width: 900, height: 680)
+                .background(Color(nsColor: .windowBackgroundColor)))
+        } else if arguments.contains("--live-window") {
+            root = AnyView(LiveMonitorView()
+                .environment(monitor)
+                .frame(width: 940, height: 720)
                 .background(Color(nsColor: .windowBackgroundColor)))
         } else if arguments.contains("--memory-window") {
             root = AnyView(MemoryView()
@@ -108,11 +113,13 @@ enum Snapshot {
         // Wait for two refreshes after the sensors are ready (CPU usage needs a delta). The
         // panel's window observer sees the off-screen window as hidden, so mark it open again.
         let panel = monitor.panelVisible  // set above for the panel only
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        // `--wait SECONDS`: render later (windows that collect samples first).
+        let wait = arguments.firstIndex(of: "--wait").flatMap { i in i + 1 < arguments.count ? Double(arguments[i + 1]) : nil } ?? 0
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5 + wait) {
             if panel { monitor.panelVisible = true }
             monitor.refresh()
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5 + wait) {
             if panel { monitor.panelVisible = true }
             monitor.refresh()
             window.setContentSize(host.fittingSize)
