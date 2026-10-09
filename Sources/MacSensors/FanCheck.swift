@@ -36,8 +36,9 @@ public struct FanCheck: Sendable, Equatable {
         case stalled(fan: Int, target: Double)
         /// The fan stays well below its target.
         case belowTarget(fan: Int, actual: Double, target: Double)
-        /// The fan runs far faster than the system asks: the SMC does not control it (PWM line,
-        /// fan connector, fan power; common after liquid damage), so it is not a sensor problem.
+        /// The fan runs far faster than the system asks: the SMC does not control it (the fan's
+        /// own electronics, PWM line, fan connector, fan power; common after liquid damage), so
+        /// it is not a sensor problem.
         case aboveTarget(fan: Int, actual: Double, target: Double)
         /// No fan was asked to speed up (the Mac stayed cool enough): no verdict.
         case notAsked

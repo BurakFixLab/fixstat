@@ -374,7 +374,7 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   `-FixStatTouchBar withEscapeKey|withoutEscapeKey` pretends one), fans (`FanCheck` / `FanTestRunner`: CPU + GPU load
   for 90 s, every fan must follow its SMC target `F<n>Tg`; stalled or far below the target
   fails, and so does far above it for ≥ 15 s (> 1.5 × the target and ≥ 1 500 rpm above it:
-  the SMC has lost control, e.g. a liquid-damaged MacBook Pro 13" M1 ran 7 500 rpm at target 0 —
+  the SMC has lost control (a faulty fan or its drive circuit), e.g. a liquid-damaged MacBook Pro 13" M1 ran 7 500 rpm at target 0 —
   an open PWM line makes these fans run flat out; the live line says "far above the target");
   no target rise = no verdict; `-FixStatSimulateFans N` fakes fans on a fanless Mac),
   speakers (L/R tones, sweep), microphone

@@ -322,7 +322,7 @@ public enum SensorCheckText {
         var lines: [String] = []
         let cpu = r.hottestCPU.map { Format.degrees($0) } ?? "–"
         for fan in r.fansRunningAway {
-            lines.append(L("Fan %1$lld runs at %2$@ although the system asks for only %3$@: the SMC does not control it. Check the fan drive circuit (PWM line, fan connector, fan power) before the sensors; this is common after liquid damage.",
+            lines.append(L("Fan %1$lld runs at %2$@ although the system asks for only %3$@: the SMC does not control it. Before the sensors, check the fan itself (try a known-good fan) and its drive circuit (PWM line, fan connector, fan power); this is common after liquid damage.",
                            fan.index + 1, Format.rpm(fan.actual), Format.rpm(fan.target ?? 0)))
         }
         for fan in r.fansNearMax {
