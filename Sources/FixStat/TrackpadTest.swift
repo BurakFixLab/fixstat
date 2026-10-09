@@ -17,12 +17,14 @@ struct TrackpadTestView: View {
                       systemImage: "exclamationmark.triangle.fill")
                     .foregroundStyle(TemperatureColor.hot)
             }
+            // The card hugs the map: when the pane is short the map gets narrower than 560,
+            // and a card around the wider frame left empty strips at both sides.
             surfaceMap
                 .aspectRatio(1.6, contentMode: .fit)
-                .frame(maxWidth: 560)
                 .background(Design.cardFill)
                 .clipShape(RoundedRectangle(cornerRadius: Design.cardRadius))
                 .overlay(RoundedRectangle(cornerRadius: Design.cardRadius).strokeBorder(.separator, lineWidth: 0.5))
+                .frame(maxWidth: 560, alignment: .leading)
             HStack(spacing: 14) {
                 Text("Click zones: left \(progress.leftZones.count) / \(TrackpadProgress.zoneCount) · right \(progress.rightZones.count) / \(TrackpadProgress.zoneCount)")
                 check("Force click", progress.forceClick)

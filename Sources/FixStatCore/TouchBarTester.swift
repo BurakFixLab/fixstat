@@ -47,6 +47,13 @@ public final class TouchBarTester: NSObject, NSTouchBarDelegate {
 
     public var allTouched: Bool { touched.count == Self.cellCount }
 
+    /// Width of the bar the test can use (Esc area + visible main part), in points; 0 before the
+    /// bar is shown. Shown in the pane so a cut-off end can be told from a dead zone.
+    public var shownWidth: CGFloat {
+        guard bar != nil else { return 0 }
+        return (escapeCells > 0 ? escapeView.shownWidth : 0) + mainView.shownWidth
+    }
+
     public func startTouchTest() {
         touched = []
         show(.touch)
@@ -170,13 +177,31 @@ final class TouchBarCanvas: NSView {
 
     required init?(coder: NSCoder) { fatalError("not used") }
 
+    /// The part of the view the bar shows. The main item asks for more width than any Touch Bar
+    /// has; when AppKit does not shrink it (MacBookPro15,2: Esc area 64 pt + 1 100 pt on a
+    /// ≈ 1 085 pt bar), the right end is cut off, so the cells are spread over what is visible.
+    var shownWidth: CGFloat {
+        let visible = visibleRect
+        return visible.width > 0 ? min(bounds.width, visible.maxX) : bounds.width
+    }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        needsDisplay = true
+    }
+
+    override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        needsDisplay = true
+    }
+
     override func draw(_ dirtyRect: NSRect) {
         if let colour {
             colour.setFill()
             bounds.fill()
             return
         }
-        let width = bounds.width / CGFloat(count)
+        let width = shownWidth / CGFloat(count)
         for index in 0..<count {
             let cell = NSRect(x: CGFloat(index) * width + 1, y: 1, width: width - 2, height: bounds.height - 2)
             (touched.contains(first + index) ? NSColor.systemGreen : NSColor(white: 0.25, alpha: 1)).setFill()
@@ -187,8 +212,9 @@ final class TouchBarCanvas: NSView {
     private func report(_ event: NSEvent) {
         for touch in event.touches(matching: [.began, .moved], in: self) where touch.type == .direct {
             let x = touch.location(in: self).x
-            guard bounds.width > 0, x >= 0, x < bounds.width else { continue }
-            onTouch?(first + Int(x / bounds.width * CGFloat(count)))
+            let width = shownWidth
+            guard width > 0, x >= 0, x < width else { continue }
+            onTouch?(first + Int(x / width * CGFloat(count)))
         }
     }
 
@@ -200,6 +226,13 @@ final class TouchBarCanvas: NSView {
 public enum TouchBarText {
     public static func progress(_ tester: TouchBarTester) -> String {
         L("%lld / %lld zones touched", tester.touched.count, TouchBarTester.cellCount)
+    }
+
+    /// "Touch Bar width used: 1 085 pt" while the bar is shown, for telling a cut-off end from
+    /// a dead zone.
+    public static func width(_ tester: TouchBarTester) -> String? {
+        let width = tester.shownWidth
+        return width > 0 ? L("Touch Bar width used: %@ pt", Format.number(Double(width))) : nil
     }
 
     public static func colourName(_ index: Int) -> String {

@@ -874,6 +874,7 @@ final class LegacyTouchBarPane: BlockPane {
 
     override func blocks() -> [Block] {
         var blocks: [Block] = [.view(TouchBarMirrorView(touched: tester.touched)), .secondary(TouchBarText.progress(tester))]
+        if let width = TouchBarText.width(tester) { blocks.append(.caption(width)) }
         if tester.mode != .off, !tester.fullWidth {
             blocks.append(.status(L("The Touch Bar could not be shown full width: keep this window in front."), .neutral))
         }

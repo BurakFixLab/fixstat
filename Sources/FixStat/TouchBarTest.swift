@@ -18,6 +18,9 @@ struct TouchBarTestView: View {
             }
             .frame(height: 24)
             Text(verbatim: tester.progress).foregroundStyle(.secondary)
+            if let width = tester.width {
+                Text(verbatim: width).font(.caption).foregroundStyle(.tertiary)
+            }
             if tester.active, !tester.fullWidth {
                 Label("The Touch Bar could not be shown full width: keep this window in front.", systemImage: "info.circle")
                     .foregroundStyle(.secondary)
@@ -51,6 +54,7 @@ final class TouchBarTesterModel {
     private(set) var touchMode = false
     private(set) var fullWidth = false
     private(set) var progress = ""
+    private(set) var width: String?
 
     @ObservationIgnored private let tester = TouchBarTester()
 
@@ -72,5 +76,7 @@ final class TouchBarTesterModel {
         if tester.fullWidth != fullWidth { fullWidth = tester.fullWidth }
         let text = TouchBarText.progress(tester)
         if text != progress { progress = text }
+        let width = TouchBarText.width(tester)
+        if width != self.width { self.width = width }
     }
 }
