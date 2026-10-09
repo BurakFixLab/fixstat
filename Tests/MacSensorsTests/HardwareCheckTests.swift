@@ -190,6 +190,23 @@ import Testing
         #expect(check.verdict == .passed)
     }
 
+    @Test func fanOutOfControlFails() {
+        // Liquid-damaged MacBook Pro 13" M1: the SMC asks for 0 rpm, the fan runs at 7 500.
+        var check = FanCheck()
+        for _ in 0..<20 { check.add([FanReading(index: 0, actual: 7500, minimum: 1200, maximum: 7200, target: 0)]) }
+        #expect(check.verdict == .aboveTarget(fan: 0, actual: 7500, target: 0))
+    }
+
+    @Test func spinningDownIsNotAFailure() {
+        // After the load the target drops at once; the fan slows down over a few seconds.
+        var check = FanCheck()
+        check.add([Self.reading(1200, target: 1200)])
+        for _ in 0..<20 { check.add([Self.reading(4000, target: 4000)]) }
+        for rpm in [3800.0, 3400, 3000, 2600, 2200, 1800, 1500, 1300] { check.add([Self.reading(rpm, target: 1200)]) }
+        for _ in 0..<20 { check.add([Self.reading(1200, target: 1200)]) }
+        #expect(check.verdict == .passed)
+    }
+
     @Test func fansOffWhileCoolAreNotAFailure() {
         // Apple Silicon MacBook Pro: fans off (target 0) until the Mac gets warm.
         var check = FanCheck()

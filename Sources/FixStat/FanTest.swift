@@ -61,7 +61,7 @@ private struct FanVerdictLabel: View {
             switch verdict {
             case .passed:
                 Label(FanText.verdict(verdict), systemImage: "checkmark.circle.fill").foregroundStyle(TemperatureColor.cool)
-            case .stalled, .belowTarget:
+            case .stalled, .belowTarget, .aboveTarget:
                 Label(FanText.verdict(verdict), systemImage: "exclamationmark.triangle.fill").foregroundStyle(TemperatureColor.hot)
             case .notAsked:
                 Label(FanText.verdict(verdict), systemImage: "info.circle").foregroundStyle(.secondary)

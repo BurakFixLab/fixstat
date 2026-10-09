@@ -111,7 +111,8 @@ public final class FanTestRunner {
                 let verdict = check.verdict
                 switch verdict {
                 case .passed: monitor.recordCheck(.fans, detail: FanText.detail(check), passed: true)
-                case .stalled, .belowTarget: monitor.recordCheck(.fans, detail: FanText.verdict(verdict), failed: true)
+                case .stalled, .belowTarget, .aboveTarget:
+                    monitor.recordCheck(.fans, detail: FanText.verdict(verdict), failed: true)
                 case .notAsked: monitor.recordCheck(.fans, detail: FanText.verdict(verdict) + " " + FanText.detail(check))
                 }
             }
@@ -155,6 +156,9 @@ public enum FanText {
         case let .belowTarget(fan, actual, target):
             return L("Fan %lld stays well below its target (%@ instead of %@): worn bearing, dirt or a weak fan.",
                      fan + 1, Format.rpm(actual), Format.rpm(target))
+        case let .aboveTarget(fan, actual, target):
+            return L("Fan %1$lld runs at %2$@ although the system asks for only %3$@: the SMC does not control it. Check the fan drive circuit (PWM line, fan connector, fan power) before the sensors; this is common after liquid damage.",
+                     fan + 1, Format.rpm(actual), Format.rpm(target))
         case .notAsked:
             return L("The fans were not asked to speed up: the Mac stayed cool enough. Judge them by ear, or test again when the Mac is warm.")
         }
@@ -162,7 +166,8 @@ public enum FanText {
 
     /// One fan's live line: "2 450 rpm · target 2 500 rpm · 1 200–6 000 rpm".
     public static func live(_ fan: FanReading) -> String {
-        [fan.target.map { L("target %@", Format.rpm($0)) },
+        let runsAway = fan.actual.flatMap { actual in fan.target.map { FanCheck.runsAway(actual: actual, target: $0) } } ?? false
+        return [fan.target.map { L("target %@", Format.rpm($0)) }, runsAway ? L("far above the target") : nil,
          fan.minimum.flatMap { min in fan.maximum.map { L("range %@–%@", Format.number(min), Format.rpm($0)) } }]
             .compactMap { $0 }.joined(separator: " · ")
     }

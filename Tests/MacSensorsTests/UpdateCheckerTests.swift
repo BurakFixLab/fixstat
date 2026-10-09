@@ -1,6 +1,7 @@
 import Foundation
 import Testing
 @testable import FixStatCore
+import MacSensors
 
 @Suite struct UpdateCheckerTests {
     @Test func versionOrder() {
@@ -21,5 +22,27 @@ import Testing
         let beta = #"{"tag_name":"v1.3.0-beta","prerelease":true}"#
         #expect(UpdateChecker.parse(Data(beta.utf8)) == nil)
         #expect(UpdateChecker.parse(Data("not json".utf8)) == nil)
+    }
+}
+
+@Suite struct SensorCheckFanTests {
+    static func result(actual: Double, target: Double) -> SensorCheckResult {
+        let fans = (0..<10).map { _ in [FanReading(index: 0, actual: actual, minimum: 1200, maximum: 7200, target: target)] }
+        return SensorCheck.result(sensors: [], series: [], idleSamples: 10, fans: fans, seconds: 60, missing: [],
+                                  missingNames: [:], thermal: nil, load: nil)
+    }
+
+    @Test func fanOutOfControlIsNotBlamedOnASensor() {
+        let r = Self.result(actual: 7500, target: 0)
+        #expect(r.fansRunningAway.count == 1)
+        #expect(r.fansNearMax.isEmpty)
+        #expect(!r.passed)
+        #expect(SensorCheckText.verdict(r) == L("No broken sensor found, but a fan is out of the SMC's control."))
+    }
+
+    @Test func fanTheSMCDrivesHardPointsToASensor() {
+        let r = Self.result(actual: 7000, target: 7000)
+        #expect(r.fansRunningAway.isEmpty)
+        #expect(r.fansNearMax.count == 1)
     }
 }

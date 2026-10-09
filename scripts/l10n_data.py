@@ -8,6 +8,9 @@ the ".n" variants take one integer (%lld) — the index from the sensor map id.
 """
 
 TR = {
+    'Fan %1$lld runs at %2$@ although the system asks for only %3$@: the SMC does not control it. Check the fan drive circuit (PWM line, fan connector, fan power) before the sensors; this is common after liquid damage.': 'Fan %1$lld, sistem yalnızca %3$@ isterken %2$@ hızında dönüyor: SMC fanı kontrol edemiyor. Sensörlerden önce fan sürme devresine bakın (PWM hattı, fan konnektörü, fan beslemesi); sıvı hasarından sonra sık görülür.',
+    "No broken sensor found, but a fan is out of the SMC's control.": "Bozuk sensör bulunamadı, ama bir fan SMC'nin kontrolünde değil.",
+    'far above the target': 'hedefin çok üstünde',
     '1 per second': 'Saniyede 1',
     '2 per second': 'Saniyede 2',
     '4 per second': 'Saniyede 4',

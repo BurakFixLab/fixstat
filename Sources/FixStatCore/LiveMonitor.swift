@@ -95,7 +95,7 @@ public final class LiveMonitor {
                 // `-FixStatLiveMarkAfter N` (screenshots): a marker N seconds after the start.
                 let markAfter = UserDefaults.standard.double(forKey: "FixStatLiveMarkAfter")
                 if markAfter > 0 {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + markAfter) { [weak self] in self?.addMarker() }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + markAfter) { self.addMarker() }
                 }
                 self.onChange?()
             }

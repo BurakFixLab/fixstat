@@ -17,6 +17,8 @@ public struct SensorCheckResult: Equatable {
     public var hottestCPU: Double?
     /// Fans at ≥ 85 % of their maximum while idle with a cool CPU.
     public var fansNearMax: [FanSpeed]
+    /// Fans far faster than the SMC asks (`F<n>Tg`): out of its control, not a sensor problem.
+    public var fansRunningAway: [FanSpeed] = []
     /// Intel: the CPU speed limit macOS applies (`pmset -g therm`), when below 100 %.
     public var cpuSpeedLimit: Int?
     /// Mean shares of all CPUs while idle (0…1).
@@ -24,8 +26,11 @@ public struct SensorCheckResult: Equatable {
     public var userShare: Double?
 
     public struct FanSpeed: Equatable {
+        public var index: Int = 0
         public var actual: Double
         public var maximum: Double
+        /// What the SMC asks for, when it says.
+        public var target: Double?
     }
 
     /// Faults of sensors this Mac certainly has.
@@ -45,7 +50,7 @@ public struct SensorCheckResult: Equatable {
         return system >= SensorCheck.kernelShare && user < SensorCheck.quietUserShare
     }
 
-    public var hasSymptoms: Bool { !fansNearMax.isEmpty || throttled || kernelBusy }
+    public var hasSymptoms: Bool { !fansNearMax.isEmpty || !fansRunningAway.isEmpty || throttled || kernelBusy }
     public var passed: Bool { known.isEmpty && !hasSymptoms }
 }
 
@@ -98,20 +103,33 @@ public enum SensorCheck {
         }.sorted()
         let hottestCPU = hottest.isEmpty ? nil : hottest[hottest.count / 2]
 
-        // Fans: mean over the last ten idle samples.
+        // Fans: means over the last ten idle samples. Far above its target, a fan is out of the
+        // SMC's control (fan drive circuit); near its maximum with a cool CPU because the SMC
+        // asks for it, the firmware is reacting to a sensor.
         var fansNearMax: [SensorCheckResult.FanSpeed] = []
+        var fansRunningAway: [SensorCheckResult.FanSpeed] = []
         let recent = fans.suffix(10)
-        if let count = recent.last?.count, (hottestCPU ?? 0) < fanCoolCPU {
+        if let count = recent.last?.count {
             for index in 0..<count {
                 let actual = recent.compactMap { index < $0.count ? $0[index].actual : nil }
-                guard !actual.isEmpty, let maximum = recent.last?[index].maximum, maximum > 0 else { continue }
+                guard !actual.isEmpty else { continue }
                 let mean = actual.reduce(0, +) / Double(actual.count)
-                if mean >= fanNearMax * maximum { fansNearMax.append(.init(actual: mean, maximum: maximum)) }
+                let targets = recent.compactMap { index < $0.count ? $0[index].target : nil }
+                let target = targets.isEmpty ? nil : targets.reduce(0, +) / Double(targets.count)
+                let maximum = recent.last?[index].maximum ?? 0
+                let speed = SensorCheckResult.FanSpeed(index: recent.last?[index].index ?? index, actual: mean,
+                                                       maximum: maximum, target: target)
+                if let target, FanCheck.runsAway(actual: mean, target: target) {
+                    fansRunningAway.append(speed)
+                } else if maximum > 0, (hottestCPU ?? 0) < fanCoolCPU, mean >= fanNearMax * maximum {
+                    fansNearMax.append(speed)
+                }
             }
         }
 
         return SensorCheckResult(date: Date(), seconds: seconds, sensorCount: judged.count, faults: faults, names: names,
                                  underLoad: underLoad, hottestCPU: hottestCPU, fansNearMax: fansNearMax,
+                                 fansRunningAway: fansRunningAway,
                                  cpuSpeedLimit: thermal?.cpuSpeedLimit.flatMap { $0 < 100 ? $0 : nil },
                                  systemShare: load?.system, userShare: load?.user)
     }
@@ -303,6 +321,10 @@ public enum SensorCheckText {
     public static func symptoms(_ r: SensorCheckResult) -> [String] {
         var lines: [String] = []
         let cpu = r.hottestCPU.map { Format.degrees($0) } ?? "–"
+        for fan in r.fansRunningAway {
+            lines.append(L("Fan %1$lld runs at %2$@ although the system asks for only %3$@: the SMC does not control it. Check the fan drive circuit (PWM line, fan connector, fan power) before the sensors; this is common after liquid damage.",
+                           fan.index + 1, Format.rpm(fan.actual), Format.rpm(fan.target ?? 0)))
+        }
         for fan in r.fansNearMax {
             lines.append(L("A fan runs at %1$@ of %2$@ rpm although the CPU is only at %3$@. Macs speed their fans up like this when a temperature sensor is missing or broken.",
                            Format.number(fan.actual), Format.number(fan.maximum), cpu))
@@ -320,6 +342,10 @@ public enum SensorCheckText {
 
     public static func verdict(_ r: SensorCheckResult) -> String {
         if !r.known.isEmpty { return L("Suspicious sensors: %lld.", r.known.count) }
+        let sensorSymptoms = !r.fansNearMax.isEmpty || r.throttled || r.kernelBusy
+        if !r.fansRunningAway.isEmpty, !sensorSymptoms {
+            return L("No broken sensor found, but a fan is out of the SMC's control.")
+        }
         if r.hasSymptoms { return L("No broken sensor found, but the Mac behaves as if one were missing.") }
         return r.underLoad ? L("All %lld sensors read plausible values and followed the load.", r.sensorCount)
             : L("All %lld sensors read plausible values.", r.sensorCount)

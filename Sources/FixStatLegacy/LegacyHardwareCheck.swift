@@ -840,7 +840,7 @@ final class LegacyFanPane: BlockPane, LegacySnapshotStartable {
                 let tone: Tone
                 switch verdict {
                 case .passed: tone = .good
-                case .stalled, .belowTarget: tone = .bad
+                case .stalled, .belowTarget, .aboveTarget: tone = .bad
                 case .notAsked: tone = .neutral
                 }
                 blocks.append(.status(FanText.verdict(verdict), tone, detail: FanText.detail(runner.check)))

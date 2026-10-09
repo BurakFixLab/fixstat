@@ -17,6 +17,9 @@ public struct SensorRecording: Codable, Sendable {
         public var externalConnected: Bool?
         /// Fan speeds in rpm (empty on fanless Macs; nil in older recordings).
         public var fans: [Double]?
+        /// The speed the SMC asks of each fan (`F<n>Tg`), same order as `fans`; nil in older
+        /// recordings. A fan far above its target is out of the SMC's control.
+        public var fanTargets: [Double?]?
         /// Adapter input power in W (`SystemPowerIn`, Apple Silicon notebooks on power).
         public var powerIn: Double?
         /// System power in W without battery charging (input − charging − adapter loss, or
@@ -37,6 +40,9 @@ public struct SensorRecording: Codable, Sendable {
     public var sensors: [SensorDescriptor]
     public var phases: [Phase] = []
     public var samples: [Sample] = []
+    /// Each fan's minimum and maximum speed (`F<n>Mn` / `F<n>Mx`); nil in older recordings.
+    public var fanMinimum: [Double?]?
+    public var fanMaximum: [Double?]?
 }
 
 /// Drives the load tests and collects samples once per second.
@@ -63,6 +69,11 @@ public final class SensorRecorder {
     public init(interval: TimeInterval = 1) {
         self.interval = interval
         recording = SensorRecording(system: .current(), startedAt: Date(), sensors: sampler.sensors)
+        let fans = sampler.fans()
+        if !fans.isEmpty {
+            recording.fanMinimum = fans.map(\.minimum)
+            recording.fanMaximum = fans.map(\.maximum)
+        }
     }
 
     public var now: Double { Date().timeIntervalSince(start) }
@@ -80,16 +91,18 @@ public final class SensorRecorder {
             own = (ownTime - last.time) / date.timeIntervalSince(last.at) / Double(ProcessInfo.processInfo.activeProcessorCount)
         }
         lastOwnCPU = (ownTime, date)
-        let sample = SensorRecording.Sample(t: now, values: sampler.sample(),
+        let fanReadings = sampler.fans()
+        var sample = SensorRecording.Sample(t: now, values: sampler.sample(),
                                             batteryAmperage: battery?.amperage,
                                             externalConnected: battery?.externalConnected,
-                                            fans: sampler.fans().compactMap(\.actual),
+                                            fans: fanReadings.compactMap(\.actual),
                                             powerIn: input,
                                             systemPower: battery?.systemPowerWatts.map { ($0 * 100).rounded() / 100 },
                                             smcPower: sampler.systemPower().map { ($0 * 100).rounded() / 100 },
                                             cpuUser: load.map { ($0.user * 1000).rounded() / 1000 },
                                             cpuSystem: load.map { ($0.system * 1000).rounded() / 1000 },
                                             ownCPU: own.map { (min(1, $0) * 1000).rounded() / 1000 })
+        if !fanReadings.isEmpty { sample.fanTargets = fanReadings.map(\.target) }
         recording.samples.append(sample)
         onSample(sample)
     }

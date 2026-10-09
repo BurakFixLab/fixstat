@@ -373,7 +373,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   or without a physical Esc, and the keyboard layout drops the F-keys there;
   `-FixStatTouchBar withEscapeKey|withoutEscapeKey` pretends one), fans (`FanCheck` / `FanTestRunner`: CPU + GPU load
   for 90 s, every fan must follow its SMC target `F<n>Tg`; stalled or far below the target
-  fails; no target rise = no verdict; `-FixStatSimulateFans N` fakes fans on a fanless Mac),
+  fails, and so does far above it for ≥ 15 s (> 1.5 × the target and ≥ 1 500 rpm above it:
+  the SMC has lost control, e.g. a liquid-damaged MacBook Pro 13" M1 ran 7 500 rpm at target 0 —
+  an open PWM line makes these fans run flat out; the live line says "far above the target");
+  no target rise = no verdict; `-FixStatSimulateFans N` fakes fans on a fanless Mac),
   speakers (L/R tones, sweep), microphone
   (level, record + play back), camera (preview, average luma), Wi-Fi (CoreWLAN; scan
   works without Location, names hidden), Bluetooth (`system_profiler` + CoreBluetooth
@@ -399,7 +402,9 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   SSD size; the M1 Air publishes the same 64 on macOS 13 and 26). Model / chip matches are
   "suspicious" (fail the item), pattern matches "unclear". Symptoms (idle samples only):
   fans ≥ 85 % of max with the CPU < 65 °C, Intel speed limit < 100 % below 80 °C, system share
-  ≥ 25 % with user < 15 % (kernel_task). Lab recordings: `sensormap faults FILE... [--break KEY]`
+  ≥ 25 % with user < 15 % (kernel_task); a fan far above its target is reported as out of the
+  SMC's control (fan drive circuit), not as a sensor symptom. Recordings keep fan targets
+  (`Sample.fanTargets`) and limits (`fanMinimum` / `fanMaximum`). Lab recordings: `sensormap faults FILE... [--break KEY]`
   (`--break` holds a sensor at its first value: a dead CPU zone was found on M1, M2 and Intel
   records; no false positives on the bench records so far; the Air 2014 / 2015 `TH0F` / `TH0R` read below zero on
   both units, so they are not taken as faults). Technician mode keeps flagged sensors visible
