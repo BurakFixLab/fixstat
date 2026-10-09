@@ -428,6 +428,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   9 / 10 Type-C, 255 internal), USB 2 and USB 3 lanes paired in ACPI order per controller,
   devices by the root port they hang off, enumeration failures (MacBookAir6,1: HS01 / HS02 +
   SSP1 / SSP2; its `link-error-count` grew by hundreds with normal use, so it is not shown).
+  Thunderbolt 3 Intel Macs (MacBookPro13,1 dump): a USB-C port has lanes on the PCH (USB 2) and
+  the Thunderbolt controller (USB 3); lanes with the same `UsbCPortNumber` form one port (numbered
+  like Apple's), unnumbered USB-C lanes join their controller's numbered ones in order, and on a
+  notebook with numbered USB-C ports the ACPI Type-A root ports (HS04, never connected) are hidden.
   `PortHistory` keeps each device's fastest link per port: a device seen at ≥ 5 Gb/s elsewhere
   but ≤ 480 Mb/s on a port flags that port's USB 3 lane (Air 2014: USB-A 1). `-FixStatSampleUSBA YES` shows two made-up ports.
   USB drive speed (`USBVolumes`, `USBSpeedRunner`, `USBSpeedText`): mounted writable volumes are

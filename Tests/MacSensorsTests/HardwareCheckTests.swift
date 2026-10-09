@@ -232,6 +232,28 @@ import Testing
         #expect(connectors[1].lanes.map(\.name) == ["HS02", "SSP2"])
     }
 
+    @Test func thunderbolt3PortsPairedByPortNumber() {
+        // MacBookPro13,1 (2016, two Thunderbolt 3 ports), from a dump: USB 2 lanes on the PCH
+        // (HS02 / HS08, numbered), USB 3 on the Thunderbolt controller (SSP1 / SSP2, numbered)
+        // with two unnumbered USB 2 lanes, and an ACPI Type-A port (HS04) that does not exist.
+        let roots = [
+            PortReader.RootPort(location: 0x1410_0000, name: "HS02", connector: 9, superSpeed: false, usbCPort: 2),
+            PortReader.RootPort(location: 0x1420_0000, name: "HS04", connector: 3, superSpeed: false),
+            PortReader.RootPort(location: 0x1430_0000, name: "HS08", connector: 9, superSpeed: false, usbCPort: 1),
+            PortReader.RootPort(location: 0x0010_0000, name: "HS01", connector: 9, superSpeed: false),
+            PortReader.RootPort(location: 0x0020_0000, name: "HS02", connector: 9, superSpeed: false),
+            PortReader.RootPort(location: 0x0030_0000, name: "SSP1", connector: 9, superSpeed: true, usbCPort: 2),
+            PortReader.RootPort(location: 0x0040_0000, name: "SSP2", connector: 9, superSpeed: true, usbCPort: 1),
+        ]
+        let ports = PortReader.connectors(from: roots, notebook: true)
+        #expect(ports.map(\.kind) == ["USB-C", "USB-C"])
+        #expect(ports.map(\.number) == [1, 2])
+        #expect(Set(ports[0].lanes.map(\.location)) == [0x1430_0000, 0x0040_0000, 0x0020_0000])
+        #expect(Set(ports[1].lanes.map(\.location)) == [0x1410_0000, 0x0030_0000, 0x0010_0000])
+        // On a desktop (iMac with both kinds) the Type-A port stays.
+        #expect(PortReader.connectors(from: roots, notebook: false).map(\.kind) == ["USB-C", "USB-C", "USB-A"])
+    }
+
     @Test func typeCPortsOnTheirOwnController() {
         let roots = [
             PortReader.RootPort(location: 0x1410_0000, name: "HS01", connector: 3, superSpeed: false),

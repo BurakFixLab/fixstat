@@ -160,7 +160,13 @@ public enum PortReader {
         var connector: Int
         var superSpeed: Bool
         var enumerationFailures: Int? = nil
+        /// `UsbCPortNumber`: the physical USB-C port this lane belongs to, when ACPI says.
+        var usbCPort: Int? = nil
     }
+
+    /// Intel MacBooks with USB-C have no USB-A connector, but their ACPI tables can still list
+    /// a Type-A root port (MacBookPro13,1: HS04, never connected).
+    static let isNotebook = HardwareProfile.kind(marketingName: nil, model: SystemInfo.sysctlString("hw.model") ?? "") == .notebook
 
     /// External ports from the XHCI root hubs (`UsbConnector` from ACPI _UPC: 0 Type-A,
     /// 3 USB 3 Standard-A, 9 / 10 Type-C, 255 internal). A USB 3 connector shows up as a
@@ -172,15 +178,16 @@ public enum PortReader {
                   let location = p.int("locationID"), isRootHubPort(service) else { return }
             roots.append(RootPort(location: location, name: p.string("name") ?? "", connector: connector,
                                   superSpeed: Registry.className(of: service).contains("30"),
-                                  enumerationFailures: p.dict("port-statistics")?.int("kPortStatEnumerationFailureCount")))
+                                  enumerationFailures: p.dict("port-statistics")?.int("kPortStatEnumerationFailureCount"),
+                                  usbCPort: p.int("UsbCPortNumber")))
         }
         let devices = usbDevicesByRootPort()
         var counters: [String: Int] = [:]
-        return connectors(from: roots).map { kind, lanes in
+        return connectors(from: roots, notebook: isNotebook).map { kind, number, lanes in
             counters[kind, default: 0] += 1
             let attached = lanes.flatMap { devices[$0.location] ?? [] }
             func sum(_ values: [Int?]) -> Int? { values.contains { $0 != nil } ? values.compactMap { $0 }.reduce(0, +) : nil }
-            return PortStatus(type: kind, number: counters[kind]!, connected: !attached.isEmpty,
+            return PortStatus(type: kind, number: number ?? counters[kind]!, connected: !attached.isEmpty,
                               activeTransports: [], supportedTransports: [], powerIn: nil, overcurrentCount: nil,
                               connectionCount: nil, enumerationFailures: sum(lanes.map(\.enumerationFailures)),
                               devices: attached)
@@ -189,22 +196,49 @@ public enum PortReader {
 
     /// Physical connectors from root hub ports: grouped by controller (locationID's top byte)
     /// and kind, USB 2 and USB 3 lanes paired in order.
-    static func connectors(from roots: [RootPort]) -> [(kind: String, lanes: [RootPort])] {
+    ///
+    /// USB-C ports of Thunderbolt 3 Macs have lanes on two controllers (USB 2 on the PCH, USB 3
+    /// on the Thunderbolt controller); when ACPI numbers them (`UsbCPortNumber`), lanes with the
+    /// same number are one port, and unnumbered USB-C lanes of a controller that has numbered
+    /// ones are paired with those in order. On a notebook with numbered USB-C ports, Type-A
+    /// root ports are ACPI leftovers and not shown.
+    static func connectors(from roots: [RootPort], notebook: Bool = false) -> [(kind: String, number: Int?, lanes: [RootPort])] {
+        func isTypeC(_ root: RootPort) -> Bool { root.connector == 9 || root.connector == 10 }
+        let sorted = roots.sorted(by: { $0.location < $1.location })
+        var numbered: [(kind: String, number: Int?, lanes: [RootPort])] = []
+        var rest = sorted
+        if sorted.contains(where: { isTypeC($0) && $0.usbCPort != nil }) {
+            var ports: [Int: [RootPort]] = [:]
+            for root in sorted where isTypeC(root) {
+                if let number = root.usbCPort { ports[number, default: []].append(root) }
+            }
+            // Unnumbered USB-C lanes join the numbered lanes of their controller, in order.
+            var byController: [Int: [RootPort]] = [:]
+            for root in sorted where isTypeC(root) && root.usbCPort == nil {
+                byController[root.location >> 24, default: []].append(root)
+            }
+            for (controller, extra) in byController {
+                let targets = sorted.filter { isTypeC($0) && $0.usbCPort != nil && $0.location >> 24 == controller }
+                for (lane, target) in zip(extra, targets) { ports[target.usbCPort!, default: []].append(lane) }
+            }
+            numbered = ports.keys.sorted().map { ("USB-C", $0, ports[$0]!) }
+            rest = sorted.filter { !isTypeC($0) && !notebook }
+        }
         var lanes: [String: (usb2: [RootPort], usb3: [RootPort])] = [:]
-        for root in roots.sorted(by: { $0.location < $1.location }) {
-            let kind = (root.connector == 9 || root.connector == 10) ? "USB-C" : "USB-A"
+        for root in rest {
+            let kind = isTypeC(root) ? "USB-C" : "USB-A"
             let key = "\(root.location >> 24)|\(kind)"
             var entry = lanes[key] ?? ([], [])
             if root.superSpeed { entry.usb3.append(root) } else { entry.usb2.append(root) }
             lanes[key] = entry
         }
-        var connectors: [(kind: String, lanes: [RootPort])] = []
+        var connectors = numbered
         for key in lanes.keys.sorted() {
             let kind = String(key.split(separator: "|")[1])
             let entry = lanes[key]!
             for index in 0..<max(entry.usb2.count, entry.usb3.count) {
-                connectors.append((kind, [index < entry.usb2.count ? entry.usb2[index] : nil,
-                                          index < entry.usb3.count ? entry.usb3[index] : nil].compactMap { $0 }))
+                connectors.append((kind, nil, [index < entry.usb2.count ? entry.usb2[index] : nil,
+                                               index < entry.usb3.count ? entry.usb3[index] : nil].compactMap { $0 }))
             }
         }
         return connectors
