@@ -11,8 +11,17 @@ public enum PartText {
         }
     }
 
-    public static func item(_ id: String) -> String {
-        switch id {
+    /// The evidence line; items that check for data name the missing data when they warn.
+    public static func item(_ id: String, status: PartCheck.Status = .pass) -> String {
+        switch (id, status) {
+        case ("manufacturerData", .warn): return L("Manufacturer data missing")
+        case ("gaugeData", .warn): return L("Gauge learning data missing (Qmax, resistance, lifetime)")
+        case ("gaugeData", .info): return L("Gauge learning data could not be read on this macOS version")
+        case ("serial", .warn): return L("Pack serial number missing or too short")
+        case ("adapter.serial", .warn): return L("Adapter serial number missing")
+        default: break
+        }
+        return switch id {
         case "ref.gauge": L("Gauge chip matches this model")
         case "ref.chemistry": L("Chemistry ID matches this model")
         case "ref.designCapacity": L("Design capacity matches this model")

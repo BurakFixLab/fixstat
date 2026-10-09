@@ -896,6 +896,16 @@
         }
       }
     },
+    "Adapter serial number missing" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptör seri numarası yok"
+          }
+        }
+      }
+    },
     "Adapter serial number present" : {
       "localizations" : {
         "tr" : {
@@ -3446,6 +3456,26 @@
         }
       }
     },
+    "Gauge learning data could not be read on this macOS version" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gauge öğrenme verileri bu macOS sürümünde okunamadı"
+          }
+        }
+      }
+    },
+    "Gauge learning data missing (Qmax, resistance, lifetime)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gauge öğrenme verileri yok (Qmax, direnç, ömür)"
+          }
+        }
+      }
+    },
     "Gauge learning data present (Qmax, resistance, lifetime)" : {
       "localizations" : {
         "tr" : {
@@ -4416,6 +4446,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Üretici verisi"
+          }
+        }
+      }
+    },
+    "Manufacturer data missing" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üretici verisi yok"
           }
         }
       }
@@ -5502,6 +5542,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paket direnci (yük basamağı)"
+          }
+        }
+      }
+    },
+    "Pack serial number missing or too short" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paket seri numarası yok veya çok kısa"
           }
         }
       }

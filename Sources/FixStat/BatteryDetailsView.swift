@@ -144,7 +144,7 @@ private struct PartCheckColumn: View {
                         .foregroundStyle(item.status == .pass ? TemperatureColor.cool : item.status == .warn ? TemperatureColor.hot : .secondary)
                         .frame(width: 14)
                     VStack(alignment: .leading, spacing: 1) {
-                        Text(verbatim: PartText.item(item.id)).fixedSize(horizontal: false, vertical: true)
+                        Text(verbatim: PartText.item(item.id, status: item.status)).fixedSize(horizontal: false, vertical: true)
                         if !item.detail.isEmpty {
                             Text(verbatim: item.detail).font(.caption.monospaced()).foregroundStyle(.secondary)
                         }

@@ -144,7 +144,11 @@ public struct PartCheck: Codable, Sendable, Equatable {
         items.append(Item(id: "manufacturerData", status: strings.isEmpty ? .warn : .pass,
                           detail: strings.joined(separator: " · ")))
         let learned = (b.cellQmax?.isEmpty == false) && (b.cellResistance?.isEmpty == false) && b.lifetime != nil
-        items.append(Item(id: "gaugeData", status: learned ? .pass : .warn, detail: ""))
+        // A genuine gauge always publishes Qmax, resistance and lifetime data; a pack that hides them
+        // is suspicious. When the design capacity, chemistry and cells are missing too, this macOS
+        // keeps the gauge data somewhere FixStat does not read: no evidence either way.
+        let unreadable = b.designCapacity == nil && b.identity?.chemistryID == nil && b.cellVoltages == nil
+        items.append(Item(id: "gaugeData", status: learned ? .pass : unreadable ? .info : .warn, detail: ""))
         let serialLength = b.serial?.count ?? 0
         items.append(Item(id: "serial", status: serialLength >= 10 ? .pass : .warn, detail: ""))
         if let cycles = b.cycleCount, let hours = b.lifetime?.totalOperatingTime, cycles < 5, hours > 500 {

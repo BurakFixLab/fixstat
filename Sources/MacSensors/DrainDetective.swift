@@ -29,7 +29,7 @@ public struct GaugeSnapshot: Codable, Sendable, Equatable {
     }
 
     public static func read(date: Date = Date()) -> GaugeSnapshot? {
-        guard let properties = Registry.properties(ofClass: BatteryReader.registryClass) else { return nil }
+        guard let properties = BatteryReader.properties() else { return nil }
         let data = properties.dict("BatteryData") ?? [:]
         let remaining = properties.int("AppleRawCurrentCapacity")
         let current = properties.int("CurrentCapacity"), maximum = properties.int("MaxCapacity")

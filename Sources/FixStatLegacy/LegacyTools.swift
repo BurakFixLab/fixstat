@@ -235,7 +235,7 @@ final class LegacyBatteryDetails {
         let tone: Tone = check.verdict == .consistent ? .good : check.verdict == .suspicious ? .bad : .neutral
         let items = check.items.map { item -> Block in
             let itemTone: Tone = item.status == .pass ? .good : item.status == .warn ? .bad : .neutral
-            return .status(PartText.item(item.id), itemTone, detail: item.detail.isEmpty ? nil : item.detail)
+            return .status(PartText.item(item.id, status: item.status), itemTone, detail: item.detail.isEmpty ? nil : item.detail)
         }
         return [.list([.headline(title, nil), .headline(PartText.verdict(check.verdict), tone)] + items)]
     }

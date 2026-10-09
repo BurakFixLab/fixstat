@@ -95,30 +95,44 @@ struct CheckDetail: View {
             Text(HardwareText.instructions(item))
                 .foregroundStyle(.secondary)
                 .lineLimit(4)
-            Group {
-                switch item {
-                case .keyboard: KeyboardTestView()
-                case .touchBar: TouchBarTestView()
-                case .trackpad: TrackpadTestView()
-                case .display: DisplayTestView()
-                case .ambientLight: AmbientLightTestView()
-                case .speakers: SpeakerTestView()
-                case .microphone: MicrophoneTestView()
-                case .camera: CameraTestView()
-                case .sensors: SensorCheckView()
-                case .fans: FanTestView()
-                case .wifi: WiFiTestView()
-                case .bluetooth: BluetoothTestView()
-                case .ports: PortsTestView()
-                case .lid: LidTestView()
+            if Self.fixedLayout.contains(item) {
+                pane.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            } else {
+                // Lists (ports, devices, sensors) grow with the Mac: let them scroll.
+                ScrollView {
+                    pane.frame(maxWidth: .infinity, alignment: .topLeading)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             ResultBar(item: item)
         }
         .padding(20)
         .frame(minWidth: 600, maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .monospacedDigit()
+    }
+
+    /// Panes that size themselves to the window (keyboard) or need two-finger scrolls for
+    /// the test itself (trackpad).
+    private static let fixedLayout: Set<HardwareCheck.Item> = [.keyboard, .trackpad]
+
+    @ViewBuilder
+    private var pane: some View {
+        switch item {
+        case .keyboard: KeyboardTestView()
+        case .touchBar: TouchBarTestView()
+        case .trackpad: TrackpadTestView()
+        case .display: DisplayTestView()
+        case .ambientLight: AmbientLightTestView()
+        case .speakers: SpeakerTestView()
+        case .microphone: MicrophoneTestView()
+        case .camera: CameraTestView()
+        case .sensors: SensorCheckView()
+        case .fans: FanTestView()
+        case .wifi: WiFiTestView()
+        case .bluetooth: BluetoothTestView()
+        case .ports: PortsTestView()
+        case .lid: LidTestView()
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 import Foundation
+import IOKit
 
 /// Power adapter as reported in `AdapterDetails`.
 public struct AdapterInfo: Codable, Sendable, Equatable {
@@ -174,14 +175,74 @@ public struct BatteryInfo: Codable, Sendable, Equatable {
 public enum BatteryReader {
     static let registryClass = "AppleSmartBattery"
 
-    /// The raw registry properties of the battery, or nil if the Mac has none.
+    /// The raw registry properties of the battery, or nil if the Mac has none. Where the gauge
+    /// data lives in child nodes (macOS 27), their properties are added under
+    /// `AppleSmartBatteryPack` / `AppleSmartBatteryBanks` so raw dumps keep them.
     public static func rawProperties() -> [String: Any]? {
-        Registry.properties(ofClass: registryClass)
+        guard let nodes = registryNodes() else { return nil }
+        var props = nodes.top
+        if let pack = nodes.pack { props[packKey] = pack }
+        if !nodes.banks.isEmpty { props[banksKey] = nodes.banks }
+        return props
+    }
+
+    /// The battery's properties in the classic layout (everything on `AppleSmartBattery`),
+    /// whichever layout this macOS publishes.
+    public static func properties() -> [String: Any]? {
+        guard let nodes = registryNodes() else { return nil }
+        return merged(nodes.top, pack: nodes.pack, banks: nodes.banks)
     }
 
     public static func read(includeSerial: Bool = false) -> BatteryInfo? {
-        guard let props = rawProperties() else { return nil }
+        guard let props = properties() else { return nil }
         return parse(props, includeSerial: includeSerial)
+    }
+
+    static let packKey = "AppleSmartBatteryPack"
+    static let banksKey = "AppleSmartBatteryBanks"
+
+    private static func registryNodes() -> (top: [String: Any], pack: [String: Any]?, banks: [[String: Any]])? {
+        let service = IOServiceGetMatchingService(ioMainPort, IOServiceMatching(registryClass))
+        guard service != IO_OBJECT_NULL else { return nil }
+        defer { IOObjectRelease(service) }
+        guard let top = Registry.properties(of: service) else { return nil }
+        let pack = Registry.descendants(of: service, className: "AppleSmartBatteryPack").first
+        let banks = Registry.descendants(of: service, className: "AppleSmartBatteryBank")
+        return (top, pack, banks)
+    }
+
+    /// Top-level keys that macOS 27 moved into the pack's (or the battery's own) `BatteryData`.
+    static let movedTopLevelKeys = [
+        "DesignCapacity", "AppleRawMaxCapacity", "AppleRawCurrentCapacity", "NominalChargeCapacity",
+        "Temperature", "VirtualTemperature", "PermanentFailureStatus", "BatteryCellDisconnectCount",
+    ]
+    /// Per-cell `BatteryData` arrays that macOS 27 split into one value per bank.
+    static let perCellKeys = ["CellVoltage", "Qmax", "WeightedRa", "DOD0", "PresentDOD"]
+
+    /// Fills what the classic layout has but `top` lacks from the macOS 27 child nodes:
+    /// pack `BatteryData` → `BatteryData` and the moved top-level keys, bank values (ordered by
+    /// `BankID`) → the per-cell arrays. Values already present are never replaced, so on a
+    /// macOS that still publishes the classic layout nothing changes.
+    static func merged(_ top: [String: Any], pack: [String: Any]?, banks: [[String: Any]]) -> [String: Any] {
+        var props = top
+        var data = top.dict("BatteryData") ?? [:]
+        if let packData = pack?.dict("BatteryData") {
+            for (key, value) in packData where data[key] == nil { data[key] = value }
+        }
+        let bankData = banks
+            .sorted { ($0.int("BankID") ?? 0) < ($1.int("BankID") ?? 0) }
+            .compactMap { $0.dict("BatteryData") }
+        if !bankData.isEmpty {
+            for key in perCellKeys where data[key] == nil {
+                let values = bankData.compactMap { $0.int(key) }
+                if values.count == bankData.count { data[key] = values.map { NSNumber(value: $0) } }
+            }
+        }
+        for key in movedTopLevelKeys where props[key] == nil {
+            if let value = data[key] { props[key] = value }
+        }
+        if !data.isEmpty { props["BatteryData"] = data }
+        return props
     }
 
     /// Sentinel used by the gauge for "not available" time values.

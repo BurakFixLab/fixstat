@@ -27,6 +27,21 @@ enum Registry {
         String(decoding: buffer.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }, as: UTF8.self)
     }
 
+    /// Properties of every entry of class `className` below `entry` (service plane), in
+    /// registry order.
+    static func descendants(of entry: io_registry_entry_t, className: String) -> [[String: Any]] {
+        var iterator: io_iterator_t = 0
+        guard IORegistryEntryCreateIterator(entry, kIOServicePlane, IOOptionBits(kIORegistryIterateRecursively),
+                                            &iterator) == KERN_SUCCESS else { return [] }
+        defer { IOObjectRelease(iterator) }
+        var result: [[String: Any]] = []
+        while case let child = IOIteratorNext(iterator), child != IO_OBJECT_NULL {
+            if self.className(of: child) == className, let props = properties(of: child) { result.append(props) }
+            IOObjectRelease(child)
+        }
+        return result
+    }
+
     static func properties(of entry: io_registry_entry_t) -> [String: Any]? {
         var unmanaged: Unmanaged<CFMutableDictionary>?
         guard IORegistryEntryCreateCFProperties(entry, &unmanaged, kCFAllocatorDefault, 0) == KERN_SUCCESS,
