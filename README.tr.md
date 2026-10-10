@@ -9,7 +9,7 @@
 > **macOS 10.13 High Sierra ve üstünde** (Intel) ve **macOS 11 Big Sur ve üstünde** (Apple
 > Silicon) çalışır — tek bir universal uygulama. macOS 14 ve sonrasında SwiftUI arayüzü,
 > eski sürümlerde aynı özelliklere sahip bir AppKit arayüzü açılır.
-> MacBook Air M1 (macOS 26), MacBook Air 11" Early 2014 (Intel, macOS 11) ve macOS 10.13
+> MacBook Air M1 (macOS 26 ve 27), MacBook Air 11" Early 2014 (Intel, macOS 11) ve macOS 10.13
 > High Sierra yüklü bir Intel iMac'te test edildi. Intel'de sensör isimleri hâlâ tahminidir —
 > geri bildirimlerinizi bekliyoruz.
 >

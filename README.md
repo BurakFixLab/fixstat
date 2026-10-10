@@ -9,7 +9,7 @@
 > **Runs on macOS 10.13 High Sierra or later** (Intel) and **macOS 11 Big Sur or later**
 > (Apple Silicon) — one universal app. macOS 14 and later get the SwiftUI interface, older
 > versions an AppKit interface with the same features.
-> Tested on a MacBook Air M1 (macOS 26), a MacBook Air 11" Early 2014 (Intel, macOS 11) and
+> Tested on a MacBook Air M1 (macOS 26 and 27), a MacBook Air 11" Early 2014 (Intel, macOS 11) and
 > an Intel iMac with macOS 10.13 High Sierra. Intel sensor names are still estimated —
 > reports are welcome.
 >
