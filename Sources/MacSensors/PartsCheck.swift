@@ -110,6 +110,10 @@ public struct PartCheck: Codable, Sendable, Equatable {
 
     // MARK: Battery
 
+    /// Highest cell Qmax a genuine pack reports, as a share of its design capacity (new packs
+    /// stay within a few percent of it).
+    static let qmaxDesignLimit = 1.25
+
     public static func battery(_ b: BatteryInfo, model: String, reference: PartsReference) -> PartCheck {
         var items: [Item] = []
         let ref = reference.batteries[model]
@@ -143,12 +147,19 @@ public struct PartCheck: Codable, Sendable, Equatable {
         let strings = b.identity?.manufacturerStrings ?? []
         items.append(Item(id: "manufacturerData", status: strings.isEmpty ? .warn : .pass,
                           detail: strings.joined(separator: " · ")))
-        let learned = (b.cellQmax?.isEmpty == false) && (b.cellResistance?.isEmpty == false) && b.lifetime != nil
+        let resistance = (b.cellResistance?.isEmpty == false) || (b.cellResistanceTables ?? 0) > 0
+        let learned = (b.cellQmax?.isEmpty == false) && resistance && b.lifetime != nil
         // A genuine gauge always publishes Qmax, resistance and lifetime data; a pack that hides them
         // is suspicious. When the design capacity, chemistry and cells are missing too, this macOS
         // keeps the gauge data somewhere FixStat does not read: no evidence either way.
         let unreadable = b.designCapacity == nil && b.identity?.chemistryID == nil && b.cellVoltages == nil
         items.append(Item(id: "gaugeData", status: learned ? .pass : unreadable ? .info : .warn, detail: ""))
+        // Series cells cannot hold far more than the pack's design capacity: a clone gauge that
+        // reports such Qmax values (e.g. 7150 mAh on a 4270 mAh pack) made them up.
+        if let design = b.designCapacity, design > 0, let highest = b.cellQmax?.max(), highest > 0 {
+            let plausible = Double(highest) <= Double(design) * qmaxDesignLimit
+            items.append(Item(id: "qmax", status: plausible ? .pass : .warn, detail: "\(highest) / \(design) mAh"))
+        }
         let serialLength = b.serial?.count ?? 0
         items.append(Item(id: "serial", status: serialLength >= 10 ? .pass : .warn, detail: ""))
         if let cycles = b.cycleCount, let hours = b.lifetime?.totalOperatingTime, cycles < 5, hours > 500 {

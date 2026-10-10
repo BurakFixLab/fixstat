@@ -19,6 +19,7 @@ public enum PartText {
         case ("gaugeData", .info): return L("Gauge learning data could not be read on this macOS version")
         case ("serial", .warn): return L("Pack serial number missing or too short")
         case ("adapter.serial", .warn): return L("Adapter serial number missing")
+        case ("qmax", .warn): return L("Cell capacity (Qmax) far above the design capacity: made-up gauge data")
         default: break
         }
         return switch id {
@@ -32,6 +33,7 @@ public enum PartText {
         case "manufacturerData": L("Manufacturer data present")
         case "gaugeData": L("Gauge learning data present (Qmax, resistance, lifetime)")
         case "serial": L("Pack serial number present")
+        case "qmax": L("Cell capacity (Qmax) plausible for the design capacity")
         case "cycleReset": L("Very low cycle count despite long operating time (reset or new pack?)")
         case "adapter.manufacturer": L("Manufacturer reported as Apple")
         case "adapter.nameWatts": L("Rated power matches the name")

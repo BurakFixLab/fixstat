@@ -1808,6 +1808,26 @@
         }
       }
     },
+    "Cell capacity (Qmax) far above the design capacity: made-up gauge data" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre kapasitesi (Qmax) tasarım kapasitesinin çok üstünde: gauge verisi uydurma"
+          }
+        }
+      }
+    },
+    "Cell capacity (Qmax) plausible for the design capacity" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre kapasitesi (Qmax) tasarım kapasitesiyle tutarlı"
+          }
+        }
+      }
+    },
     "Cell count matches this model" : {
       "localizations" : {
         "tr" : {

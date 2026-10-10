@@ -45,6 +45,28 @@ import Testing
         #expect(warned.isSuperset(of: ["ref.gauge", "ref.designCapacity", "gaugeData", "cycleReset"]))
     }
 
+    @Test func intelGaugeWithResistanceTablesHasLearnedData() {
+        // Intel gauges publish RaTableRaw but no WeightedRa (MacBookAir8,2, macOS 14).
+        var b = Self.genuineBattery
+        b.cellResistance = nil
+        b.cellResistanceTables = 3
+        let check = PartCheck.battery(b, model: "MacBookAir10,1", reference: Self.reference)
+        #expect(check.items.first { $0.id == "gaugeData" }?.status == .pass)
+        #expect(check.verdict == .consistent)
+    }
+
+    @Test func qmaxFarAboveDesignIsMadeUp() {
+        // MacBookPro14,2 aftermarket pack: design 4270 mAh, Qmax 6888 / 6921 / 7150.
+        var b = Self.genuineBattery
+        b.designCapacity = 4270
+        b.cellQmax = [6888, 6921, 7150]
+        let check = PartCheck.battery(b, model: "MacBookPro14,2", reference: Self.reference)
+        #expect(check.items.first { $0.id == "qmax" }?.status == .warn)
+        #expect(check.verdict == .suspicious)
+        let genuine = PartCheck.battery(Self.genuineBattery, model: "MacBookAir10,1", reference: Self.reference)
+        #expect(genuine.items.first { $0.id == "qmax" }?.status == .pass)
+    }
+
     @Test func emptyReferenceListsAreNotChecked() {
         // No chemistry id was recorded for this model (older Intel gauges): no warning for it.
         var reference = Self.reference

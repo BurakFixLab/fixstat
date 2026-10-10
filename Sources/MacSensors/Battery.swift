@@ -158,6 +158,9 @@ public struct BatteryInfo: Codable, Sendable, Equatable {
     /// Weighted cell resistance per cell (`BatteryData.WeightedRa`), gauge units.
     /// Relative differences between cells matter; the absolute unit is not documented.
     public var cellResistance: [Int]?
+    /// Number of per-cell resistance tables (`BatteryData.RaTableRaw`). Intel gauges publish these
+    /// learned tables but no `WeightedRa`.
+    public var cellResistanceTables: Int?
     /// Gauge-internal state of charge in % (`BatteryData.StateOfCharge`).
     public var gaugeStateOfCharge: Int?
     public var permanentFailureStatus: Int?
@@ -299,6 +302,7 @@ public enum BatteryReader {
         }
         info.cellQmax = data.intArray("Qmax")
         info.cellResistance = data.intArray("WeightedRa")
+        if let tables = data["RaTableRaw"] as? [Any], !tables.isEmpty { info.cellResistanceTables = tables.count }
         if let life = data.dict("LifetimeData") {
             info.lifetime = BatteryLifetime(
                 totalOperatingTime: life.int("TotalOperatingTime"),

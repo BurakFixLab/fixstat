@@ -420,6 +420,8 @@ TR = {
     "Video decoder (AVD)": "Video çözücü (AVD)",
     "Gauge learning data missing (Qmax, resistance, lifetime)": "Gauge öğrenme verileri yok (Qmax, direnç, ömür)",
     "Gauge learning data could not be read on this macOS version": "Gauge öğrenme verileri bu macOS sürümünde okunamadı",
+    "Cell capacity (Qmax) far above the design capacity: made-up gauge data": "Hücre kapasitesi (Qmax) tasarım kapasitesinin çok üstünde: gauge verisi uydurma",
+    "Cell capacity (Qmax) plausible for the design capacity": "Hücre kapasitesi (Qmax) tasarım kapasitesiyle tutarlı",
     "Manufacturer data missing": "Üretici verisi yok",
     "Pack serial number missing or too short": "Paket seri numarası yok veya çok kısa",
     "Adapter serial number missing": "Adaptör seri numarası yok",
