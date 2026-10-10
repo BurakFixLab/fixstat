@@ -102,6 +102,35 @@ final class IOReportSubscription {
     func subGroup(_ channel: CFDictionary) -> String { api.subGroup(channel)?.takeUnretainedValue() as String? ?? "" }
 }
 
+/// Every IOReport channel as "group | subgroup | name | unit", sorted (diagnostic dumps: shows
+/// what a new macOS added or moved). Empty without libIOReport.
+public enum IOReportCatalog {
+    typealias CopyAll = @convention(c) (UInt64, UInt64) -> Unmanaged<CFMutableDictionary>?
+    typealias ChannelString = IOReportSubscription.ChannelString
+
+    public static func channels() -> [String] {
+        guard let api = IOReportSubscription.api, let handle = dlopen("/usr/lib/libIOReport.dylib", RTLD_LAZY),
+              let copyAll = dlsym(handle, "IOReportCopyAllChannels").map({ unsafeBitCast($0, to: CopyAll.self) }),
+              let group = dlsym(handle, "IOReportChannelGetGroup").map({ unsafeBitCast($0, to: ChannelString.self) }),
+              let all = copyAll(0, 0)?.takeRetainedValue() as NSDictionary?,
+              let list = all["IOReportChannels"] as? [NSDictionary]
+        else { return [] }
+        func text(_ f: ChannelString, _ channel: CFDictionary) -> String {
+            (f(channel)?.takeUnretainedValue() as String? ?? "").trimmingCharacters(in: .whitespaces)
+        }
+        // Wi-Fi groups carry peer MAC addresses ("Interface en0 Peer …"): masked.
+        let mac = try? NSRegularExpression(pattern: "([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}")
+        let lines = list.map { item -> String in
+            let channel = item as CFDictionary
+            let line = [text(group, channel), text(api.subGroup, channel), text(api.name, channel), text(api.unit, channel)]
+                .joined(separator: " | ")
+            let range = NSRange(line.startIndex..., in: line)
+            return mac?.stringByReplacingMatches(in: line, range: range, withTemplate: "xx:xx:xx:xx:xx:xx") ?? line
+        }
+        return Array(Set(lines)).sorted()
+    }
+}
+
 /// Reads IOReport's energy counters (Apple Silicon): CPU clusters, GPU, ANE, DRAM where the chip
 /// reports them. Two sources: the PMGR / GPU channels of the "Energy Model" group and the power
 /// manager's "Energy Counters" (group "PMP"). macOS 27 stopped updating the PMGR CPU channels
