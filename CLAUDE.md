@@ -118,8 +118,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   LDOs (`P0l`…), `R` = second PMU, plus `PSTR` (system), `PDTR` (DC in), `PPBR` (battery rail).
   M1: `P0b` = P-cluster CPU, `P1b` = GPU (from load tests); names differ per chip, so they come
   from bench recordings, which keep the mean of every rail per phase. SoC component power from
-  IOReport's "Energy Model" group (`EnergySampler`, private libIOReport via dlopen, no root; M1:
-  CPU + clusters, GPU, PCIe). Tools > Power analysis (`PowerAnalyzer` in the core, 1 s, only
+  IOReport (`EnergySampler`, private libIOReport via dlopen, no root): the PMP group's "Energy
+  Counters" (M1: E / P clusters, GPU, DRAM, DCS, display (DISP), SOC_AON, SOC_REST, ISP, AVE, MSR)
+  win; the "Energy Model" group fills in the rest (PCIe). macOS 27 froze the PMGR CPU channels of
+  "Energy Model" (they keep their boot value), so on 27 only PMP gives CPU power. Tools > Power analysis (`PowerAnalyzer` in the core, 1 s, only
   while open; `PowerView` / `LegacyPower`; snapshot `--power` / `--tool power`). CPU section:
   cluster active share and mean frequency while active from IOReport "CPU Stats" (complex
   performance states) with MHz from the `pmgr` tables `voltage-states1-sram` (E) /
@@ -134,7 +136,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   draws its charts by hand (Swift Charts needs macOS 13).
 - HID power page (0xff08) voltage/current events return implausible raw values; they are
   behind `sensordump --hid-power` and marked experimental.
-- Battery (`AppleSmartBattery`): health = `AppleRawMaxCapacity / DesignCapacity`;
+- Battery (`AppleSmartBattery`): macOS 27 moved the gauge data into child nodes:
+  `AppleSmartBatteryPack` (`BatteryData`: design / raw capacities, temperature, chemistry,
+  lifetime) and one `AppleSmartBatteryBank` per series cell (`BatteryData`: CellVoltage, Qmax,
+  WeightedRa, DOD0); `BatteryReader.properties()` fills the classic layout from them (macOS
+  11–26 publish everything on the battery node). Health = `AppleRawMaxCapacity / DesignCapacity`;
   `CurrentCapacity/MaxCapacity` is % on Apple Silicon and mAh on Intel (the ratio works
   for both). Cell voltages in `BatteryData.CellVoltage`.
 - Real adapter input power is `PowerTelemetryData.SystemPowerIn` (Apple Silicon only).

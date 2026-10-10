@@ -1700,6 +1700,16 @@
         }
       }
     },
+    "Camera processor (ISP)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamera işlemcisi (ISP)"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "localizations" : {
         "tr" : {
@@ -2684,6 +2694,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ekran arka ışığı"
+          }
+        }
+      }
+    },
+    "Display controller (DCP)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekran denetleyicisi (DCP)"
           }
         }
       }
@@ -4616,6 +4636,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bellek (DRAM)"
+          }
+        }
+      }
+    },
+    "Memory controller (DCS)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bellek denetleyicisi (DCS)"
           }
         }
       }
@@ -7236,6 +7266,26 @@
         }
       }
     },
+    "SoC always-on (AON)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SoC sürekli açık bölüm (AON)"
+          }
+        }
+      }
+    },
+    "SoC, other blocks" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SoC, diğer bloklar"
+          }
+        }
+      }
+    },
     "Spare blocks below threshold (%lld %%)." : {
       "localizations" : {
         "tr" : {
@@ -8624,6 +8674,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uzun çalışma süresine rağmen çok düşük döngü sayısı (sıfırlanmış veya yeni paket?)"
+          }
+        }
+      }
+    },
+    "Video decoder (AVD)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video çözücü (AVD)"
+          }
+        }
+      }
+    },
+    "Video encoder (AVE)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video kodlayıcı (AVE)"
+          }
+        }
+      }
+    },
+    "Video scaler (MSR)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video ölçekleyici (MSR)"
           }
         }
       }

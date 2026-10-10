@@ -71,8 +71,9 @@ final class IOReportSubscription {
     private var last: (sample: CFDictionary, date: Date)?
 
     /// nil where IOReport or the group is missing (Intel, old macOS).
-    init?(group: String) {
-        guard let api = Self.api, let list = api.copy(group as CFString, nil, 0, 0, 0)?.takeRetainedValue() else { return nil }
+    init?(group: String, subGroup: String? = nil) {
+        guard let api = Self.api,
+              let list = api.copy(group as CFString, subGroup as CFString?, 0, 0, 0)?.takeRetainedValue() else { return nil }
         var subscribed: Unmanaged<CFMutableDictionary>?
         guard let subscription = api.subscribe(nil, list, &subscribed, 0, nil), let channels = subscribed?.takeRetainedValue()
         else { return nil }
@@ -102,23 +103,32 @@ final class IOReportSubscription {
 }
 
 /// Reads IOReport's energy counters (Apple Silicon): CPU clusters, GPU, ANE, DRAM where the chip
-/// reports them.
+/// reports them. Two sources: the PMGR / GPU channels of the "Energy Model" group and the power
+/// manager's "Energy Counters" (group "PMP"). macOS 27 stopped updating the PMGR CPU channels
+/// (they keep their value from boot), while PMP counts CPU, GPU, DRAM, display, SoC always-on and
+/// more; so PMP wins wherever it reports, and "Energy Model" fills in what PMP lacks (PCIe).
 public final class EnergySampler {
-    private let report: IOReportSubscription
+    private let model: IOReportSubscription?
+    private let pmp: IOReportSubscription?
 
     public init?() {
-        guard let report = IOReportSubscription(group: "Energy Model") else { return nil }
-        self.report = report
+        model = IOReportSubscription(group: "Energy Model")
+        pmp = IOReportSubscription(group: "PMP", subGroup: "Energy Counters")
+        if model == nil && pmp == nil { return nil }
     }
 
     /// Power since the previous call (the first call only starts the count and returns []).
     /// Per-core and internal detail channels are left out; zero channels too.
     public func sample() -> [ComponentPower] {
+        Self.merged(model: model.map(Self.read) ?? [], pmp: pmp.map(Self.read) ?? [])
+    }
+
+    private static func read(_ report: IOReportSubscription) -> [ComponentPower] {
         guard let (channels, seconds) = report.delta() else { return [] }
         var out: [ComponentPower] = []
         for channel in channels {
             let name = report.name(channel)
-            guard Self.isSummary(name) else { continue }
+            guard isSummary(name) else { continue }
             let unit = (report.api.unit(channel)?.takeUnretainedValue() as String? ?? "").trimmingCharacters(in: .whitespaces)
             let scale: Double
             switch unit {
@@ -133,10 +143,38 @@ public final class EnergySampler {
         return out
     }
 
-    /// Totals and clusters; not per-core channels ("PCPU2", "PACC0_CPU3"), DTL / CPM details.
+    /// PMP's components plus a CPU total (its clusters); "Energy Model" only for what PMP does not
+    /// cover. Without PMP readings, "Energy Model" as it is.
+    static func merged(model: [ComponentPower], pmp: [ComponentPower]) -> [ComponentPower] {
+        guard !pmp.isEmpty else { return model }
+        var out = pmp
+        let clusters = pmp.filter { $0.name == "ECPU" || $0.name == "PCPU" }
+        if !clusters.isEmpty {
+            out.append(ComponentPower(name: "CPU Energy", watts: clusters.reduce(0) { $0 + $1.watts }))
+        }
+        let covered = Set(out.map { kind($0.name) })
+        out += model.filter { !covered.contains(kind($0.name)) }
+        return out
+    }
+
+    /// The same component under either source's name ("GPU Energy" / "GPU").
+    static func kind(_ name: String) -> String {
+        switch name {
+        case "CPU Energy": return "cpu"
+        case "ECPU", "EACC_CPU": return "ecpu"
+        case "PCPU", "PACC_CPU": return "pcpu"
+        case "GPU Energy", "GPU": return "gpu"
+        case "ANE Energy", "ANE": return "ane"
+        case "DRAM Energy", "DRAM": return "dram"
+        default: return name
+        }
+    }
+
+    /// Totals and clusters; not per-core channels ("PCPU2", "PACC0_CPU3", "PCORE1"), DTL / CPM details.
     static func isSummary(_ name: String) -> Bool {
         if name.contains("DTL") || name.hasSuffix("CPM") { return false }
         if name.range(of: "^[EP]CPU[0-9]+$", options: .regularExpression) != nil { return false }
+        if name.range(of: "^[EP]CORE[0-9]+$", options: .regularExpression) != nil { return false }
         if name.range(of: "_CPU[0-9]+$", options: .regularExpression) != nil { return false }
         return true
     }

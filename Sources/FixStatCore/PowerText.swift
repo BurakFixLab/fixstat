@@ -18,6 +18,15 @@ public enum PowerText {
         case "DRAM Energy", "DRAM": return L("Memory (DRAM)")
         case "ECPU", "EACC_CPU": return L("Efficiency cluster")
         case "PCPU", "PACC_CPU": return L("Performance cluster")
+        // Power manager (PMP) energy counters.
+        case "DISP": return L("Display controller (DCP)")
+        case "SOC_AON": return L("SoC always-on (AON)")
+        case "SOC_REST": return L("SoC, other blocks")
+        case "DCS": return L("Memory controller (DCS)")
+        case "ISP": return L("Camera processor (ISP)")
+        case "AVE": return L("Video encoder (AVE)")
+        case "MSR": return L("Video scaler (MSR)")
+        case "AVD": return L("Video decoder (AVD)")
         default: break
         }
         if let n = number(in: name, pattern: "^PACC([0-9]+)_CPU$") { return L("Performance cluster %lld", n + 1) }
