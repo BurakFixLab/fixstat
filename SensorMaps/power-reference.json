@@ -1,8 +1,24 @@
 {
   "models" : {
+    "Mac14,2" : {
+      "idleDisplayOffW" : [
+        5
+      ]
+    },
+    "Mac15,12" : {
+      "idleDisplayOffW" : [
+        5.4
+      ]
+    },
     "MacBookAir6,1" : {
       "idleDisplayOffW" : [
-        5.8
+        5.8,
+        5.7
+      ]
+    },
+    "MacBookPro14,2" : {
+      "idleDisplayOffW" : [
+        5.4
       ]
     }
   },
