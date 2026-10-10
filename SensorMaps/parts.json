@@ -66,6 +66,14 @@
       "cellVendors": ["ATL"],
       "samples": 1
     },
+    "MacBookAir9,1": {
+      "designCapacity": [4381],
+      "chemistryIDs": [6210],
+      "gauges": ["bq20z451"],
+      "cellCount": 3,
+      "cellVendors": ["ATL"],
+      "samples": 1
+    },
     "MacBookPro15,2": {
       "designCapacity": [5088],
       "chemistryIDs": [6262],
@@ -99,7 +107,7 @@
       "watts": 94,
       "profiles": [[5000, 3000], [9000, 3000], [15000, 3000], [20000, 4700]],
       "firmware": ["01070051"],
-      "samples": 10
+      "samples": 11
     },
     {
       "id": "0x1656",
