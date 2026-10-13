@@ -71,7 +71,7 @@ public struct SSDInfo: Codable, Sendable, Equatable {
     public var ata: ATAHealth?
     /// "PCI-Express", "SATA", "Apple Fabric" …
     public var interconnect: String?
-    /// Space on the startup volume.
+    /// Space on the internal SSD (the startup volume, unless the Mac was started from another disk).
     public var space: VolumeSpace?
     /// Further internal ATA drives, e.g. the hard disk of a Fusion Drive iMac.
     public var otherDrives: [ATADrive] = []
@@ -141,7 +141,7 @@ public struct SSDInfo: Codable, Sendable, Equatable {
             let devices = DiskIOStatistics.internalDevices()
             info.io = (devices.first { $0.model != nil && $0.model == info.model } ?? devices.first)?.statistics
         }
-        info.space = VolumeSpace.startup()
+        info.space = InternalStorage.space()
         if UserDefaults.standard.bool(forKey: "FixStatSampleATA") { info = sampleATA(space: info.space) }
         guard info.model != nil || info.health != nil || info.ata != nil else { return nil }
         return info

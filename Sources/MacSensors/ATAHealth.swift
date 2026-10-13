@@ -207,15 +207,27 @@ public struct ATADrive: Codable, Sendable, Equatable {
     }
 }
 
-/// Space on the startup volume (the APFS container is shared by its volumes; "used" is what
-/// is not available, as Finder shows it).
+/// Space on the internal SSD (the APFS container is shared by its volumes; "used" is what
+/// is not available, as Finder shows it): the startup volume, or `InternalStorage.space()`.
 public struct VolumeSpace: Codable, Sendable, Equatable {
     public var total: Double
     public var available: Double
+    /// The Mac was started from another disk: this is the internal SSD, not the startup volume.
+    public var startedFromOtherDisk: Bool?
     public var used: Double { max(0, total - available) }
 
+    public init(total: Double, available: Double, startedFromOtherDisk: Bool? = nil) {
+        self.total = total
+        self.available = available
+        self.startedFromOtherDisk = startedFromOtherDisk
+    }
+
     public static func startup() -> VolumeSpace? {
-        let url = URL(fileURLWithPath: "/")
+        of(URL(fileURLWithPath: "/"))
+    }
+
+    /// Space of the volume (its APFS container) at `url`.
+    public static func of(_ url: URL) -> VolumeSpace? {
         var keys: Set<URLResourceKey> = [.volumeTotalCapacityKey, .volumeAvailableCapacityKey]
         if #available(macOS 10.13, *) { keys.insert(.volumeAvailableCapacityForImportantUsageKey) }
         guard let values = try? url.resourceValues(forKeys: keys), let total = values.volumeTotalCapacity else { return nil }

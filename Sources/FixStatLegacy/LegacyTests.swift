@@ -394,6 +394,9 @@ final class LegacySSD: LegacySnapshotStartable {
         var blocks: [Block] = [
             .section(L("Write–verify stress test")),
             .secondary(L("Writes a test file to free space, reads it back and compares every byte. Finds data corruption, I/O errors and stalling areas that point to failing NAND. Only free space can be tested, and the test uses some of the SSD's write endurance.")),
+        ]
+        if let note = SSDText.testLocationNote { blocks.append(.secondary(note)) }
+        blocks += [
             .view(hStack([sizeControl,
                           fixed(makeLabel(L("%@ usable", Format.bytes(available)), size: LegacyStyle.caption,
                                           color: .secondaryLabelColor)),

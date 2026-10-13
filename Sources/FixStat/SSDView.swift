@@ -148,6 +148,11 @@ struct SSDView: View {
             Text("Writes a test file to free space, reads it back and compares every byte. Finds data corruption, I/O errors and stalling areas that point to failing NAND. Only free space can be tested, and the test uses some of the SSD's write endurance.")
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
+            if let note = SSDText.testLocationNote {
+                Label(note, systemImage: "externaldrive")
+                    .font(.callout)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             HStack(spacing: 12) {
                 Picker("Size", selection: $gigabytes) {
                     ForEach([2.0, 8.0, 16.0, 32.0], id: \.self) { size in

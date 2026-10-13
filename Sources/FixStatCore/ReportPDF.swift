@@ -287,7 +287,9 @@ private final class ReportWriter {
     private func ssdSection(_ ssd: SSDInfo) {
         group(L("SSD"))
         row(L("Model"), [ssd.model, ssd.capacity.map { Format.bytes($0) }].compactMap { $0 }.joined(separator: " · "))
-        if let space = ssd.space { row(L("Startup volume"), SSDText.space(space)) }
+        if let space = ssd.space {
+            row(space.startedFromOtherDisk == true ? L("Internal SSD") : L("Startup volume"), SSDText.space(space))
+        }
         if let h = ssd.health {
             let findings = SSDText.healthFindings(h)
             row(L("Health (SMART)"), ([SSDText.healthSummary(ssd)].compactMap { $0 }

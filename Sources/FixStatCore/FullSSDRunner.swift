@@ -188,7 +188,11 @@ public final class FullSSDRunner: @unchecked Sendable {
         onChange?()
         let test = SSDStressTest()
         writeTest = test
-        let directory = FileManager.default.temporaryDirectory
+        guard let directory = InternalStorage.testDirectory() else {
+            // Started from another disk with the internal SSD not mounted: the surface scan is done.
+            finish(FullSSDResult(surface: surface, writeVerify: nil, healthBefore: before, healthAfter: SSDInfo.readHealth()))
+            return
+        }
         Thread.detachNewThread { [weak self] in
             let written = test.run(bytes: writeBytes, directory: directory) { progress in
                 let done = Double(progress.chunk) / Double(max(progress.chunkCount, 1))

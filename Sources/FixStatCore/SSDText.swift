@@ -64,9 +64,21 @@ public enum SSDText {
         L("macOS lets apps read the SMART data of this SSD only with Full Disk Access: System Settings › Privacy & Security › Full Disk Access › turn FixStat on, then open this window again.")
     }
 
-    /// "162 GB used of 245 GB · 83 GB free" (startup volume).
+    /// "162 GB used of 245 GB · 83 GB free" (the internal SSD).
     public static func space(_ space: VolumeSpace) -> String {
-        L("%@ used of %@ · %@ free", Format.bytes(space.used), Format.bytes(space.total), Format.bytes(space.available))
+        let text = L("%@ used of %@ · %@ free", Format.bytes(space.used), Format.bytes(space.total), Format.bytes(space.available))
+        return space.startedFromOtherDisk == true ? text + " · " + L("internal SSD (the Mac was started from another disk)") : text
+    }
+
+    /// Where the write–verify test writes when the Mac was started from another disk; nil when it
+    /// runs from the internal SSD.
+    public static var testLocationNote: String? {
+        guard !InternalStorage.startedFromInternal else { return nil }
+        guard let directory = InternalStorage.testDirectory() else {
+            return L("The Mac was started from another disk and the internal SSD is not mounted (or still locked with FileVault). Mount it in Disk Utility to test it.")
+        }
+        let name = (try? directory.resourceValues(forKeys: [.volumeNameKey]))?.volumeName ?? directory.path
+        return L("The Mac was started from another disk: the test writes to the internal SSD (%@).", name)
     }
 
     /// Model line: capacity, NAND, interconnect, firmware.

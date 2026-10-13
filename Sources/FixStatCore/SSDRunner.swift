@@ -25,7 +25,7 @@ public final class SSDRunner: @unchecked Sendable {
 
     /// Free space the test may use, in bytes.
     public static var availableBytes: Int64 {
-        SSDStressTest.availableBytes(in: FileManager.default.temporaryDirectory)
+        InternalStorage.testDirectory().map { SSDStressTest.availableBytes(in: $0) } ?? 0
     }
 
     public func start(gigabytes: Double) {
@@ -42,7 +42,9 @@ public final class SSDRunner: @unchecked Sendable {
             options: [.userInitiated, .idleSystemSleepDisabled], reason: "SSD stress test")
         onChange?()
         let bytes = Int64(gigabytes * 1_000_000_000)
-        let directory = FileManager.default.temporaryDirectory
+        // The internal SSD also when the Mac was started from another disk (the UI does not offer
+        // the test when it is not mounted).
+        let directory = InternalStorage.testDirectory() ?? FileManager.default.temporaryDirectory
         Thread.detachNewThread { [weak self] in
             let result = test.run(bytes: bytes, directory: directory) { progress in
                 DispatchQueue.main.async { self?.update(progress) }

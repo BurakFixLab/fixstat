@@ -4094,6 +4094,16 @@
         }
       }
     },
+    "Internal SSD" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dahili SSD"
+          }
+        }
+      }
+    },
     "I²C errors" : {
       "localizations" : {
         "tr" : {
@@ -8004,6 +8014,26 @@
         }
       }
     },
+    "The Mac was started from another disk and the internal SSD is not mounted (or still locked with FileVault). Mount it in Disk Utility to test it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac başka bir diskten açıldı ve dahili SSD bağlı değil (ya da FileVault ile hâlâ kilitli). Test etmek için Disk İzlencesi'nden bağlayın."
+          }
+        }
+      }
+    },
+    "The Mac was started from another disk: the test writes to the internal SSD (%@)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac başka bir diskten açıldı: test dahili SSD'ye yazar (%@)."
+          }
+        }
+      }
+    },
     "The SSD reports a critical warning (code %lld)." : {
       "localizations" : {
         "tr" : {
@@ -9512,6 +9542,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "kullanımda"
+          }
+        }
+      }
+    },
+    "internal SSD (the Mac was started from another disk)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dahili SSD (Mac başka bir diskten açıldı)"
           }
         }
       }

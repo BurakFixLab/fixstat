@@ -83,7 +83,8 @@ public struct SurfaceScanResult: Codable, Sendable, Equatable {
     }
 }
 
-/// The internal physical disk that holds the startup volume.
+/// The internal physical disk: the one that holds the startup volume, or the internal disk when
+/// the Mac was started from another disk.
 public struct InternalDisk: Sendable, Equatable {
     /// e.g. "disk0"
     public let identifier: String
@@ -93,6 +94,11 @@ public struct InternalDisk: Sendable, Equatable {
 
     /// Uses `diskutil` (no root needed).
     public static func find() -> InternalDisk? {
+        if !InternalStorage.startedFromInternal {
+            guard let whole = InternalStorage.internalWholeDisk(), let info = diskutil(["info", "-plist", whole]),
+                  (info["Internal"] as? Bool) == true, let size = (info["Size"] as? NSNumber)?.int64Value else { return nil }
+            return InternalDisk(identifier: whole, size: size)
+        }
         guard let root = diskutil(["info", "-plist", "/"]) else { return nil }
         var store = (root["APFSPhysicalStores"] as? [[String: Any]])?.first?["APFSPhysicalStore"] as? String
         if store == nil { store = root["ParentWholeDisk"] as? String }
