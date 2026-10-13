@@ -27,6 +27,9 @@ public enum PowerText {
         case "AVE": return L("Video encoder (AVE)")
         case "MSR": return L("Video scaler (MSR)")
         case "AVD": return L("Video decoder (AVD)")
+        case "VDEC": return L("Video decoder (VDEC)")
+        case "AMCC": return L("Memory cache controller (AMCC)")
+        case "DISPEXT": return L("External display controller")
         default: break
         }
         if let n = number(in: name, pattern: "^PACC([0-9]+)_CPU$") { return L("Performance cluster %lld", n + 1) }

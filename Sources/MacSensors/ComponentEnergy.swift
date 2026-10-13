@@ -199,9 +199,10 @@ public final class EnergySampler {
         }
     }
 
-    /// Totals and clusters; not per-core channels ("PCPU2", "PACC0_CPU3", "PCORE1"), DTL / CPM details.
+    /// Totals and clusters; not per-core channels ("PCPU2", "PACC0_CPU3", "PCORE1"), DTL / CPM details
+    /// ("ECPM", "PCPM_SRAM").
     static func isSummary(_ name: String) -> Bool {
-        if name.contains("DTL") || name.hasSuffix("CPM") { return false }
+        if name.contains("DTL") || name.contains("CPM") { return false }
         if name.range(of: "^[EP]CPU[0-9]+$", options: .regularExpression) != nil { return false }
         if name.range(of: "^[EP]CORE[0-9]+$", options: .regularExpression) != nil { return false }
         if name.range(of: "_CPU[0-9]+$", options: .regularExpression) != nil { return false }

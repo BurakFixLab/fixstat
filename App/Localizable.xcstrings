@@ -3028,6 +3028,16 @@
         }
       }
     },
+    "External display controller" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Harici ekran denetleyicisi"
+          }
+        }
+      }
+    },
     "Failed" : {
       "localizations" : {
         "tr" : {
@@ -4656,6 +4666,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bellek (DRAM)"
+          }
+        }
+      }
+    },
+    "Memory cache controller (AMCC)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bellek önbellek denetleyicisi (AMCC)"
           }
         }
       }
@@ -8704,6 +8724,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Video çözücü (AVD)"
+          }
+        }
+      }
+    },
+    "Video decoder (VDEC)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video çözücü (VDEC)"
           }
         }
       }

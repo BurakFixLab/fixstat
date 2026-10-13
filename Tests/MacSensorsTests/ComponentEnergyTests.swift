@@ -22,7 +22,7 @@ import Testing
     }
 
     @Test func perCoreChannelsAreNotSummaries() {
-        for name in ["PCORE0", "ECORE3", "PCPU2", "PACC0_CPU1", "ECPM", "PCPUDTL0a"] {
+        for name in ["PCORE0", "ECORE3", "PCPU2", "PACC0_CPU1", "ECPM", "PCPM_SRAM", "PCPUDTL0a"] {
             #expect(!EnergySampler.isSummary(name), "\(name)")
         }
         for name in ["PCPU", "ECPU", "DRAM", "SOC_AON", "GPU SRAM", "CPU Energy"] {
