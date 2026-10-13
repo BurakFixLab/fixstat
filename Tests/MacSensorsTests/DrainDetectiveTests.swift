@@ -43,6 +43,23 @@ import Testing
         #expect(report.conclusion == .software)
     }
 
+    @Test func shortMeasurementIsNotJudged() {
+        // A healthy M1 Air: 21 mAh in 1 h 51 min shut down, ≈ 11 mA ("elevated" from one short period).
+        let short = DrainReport.make(segments: [Self.segment(.off, hours: 1.85, mAh: 21)], analysis: Self.analysis())
+        #expect(short.off?.tentative == true)
+        #expect(short.off?.level == .elevated)
+        #expect(short.conclusion == .needsMoreData)
+        // Three hours or 50 mAh are enough to judge.
+        let long = DrainReport.make(segments: [Self.segment(.off, hours: 3.2, mAh: 38)], analysis: Self.analysis())
+        #expect(long.off?.tentative == false)
+        #expect(long.conclusion == .hardware(alwaysOn: true))
+        // A short high sleep drain beside a judged normal shutdown stays open too.
+        let mixed = DrainReport.make(segments: [Self.segment(hours: 1.2, mAh: 40),
+                                                Self.segment(.off, hours: 10, mAh: 30, at: 20)],
+                                     analysis: Self.analysis())
+        #expect(mixed.conclusion == .needsMoreData)
+    }
+
     @Test func leakOnlyWhileAsleep() {
         let report = DrainReport.make(segments: [Self.segment(hours: 8, mAh: 560),
                                                  Self.segment(.off, hours: 10, mAh: 30, at: 20)],

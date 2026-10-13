@@ -8,6 +8,8 @@ public enum DrainText {
         switch r.conclusion {
         case .noData:
             return (L("No measurement yet. Unplug the adapter and let the Mac sleep for at least an hour (overnight is best) while FixStat runs. For the shutdown measurement, shut it down for at least an hour; FixStat must open at login."), nil)
+        case .needsMoreData:
+            return (L("The drain looks raised, but the measurements are too short to judge. Measure again: the Mac asleep or shut down on battery for at least 3 hours (overnight is best)."), nil)
         case .normal:
             return (L("Battery drain while asleep and shut down is normal."), false)
         case .software:
@@ -32,8 +34,12 @@ public enum DrainText {
     }
 
     static func summary(_ s: DrainReport.Summary) -> String {
-        L("%@ (%@; median of %lld, %@ in total)", SleepText.milliamps(s.milliamps), level(s.level), s.segments,
-          Format.duration(s.hours * 3600))
+        if s.tentative {
+            return L("%@ (only %@ lost in %@: too little to judge)", SleepText.milliamps(s.milliamps),
+                     Format.milliampHours(Int(s.drained.rounded())), Format.duration(s.hours * 3600))
+        }
+        return L("%@ (%@; median of %lld, %@ in total)", SleepText.milliamps(s.milliamps), level(s.level), s.segments,
+                 Format.duration(s.hours * 3600))
     }
 
     public static func rows(_ r: DrainReport) -> [(String, String)] {
@@ -59,8 +65,9 @@ public enum DrainText {
 
     /// How the levels are judged.
     public static var guide: String {
-        L("Rough guide until reference values per model exist: asleep below %@, shut down below %@ is normal. Only sleeps and shutdowns of at least an hour on battery count.",
-          SleepText.milliamps(DrainReport.sleepElevated), SleepText.milliamps(DrainReport.offElevated))
+        L("Rough guide until reference values per model exist: asleep below %@, shut down below %@ is normal. Only sleeps and shutdowns of at least an hour on battery count, and a verdict needs at least %@ lost or %@ measured.",
+          SleepText.milliamps(DrainReport.sleepElevated), SleepText.milliamps(DrainReport.offElevated),
+          Format.milliampHours(Int(DrainReport.judgedMilliampHours)), Format.duration(DrainReport.judgedHours * 3600))
     }
 
     // MARK: Idle power (display off)

@@ -117,6 +117,22 @@
         }
       }
     },
+    "%@ (only %@ lost in %@: too little to judge)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (only %2$@ lost in %3$@: too little to judge)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (%3$@ içinde yalnızca %2$@ düştü: karar için çok az)"
+          }
+        }
+      }
+    },
     "%@ (raw)" : {
       "localizations" : {
         "tr" : {
@@ -6734,18 +6750,18 @@
         }
       }
     },
-    "Rough guide until reference values per model exist: asleep below %@, shut down below %@ is normal. Only sleeps and shutdowns of at least an hour on battery count." : {
+    "Rough guide until reference values per model exist: asleep below %@, shut down below %@ is normal. Only sleeps and shutdowns of at least an hour on battery count, and a verdict needs at least %@ lost or %@ measured." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rough guide until reference values per model exist: asleep below %1$@, shut down below %2$@ is normal. Only sleeps and shutdowns of at least an hour on battery count."
+            "value" : "Rough guide until reference values per model exist: asleep below %1$@, shut down below %2$@ is normal. Only sleeps and shutdowns of at least an hour on battery count, and a verdict needs at least %3$@ lost or %4$@ measured."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Model başına referans değerler oluşana kadar kaba ölçü: uykuda %1$@, kapalıyken %2$@ altı normaldir. Yalnızca pilde en az bir saat süren uyku ve kapanmalar sayılır."
+            "value" : "Model başına referans değerler oluşana kadar kaba ölçü: uykuda %1$@, kapalıyken %2$@ altı normaldir. Yalnızca pilde en az bir saat süren uyku ve kapanmalar sayılır; karar için en az %3$@ düşüş veya %4$@ ölçüm gerekir."
           }
         }
       }
@@ -8104,6 +8120,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ölçüm sırasında ekran uyandı. Yeniden başlatın ve iki dakika Mac'e dokunmayın."
+          }
+        }
+      }
+    },
+    "The drain looks raised, but the measurements are too short to judge. Measure again: the Mac asleep or shut down on battery for at least 3 hours (overnight is best)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüketim yüksek görünüyor ama ölçümler karar vermek için çok kısa. Tekrar ölçün: Mac pilde en az 3 saat uykuda veya kapalı kalsın (en iyisi bir gece)."
           }
         }
       }

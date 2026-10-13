@@ -118,11 +118,17 @@ public struct DrainReport: Sendable, Equatable {
         public var segments: Int
         public var hours: Double
         public var level: Level
+        /// Charge lost over all segments (mAh).
+        public var drained: Double
+        /// Too little drop and time to judge (gauge resolution): shown, but no verdict.
+        public var tentative: Bool
     }
 
     public enum Conclusion: Equatable, Sendable {
         /// No usable measurement yet.
         case noData
+        /// The drain looks raised, but the measurements are too short to tell.
+        case needsMoreData
         case normal
         /// Dark wakes explain the drain.
         case software
@@ -162,6 +168,10 @@ public struct DrainReport: Sendable, Equatable {
     public static let minimumHours = 1.0
     /// Extra cell loss that counts as self-discharge: at least this many mAh and 0.5 % of Qmax.
     public static let cellExtraMinimum = 15.0
+    /// A level is judged only from at least this much charge lost or this many hours: the gauge's
+    /// remaining capacity moves in steps of several mAh (21 mAh in 1 h 51 min shut down read
+    /// "elevated" on a healthy M1 Air).
+    public static let judgedMilliampHours = 50.0, judgedHours = 3.0
 
     static func summary(_ segments: [DrainSegment], elevated: Double, high: Double) -> Summary? {
         let values = segments.compactMap(\.milliamps).filter { $0 >= 0 }.sorted()
@@ -169,8 +179,11 @@ public struct DrainReport: Sendable, Equatable {
         let median = values.count % 2 == 1 ? values[values.count / 2]
             : (values[values.count / 2 - 1] + values[values.count / 2]) / 2
         let level: Level = median >= high ? .high : median >= elevated ? .elevated : .normal
-        return Summary(milliamps: median, worst: values.last ?? median, segments: values.count,
-                       hours: segments.map(\.hours).reduce(0, +), level: level)
+        let hours = segments.map(\.hours).reduce(0, +)
+        let drained = segments.compactMap(\.drain).filter { $0 > 0 }.reduce(0, +)
+        return Summary(milliamps: median, worst: values.last ?? median, segments: values.count, hours: hours,
+                       level: level, drained: drained,
+                       tentative: drained < judgedMilliampHours && hours < judgedHours)
     }
 
     public static func make(segments: [DrainSegment], analysis: SleepAnalysis?) -> DrainReport {
@@ -208,10 +221,15 @@ public struct DrainReport: Sendable, Equatable {
         let off = summary(offs, elevated: offElevated, high: offHigh)
         let selfDischarging = cellFindings.first { !$0.maybeBalancing }
 
+        // Raised levels count only where there is enough to judge.
+        let sleepJudged = sleep?.tentative == false ? sleep : nil
+        let offJudged = off?.tentative == false ? off : nil
+        let raisedButShort = [sleep, off].contains { $0?.tentative == true && $0!.level > .normal }
+
         let conclusion: Conclusion
         if sleep == nil && off == nil {
             conclusion = selfDischarging.map { .battery(cell: $0.cell) } ?? .noData
-        } else if let sleep, sleep.level > .normal {
+        } else if let sleep = sleepJudged, sleep.level > .normal {
             // More than two dark wakes per hour or over 10 % of the time awake: software.
             let busy = sleepSeconds > 0 && (Double(darkWakes) / (Double(sleepSeconds) / 3600) > 2
                 || Double(darkSeconds) > 0.1 * Double(sleepSeconds))
@@ -221,10 +239,12 @@ public struct DrainReport: Sendable, Equatable {
             } else if let cell = selfDischarging {
                 conclusion = .battery(cell: cell.cell)
             } else {
-                conclusion = .hardware(alwaysOn: off.map { $0.level > .normal })
+                conclusion = .hardware(alwaysOn: offJudged.map { $0.level > .normal })
             }
-        } else if let off, off.level > .normal {
+        } else if let off = offJudged, off.level > .normal {
             conclusion = selfDischarging.map { .battery(cell: $0.cell) } ?? .hardware(alwaysOn: true)
+        } else if raisedButShort {
+            conclusion = selfDischarging.map { .battery(cell: $0.cell) } ?? .needsMoreData
         } else {
             conclusion = selfDischarging.map { .battery(cell: $0.cell) } ?? .normal
         }
