@@ -16,7 +16,7 @@
       "gauges": ["bq20z451"],
       "cellCount": 3,
       "cellVendors": ["ATL"],
-      "samples": 1
+      "samples": 2
     },
     "Mac14,9": {
       "designCapacity": [6075],
@@ -141,6 +141,15 @@
       "watts": 68,
       "profiles": [[5000, 2960], [9000, 2970], [15000, 2980], [20000, 3390]],
       "firmware": ["01030030"],
+      "samples": 1
+    },
+    {
+      "id": "0x7016",
+      "name": "67W USB-C Power Adapter",
+      "manufacturer": "Apple Inc.",
+      "watts": 65,
+      "profiles": [[5000, 3000], [9000, 3000], [15000, 3000], [20000, 3270]],
+      "firmware": ["01050036"],
       "samples": 1
     }
   ]
