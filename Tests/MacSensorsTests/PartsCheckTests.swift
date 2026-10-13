@@ -45,6 +45,18 @@ import Testing
         #expect(warned.isSuperset(of: ["ref.gauge", "ref.designCapacity", "gaugeData", "cycleReset"]))
     }
 
+    @Test func unseenChemistryWithFewSamplesIsNotSuspicious() {
+        // Mac14,2 reference held one COS pack (21620); a genuine ATL pack reports 21353.
+        var b = Self.genuineBattery
+        b.identity?.chemistryID = 99999
+        let check = PartCheck.battery(b, model: "MacBookAir10,1", reference: Self.reference)
+        #expect(check.items.first { $0.id == "ref.chemistry" }?.status == .info)
+        #expect(check.verdict == .consistent)
+        var many = Self.reference
+        many.batteries["MacBookAir10,1"]?.samples = 6
+        #expect(PartCheck.battery(b, model: "MacBookAir10,1", reference: many).verdict == .suspicious)
+    }
+
     @Test func intelGaugeWithResistanceTablesHasLearnedData() {
         // Intel gauges publish RaTableRaw but no WeightedRa (MacBookAir8,2, macOS 14).
         var b = Self.genuineBattery

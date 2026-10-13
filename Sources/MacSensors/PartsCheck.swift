@@ -113,6 +113,8 @@ public struct PartCheck: Codable, Sendable, Equatable {
     /// Highest cell Qmax a genuine pack reports, as a share of its design capacity (new packs
     /// stay within a few percent of it).
     static let qmaxDesignLimit = 1.25
+    /// Genuine samples of a model before an unknown chemistry ID makes a pack suspicious.
+    static let chemistryMinimumSamples = 5
 
     public static func battery(_ b: BatteryInfo, model: String, reference: PartsReference) -> PartCheck {
         var items: [Item] = []
@@ -125,7 +127,11 @@ public struct PartCheck: Codable, Sendable, Equatable {
                 items.append(Item(id: "ref.gauge", status: ref.gauges.contains(gauge) ? .pass : .warn, detail: gauge))
             }
             if let chem = b.identity?.chemistryID, !ref.chemistryIDs.isEmpty {
-                items.append(Item(id: "ref.chemistry", status: ref.chemistryIDs.contains(chem) ? .pass : .warn,
+                // The chemistry follows the cell maker, and genuine packs of one model come from
+                // several makers (Mac14,2: COS 21620 and ATL 21353): an ID not seen yet only
+                // counts against the pack once the model has enough genuine samples.
+                let unseen: Status = (ref.samples ?? 0) >= chemistryMinimumSamples ? .warn : .info
+                items.append(Item(id: "ref.chemistry", status: ref.chemistryIDs.contains(chem) ? .pass : unseen,
                                   detail: String(chem)))
             }
             if let design = b.designCapacity, !ref.designCapacity.isEmpty {

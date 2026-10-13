@@ -20,6 +20,17 @@ public enum PartText {
         case ("serial", .warn): return L("Pack serial number missing or too short")
         case ("adapter.serial", .warn): return L("Adapter serial number missing")
         case ("qmax", .warn): return L("Cell capacity (Qmax) far above the design capacity: made-up gauge data")
+        case ("ref.gauge", .warn): return L("Gauge chip differs from genuine packs of this model")
+        case ("ref.chemistry", .warn): return L("Chemistry ID differs from genuine packs of this model")
+        case ("ref.chemistry", .info): return L("Chemistry ID not seen in genuine packs of this model yet")
+        case ("ref.designCapacity", .warn): return L("Design capacity differs from this model's")
+        case ("ref.cellCount", .warn): return L("Cell count differs from this model's")
+        case ("ref.cellVendor", .info): return L("Cell maker not seen in genuine packs of this model yet")
+        case ("adapter.manufacturer", .warn): return L("Manufacturer not reported as Apple")
+        case ("adapter.nameWatts", .warn): return L("Rated power does not match the name")
+        case ("ref.adapter.id", .warn): return L("Name differs from the Apple adapter with this ID")
+        case ("ref.adapter.firmware", .info): return L("Firmware not seen in genuine adapters yet")
+        case ("ref.adapter.profiles", .warn): return L("Power profiles differ from the genuine adapter")
         default: break
         }
         return switch id {

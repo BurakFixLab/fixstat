@@ -1828,6 +1828,16 @@
         }
       }
     },
+    "Cell count differs from this model's" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre sayısı bu modelinkinden farklı"
+          }
+        }
+      }
+    },
     "Cell count matches this model" : {
       "localizations" : {
         "tr" : {
@@ -1844,6 +1854,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hücre kopmaları"
+          }
+        }
+      }
+    },
+    "Cell maker not seen in genuine packs of this model yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hücre üreticisi bu modelin orijinal paketlerinde henüz görülmedi"
           }
         }
       }
@@ -2120,12 +2140,32 @@
         }
       }
     },
+    "Chemistry ID differs from genuine packs of this model" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kimya kodu bu modelin orijinal paketlerinden farklı"
+          }
+        }
+      }
+    },
     "Chemistry ID matches this model" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kimya kodu bu modelle uyuşuyor"
+          }
+        }
+      }
+    },
+    "Chemistry ID not seen in genuine packs of this model yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kimya kodu bu modelin orijinal paketlerinde henüz görülmedi"
           }
         }
       }
@@ -2624,6 +2664,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tasarım kapasitesi"
+          }
+        }
+      }
+    },
+    "Design capacity differs from this model's" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasarım kapasitesi bu modelinkinden farklı"
           }
         }
       }
@@ -3176,6 +3226,16 @@
         }
       }
     },
+    "Firmware not seen in genuine adapters yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firmware orijinal adaptörlerde henüz görülmedi"
+          }
+        }
+      }
+    },
     "Firmware seen in genuine adapters" : {
       "localizations" : {
         "tr" : {
@@ -3482,6 +3542,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gauge çipi"
+          }
+        }
+      }
+    },
+    "Gauge chip differs from genuine packs of this model" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gauge çipi bu modelin orijinal paketlerinden farklı"
           }
         }
       }
@@ -4520,6 +4590,16 @@
         }
       }
     },
+    "Manufacturer not reported as Apple" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üretici Apple olarak bildirilmiyor"
+          }
+        }
+      }
+    },
     "Manufacturer reported as Apple" : {
       "localizations" : {
         "tr" : {
@@ -4816,6 +4896,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ad"
+          }
+        }
+      }
+    },
+    "Name differs from the Apple adapter with this ID" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adı bu kimlikteki Apple adaptöründen farklı"
           }
         }
       }
@@ -6068,6 +6158,16 @@
         }
       }
     },
+    "Power profiles differ from the genuine adapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güç profilleri orijinal adaptörden farklı"
+          }
+        }
+      }
+    },
     "Power profiles match the genuine adapter" : {
       "localizations" : {
         "tr" : {
@@ -6254,6 +6354,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yazma ömrü tükenmiş (%%%lld)."
+          }
+        }
+      }
+    },
+    "Rated power does not match the name" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gücü adıyla uyuşmuyor"
           }
         }
       }
