@@ -108,6 +108,12 @@ import Testing
         #expect(PartCheck.adapter(b, reference: Self.reference)?.verdict == .consistent)
     }
 
+    @Test func adapterNameWithTrailingSpace() {
+        // The 70 W adapter reports "70W USB-C Power Adapter " (Mac15,3 bench record).
+        let b = Self.adapterBattery(manufacturer: "Apple Inc.", name: "96W USB-C Power Adapter ", watts: 94, id: "0x7002")
+        #expect(PartCheck.adapter(b, reference: Self.reference)?.verdict == .consistent)
+    }
+
     @Test func foreignAdapter() {
         let b = Self.adapterBattery(manufacturer: "Generic", name: "96W USB-C Power Adapter", watts: 45, id: "0x1234")
         let check = PartCheck.adapter(b, reference: Self.reference)

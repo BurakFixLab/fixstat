@@ -62,7 +62,7 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   M1 (see Hardware findings); M1 Max / M2 Max reuse the CPU entries of the Pro chip
   (assumed, not recorded). M3 GPU pairs wander more (≈ 0.6 °C), so the analyzer allows a looser
   offset for `Tg` than for `Tp` / `Te`; its `Tp1*` / `Te0O–P` are cluster aggregates (derived).
-- Model entries exist for the bench-recorded Macs (Mac14,2 / 14,7 / 14,9 / 15,12 / 16,12,
+- Model entries exist for the bench-recorded Macs (Mac14,2 / 14,7 / 14,9 / 15,3 / 15,12 / 16,12,
   MacBookAir6,1 / 10,1, MacBookPro15,2 / 18,3; `sensormap propose` on the lab records, keys that
   stayed constant through every test except SoC dies moved to `ignored`; only the M1 Air map was
   reviewed by hand). Records of faulty units (MacBookAir7,2, MacBookAir9,1) are not used.

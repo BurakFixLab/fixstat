@@ -179,7 +179,8 @@ public struct PartCheck: Codable, Sendable, Equatable {
         let manufacturer = adapter.manufacturer ?? ""
         items.append(Item(id: "adapter.manufacturer", status: manufacturer == "Apple Inc." ? .pass : .warn, detail: manufacturer))
 
-        let name = adapter.name ?? ""
+        // Some adapters report their name with a trailing space ("70W USB-C Power Adapter ").
+        let name = (adapter.name ?? "").trimmingCharacters(in: .whitespaces)
         if let nameWatts = Int(name.prefix { $0.isNumber }), let watts = adapter.ratedWatts {
             let ok = watts <= nameWatts && watts >= nameWatts - 6
             items.append(Item(id: "adapter.nameWatts", status: ok ? .pass : .warn, detail: "\(name) · \(watts) W"))

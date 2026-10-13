@@ -4,11 +4,11 @@
   "batteries": {
     "Mac14,2": {
       "designCapacity": [4563],
-      "chemistryIDs": [21620],
+      "chemistryIDs": [21620, 21353],
       "gauges": ["bq40z651"],
       "cellCount": 3,
-      "cellVendors": ["COS"],
-      "samples": 1
+      "cellVendors": ["COS", "ATL"],
+      "samples": 3
     },
     "Mac14,7": {
       "designCapacity": [5103],
@@ -29,6 +29,14 @@
     "Mac15,12": {
       "designCapacity": [4563],
       "chemistryIDs": [21353],
+      "gauges": ["bq40z651"],
+      "cellCount": 3,
+      "cellVendors": ["ATL"],
+      "samples": 1
+    },
+    "Mac15,3": {
+      "designCapacity": [6075],
+      "chemistryIDs": [20882],
       "gauges": ["bq40z651"],
       "cellCount": 3,
       "cellVendors": ["ATL"],
@@ -115,6 +123,24 @@
       "manufacturer": "Apple Inc.",
       "watts": 86,
       "firmware": ["01070069"],
+      "samples": 1
+    },
+    {
+      "id": "0x7003",
+      "name": "30W USB-C Power Adapter",
+      "manufacturer": "Apple Inc.",
+      "watts": 30,
+      "profiles": [[5000, 2960], [9000, 2970], [15000, 1980], [20000, 1490]],
+      "firmware": ["01030053"],
+      "samples": 2
+    },
+    {
+      "id": "0x701C",
+      "name": "70W USB-C Power Adapter",
+      "manufacturer": "Apple Inc.",
+      "watts": 68,
+      "profiles": [[5000, 2960], [9000, 2970], [15000, 2980], [20000, 3390]],
+      "firmware": ["01030030"],
       "samples": 1
     }
   ]
