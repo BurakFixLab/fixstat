@@ -25,9 +25,13 @@ public final class TouchBarTester: NSObject, NSTouchBarDelegate {
     public private(set) var touched = Set<Int>()
     /// True when the system-modal presentation was available.
     public private(set) var fullWidth = false
+    /// Touches come from the bar's own sensor too (`TouchBarDigitizer`): the whole physical
+    /// strip counts, including the parts macOS keeps around the Esc slot.
+    public private(set) var readsSensor = false
     public var onChange: (() -> Void)?
 
     private var bar: NSTouchBar?
+    private let digitizer = TouchBarDigitizer()
     private let escapeView: TouchBarCanvas
     private let mainView: TouchBarCanvas
     private static let escapeID = NSTouchBarItem.Identifier("io.github.burakfixlab.fixstat.touchbar.escape")
@@ -43,6 +47,9 @@ public final class TouchBarTester: NSObject, NSTouchBarDelegate {
         for view in [escapeView, mainView] {
             view.onTouch = { [weak self] cell in self?.touch(cell) }
         }
+        digitizer.onTouch = { [weak self] x in
+            self?.touch(min(Self.cellCount - 1, Int(x * Double(Self.cellCount))))
+        }
     }
 
     public var allTouched: Bool { touched.count == Self.cellCount }
@@ -56,18 +63,26 @@ public final class TouchBarTester: NSObject, NSTouchBarDelegate {
 
     public func startTouchTest() {
         touched = []
+        readsSensor = digitizer.start()
         show(.touch)
     }
 
     public func showColour(_ index: Int) {
+        stopSensor()
         show(.colour(index % Self.colours.count))
     }
 
     public func stop() {
         guard mode != .off else { return }
+        stopSensor()
         mode = .off
         dismiss()
         onChange?()
+    }
+
+    private func stopSensor() {
+        digitizer.stop()
+        readsSensor = false
     }
 
     private func touch(_ cell: Int) {
@@ -232,7 +247,9 @@ public enum TouchBarText {
     /// a dead zone.
     public static func width(_ tester: TouchBarTester) -> String? {
         let width = tester.shownWidth
-        return width > 0 ? L("Touch Bar width used: %@ pt", Format.number(Double(width))) : nil
+        guard width > 0 else { return nil }
+        let text = L("Touch Bar width used: %@ pt", Format.number(Double(width)))
+        return tester.readsSensor ? text + " · " + L("touches also read from the Touch Bar sensor (whole strip, Esc area included)") : text
     }
 
     public static func colourName(_ index: Int) -> String {

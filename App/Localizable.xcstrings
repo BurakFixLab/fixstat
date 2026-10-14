@@ -10560,6 +10560,16 @@
         }
       }
     },
+    "touches also read from the Touch Bar sensor (whole strip, Esc area included)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dokunmalar Touch Bar sensöründen de okunuyor (tüm şerit, Esc bölgesi dahil)"
+          }
+        }
+      }
+    },
     "unknown" : {
       "localizations" : {
         "tr" : {

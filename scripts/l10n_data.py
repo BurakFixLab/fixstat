@@ -442,6 +442,7 @@ TR = {
     "The Mac was started from another disk and the internal SSD is not mounted (or still locked with FileVault). Mount it in Disk Utility to test it.": "Mac başka bir diskten açıldı ve dahili SSD bağlı değil (ya da FileVault ile hâlâ kilitli). Test etmek için Disk İzlencesi'nden bağlayın.",
     "The Mac was started from another disk: the test writes to the internal SSD (%@).": "Mac başka bir diskten açıldı: test dahili SSD'ye yazar (%@).",
     "Internal SSD": "Dahili SSD",
+    "touches also read from the Touch Bar sensor (whole strip, Esc area included)": "dokunmalar Touch Bar sensöründen de okunuyor (tüm şerit, Esc bölgesi dahil)",
     "Manufacturer data missing": "Üretici verisi yok",
     "Pack serial number missing or too short": "Paket seri numarası yok veya çok kısa",
     "Adapter serial number missing": "Adaptör seri numarası yok",
