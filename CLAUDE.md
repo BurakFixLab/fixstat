@@ -449,7 +449,14 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   session state (`MonitorCore.usbSpeedResults`) and part of the ports evidence.
   `-FixStatSampleUSBDrive YES` fakes a stick in USB-A 1 backed by a temporary folder.
 - Lid: `IOPMrootDomain.AppleClamshellState` polled, plus the last `pmset -g log` sleep
-  reason ("Clamshell Sleep") after a wake. No lid angle sensor on MacBookAir10,1.
+  reason ("Clamshell Sleep") after a wake. Lid angle (`LidAngleSensor`): the SPU HID device "las"
+  (0x05AC / 0x8104, sensor page 0x20, usage 0x8A; input report 1 = usage 0x047F, 9 bits, 0 … 360°)
+  on MacBook Air M2 / M3 and MacBook Pro M3 (dumps; not on M1, Intel, the 13" M2 MacBook Pro).
+  Read three ways (delivered input value, input report, feature report; which one answers is
+  not confirmed on a real Mac yet), polled every 0.1 s and drawn as a side view; the angle at
+  which macOS reports the lid closed and the range seen are evidence, and a lid that closed
+  while the angle stayed within 20° is a finding. `-FixStatSampleLidAngle YES` swings a made-up
+  lid. No lid angle sensor on MacBookAir10,1.
 - USB-C PD: the active profile is macOS' selection (`AdapterDetails.UsbHvcMenu` /
   `UsbHvcHvcIndex`); the port controller's RDO can lag (showed 5 V while charging at 20 V).
 

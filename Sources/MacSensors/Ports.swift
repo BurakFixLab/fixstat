@@ -375,9 +375,13 @@ public enum PortReader {
 public enum LidSensor {
     /// `AppleClamshellState`: true while the lid is closed. nil on desktops.
     public static func isClosed() -> Bool? {
-        guard let value = Registry.properties(ofClass: "IOPMrootDomain")?["AppleClamshellState"] as? NSNumber
-        else { return nil }
-        return value.boolValue
+        // Only this property: the lid test polls it ten times a second.
+        let service = IOServiceGetMatchingService(ioMainPort, IOServiceMatching("IOPMrootDomain"))
+        guard service != IO_OBJECT_NULL else { return nil }
+        defer { IOObjectRelease(service) }
+        let value = IORegistryEntryCreateCFProperty(service, "AppleClamshellState" as CFString, kCFAllocatorDefault, 0)?
+            .takeRetainedValue() as? NSNumber
+        return value?.boolValue
     }
 
     /// Reason of the most recent sleep in `pmset -g log`, e.g. "Clamshell Sleep".

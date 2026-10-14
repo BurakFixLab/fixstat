@@ -697,12 +697,18 @@ final class LegacyPortsPane: BlockPane, LegacySnapshotStartable {
 
 final class LegacyLidPane: BlockPane {
     private let watcher = LidWatcher()
+    private let drawing = LidAngleView()
+    private var recorded: String?
 
     override init(core: MonitorCore) {
         super.init(core: core)
         watcher.onChange = { [weak self] in
             guard let self else { return }
-            if let event = watcher.detected { core.recordCheck(.lid, detail: event, passed: true) }
+            if let evidence = LidText.evidence(watcher), evidence != recorded {
+                recorded = evidence
+                core.recordCheck(.lid, detail: evidence, passed: LidText.finding(watcher) == nil)
+            }
+            drawing.angle = watcher.angle
             refresh()
         }
     }
@@ -722,6 +728,20 @@ final class LegacyLidPane: BlockPane {
             blocks.append(.headline(closed ? L("Lid closed") : L("Lid open"), nil))
         } else {
             blocks.append(.secondary(L("This Mac has no lid sensor.")))
+        }
+        if watcher.hasAngleSensor {
+            let value = makeLabel(watcher.angle.map(LidText.angle) ?? "–", size: 30, weight: .semibold)
+            var texts: [NSView] = [value]
+            for line in LidText.lines(watcher) { texts.append(makeLabel(line, color: .secondaryLabelColor)) }
+            if watcher.angle == nil { texts.append(makeLabel(LidText.waitingForAngle, color: .secondaryLabelColor)) }
+            let column = NSStackView(views: texts)
+            column.orientation = .vertical
+            column.alignment = .leading
+            blocks.append(.view(hStack([drawing, column], spacing: 24)))
+            if let finding = LidText.finding(watcher) { blocks.append(.status(finding, .bad)) }
+            if let source = LidText.source(watcher) { blocks.append(.caption(source)) }
+        } else if watcher.closed != nil {
+            blocks.append(.secondary(LidText.noAngleSensor))
         }
         if let event = watcher.detected {
             blocks.append(.status(event, .good))
@@ -912,5 +932,36 @@ final class TouchBarMirrorView: NSView {
             (touched.contains(index) ? LegacyStyle.cool : NSColor.labelColor.withAlphaComponent(0.12)).setFill()
             NSBezierPath(roundedRect: cell, xRadius: 3, yRadius: 3).fill()
         }
+    }
+}
+
+/// Side view of the notebook at the measured hinge angle (AppKit twin of `LidAngleDrawing`).
+final class LidAngleView: NSView {
+    var angle: Double? { didSet { if angle != oldValue { needsDisplay = true } } }
+
+    override var intrinsicContentSize: NSSize { NSSize(width: 220, height: 150) }
+
+    override func draw(_ dirtyRect: NSRect) {
+        let length = bounds.width * 0.62
+        // AppKit's y axis points up: the hinge sits near the bottom.
+        let hinge = NSPoint(x: bounds.width * 0.3, y: 18)
+        NSColor.secondaryLabelColor.setFill()
+        NSBezierPath(roundedRect: NSRect(x: hinge.x, y: hinge.y - 7, width: length, height: 7), xRadius: 3, yRadius: 3).fill()
+        guard let angle else { return }
+        let degrees = CGFloat(min(max(angle, 0), 200))
+        let radians = degrees * .pi / 180
+        let lid = NSBezierPath()
+        lid.move(to: hinge)
+        lid.line(to: NSPoint(x: hinge.x + length * cos(radians), y: hinge.y + length * sin(radians)))
+        lid.lineWidth = 6
+        lid.lineCapStyle = .round
+        LegacyStyle.accent.setStroke()
+        lid.stroke()
+        let arc = NSBezierPath()
+        arc.appendArc(withCenter: hinge, radius: 34, startAngle: 0, endAngle: degrees)
+        arc.lineWidth = 1.5
+        arc.setLineDash([3, 3], count: 2, phase: 0)
+        NSColor.secondaryLabelColor.setStroke()
+        arc.stroke()
     }
 }

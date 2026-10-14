@@ -1112,6 +1112,22 @@
         }
       }
     },
+    "Angle seen: %@ – %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Angle seen: %1$@ – %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görülen açı: %1$@ – %2$@"
+          }
+        }
+      }
+    },
     "Appearance" : {
       "localizations" : {
         "tr" : {
@@ -4286,6 +4302,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seviye %1$@ · tepe %2$@"
+          }
+        }
+      }
+    },
+    "Lid angle sensor found, no reading yet." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapak açısı sensörü bulundu, henüz değer gelmedi."
+          }
+        }
+      }
+    },
+    "Lid angle sensor read through %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapak açısı sensörü %@ ile okunuyor"
           }
         }
       }
@@ -8254,6 +8290,32 @@
         }
       }
     },
+    "The lid closed, but the lid angle sensor gave no reading: check the sensor in the hinge and its cable." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapak kapandı ama kapak açısı sensörü hiç değer vermedi: menteşedeki sensörü ve kablosunu kontrol edin."
+          }
+        }
+      }
+    },
+    "The lid closed, but the lid angle sensor stayed between %@ and %@: check the sensor in the hinge and its cable." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The lid closed, but the lid angle sensor stayed between %1$@ and %2$@: check the sensor in the hinge and its cable."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapak kapandı ama kapak açısı sensörü %1$@ ile %2$@ arasında kaldı: menteşedeki sensörü ve kablosunu kontrol edin."
+          }
+        }
+      }
+    },
     "The power log covers only %@: macOS starts it again after the Mac is erased or its clock is changed." : {
       "localizations" : {
         "tr" : {
@@ -8370,6 +8432,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu Mac'te dahili batarya yok."
+          }
+        }
+      }
+    },
+    "This Mac has no lid angle sensor: only open or closed can be read." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Mac'te kapak açısı sensörü yok: yalnızca açık veya kapalı olduğu okunabilir."
           }
         }
       }
@@ -9642,6 +9714,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS bu SSD'nin SMART verisini yalnızca Tam Disk Erişimi olan uygulamalara açıyor: Sistem Ayarları › Gizlilik ve Güvenlik › Tam Disk Erişimi › FixStat'ı açın, sonra bu pencereyi yeniden açın."
+          }
+        }
+      }
+    },
+    "macOS reported the lid closed at %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS kapağı %@ açıda kapalı bildirdi"
           }
         }
       }

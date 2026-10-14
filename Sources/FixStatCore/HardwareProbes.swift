@@ -403,16 +403,34 @@ public final class LidWatcher {
     public private(set) var detected: String?
     public var onChange: (() -> Void)?
 
+    /// Lid angle in degrees (Macs with a lid angle sensor), the lowest and highest seen, the last
+    /// angle before macOS reported the lid closed, and how the sensor answered.
+    public private(set) var angle: Double?
+    public private(set) var angleLow: Double?
+    public private(set) var angleHigh: Double?
+    public private(set) var closedAtAngle: Double?
+    public private(set) var angleSource: String?
+    public private(set) var hasAngleSensor = false
+
     private var timer: Timer?
     private var observers: [NSObjectProtocol] = []
     private var closedAtSleep = false
+    private var angleSensor: LidAngleSensor?
+    /// `-FixStatSampleLidAngle YES`: a made-up lid swinging between 0° and 130°, for checking
+    /// the pane on a Mac without the sensor.
+    private var sampleStart: Date?
 
     public init() {}
 
     public func start() {
         guard timer == nil else { return }
         closed = LidSensor.isClosed()
-        let timer = Timer(timeInterval: 0.3, repeats: true) { [weak self] _ in
+        angleSensor = LidAngleSensor()
+        sampleStart = UserDefaults.standard.bool(forKey: "FixStatSampleLidAngle") ? Date() : nil
+        hasAngleSensor = angleSensor != nil || sampleStart != nil || LidAngleSensor.isPresent
+        readAngle()
+        // Faster while there is an angle to animate.
+        let timer = Timer(timeInterval: angleSensor != nil || sampleStart != nil ? 0.1 : 0.3, repeats: true) { [weak self] _ in
             self?.poll()
         }
         RunLoop.main.add(timer, forMode: .common)
@@ -431,17 +449,41 @@ public final class LidWatcher {
         timer = nil
         observers.forEach(NSWorkspace.shared.notificationCenter.removeObserver)
         observers = []
+        angleSensor = nil
     }
 
     private func poll() {
+        let before = angle
+        let angleChanged = readAngle()
         let now = LidSensor.isClosed()
-        var changed = now != closed
-        if now == true, closed == false, detected == nil {
-            detected = L("Lid closing detected at %@", Format.timeWithSeconds(Date()))
+        var changed = now != closed || angleChanged
+        if now == true, closed == false {
+            closedAtAngle = before ?? angle
+            if detected == nil {
+                detected = L("Lid closing detected at %@", Format.timeWithSeconds(Date()))
+            }
             changed = true
         }
         closed = now
         if changed { onChange?() }
+    }
+
+    /// True when the angle changed.
+    @discardableResult
+    private func readAngle() -> Bool {
+        var reading = angleSensor?.read()
+        if let sampleStart {
+            let phase = Date().timeIntervalSince(sampleStart).truncatingRemainder(dividingBy: 8) / 8
+            let degrees = (65 - 65 * cos(phase * 2 * .pi)).rounded()
+            reading = LidAngleSensor.Reading(degrees: degrees, method: .inputValue, raw: "sample")
+        }
+        guard let reading else { return false }
+        angleSource = "\(reading.method.rawValue) · \(reading.raw)"
+        angleLow = min(angleLow ?? reading.degrees, reading.degrees)
+        angleHigh = max(angleHigh ?? reading.degrees, reading.degrees)
+        guard reading.degrees != angle else { return false }
+        angle = reading.degrees
+        return true
     }
 
     private func checkAfterWake() {
@@ -458,4 +500,45 @@ public final class LidWatcher {
             }
         }
     }
+}
+
+/// Texts of the lid test's angle part (both interfaces).
+public enum LidText {
+    /// "112°" (hinge angle, not a temperature).
+    public static func angle(_ degrees: Double) -> String { Format.degrees(degrees) }
+
+    /// Range seen and where macOS reported the lid closed.
+    public static func lines(_ watcher: LidWatcher) -> [String] {
+        var lines: [String] = []
+        if let low = watcher.angleLow, let high = watcher.angleHigh, high > low {
+            lines.append(L("Angle seen: %@ – %@", angle(low), angle(high)))
+        }
+        if let closedAt = watcher.closedAtAngle {
+            lines.append(L("macOS reported the lid closed at %@", angle(closedAt)))
+        }
+        return lines
+    }
+
+    /// The lid closed but the angle hardly moved: the sensor does not follow the lid.
+    public static func finding(_ watcher: LidWatcher) -> String? {
+        guard watcher.hasAngleSensor, watcher.detected != nil else { return nil }
+        guard let low = watcher.angleLow, let high = watcher.angleHigh else {
+            return L("The lid closed, but the lid angle sensor gave no reading: check the sensor in the hinge and its cable.")
+        }
+        guard high - low < 20 else { return nil }
+        return L("The lid closed, but the lid angle sensor stayed between %@ and %@: check the sensor in the hinge and its cable.",
+                 angle(low), angle(high))
+    }
+
+    /// Evidence for the checklist when the lid closed.
+    public static func evidence(_ watcher: LidWatcher) -> String? {
+        guard let detected = watcher.detected else { return nil }
+        return ([detected] + lines(watcher)).joined(separator: " · ")
+    }
+
+    public static var noAngleSensor: String { L("This Mac has no lid angle sensor: only open or closed can be read.") }
+    public static func source(_ watcher: LidWatcher) -> String? {
+        watcher.angleSource.map { L("Lid angle sensor read through %@", $0) }
+    }
+    public static var waitingForAngle: String { L("Lid angle sensor found, no reading yet.") }
 }

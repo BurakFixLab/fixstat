@@ -230,6 +230,31 @@ struct LidTestView: View {
             } else {
                 Text("This Mac has no lid sensor.").foregroundStyle(.secondary)
             }
+            if watcher.hasAngleSensor {
+                Card {
+                    HStack(alignment: .center, spacing: 24) {
+                        LidAngleDrawing(angle: watcher.angle)
+                            .frame(width: 220, height: 150)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(verbatim: watcher.angle.map(LidText.angle) ?? "–")
+                                .font(.system(size: 34, weight: .semibold))
+                                .monospacedDigit()
+                            ForEach(watcher.lines, id: \.self) { Text(verbatim: $0).foregroundStyle(.secondary) }
+                            if watcher.angle == nil {
+                                Text(verbatim: LidText.waitingForAngle).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    if let finding = watcher.finding {
+                        FindingRow(text: finding)
+                    }
+                    if let source = watcher.source {
+                        Text(verbatim: source).font(.caption).foregroundStyle(.tertiary)
+                    }
+                }
+            } else if watcher.closed != nil {
+                Text(verbatim: LidText.noAngleSensor).foregroundStyle(.secondary)
+            }
             if let event = watcher.detected {
                 Label(event, systemImage: "checkmark.circle.fill")
                     .foregroundStyle(TemperatureColor.cool)
@@ -240,9 +265,41 @@ struct LidTestView: View {
         .font(.callout)
         .onAppear { watcher.start() }
         .onDisappear { watcher.stop() }
-        .onChange(of: watcher.detected) { _, event in
-            if let event { monitor.recordCheck(.lid, detail: event, passed: true) }
+        .onChange(of: watcher.evidence) { _, evidence in
+            // A sensor that does not follow the lid is evidence, not a pass.
+            if let evidence { monitor.recordCheck(.lid, detail: evidence, passed: watcher.finding == nil) }
         }
+    }
+}
+
+/// Side view of the notebook: the base and the display lid at the measured hinge angle
+/// (0° closed, 90° upright).
+@available(macOS 14.0, *)
+struct LidAngleDrawing: View {
+    let angle: Double?
+
+    var body: some View {
+        Canvas { context, size in
+            let length = size.width * 0.62
+            let hinge = CGPoint(x: size.width * 0.3, y: size.height - 18)
+            // Base: from the hinge towards the front (right).
+            let base = CGRect(x: hinge.x, y: hinge.y, width: length, height: 7)
+            context.fill(Path(roundedRect: base, cornerRadius: 3), with: .color(.secondary))
+            guard let angle else { return }
+            let radians = min(max(angle, 0), 200) * .pi / 180
+            let tip = CGPoint(x: hinge.x + length * cos(radians), y: hinge.y - length * sin(radians))
+            var lid = Path()
+            lid.move(to: hinge)
+            lid.addLine(to: tip)
+            context.stroke(lid, with: .color(.accentColor), style: StrokeStyle(lineWidth: 6, lineCap: .round))
+            // The arc between the base and the lid.
+            var arc = Path()
+            arc.addArc(center: hinge, radius: 34, startAngle: .degrees(0), endAngle: .degrees(-min(max(angle, 0), 200)),
+                       clockwise: true)
+            context.stroke(arc, with: .color(.secondary), style: StrokeStyle(lineWidth: 1.5, dash: [3, 3]))
+        }
+        .animation(.linear(duration: 0.1), value: angle)
+        .accessibilityLabel(Text(verbatim: angle.map(LidText.angle) ?? "–"))
     }
 }
 
@@ -253,6 +310,12 @@ struct LidTestView: View {
 final class LidWatcherModel {
     private(set) var closed: Bool?
     private(set) var detected: String?
+    private(set) var hasAngleSensor = false
+    private(set) var angle: Double?
+    private(set) var lines: [String] = []
+    private(set) var finding: String?
+    private(set) var source: String?
+    private(set) var evidence: String?
 
     @ObservationIgnored private let watcher = FixStatCore.LidWatcher()
 
@@ -272,5 +335,15 @@ final class LidWatcherModel {
     private func sync() {
         if watcher.closed != closed { closed = watcher.closed }
         if watcher.detected != detected { detected = watcher.detected }
+        if watcher.hasAngleSensor != hasAngleSensor { hasAngleSensor = watcher.hasAngleSensor }
+        if watcher.angle != angle { angle = watcher.angle }
+        let lines = LidText.lines(watcher)
+        if lines != self.lines { self.lines = lines }
+        let finding = LidText.finding(watcher)
+        if finding != self.finding { self.finding = finding }
+        let source = LidText.source(watcher)
+        if source != self.source { self.source = source }
+        let evidence = LidText.evidence(watcher)
+        if evidence != self.evidence { self.evidence = evidence }
     }
 }
