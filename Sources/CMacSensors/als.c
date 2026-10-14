@@ -3,8 +3,11 @@
 // Apple Silicon: the SPU ALS service in the HID event system (vendor usage page 0xFF00,
 // usage 4, no Product name), event type 12 (kIOHIDEventTypeAmbientLightSensor); its first
 // field is the level in lux.
-// Intel: the AppleLMUController user client, selector 0 returns two raw channel values
-// (older MacBooks; T2 Macs report through the HID event system as well).
+// T2 Macs: the USB ambient light sensor behind the T2, also in the HID event system (sensor
+// page 0x20, usage 0x41), same event and field.
+// Intel without T2: the AppleLMUController user client, selector 0 returns two raw channel
+// values (older MacBooks); 2016 / 2017 MacBook Pros have no LMU controller and report through
+// the SMC instead (read in Swift).
 
 #include "CMacSensors.h"
 #include <IOKit/hidsystem/IOHIDEventSystemClient.h>
@@ -19,39 +22,51 @@ extern double IOHIDEventGetFloatValue(IOHIDEventRef event, int32_t field);
 
 enum { kALSEventType = 12 };
 
-static IOHIDEventSystemClientRef alsClient = NULL;
+// Apple Silicon's SPU service (vendor page 0xFF00, usage 4) and the T2's USB sensor
+// (AppleUSBALSService: HID sensor page 0x20, usage 0x41 "ambient light"; MacBookPro15,1 dump).
+static IOHIDEventSystemClientRef alsClients[2] = { NULL, NULL };
+static const int32_t alsMatches[2][2] = { { 0xFF00, 4 }, { 0x20, 0x41 } };
+
+static IOHIDEventSystemClientRef alsClient(int index) {
+    if (alsClients[index] != NULL) return alsClients[index];
+    IOHIDEventSystemClientRef client = IOHIDEventSystemClientCreate(kCFAllocatorDefault);
+    if (client == NULL) return NULL;
+    int32_t pageValue = alsMatches[index][0], usageValue = alsMatches[index][1];
+    CFNumberRef page = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &pageValue);
+    CFNumberRef usage = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &usageValue);
+    const void *keys[] = { CFSTR("PrimaryUsagePage"), CFSTR("PrimaryUsage") };
+    const void *values[] = { page, usage };
+    CFDictionaryRef match = CFDictionaryCreate(kCFAllocatorDefault, keys, values, 2,
+                                               &kCFTypeDictionaryKeyCallBacks,
+                                               &kCFTypeDictionaryValueCallBacks);
+    IOHIDEventSystemClientSetMatching(client, match);
+    CFRelease(match);
+    CFRelease(page);
+    CFRelease(usage);
+    alsClients[index] = client;
+    return client;
+}
 
 bool FSAmbientLightLux(double *outLux) {
-    if (alsClient == NULL) {
-        alsClient = IOHIDEventSystemClientCreate(kCFAllocatorDefault);
-        if (alsClient == NULL) return false;
-        int32_t pageValue = 0xFF00, usageValue = 4;
-        CFNumberRef page = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &pageValue);
-        CFNumberRef usage = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &usageValue);
-        const void *keys[] = { CFSTR("PrimaryUsagePage"), CFSTR("PrimaryUsage") };
-        const void *values[] = { page, usage };
-        CFDictionaryRef match = CFDictionaryCreate(kCFAllocatorDefault, keys, values, 2,
-                                                   &kCFTypeDictionaryKeyCallBacks,
-                                                   &kCFTypeDictionaryValueCallBacks);
-        IOHIDEventSystemClientSetMatching(alsClient, match);
-        CFRelease(match);
-        CFRelease(page);
-        CFRelease(usage);
-    }
-    CFArrayRef services = IOHIDEventSystemClientCopyServices(alsClient);
-    if (services == NULL) return false;
-    bool found = false;
-    for (CFIndex i = 0; i < CFArrayGetCount(services) && !found; i++) {
-        IOHIDServiceClientRef service = (IOHIDServiceClientRef)CFArrayGetValueAtIndex(services, i);
-        IOHIDEventRef event = IOHIDServiceClientCopyEvent(service, kALSEventType, 0, 0);
-        if (event != NULL) {
-            *outLux = IOHIDEventGetFloatValue(event, kALSEventType << 16);
-            found = true;
-            CFRelease(event);
+    for (int index = 0; index < 2; index++) {
+        IOHIDEventSystemClientRef client = alsClient(index);
+        if (client == NULL) continue;
+        CFArrayRef services = IOHIDEventSystemClientCopyServices(client);
+        if (services == NULL) continue;
+        bool found = false;
+        for (CFIndex i = 0; i < CFArrayGetCount(services) && !found; i++) {
+            IOHIDServiceClientRef service = (IOHIDServiceClientRef)CFArrayGetValueAtIndex(services, i);
+            IOHIDEventRef event = IOHIDServiceClientCopyEvent(service, kALSEventType, 0, 0);
+            if (event != NULL) {
+                *outLux = IOHIDEventGetFloatValue(event, kALSEventType << 16);
+                found = true;
+                CFRelease(event);
+            }
         }
+        CFRelease(services);
+        if (found) return true;
     }
-    CFRelease(services);
-    return found;
+    return false;
 }
 
 bool FSLMUReadChannels(uint64_t *outLeft, uint64_t *outRight) {

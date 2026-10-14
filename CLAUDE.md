@@ -418,8 +418,10 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   holds the first CPU sensor under load, `-FixStatSensorCheckSeconds N` shortens both phases.
 - Ambient light (`AmbientLightSensor`, `als.c`; test logic `LightCheck`, UI
   `AmbientLightTest.swift`): Apple Silicon lux from the SPU ALS HID service (usage page
-  0xFF00 / usage 4, no Product name, event type 12, field 12 << 16); Intel raw channels from
-  AppleLMUController selector 0. Guided steps normal → covered → flashlight; the camera's
+  0xFF00 / usage 4, no Product name, event type 12, field 12 << 16); T2 Macs from the USB
+  sensor behind the T2 (`AppleUSBALSService`, HID sensor page 0x20 / usage 0x41, same event);
+  Intel raw channels from AppleLMUController selector 0, and on 2016 / 2017 MacBook Pros
+  without T2 (no LMU controller) from the SMC's `ALV0` (valid flag, gain, two BE 16-bit channels). Guided steps normal → covered → flashlight; the camera's
   average brightness confirms the flashlight, so "no light" (repeat) is told apart from
   "reads dark" (fail). "Automatic brightness" is readable only from the old
   com.apple.iokit.AmbientLightSensor preference; on recent macOS it lives in root-owned

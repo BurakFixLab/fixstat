@@ -3,8 +3,9 @@ import Foundation
 
 /// Ambient light sensor (the sensor next to the camera that drives automatic brightness).
 ///
-/// Apple Silicon reports lux through the HID event system; Intel MacBooks report two raw
-/// channels through AppleLMUController (not lux, but proportional to light). Read-only.
+/// Apple Silicon and T2 Macs report lux through the HID event system; older Intel MacBooks
+/// report two raw channels through AppleLMUController, 2016 / 2017 MacBook Pros through the
+/// SMC's `ALV0` (not lux, but proportional to light). Read-only.
 public enum AmbientLightSensor {
     public enum Source: String, Codable, Sendable { case lux, raw }
 
@@ -18,7 +19,23 @@ public enum AmbientLightSensor {
         if FSAmbientLightLux(&lux) { return Reading(value: lux, source: .lux) }
         var left: UInt64 = 0, right: UInt64 = 0
         if FSLMUReadChannels(&left, &right) { return Reading(value: Double(left + right) / 2, source: .raw) }
+        if let channels = smcChannels() { return Reading(value: Double(channels.0 + channels.1) / 2, source: .raw) }
         return nil
+    }
+
+    nonisolated(unsafe) private static let smc: SMC? = try? SMC()
+
+    /// 2016 / 2017 MacBook Pros without T2 (MacBookPro14,1 dump): no LMU controller; the SMC's
+    /// `ALV0` (type `{alv`) starts with a valid flag, a gain byte and two big-endian 16-bit raw
+    /// channels, e.g. 01 80 00cf 0015 … = channels 207 and 21 in room light.
+    static func smcChannels() -> (Int, Int)? {
+        guard let value = try? smc?.read("ALV0") else { return nil }
+        return channels(alv: value.bytes)
+    }
+
+    static func channels(alv bytes: [UInt8]) -> (Int, Int)? {
+        guard bytes.count >= 6, bytes[0] == 1 else { return nil }
+        return (Int(bytes[2]) << 8 | Int(bytes[3]), Int(bytes[4]) << 8 | Int(bytes[5]))
     }
 
     /// macOS setting "Automatically adjust brightness" (nil if unknown). A display that
