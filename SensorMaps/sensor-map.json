@@ -5277,6 +5277,171 @@
         }
       ]
     },
+    "MacBookPro15,1" : {
+      "board" : "Mac",
+      "chip" : "Intel(R) Core(TM) i9-9880H CPU @ 2.30GHz",
+      "ignored" : [
+        "TH1a",
+        "TH1b",
+        "Tm1P"
+      ],
+      "sensors" : [
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "id" : "battery.pack.1",
+          "key" : "TB0T",
+          "note" : "SMC; Δall +3.8, Δgpu -0.3, Δssd +0.1"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "id" : "battery.pack.2",
+          "key" : "TB1T",
+          "note" : "SMC; Δall +3.9, Δgpu -0.3, Δssd -0.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "id" : "battery.pack.3",
+          "key" : "TB2T",
+          "note" : "SMC; Δall +3.7, Δgpu +0.0, Δssd +0.1"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "chassis",
+          "id" : "chassis.air",
+          "key" : "TA0V",
+          "note" : "SMC; Δall -4.2, Δgpu -0.6, Δssd +0.4"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "chassis",
+          "id" : "chassis.palmrest.1",
+          "key" : "Ts0P",
+          "note" : "SMC; Δall +0.2, Δgpu +0.1, Δssd +0.2"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "chassis",
+          "id" : "chassis.palmrest.2",
+          "key" : "Ts1P",
+          "note" : "SMC; Δall -0.5, Δgpu +0.5, Δssd +0.3"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.1",
+          "key" : "TC1C",
+          "note" : "SMC; Δall +53.0, Δgpu +12.1, Δssd -0.8"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.2",
+          "key" : "TC2C",
+          "note" : "SMC; Δall +49.5, Δgpu +11.1, Δssd -0.3"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.3",
+          "key" : "TC3C",
+          "note" : "SMC; Δall +60.1, Δgpu +11.5, Δssd -1.2"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.4",
+          "key" : "TC4C",
+          "note" : "SMC; Δall +55.9, Δgpu +11.5, Δssd -2.3"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.5",
+          "key" : "TC5C",
+          "note" : "SMC; Δall +59.4, Δgpu +10.8, Δssd -0.4"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.6",
+          "key" : "TC6C",
+          "note" : "SMC; Δall +59.7, Δgpu +11.2, Δssd -1.3"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.7",
+          "key" : "TC7C",
+          "note" : "SMC; Δall +47.9, Δgpu +11.4, Δssd -2.0"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.8",
+          "key" : "TC8C",
+          "note" : "SMC; Δall +53.3, Δgpu +11.5, Δssd -2.3"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.die.1",
+          "key" : "TC0E",
+          "note" : "SMC; Δall +56.0, Δgpu -9.9, Δssd -4.5"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.die.2",
+          "key" : "TC0F",
+          "note" : "SMC; Δall +55.7, Δgpu -9.9, Δssd -4.9"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.proximity",
+          "key" : "TC0P",
+          "note" : "SMC; Δall +35.4, Δgpu +5.6, Δssd -2.8"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.die",
+          "key" : "TCGC",
+          "note" : "SMC; Δall +37.1, Δgpu +10.1, Δssd -2.3"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.proximity",
+          "key" : "TG0P",
+          "note" : "SMC; Δall +29.3, Δgpu +8.6, Δssd -4.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "id" : "board.memory",
+          "key" : "TM0P",
+          "note" : "SMC; Δall +11.7, Δgpu -0.1, Δssd +0.6"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "id" : "board.pch",
+          "key" : "TPCD",
+          "note" : "SMC; Δall +7.9, Δgpu +0.9, Δssd +11.5"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "id" : "board.wifi",
+          "key" : "TW0P",
+          "note" : "SMC; Δall +9.3, Δgpu -0.3, Δssd -0.3"
+        }
+      ]
+    },
     "MacBookPro15,2" : {
       "board" : "Mac",
       "chip" : "Intel(R) Core(TM) i7-8559U CPU @ 2.70GHz",
@@ -5402,6 +5567,670 @@
           "id" : "board.wifi",
           "key" : "TW0P",
           "note" : "SMC; Δall +18.1, Δgpu +22.6, Δssd +6.9"
+        }
+      ]
+    },
+    "MacBookPro17,1" : {
+      "board" : "J293",
+      "chip" : "Apple M1",
+      "derived" : [
+        "Ta1a",
+        "Ta1b",
+        "Ta1x",
+        "Ta1z",
+        "Tc0a",
+        "Tc0b",
+        "Tc0x",
+        "Tc0z",
+        "Tc3a",
+        "Tc3b",
+        "Tc3x",
+        "Tc3z",
+        "Tc4a",
+        "Tc4b",
+        "Tc4x",
+        "Tc4z",
+        "Tc7a",
+        "Tc7b",
+        "Tc7x",
+        "Tc7z",
+        "Tc8a",
+        "Tc8b",
+        "Tc8x",
+        "Tc8z",
+        "Tc9a",
+        "Tc9b",
+        "Tc9x",
+        "Tc9z",
+        "Tcaa",
+        "Tcab",
+        "Tcax",
+        "Tcaz",
+        "Te0a",
+        "Te0b",
+        "Te0x",
+        "Te0z",
+        "Te3a",
+        "Te3b",
+        "Te3x",
+        "Te3z",
+        "Tg1b",
+        "Tg4b",
+        "Th0a",
+        "Th0b",
+        "Th0x",
+        "Th0z",
+        "Th1a",
+        "Th1b",
+        "Th1x",
+        "Th1z",
+        "Th2a",
+        "Th2b",
+        "Th2x",
+        "Th2z",
+        "Tp2a",
+        "Tp2b",
+        "Tp2x",
+        "Tp2z",
+        "Tp3a",
+        "Tp3b",
+        "Tp3x",
+        "Tp3z",
+        "Tp4a",
+        "Tp4b",
+        "Tp4x",
+        "Tp4z",
+        "Tp5a",
+        "Tp5b",
+        "Tp5x",
+        "Tp5z",
+        "Tp7a",
+        "Tp7b",
+        "Tp7x",
+        "Tp7z",
+        "Tp8a",
+        "Tp8b",
+        "Tp8x",
+        "Tp8z",
+        "Tp9a",
+        "Tp9b",
+        "Tp9x",
+        "Tp9z",
+        "Ts0a",
+        "Ts0b",
+        "Ts0x",
+        "Ts0z",
+        "Ts1a",
+        "Ts1b",
+        "Ts1x",
+        "Ts1z",
+        "Ts2a",
+        "Ts2b",
+        "Ts2x",
+        "Ts2z",
+        "Ts5a",
+        "Ts5b",
+        "Ts5x",
+        "Ts5z"
+      ],
+      "ignored" : [
+        "TP0Z",
+        "TP4d",
+        "TP5d",
+        "TR0Z",
+        "Tarc",
+        "Tc1a",
+        "Tc1b",
+        "Tc1x",
+        "Tc1z",
+        "Tc2a",
+        "Tc2b",
+        "Tc2x",
+        "Tc2z",
+        "Tc5a",
+        "Tc5b",
+        "Tc5x",
+        "Tc5z",
+        "Tc6a",
+        "Tc6b",
+        "Tc6x",
+        "Tc6z"
+      ],
+      "sensors" : [
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "hidName" : "gas gauge battery",
+          "id" : "battery.gauge.1",
+          "key" : "TG0B",
+          "note" : "HID; Δall +0.6, Δgpu +1.0, Δssd +0.0, Δcharging -0.5"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "hidName" : "gas gauge battery",
+          "id" : "battery.gauge.2",
+          "key" : "TG0C",
+          "note" : "HID; Δall +0.0, Δgpu +0.0, Δssd +0.0, Δcharging -1.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "hidName" : "gas gauge battery",
+          "id" : "battery.gauge.3",
+          "key" : "TG0H",
+          "note" : "HID; Δall +1.0, Δgpu +1.0, Δssd +0.0, Δcharging +0.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "hidName" : "gas gauge battery",
+          "id" : "battery.gauge.4",
+          "key" : "TG0V",
+          "note" : "HID; Δall +0.6, Δgpu +1.0, Δssd +0.0, Δcharging -0.5"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "hidName" : "gas gauge battery",
+          "id" : "battery.gauge.5",
+          "key" : "TG1B",
+          "note" : "HID; same reading as TB1T; Δall +1.0, Δgpu +1.0, Δssd +0.0, Δcharging -0.7"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "hidName" : "gas gauge battery",
+          "id" : "battery.gauge.6",
+          "key" : "TG2B",
+          "note" : "HID; same reading as TB2T; Δall +0.3, Δgpu +0.4, Δssd +0.2, Δcharging -0.1"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "id" : "battery.pack.1",
+          "key" : "TB0T",
+          "note" : "SMC; Δall +0.6, Δgpu +1.0, Δssd +0.0, Δcharging -0.5"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "id" : "battery.pack.2",
+          "key" : "TB1T",
+          "note" : "SMC; same reading as TG1B (gas gauge battery); Δall +1.0, Δgpu +1.0, Δssd +0.0, Δcharging -0.7"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "id" : "battery.pack.3",
+          "key" : "TB2T",
+          "note" : "SMC; same reading as TG2B (gas gauge battery); Δall +0.3, Δgpu +0.4, Δssd +0.2, Δcharging -0.1"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "chassis",
+          "id" : "chassis.ambient",
+          "key" : "TVA0",
+          "note" : "SMC; Δall -0.2, Δgpu +0.1, Δssd -0.0, Δcharging +0.1"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "chassis",
+          "id" : "chassis.palmrest.1",
+          "key" : "Ts0P",
+          "note" : "SMC; Δall +0.0, Δgpu +0.8, Δssd +1.0, Δcharging -1.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "chassis",
+          "id" : "chassis.palmrest.2",
+          "key" : "Ts1P",
+          "note" : "SMC; Δall +0.0, Δgpu +1.0, Δssd +0.0, Δcharging -0.8"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "chassis",
+          "id" : "chassis.skin.1",
+          "key" : "TVS0",
+          "note" : "SMC; Δall +1.9, Δgpu +1.5, Δssd -0.2, Δcharging -1.3"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "chassis",
+          "id" : "chassis.skin.2",
+          "key" : "TVS1",
+          "note" : "SMC; Δall +1.7, Δgpu +1.5, Δssd +0.0, Δcharging -1.2"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "chassis",
+          "id" : "chassis.skin.3",
+          "key" : "TVSx",
+          "note" : "SMC; Δall +1.9, Δgpu +1.5, Δssd -0.2, Δcharging -1.3"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "hidName" : "eACC MTR Temp Sensor0",
+          "id" : "cpu.ecluster.1",
+          "key" : "Te0i",
+          "note" : "HID; Δall +17.4, Δgpu +19.6, Δssd +5.6, Δcharging -1.7"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "hidName" : "eACC MTR Temp Sensor3",
+          "id" : "cpu.ecluster.2",
+          "key" : "Te3i",
+          "note" : "HID; Δall +18.6, Δgpu +19.7, Δssd +4.9, Δcharging -1.9"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "hidName" : "pACC MTR Temp Sensor2",
+          "id" : "cpu.pcluster.1",
+          "key" : "Tp2i",
+          "note" : "HID; Δall +24.4, Δgpu +19.8, Δssd +7.6, Δcharging -0.4"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "hidName" : "pACC MTR Temp Sensor3",
+          "id" : "cpu.pcluster.2",
+          "key" : "Tp3i",
+          "note" : "HID; Δall +24.8, Δgpu +17.8, Δssd +8.7, Δcharging -1.5"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "hidName" : "pACC MTR Temp Sensor4",
+          "id" : "cpu.pcluster.3",
+          "key" : "Tp4i",
+          "note" : "HID; Δall +23.4, Δgpu +18.5, Δssd +7.1, Δcharging -1.6"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "hidName" : "pACC MTR Temp Sensor5",
+          "id" : "cpu.pcluster.4",
+          "key" : "Tp5i",
+          "note" : "HID; Δall +20.3, Δgpu +20.2, Δssd +5.2, Δcharging -2.0"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "hidName" : "pACC MTR Temp Sensor7",
+          "id" : "cpu.pcluster.5",
+          "key" : "Tp7i",
+          "note" : "HID; Δall +24.3, Δgpu +23.1, Δssd +6.5, Δcharging -2.3"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "hidName" : "pACC MTR Temp Sensor8",
+          "id" : "cpu.pcluster.6",
+          "key" : "Tp8i",
+          "note" : "HID; Δall +25.9, Δgpu +20.9, Δssd +6.1, Δcharging -2.5"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "hidName" : "pACC MTR Temp Sensor9",
+          "id" : "cpu.pcluster.7",
+          "key" : "Tp9i",
+          "note" : "HID; Δall +23.1, Δgpu +21.0, Δssd +4.8, Δcharging -3.0"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "gpu",
+          "hidName" : "GPU MTR Temp Sensor1",
+          "id" : "gpu.cluster.1",
+          "key" : "Tg1i",
+          "note" : "HID; Δall +0.0, Δgpu +27.9, Δssd +0.0, Δcharging +0.0"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "gpu",
+          "hidName" : "GPU MTR Temp Sensor4",
+          "id" : "gpu.cluster.2",
+          "key" : "Tg4i",
+          "note" : "HID; Δall +0.0, Δgpu +30.9, Δssd +0.0, Δcharging +0.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "id" : "board.charger",
+          "key" : "TCHP",
+          "note" : "SMC; same reading as TP8d (PMU tdev8); Δall +7.9, Δgpu +8.6, Δssd +1.6, Δcharging +5.1"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "id" : "board.io",
+          "key" : "TIOP",
+          "note" : "SMC; Δall +2.8, Δgpu +2.5, Δssd +0.0, Δcharging -1.4"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "id" : "board.memory_vr",
+          "key" : "TMVR",
+          "note" : "SMC; same reading as TP1d (PMU tdev1); Δall +5.9, Δgpu +6.4, Δssd +1.2, Δcharging -0.9"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "id" : "board.pmu",
+          "key" : "TPMP",
+          "note" : "SMC; same reading as TP7d (PMU tdev7); Δall +11.3, Δgpu +14.0, Δssd +3.2, Δcharging -0.9"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "id" : "board.psu",
+          "key" : "TPSP",
+          "note" : "SMC; same reading as TR1d (PMU2 tdev1); Δall +8.0, Δgpu +9.4, Δssd +3.6, Δcharging -1.7"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "id" : "board.wifi",
+          "key" : "TW0P",
+          "note" : "SMC; same reading as TP6d (PMU tdev6); Δall +4.0, Δgpu +4.2, Δssd +0.6, Δcharging -1.4"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdie1",
+          "id" : "pmu.die.1",
+          "key" : "TP1l",
+          "note" : "HID; Δall +11.0, Δgpu +12.4, Δssd +3.3, Δcharging -0.9"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdie2",
+          "id" : "pmu.die.2",
+          "key" : "TP2b",
+          "note" : "HID; Δall +14.1, Δgpu +14.3, Δssd +3.4, Δcharging -0.6"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdie4",
+          "id" : "pmu.die.4",
+          "key" : "TP4b",
+          "note" : "HID; Δall +10.9, Δgpu +12.3, Δssd +3.0, Δcharging -0.3"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdie5",
+          "id" : "pmu.die.5",
+          "key" : "TP5b",
+          "note" : "HID; Δall +12.0, Δgpu +12.6, Δssd +3.4, Δcharging -0.5"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdie6",
+          "id" : "pmu.die.6",
+          "key" : "TP6b",
+          "note" : "HID; Δall +11.3, Δgpu +15.9, Δssd +3.3, Δcharging -0.9"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdie7",
+          "id" : "pmu.die.7",
+          "key" : "TP7b",
+          "note" : "HID; Δall +13.6, Δgpu +13.0, Δssd +3.5, Δcharging -0.5"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdie8",
+          "id" : "pmu.die.8",
+          "key" : "TP8b",
+          "note" : "HID; Δall +11.8, Δgpu +17.9, Δssd +3.0, Δcharging -0.9"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdev1",
+          "id" : "pmu.ntc.1",
+          "key" : "TP1d",
+          "note" : "HID; same reading as TMVR; Δall +5.9, Δgpu +6.4, Δssd +1.2, Δcharging -0.9"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdev2",
+          "id" : "pmu.ntc.2",
+          "key" : "TP2d",
+          "note" : "HID; same reading as TSDD; Δall +12.6, Δgpu +16.3, Δssd +4.3, Δcharging -1.7"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdev3",
+          "id" : "pmu.ntc.3",
+          "key" : "TP3d",
+          "note" : "HID; same reading as TSCD; Δall +15.5, Δgpu +17.8, Δssd +4.5, Δcharging -1.7"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdev6",
+          "id" : "pmu.ntc.6",
+          "key" : "TP6d",
+          "note" : "HID; same reading as TW0P; Δall +3.9, Δgpu +4.2, Δssd +0.5, Δcharging -1.3"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdev7",
+          "id" : "pmu.ntc.7",
+          "key" : "TP7d",
+          "note" : "HID; same reading as TPMP; Δall +11.3, Δgpu +14.1, Δssd +3.2, Δcharging -0.8"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU tdev8",
+          "id" : "pmu.ntc.8",
+          "key" : "TP8d",
+          "note" : "HID; same reading as TCHP; Δall +7.9, Δgpu +8.6, Δssd +1.6, Δcharging +5.1"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdie1",
+          "id" : "pmu2.die.1",
+          "key" : "TR1l",
+          "note" : "HID; Δall +7.8, Δgpu +9.2, Δssd +4.8, Δcharging -1.5"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdie2",
+          "id" : "pmu2.die.2",
+          "key" : "TR2l",
+          "note" : "HID; Δall +7.9, Δgpu +9.3, Δssd +5.6, Δcharging -1.7"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdie3",
+          "id" : "pmu2.die.3",
+          "key" : "TR3b",
+          "note" : "HID; Δall +8.4, Δgpu +9.3, Δssd +4.7, Δcharging -2.1"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdie4",
+          "id" : "pmu2.die.4",
+          "key" : "TR4b",
+          "note" : "HID; Δall +8.2, Δgpu +9.6, Δssd +4.9, Δcharging -2.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdie5",
+          "id" : "pmu2.die.5",
+          "key" : "TR5b",
+          "note" : "HID; Δall +7.9, Δgpu +8.9, Δssd +5.3, Δcharging -1.8"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdie6",
+          "id" : "pmu2.die.6",
+          "key" : "TR6b",
+          "note" : "HID; Δall +7.9, Δgpu +9.5, Δssd +4.3, Δcharging -1.8"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdie7",
+          "id" : "pmu2.die.7",
+          "key" : "TR7b",
+          "note" : "HID; Δall +7.8, Δgpu +8.8, Δssd +2.9, Δcharging -1.6"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdie8",
+          "id" : "pmu2.die.8",
+          "key" : "TR8b",
+          "note" : "HID; Δall +8.0, Δgpu +9.6, Δssd +4.6, Δcharging -1.9"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdev1",
+          "id" : "pmu2.ntc.1",
+          "key" : "TR1d",
+          "note" : "HID; same reading as TPSP; Δall +8.0, Δgpu +9.5, Δssd +3.7, Δcharging -1.7"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdev2",
+          "id" : "pmu2.ntc.2",
+          "key" : "TR2d",
+          "note" : "HID; same reading as TT0D, TaMP; Δall +3.0, Δgpu +3.1, Δssd +0.4, Δcharging -1.1"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdev3",
+          "id" : "pmu2.ntc.3",
+          "key" : "TR3d",
+          "note" : "HID; same reading as TH0T, TH0x; Δall +9.1, Δgpu +10.7, Δssd +5.4, Δcharging -1.9"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdev4",
+          "id" : "pmu2.ntc.4",
+          "key" : "TR4d",
+          "note" : "HID; same reading as TH0B; Δall +6.1, Δgpu +6.6, Δssd +4.8, Δcharging -1.8"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMU2 tdev5",
+          "id" : "pmu2.ntc.5",
+          "key" : "TR5d",
+          "note" : "HID; same reading as Th1H; Δall +5.3, Δgpu +5.7, Δssd +2.2, Δcharging -1.7"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "ANE MTR Temp Sensor1",
+          "id" : "soc.ane.1",
+          "key" : "Ta1i",
+          "note" : "HID; constant during all tests; Δall +0.0, Δgpu +0.0, Δssd +0.0, Δcharging +0.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "ISP MTR Temp Sensor5",
+          "id" : "soc.isp.1",
+          "key" : "Ts5i",
+          "note" : "HID; Δall +0.0, Δgpu +0.0, Δssd +0.0, Δcharging +0.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "SOC MTR Temp Sensor0",
+          "id" : "soc.mtr.1",
+          "key" : "Ts0i",
+          "note" : "HID; Δall +16.4, Δgpu +18.5, Δssd +4.7, Δcharging -1.5"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "SOC MTR Temp Sensor1",
+          "id" : "soc.mtr.2",
+          "key" : "Ts1i",
+          "note" : "HID; Δall +17.0, Δgpu +25.0, Δssd +4.7, Δcharging -1.6"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "SOC MTR Temp Sensor2",
+          "id" : "soc.mtr.3",
+          "key" : "Ts2i",
+          "note" : "HID; Δall +19.1, Δgpu +21.9, Δssd +6.3, Δcharging -1.8"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMGR SOC Die Temp Sensor0",
+          "id" : "soc.pmgr.1",
+          "key" : "Th0i",
+          "note" : "HID; same reading as Th0a, Th0b; Δall +14.3, Δgpu +18.9, Δssd +4.4, Δcharging -2.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMGR SOC Die Temp Sensor1",
+          "id" : "soc.pmgr.2",
+          "key" : "Th1i",
+          "note" : "HID; same reading as Th1a; Δall +15.5, Δgpu +23.2, Δssd +4.4, Δcharging -1.9"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "hidName" : "PMGR SOC Die Temp Sensor2",
+          "id" : "soc.pmgr.3",
+          "key" : "Th2i",
+          "note" : "HID; same reading as Th2a; Δall +18.5, Δgpu +20.2, Δssd +5.0, Δcharging -1.9"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "ssd",
+          "hidName" : "NAND CH0 temp",
+          "id" : "ssd.nand.1",
+          "key" : "TN0n",
+          "note" : "HID; Δall +7.1, Δgpu +8.8, Δssd +13.0, Δcharging -1.9"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "ssd",
+          "id" : "ssd.proximity.1",
+          "key" : "TH0T",
+          "note" : "SMC; same reading as TR3d (PMU2 tdev3); Δall +9.0, Δgpu +10.7, Δssd +5.4, Δcharging -1.9"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "ssd",
+          "id" : "ssd.proximity.2",
+          "key" : "TH0x",
+          "note" : "SMC; same reading as TR3d (PMU2 tdev3); Δall +9.0, Δgpu +10.7, Δssd +5.4, Δcharging -1.9"
         }
       ]
     },

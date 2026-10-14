@@ -32,6 +32,16 @@
       "idleDisplayOffW" : [
         5.4
       ]
+    },
+    "MacBookPro15,1" : {
+      "idleDisplayOffW" : [
+        7.5
+      ]
+    },
+    "MacBookPro17,1" : {
+      "idleDisplayOffW" : [
+        6.1
+      ]
     }
   },
   "note" : "Idle system power with the display off (W), measured at the bench on Macs known to be good. One value per Mac.",
