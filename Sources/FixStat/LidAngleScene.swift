@@ -77,13 +77,14 @@ struct NotebookSideModel: View {
     let angle: Double
     let notebook: NotebookSideScene.Body
 
-    @Environment(\.colorScheme) private var colorScheme
-
     var body: some View {
-        ShapeCanvas(label: LidText.angle(angle.rounded())) { size in
-            NotebookSideScene(size: size, body: notebook, dark: colorScheme == .dark)
-                .shapes(angle: angle)
+        Canvas { context, size in
+            context.withCGContext { cg in
+                NotebookSideScene(size: size, body: notebook).draw(in: cg, angle: angle)
+            }
         }
+        .accessibilityElement()
+        .accessibilityLabel(Text(verbatim: LidText.angle(angle.rounded())))
     }
 }
 
