@@ -450,13 +450,20 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   `-FixStatSampleUSBDrive YES` fakes a stick in USB-A 1 backed by a temporary folder.
 - Lid: `IOPMrootDomain.AppleClamshellState` polled, plus the last `pmset -g log` sleep
   reason ("Clamshell Sleep") after a wake. Lid angle (`LidAngleSensor`): the SPU HID device "las"
-  (0x05AC / 0x8104, sensor page 0x20, usage 0x8A; input report 1 = usage 0x047F, 9 bits, 0 … 360°)
+  (0x05AC / 0x8104, sensor page 0x20, usage 0x8A; report 1 = usage 0x047F, 9 bits, 0 … 360°)
   on MacBook Air M2 / M3 and MacBook Pro M3 (dumps; not on M1, Intel, the 13" M2 MacBook Pro).
-  Read three ways (delivered input value, input report, feature report; which one answers is
-  not confirmed on a real Mac yet), polled every 0.1 s and drawn as a side view; the angle at
-  which macOS reports the lid closed and the range seen are evidence, and a lid that closed
-  while the angle stayed within 20° is a finding. `-FixStatSampleLidAngle YES` swings a made-up
-  lid. No lid angle sensor on MacBookAir10,1.
+  Read by asking the sensor for a feature report (then an input report): the value the HID system
+  last delivered lagged seconds behind the lid on a real Mac (all three ways answered on a
+  MacBook Pro M3 and a MacBook Air M2). Read every display frame and eased (`AngleFollower`,
+  ~60 ms) for the side view `NotebookSideScene` (core, CoreGraphics; the owner's vector designs of
+  a 13" Air and a 14" Pro, 15" / 16" stretched; `LidAngleScene` / `NotebookSideView`), painted in
+  the enclosure finish from `HousingColor` (device tree `chosen/housing-color`, last word = the
+  CoreTypes `ECOLOR` number: 1 silver, 2 space gray, 3 gold, 7 midnight, 8 starlight, 9 space
+  black, 11 sky blue; space gray confirmed on a MacBook Air M2). The angle at which macOS reports
+  the lid closed and the range seen are evidence, and a lid that closed while the angle stayed
+  within 20° is a finding. `-FixStatSampleLidAngle YES|N` swings or holds a made-up lid,
+  `-FixStatNotebookBody air13|air15|pro14|pro16` and `-FixStatHousingColor NAME` pick the drawing.
+  No lid angle sensor on MacBookAir10,1.
 - USB-C PD: the active profile is macOS' selection (`AdapterDetails.UsbHvcMenu` /
   `UsbHvcHvcIndex`); the port controller's RDO can lag (showed 5 V while charging at 20 V).
 
@@ -501,7 +508,7 @@ build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png [--techn
     [--max-height N] [--dark|--light]      # --max-height: as on a small screen (11" Air: 722)
 build/FixStat.app/Contents/MacOS/FixStat --legacy-ui --snapshot out.png --tool device|history|details|crash|sleep|hardware \
     [--item keyboard…lid] [--wait SECONDS] [--range 0…6] [--start-test SECONDS]   # also stress|memory|ssd|capacity
-# One checklist pane (README): --check-item sensors [--sensor-check --wait 26 -FixStatSensorCheckSeconds 10
+# One checklist pane (README; --height N for a taller window): --check-item sensors [--sensor-check --wait 26 -FixStatSensorCheckSeconds 10
 #   -FixStatSampleSensorFault YES]; live monitor: --live-window --wait 36 -FixStatLiveChannels "smc:PSTR,smc:PP0b,hid:Tp2i"
 #   -FixStatLiveMarkAfter 14 (put a CPU load on the Mac after the marker for moving lines)
 # Write the report (same as "Export report") and exit (also with --legacy-ui; under the
