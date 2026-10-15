@@ -44,11 +44,14 @@ public struct NotebookSideScene {
     }
 
     let body: Body
+    let finish: HousingColor
     private let size: CGSize
 
-    public init(size: CGSize, body: Body) {
+    /// `finish`: the enclosure colour (silver when unknown).
+    public init(size: CGSize, body: Body, finish: HousingColor? = nil) {
         self.size = size
         self.body = body
+        self.finish = finish ?? .silver
     }
 
     /// The design's hinge: the centre of the lid's rounded back end, in the lid's own coordinates
@@ -123,13 +126,13 @@ public struct NotebookSideScene {
         lid.addQuadCurve(to: pt(-300, 491.7), control: pt(-300, 497.6))
         lid.addQuadCurve(to: pt(-294, 485.8), control: pt(-300, 485.8))
         lid.closeSubpath()
-        fill(ctx, lid, gradient: Self.lidAlong, from: pt(-300, 0), to: pt(end, 0))
+        fill(ctx, lid, gradient: metal(Self.lidAlong), from: pt(-300, 0), to: pt(end, 0))
         fill(ctx, rect(-296, 485.8, length, 2.6), gradient: Self.lidEdge, from: pt(0, 485.8), to: pt(0, 488.4))
-        fill(ctx, rect(-296, 494.7, length, 0.8), hex: 0xdbe8ef, alpha: 0.6)
-        fill(ctx, rect(-296, 495.45, length, 0.7), hex: 0x97a5ae, alpha: 0.65)
+        fill(ctx, rect(-296, 494.7, length, 0.8), metal: 0xdbe8ef, alpha: 0.6)
+        fill(ctx, rect(-296, 495.45, length, 0.7), metal: 0x97a5ae, alpha: 0.65)
         fill(ctx, rounded(-297, 496.1, length + 1.6, 1.5, 0.75), hex: 0x23282d)
-        fill(ctx, rounded(end - 3, 485.8, 3, 10.3, 1.2), hex: 0xeaf1f5, alpha: 0.75)
-        fill(ctx, rect(end - 3.4, 486.3, 0.5, 9.6), hex: 0xa9b6bf, alpha: 0.5)
+        fill(ctx, rounded(end - 3, 485.8, 3, 10.3, 1.2), metal: 0xeaf1f5, alpha: 0.75)
+        fill(ctx, rect(end - 3.4, 486.3, 0.5, 9.6), metal: 0xa9b6bf, alpha: 0.5)
         ctx.restoreGState()
     }
 
@@ -162,7 +165,7 @@ public struct NotebookSideScene {
     private func drawBase(_ ctx: CGContext, dx: Double, dy: Double) {
         let base = basePath(dx: dx, dy: dy)
         let height = 24 + dy
-        fill(ctx, base, vertical: Self.base, from: 559, to: 559 + height)
+        fill(ctx, base, vertical: metal(Self.base), from: 559, to: 559 + height)
 
         ctx.saveGState()
         ctx.addPath(base)
@@ -175,7 +178,7 @@ public struct NotebookSideScene {
         ctx.setBlendMode(.destinationIn)
         fill(ctx, end, gradient: Self.endShineV, from: pt(0, 559), to: pt(0, 559 + height))
         ctx.endTransparencyLayer()
-        fill(ctx, rect(140, 559, 698 + dx, 0.9), hex: 0xeef4f7)
+        fill(ctx, rect(140, 559, 698 + dx, 0.9), metal: 0xeef4f7)
         // The heel under the hinge: a shadow fading forward, a dark spot.
         fill(ctx, rect(136, 555, 40, 32 + dy), gradient: Self.heelH, from: pt(136, 0), to: pt(176, 0))
         radial(ctx, Self.heelSpot, in: CGRect(x: 134, y: 552, width: 22, height: 24), centre: pt(0.42, 0.4), clipToEllipse: false)
@@ -191,7 +194,7 @@ public struct NotebookSideScene {
         ctx.addPath(rim)
         ctx.setLineWidth(1.3)
         ctx.setLineCap(.round)
-        ctx.setStrokeColor(Self.color(0x8796a1, 0.75))
+        ctx.setStrokeColor(tinted(0x8796a1, 0.75))
         ctx.strokePath()
         ctx.restoreGState()
     }
@@ -203,16 +206,16 @@ public struct NotebookSideScene {
         // Ports sit at the same height of the side, a thicker base moves them down.
         ctx.translateBy(x: 0, y: CGFloat(dy / 2))
         // MagSafe.
-        fill(ctx, rounded(190.5, 562, 56.5, 11, 5.5), vertical: Self.mag, from: 562, to: 573)
-        fill(ctx, rounded(193, 563.6, 51.5, 8, 4), hex: 0xb4c2cc, alpha: 0.55)
-        fill(ctx, rounded(201, 565.8, 33.5, 3.4, 1.4), hex: 0xa3b1bb)
-        fill(ctx, rect(201, 565.8, 33.5, 0.7), hex: 0x8f9da6, alpha: 0.7)
+        fill(ctx, rounded(190.5, 562, 56.5, 11, 5.5), vertical: metal(Self.mag), from: 562, to: 573)
+        fill(ctx, rounded(193, 563.6, 51.5, 8, 4), metal: 0xb4c2cc, alpha: 0.55)
+        fill(ctx, rounded(201, 565.8, 33.5, 3.4, 1.4), metal: 0xa3b1bb)
+        fill(ctx, rect(201, 565.8, 33.5, 0.7), metal: 0x8f9da6, alpha: 0.7)
         for i in 0..<6 {
-            fill(ctx, rounded(202.2 + 5.25 * Double(i), 566.7, 4.3, 1.7, 0.6), hex: 0xdfe8ee)
+            fill(ctx, rounded(202.2 + 5.25 * Double(i), 566.7, 4.3, 1.7, 0.6), metal: 0xdfe8ee)
         }
         // USB-C.
         for x in [263.5, 311.5] {
-            fill(ctx, rounded(x, 561.6, 29, 1.6, 0.8), hex: 0xe2eaf0, alpha: 0.6)
+            fill(ctx, rounded(x, 561.6, 29, 1.6, 0.8), metal: 0xe2eaf0, alpha: 0.6)
             fill(ctx, rounded(x + 0.8, 563, 27.4, 9.4, 4.7), vertical: Self.usb, from: 563, to: 572.4)
             fill(ctx, rounded(x + 3.5, 565.9, 22, 4, 2), hex: 0x0a131b)
             fill(ctx, rounded(x + 5.1, 567, 18.8, 1.9, 0.95), hex: 0x3e474e)
@@ -250,11 +253,11 @@ public struct NotebookSideScene {
         lid.addQuadCurve(to: pt(-293.8, 486), control: pt(-293.8, 492.2))
         lid.addQuadCurve(to: pt(-287.8, 479.8), control: pt(-293.8, 479.8))
         lid.closeSubpath()
-        fill(ctx, lid, gradient: Self.proLidAlong, from: pt(-293.8, 0), to: pt(end, 0))
-        fill(ctx, rect(-290.8, 479.8, length, 10.8), vertical: Self.proLidCross, from: 479.8, to: 490.6)
-        fill(ctx, rect(-290.8, 489.9, length, 0.7), hex: 0xc4c5c8, alpha: 0.8)
+        fill(ctx, lid, gradient: metal(Self.proLidAlong), from: pt(-293.8, 0), to: pt(end, 0))
+        fill(ctx, rect(-290.8, 479.8, length, 10.8), vertical: metal(Self.proLidCross), from: 479.8, to: 490.6)
+        fill(ctx, rect(-290.8, 489.9, length, 0.7), metal: 0xc4c5c8, alpha: 0.8)
         fill(ctx, rounded(-289.8, 490.6, length - 0.5, 1.6, 0.8), hex: 0x26272a)
-        fill(ctx, rounded(end - 2.6, 480.2, 2.2, 10, 1), hex: 0xf1f2f4, alpha: 0.6)
+        fill(ctx, rounded(end - 2.6, 480.2, 2.2, 10, 1), metal: 0xf1f2f4, alpha: 0.6)
         ctx.restoreGState()
 
         // Base.
@@ -270,12 +273,12 @@ public struct NotebookSideScene {
         base.addLine(to: pt(137, 551))
         base.addQuadCurve(to: pt(139, 549), control: pt(137, 549))
         base.closeSubpath()
-        fill(ctx, base, gradient: Self.proBaseAlong, from: pt(137, 0), to: pt(r, 0))
+        fill(ctx, base, gradient: metal(Self.proBaseAlong), from: pt(137, 0), to: pt(r, 0))
         ctx.saveGState()
         ctx.addPath(base)
         ctx.clip()
         fill(ctx, rect(130, 549, 715 + dx, 34), vertical: Self.proBaseShade, from: 549, to: 583)
-        fill(ctx, rect(130, 549, 715 + dx, 0.8), hex: 0xbdbec1)
+        fill(ctx, rect(130, 549, 715 + dx, 0.8), metal: 0xbdbec1)
         fill(ctx, rect(130, 549.8, 715 + dx, 0.9), hex: 0xffffff, alpha: 0.45)
         // The vent slot along the bottom edge, fading out towards the front.
         let slot = rect(412.07, 576.25, 350.32 + dx, 4)
@@ -290,20 +293,20 @@ public struct NotebookSideScene {
         radial(ctx, Self.proHingeShade, in: CGRect(x: 135.5, y: 544.3, width: 16, height: 8.4), centre: pt(0.5, 0.5), clipToEllipse: true)
 
         // MagSafe 3.
-        fill(ctx, rounded(213.55, 554.88, 43.25, 7.61, 3.81), vertical: Self.proMag, from: 554.88, to: 562.49)
+        fill(ctx, rounded(213.55, 554.88, 43.25, 7.61, 3.81), vertical: metal(Self.proMag), from: 554.88, to: 562.49)
         fill(ctx, rounded(221.34, 557.48, 30.71, 3.98, 1.38), vertical: Self.proMagSlot, from: 557.48, to: 561.46)
         for x in [225.84, 231.03, 236.65, 241.84, 247.46] {
             fill(ctx, rounded(x, 558.77, 1.38, 2.08, 0.4), hex: 0x77787c)
         }
         // Thunderbolt.
         for x in [279.03, 321.85] {
-            fill(ctx, rounded(x, 554.71, 23.87, 1.3, 0.65), hex: 0xeceef0, alpha: 0.7)
+            fill(ctx, rounded(x, 554.71, 23.87, 1.3, 0.65), metal: 0xeceef0, alpha: 0.7)
             fill(ctx, rounded(x + 0.26, 555.57, 23.36, 7.79, 3.89), vertical: Self.proUsb, from: 555.57, to: 563.36)
             fill(ctx, rounded(x + 2.08, 558.6, 17.82, 1.9, 0.95), hex: 0x44464a)
         }
         // Headphone jack.
         fill(ctx, CGPath(ellipseIn: CGRect(x: 368.13 - 5.36, y: 559.38 - 5.36, width: 10.72, height: 10.72), transform: nil),
-             hex: 0xc4c5c8, alpha: 0.6)
+             metal: 0xc4c5c8, alpha: 0.6)
         radial(ctx, Self.proJack, in: CGRect(x: 368.13 - 4.76, y: 559.38 - 4.76, width: 9.52, height: 9.52),
                centre: pt(0.5, 0.45), clipToEllipse: true)
     }
@@ -333,6 +336,12 @@ public struct NotebookSideScene {
         return CGPath(roundedRect: CGRect(x: x, y: y, width: w, height: h), cornerWidth: radius, cornerHeight: radius, transform: nil)
     }
 
+    private func fill(_ ctx: CGContext, _ path: CGPath, metal hex: UInt32, alpha: Double = 1) {
+        ctx.addPath(path)
+        ctx.setFillColor(tinted(hex, alpha))
+        ctx.fillPath()
+    }
+
     private func fill(_ ctx: CGContext, _ path: CGPath, hex: UInt32, alpha: Double = 1) {
         ctx.addPath(path)
         ctx.setFillColor(Self.color(hex, alpha))
@@ -349,6 +358,50 @@ public struct NotebookSideScene {
 
     private func fill(_ ctx: CGContext, _ path: CGPath, vertical gradient: CGGradient, from top: Double, to bottom: Double) {
         fill(ctx, path, gradient: gradient, from: pt(0, top), to: pt(0, bottom))
+    }
+
+    // MARK: Finish
+
+    /// Mid-tone of each finish (sRGB, approximate).
+    private var finishTone: (Double, Double, Double) {
+        switch finish {
+        case .silver: return (0.86, 0.865, 0.87)
+        case .spaceGray: return (0.60, 0.61, 0.63)
+        case .gold: return (0.89, 0.80, 0.71)
+        case .midnight: return (0.20, 0.23, 0.30)
+        case .starlight: return (0.88, 0.85, 0.79)
+        case .spaceBlack: return (0.26, 0.26, 0.27)
+        case .skyBlue: return (0.80, 0.86, 0.90)
+        }
+    }
+
+    /// The designs are drawn in one finish each (the Air in sky blue, the Pro in silver); other
+    /// finishes repaint the aluminium by brightness, keeping its light and shade.
+    private var repaints: Bool { body.isPro ? finish != .silver : finish != .skyBlue }
+
+    private func tinted(_ hex: UInt32, _ alpha: Double = 1) -> CGColor {
+        guard repaints, hex != 0xffffff else { return Self.color(hex, alpha) }
+        let r = Double((hex >> 16) & 0xff) / 255, g = Double((hex >> 8) & 0xff) / 255, b = Double(hex & 0xff) / 255
+        let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b, middle = 0.85
+        let (tr, tg, tb) = finishTone
+        func channel(_ t: Double) -> CGFloat {
+            CGFloat(min(max(t * luminance / middle + (1 - t) * max(0, luminance - middle) * 1.5, 0), 1))
+        }
+        return CGColor(colorSpace: Self.space, components: [channel(tr), channel(tg), channel(tb), CGFloat(alpha)])
+            ?? Self.color(hex, alpha)
+    }
+
+    /// A gradient of the aluminium in this finish.
+    private func metal(_ stops: Stops) -> CGGradient {
+        let colours = stops.items.map { tinted($0.1, $0.2) } as CFArray
+        return CGGradient(colorsSpace: Self.space, colors: colours, locations: stops.items.map { CGFloat($0.0) })!
+    }
+
+    /// Gradient stops of the design, painted in the finish when drawn.
+    struct Stops {
+        let items: [(Double, UInt32, Double)]
+        init(_ items: [(Double, UInt32, Double)]) { self.items = items }
+        init(_ items: [(Double, UInt32)]) { self.items = items.map { ($0.0, $0.1, 1.0) } }
     }
 
     // MARK: Colours and gradients (from the design)
@@ -371,11 +424,11 @@ public struct NotebookSideScene {
         gradient(stops.map { ($0.0, $0.1, 1.0) })
     }
 
-    static let lidAlong = gradient([(0, 0x8e9ca5), (0.016, 0xa0aeb7), (0.035, 0xb9c8cf), (0.114, 0xd1dce2), (0.3, 0xccd8df),
+    static let lidAlong = Stops([(0, 0x8e9ca5), (0.016, 0xa0aeb7), (0.035, 0xb9c8cf), (0.114, 0xd1dce2), (0.3, 0xccd8df),
                                     (0.522, 0xc6d3db), (0.8, 0xc2cfd7), (0.931, 0xbfccd4), (0.962, 0xd6e1e7),
                                     (0.98, 0xe4eff5), (1, 0xe6f0f5)])
     static let lidEdge = gradient([(0, 0xffffff, 0.7), (0.5, 0xffffff, 0.3), (1, 0xffffff, 0)])
-    static let base = gradient([(0, 0xe8f0f4), (0.05, 0xd6e1e7), (0.1, 0xcfdae0), (0.33, 0xcfdae0), (0.375, 0xc8d4db),
+    static let base = Stops([(0, 0xe8f0f4), (0.05, 0xd6e1e7), (0.1, 0xcfdae0), (0.33, 0xcfdae0), (0.375, 0xc8d4db),
                                 (0.42, 0xb8c6cd), (0.48, 0xa5b3bc), (0.54, 0x8e9ea8), (0.6, 0x798790), (0.66, 0x727f87),
                                 (0.72, 0x76838c), (0.78, 0x86939c), (0.85, 0x99a7b2), (0.91, 0xa5b7c1), (0.95, 0xa6b6be),
                                 (0.98, 0x9aa7ae), (1, 0xc3ccd3)])
@@ -386,12 +439,12 @@ public struct NotebookSideScene {
     static let heelH = gradient([(0, 0x3c4750, 0.9), (0.12, 0x55616b, 0.7), (0.35, 0x7f8c96, 0.3), (1, 0x7f8c96, 0)])
     static let heelSpot = gradient([(0, 0x1c2329, 0.95), (0.45, 0x2e373f, 0.6), (1, 0x2e373f, 0)])
     static let foot = gradient([(0, 0x7c8992), (0.3, 0x8a96a0), (0.55, 0x5c6670), (0.8, 0x262c32), (1, 0x4a4f55)])
-    static let mag = gradient([(0, 0x5b656e), (0.14, 0x6a7680), (0.25, 0x7e8d94), (0.65, 0x84939a), (0.85, 0x9eadb4),
+    static let mag = Stops([(0, 0x5b656e), (0.14, 0x6a7680), (0.25, 0x7e8d94), (0.65, 0x84939a), (0.85, 0x9eadb4),
                                (1, 0xadbcc3)])
     static let usb = gradient([(0, 0x5e6770), (0.15, 0x252e37), (0.4, 0x141d26), (0.75, 0x2a333b), (1, 0x6a747d)])
 
     // MacBook Pro design.
-    static let proLidAlong = gradient([(0, 0xadaeb0, 1), (0.0062, 0xd5d6d8, 1), (0.0099, 0xe8e9eb, 1),
+    static let proLidAlong = Stops([(0, 0xadaeb0, 1), (0.0062, 0xd5d6d8, 1), (0.0099, 0xe8e9eb, 1),
         (0.0136, 0xe5e6e8, 1), (0.0173, 0xd5d6d8, 1), (0.021, 0xb3b4b6, 1), (0.0247, 0x999a9c, 1),
         (0.0284, 0x8f9092, 1), (0.0358, 0x969799, 1), (0.0506, 0xa8a9ab, 1), (0.0654, 0xb4b5b7, 1),
         (0.0877, 0xc1c2c4, 1), (0.1, 0xc8c9cb, 1), (0.1247, 0xd1d2d4, 1), (0.1432, 0xd5d6d8, 1),
@@ -401,9 +454,9 @@ public struct NotebookSideScene {
         (0.9667, 0x909193, 1), (0.9704, 0x909193, 1), (0.9741, 0x9e9fa1, 1), (0.9778, 0xb6b7b9, 1),
         (0.9815, 0xd5d6d8, 1), (0.9852, 0xe4e5e7, 1), (0.9889, 0xe5e6e8, 1), (0.9926, 0xcccdcf, 1),
         (0.9963, 0xaeafb1, 1), (1, 0xbdbec0, 1)])
-    static let proLidCross = gradient([(0, 0xb9babd, 1), (0.06, 0xcfd0d3, 1), (0.09, 0xffffff, 0.5),
+    static let proLidCross = Stops([(0, 0xb9babd, 1), (0.06, 0xcfd0d3, 1), (0.09, 0xffffff, 0.5),
         (0.2, 0xffffff, 0.4), (0.27, 0x7a7b80, 0.08), (0.33, 0xffffff, 0), (1, 0xffffff, 0)])
-    static let proBaseAlong = gradient([(0, 0xb3b4b6, 1), (0.0025, 0xa9aaac, 1), (0.0062, 0xd6d7d9, 1),
+    static let proBaseAlong = Stops([(0, 0xb3b4b6, 1), (0.0025, 0xa9aaac, 1), (0.0062, 0xd6d7d9, 1),
         (0.0099, 0xecedef, 1), (0.0136, 0xe7e8ea, 1), (0.0173, 0xd1d2d4, 1), (0.021, 0xadaeb0, 1),
         (0.0247, 0x97989a, 1), (0.0284, 0x8f9092, 1), (0.0321, 0x909193, 1), (0.0358, 0x939496, 1),
         (0.0432, 0x9a9b9d, 1), (0.0506, 0x9e9fa1, 1), (0.0654, 0xa7a8aa, 1), (0.0877, 0xb8b9bb, 1),
@@ -424,7 +477,7 @@ public struct NotebookSideScene {
     static let proSlot = gradient([(0, 0x3b3c3f, 1), (0.45, 0x333436, 1), (1, 0x7a7b7e, 1)])
     static let proSlotFade = gradient([(0, 0xffffff, 1), (0.88, 0xffffff, 1), (1, 0xffffff, 0)])
     static let proFoot = gradient([(0, 0x9b9c9f, 1), (0.35, 0x6f7074, 1), (0.7, 0x2a2b2e, 1), (1, 0x1b1c1e, 1)])
-    static let proMag = gradient([(0, 0x7c7d81, 1), (0.15, 0x86878b, 1), (0.35, 0x9fa0a4, 1), (0.7, 0xb1b2b6, 1),
+    static let proMag = Stops([(0, 0x7c7d81, 1), (0.15, 0x86878b, 1), (0.35, 0x9fa0a4, 1), (0.7, 0xb1b2b6, 1),
         (1, 0xbcbdc1, 1)])
     static let proMagSlot = gradient([(0, 0x58595c, 1), (0.25, 0x2a2b2e, 1), (0.75, 0x262729, 1), (1, 0x6f7073, 1)])
     static let proUsb = gradient([(0, 0x3a3b3e, 1), (0.12, 0x141517, 1), (0.85, 0x141517, 1), (1, 0x646568, 1)])

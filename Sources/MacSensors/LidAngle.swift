@@ -6,10 +6,9 @@ import IOKit.hid
 /// the hinge angle, usage 0x047F, 9 bits, 0 … 360 degrees (report descriptor of the MacBook Air
 /// M2 / M3 and MacBook Pro 14" M3 dumps; not on M1 or Intel Macs, nor the 13" M2 MacBook Pro).
 ///
-/// Read-only. Three ways are tried, since which one this device answers has not been seen on a
-/// real Mac yet: the value the device last sent (input reports, delivered on the main run loop),
-/// an input report asked for, and a feature report. `Reading.method` and `raw` say which one
-/// answered. Main thread.
+/// Read-only. Three ways: a feature report and an input report asked for (all three answered on
+/// a MacBook Pro M3, macOS 27), and the value the device last sent (delivered on the main run
+/// loop; seconds behind the lid). `Reading.method` and `raw` say which one answered. Main thread.
 public final class LidAngleSensor {
     public enum Method: String, Sendable { case inputValue, inputReport, featureReport }
 
@@ -72,17 +71,19 @@ public final class LidAngleSensor {
         return !((IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice>) ?? []).isEmpty
     }
 
-    /// The current angle, from the first way that answers.
+    /// The current angle, asked of the sensor itself (a feature report, then an input report);
+    /// the value the HID system last delivered only as a fallback: it lagged seconds behind the
+    /// lid on a real Mac.
     public func read() -> Reading? {
-        if let (result, raw) = currentValue(), result == kIOReturnSuccess, raw > 0 || lastValue != nil {
-            return Reading(degrees: Double(raw), method: .inputValue, raw: String(raw))
-        }
-        if let last = lastValue { return Reading(degrees: last.degrees, method: .inputValue, raw: String(last.raw)) }
-        for (type, method) in [(kIOHIDReportTypeInput, Method.inputReport), (kIOHIDReportTypeFeature, Method.featureReport)] {
+        for (type, method) in [(kIOHIDReportTypeFeature, Method.featureReport), (kIOHIDReportTypeInput, Method.inputReport)] {
             if let bytes = report(type), let degrees = Self.angle(report: bytes) {
                 return Reading(degrees: degrees, method: method, raw: bytes.map { String(format: "%02x", $0) }.joined())
             }
         }
+        if let (result, raw) = currentValue(), result == kIOReturnSuccess, raw > 0 || lastValue != nil {
+            return Reading(degrees: Double(raw), method: .inputValue, raw: String(raw))
+        }
+        if let last = lastValue { return Reading(degrees: last.degrees, method: .inputValue, raw: String(last.raw)) }
         return nil
     }
 

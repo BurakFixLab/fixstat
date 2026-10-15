@@ -1,36 +1,33 @@
 import SwiftUI
 import FixStatCore
+import MacSensors
 
-/// The lid test's live picture: a notebook seen from the front and a little above, its lid at
-/// the angle the hinge sensor reports. Every display frame reads the newest angle and eases
-/// towards it, so the drawing moves with the lid instead of jumping ten times a second.
+/// The lid test's live picture: this Mac seen from the side, its lid at the angle the hinge
+/// sensor reports. Every display frame reads the newest angle and eases towards it, so the
+/// drawing moves with the lid instead of jumping from reading to reading.
 @available(macOS 14.0, *)
 struct LidAngleScene: View {
     /// The newest angle (degrees, 0 = closed), read once per display frame.
     let angle: () -> Double?
     @State private var follower = AngleFollower()
     @State private var notebook = NotebookSideScene.Body.current()
+    @State private var finish = HousingColor.current()
 
     var body: some View {
         TimelineView(.animation) { context in
             let shown = follower.value(at: context.date, target: angle())
-            // Two pictures for now, so the owner can pick one at the bench: 3D from the front, and
-            // the side profile of this Mac's body.
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .center, spacing: 28) {
-                    NotebookModel(angle: shown ?? 110, hasReading: shown != nil)
-                        .frame(width: 250, height: 190)
-                    VStack(alignment: .leading, spacing: 2) {
+            NotebookSideModel(angle: shown ?? 110, notebook: notebook, finish: finish)
+                .frame(width: 580, height: 300)
+                .overlay(alignment: .topTrailing) {
+                    VStack(alignment: .trailing, spacing: 2) {
                         Text(verbatim: shown.map { LidText.angle($0.rounded()) } ?? "–")
                             .font(.system(size: 44, weight: .semibold, design: .rounded))
                             .monospacedDigit()
                             .contentTransition(.numericText(value: shown ?? 0))
                         Text("Lid angle").font(.callout).foregroundStyle(.secondary)
                     }
+                    .padding(8)
                 }
-                NotebookSideModel(angle: shown ?? 110, notebook: notebook)
-                    .frame(width: 580, height: 300)
-            }
         }
     }
 }
@@ -56,69 +53,20 @@ final class AngleFollower {
     }
 }
 
-/// Draws `NotebookScene` (the core's 3D notebook) for one lid angle.
-@available(macOS 14.0, *)
-struct NotebookModel: View {
-    let angle: Double
-    let hasReading: Bool
-
-    @Environment(\.colorScheme) private var colorScheme
-
-    var body: some View {
-        ShapeCanvas(label: LidText.angle(angle.rounded())) { size in
-            NotebookScene(size: size, dark: colorScheme == .dark).shapes(angle: angle, hasReading: hasReading)
-        }
-    }
-}
-
 /// Draws `NotebookSideScene` (this Mac's body from the side) for one lid angle.
 @available(macOS 14.0, *)
 struct NotebookSideModel: View {
     let angle: Double
     let notebook: NotebookSideScene.Body
+    let finish: HousingColor?
 
     var body: some View {
         Canvas { context, size in
             context.withCGContext { cg in
-                NotebookSideScene(size: size, body: notebook).draw(in: cg, angle: angle)
+                NotebookSideScene(size: size, body: notebook, finish: finish).draw(in: cg, angle: angle)
             }
         }
         .accessibilityElement()
         .accessibilityLabel(Text(verbatim: LidText.angle(angle.rounded())))
-    }
-}
-
-/// Fills the core's scene polygons.
-@available(macOS 14.0, *)
-struct ShapeCanvas: View {
-    let label: String
-    let shapes: (CGSize) -> [NotebookScene.Shape]
-
-    var body: some View {
-        Canvas { context, size in
-            for shape in shapes(size) {
-                var path = Path()
-                path.addLines(shape.points)
-                path.closeSubpath()
-                switch shape.fill {
-                case let .solid(colour):
-                    context.fill(path, with: .color(Self.color(colour)))
-                case let .gradient(colours, start, end):
-                    context.fill(path, with: .linearGradient(Gradient(colors: colours.map(Self.color)),
-                                                             startPoint: start, endPoint: end))
-                case let .shadow(colour, radius):
-                    context.drawLayer { layer in
-                        layer.addFilter(.blur(radius: radius))
-                        layer.fill(path, with: .color(Self.color(colour)))
-                    }
-                }
-            }
-        }
-        .accessibilityElement()
-        .accessibilityLabel(Text(verbatim: label))
-    }
-
-    static func color(_ c: NotebookScene.RGBA) -> Color {
-        Color(.sRGB, red: c.r, green: c.g, blue: c.b, opacity: c.a)
     }
 }
