@@ -417,8 +417,10 @@ public final class LidWatcher {
     private var closedAtSleep = false
     private var angleSensor: LidAngleSensor?
     /// `-FixStatSampleLidAngle YES`: a made-up lid swinging between 0° and 130°, for checking
+    /// the pane on a Mac without the sensor; a number (`-FixStatSampleLidAngle 120`) holds that angle.
     /// the pane on a Mac without the sensor.
     private var sampleStart: Date?
+    private var sampleFixed: Double?
 
     public init() {}
 
@@ -426,7 +428,9 @@ public final class LidWatcher {
         guard timer == nil else { return }
         closed = LidSensor.isClosed()
         angleSensor = LidAngleSensor()
-        sampleStart = UserDefaults.standard.bool(forKey: "FixStatSampleLidAngle") ? Date() : nil
+        let sample = UserDefaults.standard.string(forKey: "FixStatSampleLidAngle")
+        sampleFixed = sample.flatMap(Double.init)
+        sampleStart = sampleFixed != nil || UserDefaults.standard.bool(forKey: "FixStatSampleLidAngle") ? Date() : nil
         hasAngleSensor = angleSensor != nil || sampleStart != nil || LidAngleSensor.isPresent
         readAngle()
         // Faster while there is an angle to animate.
@@ -468,13 +472,24 @@ public final class LidWatcher {
         if changed { onChange?() }
     }
 
+    private func sampleDegrees() -> Double? {
+        guard let sampleStart else { return nil }
+        if let sampleFixed { return sampleFixed }
+        let phase = Date().timeIntervalSince(sampleStart).truncatingRemainder(dividingBy: 8) / 8
+        return 65 - 65 * cos(phase * 2 * .pi)
+    }
+
+    /// The angle right now (for drawing every display frame; the poll keeps the range and the
+    /// closing angle). The sensor reports about 125 times a second.
+    public func liveAngle() -> Double? {
+        sampleDegrees() ?? angleSensor?.read()?.degrees ?? angle
+    }
+
     /// True when the angle changed.
     @discardableResult
     private func readAngle() -> Bool {
         var reading = angleSensor?.read()
-        if let sampleStart {
-            let phase = Date().timeIntervalSince(sampleStart).truncatingRemainder(dividingBy: 8) / 8
-            let degrees = (65 - 65 * cos(phase * 2 * .pi)).rounded()
+        if let degrees = sampleDegrees() {
             reading = LidAngleSensor.Reading(degrees: degrees, method: .inputValue, raw: "sample")
         }
         guard let reading else { return false }

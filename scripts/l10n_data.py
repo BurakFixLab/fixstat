@@ -443,6 +443,7 @@ TR = {
     "The Mac was started from another disk: the test writes to the internal SSD (%@).": "Mac başka bir diskten açıldı: test dahili SSD'ye yazar (%@).",
     "Internal SSD": "Dahili SSD",
     "touches also read from the Touch Bar sensor (whole strip, Esc area included)": "dokunmalar Touch Bar sensöründen de okunuyor (tüm şerit, Esc bölgesi dahil)",
+    "Lid angle": "Kapak açısı",
     "Angle seen: %@ – %@": "Görülen açı: %1$@ – %2$@",
     "macOS reported the lid closed at %@": "macOS kapağı %@ açıda kapalı bildirdi",
     "The lid closed, but the lid angle sensor gave no reading: check the sensor in the hinge and its cable.": "Kapak kapandı ama kapak açısı sensörü hiç değer vermedi: menteşedeki sensörü ve kablosunu kontrol edin.",

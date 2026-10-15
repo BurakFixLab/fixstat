@@ -232,18 +232,10 @@ struct LidTestView: View {
             }
             if watcher.hasAngleSensor {
                 Card {
-                    HStack(alignment: .center, spacing: 24) {
-                        LidAngleDrawing(angle: watcher.angle)
-                            .frame(width: 220, height: 150)
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(verbatim: watcher.angle.map(LidText.angle) ?? "–")
-                                .font(.system(size: 34, weight: .semibold))
-                                .monospacedDigit()
-                            ForEach(watcher.lines, id: \.self) { Text(verbatim: $0).foregroundStyle(.secondary) }
-                            if watcher.angle == nil {
-                                Text(verbatim: LidText.waitingForAngle).foregroundStyle(.secondary)
-                            }
-                        }
+                    LidAngleScene(angle: { watcher.liveAngle() })
+                    ForEach(watcher.lines, id: \.self) { Text(verbatim: $0).foregroundStyle(.secondary) }
+                    if watcher.angle == nil {
+                        Text(verbatim: LidText.waitingForAngle).foregroundStyle(.secondary)
                     }
                     if let finding = watcher.finding {
                         FindingRow(text: finding)
@@ -269,37 +261,6 @@ struct LidTestView: View {
             // A sensor that does not follow the lid is evidence, not a pass.
             if let evidence { monitor.recordCheck(.lid, detail: evidence, passed: watcher.finding == nil) }
         }
-    }
-}
-
-/// Side view of the notebook: the base and the display lid at the measured hinge angle
-/// (0° closed, 90° upright).
-@available(macOS 14.0, *)
-struct LidAngleDrawing: View {
-    let angle: Double?
-
-    var body: some View {
-        Canvas { context, size in
-            let length = size.width * 0.62
-            let hinge = CGPoint(x: size.width * 0.3, y: size.height - 18)
-            // Base: from the hinge towards the front (right).
-            let base = CGRect(x: hinge.x, y: hinge.y, width: length, height: 7)
-            context.fill(Path(roundedRect: base, cornerRadius: 3), with: .color(.secondary))
-            guard let angle else { return }
-            let radians = min(max(angle, 0), 200) * .pi / 180
-            let tip = CGPoint(x: hinge.x + length * cos(radians), y: hinge.y - length * sin(radians))
-            var lid = Path()
-            lid.move(to: hinge)
-            lid.addLine(to: tip)
-            context.stroke(lid, with: .color(.accentColor), style: StrokeStyle(lineWidth: 6, lineCap: .round))
-            // The arc between the base and the lid.
-            var arc = Path()
-            arc.addArc(center: hinge, radius: 34, startAngle: .degrees(0), endAngle: .degrees(-min(max(angle, 0), 200)),
-                       clockwise: true)
-            context.stroke(arc, with: .color(.secondary), style: StrokeStyle(lineWidth: 1.5, dash: [3, 3]))
-        }
-        .animation(.linear(duration: 0.1), value: angle)
-        .accessibilityLabel(Text(verbatim: angle.map(LidText.angle) ?? "–"))
     }
 }
 
@@ -331,6 +292,9 @@ final class LidWatcherModel {
     }
 
     func stop() { watcher.stop() }
+
+    /// The newest angle, for drawing every display frame.
+    func liveAngle() -> Double? { watcher.liveAngle() }
 
     private func sync() {
         if watcher.closed != closed { closed = watcher.closed }

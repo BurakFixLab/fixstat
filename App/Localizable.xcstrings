@@ -4306,6 +4306,16 @@
         }
       }
     },
+    "Lid angle" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapak açısı"
+          }
+        }
+      }
+    },
     "Lid angle sensor found, no reading yet." : {
       "localizations" : {
         "tr" : {
