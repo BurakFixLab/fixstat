@@ -31,8 +31,14 @@ public enum HousingColor: Int, CaseIterable, Sendable {
         guard let data = IORegistryEntryCreateCFProperty(chosen, "housing-color" as CFString, kCFAllocatorDefault, 0)?
             .takeRetainedValue() as? Data, data.count >= 4 else { return nil }
         let bytes = [UInt8](data)
-        return stride(from: 0, to: bytes.count - 3, by: 4).map { i in
-            UInt32(bytes[i]) | UInt32(bytes[i + 1]) << 8 | UInt32(bytes[i + 2]) << 16 | UInt32(bytes[i + 3]) << 24
+        var words: [UInt32] = []
+        for start in stride(from: 0, to: bytes.count - 3, by: 4) {
+            var word: UInt32 = 0
+            for (shift, byte) in bytes[start..<start + 4].enumerated() {
+                word |= UInt32(byte) << UInt32(8 * shift)
+            }
+            words.append(word)
         }
+        return words
     }
 }
