@@ -192,10 +192,19 @@ public struct NotebookSideScene {
         let t = (slope + angle) * .pi / 180
         // `v` runs across the lid: negative towards the display, positive towards the outer cover.
         let along = (cos(t), sin(t)), outward = (-sin(t), cos(t))
-        let half = s.lid / 2, length = s.depth - 3
-        let pivot = (half + 0.2, topRear + half)
+        // The lid reaches `tail` past the hinge axis: closed, its back edge is flush with the
+        // base; opened, that end swings down in front of the base's back corner.
+        let half = s.lid / 2, tail = min(3.5, topRear * 0.5), length = s.depth - tail - 1
+        let pivot = (tail, topRear + half)
         func lid(_ u: Double, _ v: Double) -> (Double, Double) {
             (pivot.0 + along.0 * u + outward.0 * v, pivot.1 + along.1 * u + outward.1 * v)
+        }
+        let r = min(1.2, half * 0.6)
+        func corner(_ u: Double, _ v: Double, from a: Double, to b: Double) -> [(Double, Double)] {
+            (0...5).map { i in
+                let t = (a + (b - a) * Double(i) / 5) * .pi / 180
+                return lid(u + r * cos(t), v + r * sin(t))
+            }
         }
         var outline: [(Double, Double)] = []
         // Top end: a half circle from the display side over to the outer side.
@@ -203,23 +212,22 @@ public struct NotebookSideScene {
             let a = .pi / 2 - Double(i) / 10 * .pi
             return lid(length - half + half * cos(a), -half * sin(a))
         }
-        // Hinge end: a half circle around the pivot, back to the outer side.
-        outline += (0...12).map { i -> (Double, Double) in
-            let a = -.pi / 2 - Double(i) / 12 * .pi
-            return lid(half * cos(a), -half * sin(a))
-        }
+        // Hinge end: square with rounded corners.
+        outline += corner(-tail + r, half - r, from: 90, to: 180)
+        outline += corner(-tail + r, -half + r, from: 180, to: 270)
         // A shade darker on a light background, where the bright edge would disappear.
         let lidTone = dark ? 0.0 : 0.07
         add(outline, across([metal(0.86 - lidTone), metal(0.78 - lidTone), metal(0.68 - lidTone)],
                             lid(length / 2, half), lid(length / 2, -half)))
-        // Light running along the edge, brightest at the top end.
-        add(outline, across([RGBA(1, 1, 1, 0), RGBA(1, 1, 1, 0.05), RGBA(1, 1, 1, dark ? 0.25 : 0.30)], lid(0, 0), lid(length, 0)))
+        // Light running along the edge, brightest at the top end; the hinge end catches it too.
+        add(outline, across([RGBA(1, 1, 1, dark ? 0.30 : 0.45), RGBA(1, 1, 1, 0), RGBA(1, 1, 1, 0.05), RGBA(1, 1, 1, dark ? 0.25 : 0.30)],
+                            lid(-tail, 0), lid(length, 0)))
         // The display glass seen edge on.
         let glass = min(0.7, s.lid * 0.2)
-        add([lid(1.5, -half), lid(length - half, -half), lid(length - half, -half + glass), lid(1.5, -half + glass)],
+        add([lid(1, -half), lid(length - half, -half), lid(length - half, -half + glass), lid(1, -half + glass)],
             .solid(RGBA(0.06, 0.06, 0.08)))
         // Polished outer edge.
-        add([lid(0, half), lid(length - half, half), lid(length - half, half - 0.3), lid(0, half - 0.3)],
+        add([lid(-tail + r, half), lid(length - half, half), lid(length - half, half - 0.3), lid(-tail + r, half - 0.3)],
             .solid(RGBA(1, 1, 1, dark ? 0.45 : 0.75)))
         return shapes
     }
