@@ -411,14 +411,16 @@ public final class LidWatcher {
     public private(set) var closedAtAngle: Double?
     public private(set) var angleSource: String?
     public private(set) var hasAngleSensor = false
+    /// This model has a lid angle sensor (MacBooks with M2 or later, except the 13" MacBook Pro M2).
+    public private(set) var angleSensorExpected = false
 
     private var timer: Timer?
     private var observers: [NSObjectProtocol] = []
     private var closedAtSleep = false
     private var angleSensor: LidAngleSensor?
     /// `-FixStatSampleLidAngle YES`: a made-up lid swinging between 0° and 130°, for checking
-    /// the pane on a Mac without the sensor; a number (`-FixStatSampleLidAngle 120`) holds that angle.
-    /// the pane on a Mac without the sensor.
+    /// the pane on a Mac without the sensor; a number (`-FixStatSampleLidAngle 120`) holds that angle;
+    /// `missing` pretends a model that should have the sensor but does not show it.
     private var sampleStart: Date?
     private var sampleFixed: Double?
 
@@ -427,11 +429,14 @@ public final class LidWatcher {
     public func start() {
         guard timer == nil else { return }
         closed = LidSensor.isClosed()
-        angleSensor = LidAngleSensor()
         let sample = UserDefaults.standard.string(forKey: "FixStatSampleLidAngle")
+        let missing = sample == "missing"
+        angleSensor = missing ? nil : LidAngleSensor()
         sampleFixed = sample.flatMap(Double.init)
         sampleStart = sampleFixed != nil || UserDefaults.standard.bool(forKey: "FixStatSampleLidAngle") ? Date() : nil
-        hasAngleSensor = angleSensor != nil || sampleStart != nil || LidAngleSensor.isPresent
+        hasAngleSensor = !missing && (angleSensor != nil || sampleStart != nil || LidAngleSensor.isPresent)
+        angleSensorExpected = missing
+            || LidAngleSensor.expected(model: SystemInfo.current().model, notebook: closed != nil)
         readAngle()
         // Faster while there is an angle to animate.
         let timer = Timer(timeInterval: angleSensor != nil || sampleStart != nil ? 0.1 : 0.3, repeats: true) { [weak self] _ in
@@ -534,8 +539,10 @@ public enum LidText {
         return lines
     }
 
-    /// The lid closed but the angle hardly moved: the sensor does not follow the lid.
+    /// The model should have an angle sensor but macOS does not see it; or the lid closed but the
+    /// angle hardly moved: the sensor does not follow the lid.
     public static func finding(_ watcher: LidWatcher) -> String? {
+        if !watcher.hasAngleSensor, watcher.angleSensorExpected { return missingAngleSensor }
         guard watcher.hasAngleSensor, watcher.detected != nil else { return nil }
         guard let low = watcher.angleLow, let high = watcher.angleHigh else {
             return L("The lid closed, but the lid angle sensor gave no reading: check the sensor in the hinge and its cable.")
@@ -545,10 +552,14 @@ public enum LidText {
                  angle(low), angle(high))
     }
 
-    /// Evidence for the checklist when the lid closed.
+    /// Evidence for the checklist when the lid closed (with the finding, if any).
     public static func evidence(_ watcher: LidWatcher) -> String? {
         guard let detected = watcher.detected else { return nil }
-        return ([detected] + lines(watcher)).joined(separator: " · ")
+        return ([detected] + lines(watcher) + [finding(watcher)].compactMap { $0 }).joined(separator: " · ")
+    }
+
+    public static var missingAngleSensor: String {
+        L("This model has a lid angle sensor, but macOS does not see it: check the sensor in the hinge and its cable.")
     }
 
     public static var noAngleSensor: String { L("This Mac has no lid angle sensor: only open or closed can be read.") }

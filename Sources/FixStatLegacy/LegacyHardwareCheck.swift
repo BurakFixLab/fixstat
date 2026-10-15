@@ -740,6 +740,8 @@ final class LegacyLidPane: BlockPane {
             blocks.append(.view(hStack([drawing, column], spacing: 24)))
             if let finding = LidText.finding(watcher) { blocks.append(.status(finding, .bad)) }
             if let source = LidText.source(watcher) { blocks.append(.caption(source)) }
+        } else if let finding = LidText.finding(watcher) {
+            blocks.append(.status(finding, .bad))
         } else if watcher.closed != nil {
             blocks.append(.secondary(LidText.noAngleSensor))
         }

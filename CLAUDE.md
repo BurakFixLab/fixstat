@@ -461,9 +461,13 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   CoreTypes `ECOLOR` number: 1 silver, 2 space gray, 3 gold, 7 midnight, 8 starlight, 9 space
   black, 11 sky blue; space gray confirmed on a MacBook Air M2). The angle at which macOS reports
   the lid closed and the range seen are evidence, and a lid that closed while the angle stayed
-  within 20° is a finding. `-FixStatSampleLidAngle YES|N` swings or holds a made-up lid,
+  within 20° is a finding. `-FixStatSampleLidAngle YES|N|missing` swings or holds a made-up lid,
   `-FixStatNotebookBody air13|air15|pro14|pro16` and `-FixStatHousingColor NAME` pick the drawing.
-  No lid angle sensor on MacBookAir10,1.
+  Every MacBook with M2 or later has the sensor except the 13" MacBook Pro M2 (Mac14,7) (owner;
+  `LidAngleSensor.expected`): on those a sensor macOS does not show fails the test ("check the
+  sensor in the hinge and its cable"; `-FixStatSampleLidAngle missing` pretends it). Whether an
+  unplugged hinge sensor disappears or reads a fixed value is not known yet. No lid angle sensor
+  on MacBookAir10,1.
 - USB-C PD: the active profile is macOS' selection (`AdapterDetails.UsbHvcMenu` /
   `UsbHvcHvcIndex`); the port controller's RDO can lag (showed 5 V while charging at 20 V).
 

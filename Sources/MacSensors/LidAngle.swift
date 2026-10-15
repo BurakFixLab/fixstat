@@ -64,6 +64,15 @@ public final class LidAngleSensor {
          kIOHIDPrimaryUsagePageKey: Int(sensorPage), kIOHIDPrimaryUsageKey: 0x8A]
     }
 
+    /// Whether this model has the sensor: every MacBook with M2 or later (model identifiers
+    /// `MacNN,N`) except the 13" MacBook Pro M2 (Mac14,7); none before (M1: `MacBookAir10,1`,
+    /// `MacBookPro17,1` / `18,x`; Intel). Technician's knowledge, seen in the MacBook Air M2 / M3
+    /// and MacBook Pro M3 dumps. `notebook`: the identifiers of desktops look the same.
+    public static func expected(model: String, notebook: Bool) -> Bool {
+        guard notebook, model != "Mac14,7" else { return false }
+        return model.range(of: #"^Mac[0-9]+,[0-9]+$"#, options: .regularExpression) != nil
+    }
+
     /// Whether this Mac publishes the sensor (without opening it).
     public static var isPresent: Bool {
         let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))

@@ -244,6 +244,8 @@ struct LidTestView: View {
                         Text(verbatim: source).font(.caption).foregroundStyle(.tertiary)
                     }
                 }
+            } else if let finding = watcher.finding {
+                FindingRow(text: finding)
             } else if watcher.closed != nil {
                 Text(verbatim: LidText.noAngleSensor).foregroundStyle(.secondary)
             }

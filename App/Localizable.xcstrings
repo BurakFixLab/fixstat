@@ -8486,6 +8486,16 @@
         }
       }
     },
+    "This model has a lid angle sensor, but macOS does not see it: check the sensor in the hinge and its cable." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu modelde kapak açısı sensörü var ama macOS onu görmüyor: menteşedeki sensörü ve kablosunu kontrol edin."
+          }
+        }
+      }
+    },
     "Threshold" : {
       "localizations" : {
         "tr" : {

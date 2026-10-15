@@ -449,6 +449,7 @@ TR = {
     "The lid closed, but the lid angle sensor gave no reading: check the sensor in the hinge and its cable.": "Kapak kapandı ama kapak açısı sensörü hiç değer vermedi: menteşedeki sensörü ve kablosunu kontrol edin.",
     "The lid closed, but the lid angle sensor stayed between %@ and %@: check the sensor in the hinge and its cable.": "Kapak kapandı ama kapak açısı sensörü %1$@ ile %2$@ arasında kaldı: menteşedeki sensörü ve kablosunu kontrol edin.",
     "This Mac has no lid angle sensor: only open or closed can be read.": "Bu Mac'te kapak açısı sensörü yok: yalnızca açık veya kapalı olduğu okunabilir.",
+    "This model has a lid angle sensor, but macOS does not see it: check the sensor in the hinge and its cable.": "Bu modelde kapak açısı sensörü var ama macOS onu görmüyor: menteşedeki sensörü ve kablosunu kontrol edin.",
     "Lid angle sensor read through %@": "Kapak açısı sensörü %@ ile okunuyor",
     "Lid angle sensor found, no reading yet.": "Kapak açısı sensörü bulundu, henüz değer gelmedi.",
     "Manufacturer data missing": "Üretici verisi yok",
