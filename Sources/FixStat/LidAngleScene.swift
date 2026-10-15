@@ -16,20 +16,20 @@ struct LidAngleScene: View {
             let shown = follower.value(at: context.date, target: angle())
             // Two pictures for now, so the owner can pick one at the bench: 3D from the front, and
             // the side profile of this Mac's body.
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(alignment: .center, spacing: 16) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .center, spacing: 28) {
                     NotebookModel(angle: shown ?? 110, hasReading: shown != nil)
                         .frame(width: 250, height: 190)
-                    NotebookSideModel(angle: shown ?? 110, hasReading: shown != nil, notebook: notebook)
-                        .frame(width: 320, height: 190)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(verbatim: shown.map { LidText.angle($0.rounded()) } ?? "–")
+                            .font(.system(size: 44, weight: .semibold, design: .rounded))
+                            .monospacedDigit()
+                            .contentTransition(.numericText(value: shown ?? 0))
+                        Text("Lid angle").font(.callout).foregroundStyle(.secondary)
+                    }
                 }
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Text(verbatim: shown.map { LidText.angle($0.rounded()) } ?? "–")
-                        .font(.system(size: 40, weight: .semibold, design: .rounded))
-                        .monospacedDigit()
-                        .contentTransition(.numericText(value: shown ?? 0))
-                    Text("Lid angle").font(.callout).foregroundStyle(.secondary)
-                }
+                NotebookSideModel(angle: shown ?? 110, notebook: notebook)
+                    .frame(width: 580, height: 300)
             }
         }
     }
@@ -75,7 +75,6 @@ struct NotebookModel: View {
 @available(macOS 14.0, *)
 struct NotebookSideModel: View {
     let angle: Double
-    let hasReading: Bool
     let notebook: NotebookSideScene.Body
 
     @Environment(\.colorScheme) private var colorScheme
@@ -83,13 +82,8 @@ struct NotebookSideModel: View {
     var body: some View {
         ShapeCanvas(label: LidText.angle(angle.rounded())) { size in
             NotebookSideScene(size: size, body: notebook, dark: colorScheme == .dark)
-                .shapes(angle: angle, hasReading: hasReading, accent: Self.accent)
+                .shapes(angle: angle)
         }
-    }
-
-    static var accent: NotebookScene.RGBA {
-        let colour = NSColor.controlAccentColor.usingColorSpace(.sRGB) ?? .systemBlue
-        return NotebookScene.RGBA(Double(colour.redComponent), Double(colour.greenComponent), Double(colour.blueComponent))
     }
 }
 

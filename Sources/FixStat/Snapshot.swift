@@ -9,7 +9,7 @@ import FixStatCore
 ///       [--dark|--light] [-AppleLanguages "(tr)"]
 ///
 /// `--settings 0|1|2` renders a Settings tab (General, Thresholds, Sensors) instead,
-/// `--details` the battery details window, `--power` the power analysis window, `--live-window` the live monitor, `--sleep-window` the sleep and wake window, `--ssd-window` the SSD window, `--memory-window`, `--test-window`, `--capacity-window` the test windows, `--hardware [keyboard|trackpad|…]` the hardware check, `--check-item NAME [--sensor-check]` one checklist pane, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
+/// `--details` the battery details window, `--power` the power analysis window, `--live-window` the live monitor, `--sleep-window` the sleep and wake window, `--ssd-window` the SSD window, `--memory-window`, `--test-window`, `--capacity-window` the test windows, `--hardware [keyboard|trackpad|…]` the hardware check, `--check-item NAME [--sensor-check] [--height N]` one checklist pane, `--history [--range 0…6]` the battery history window (use `--data-dir DIR` for sample data).
 ///
 ///   FixStat.app/Contents/MacOS/FixStat --export report.csv|report.json|report.pdf [--sample-check] [--sample-capacity] [--sleep]
 ///
@@ -45,9 +45,13 @@ enum Snapshot {
                   let item = HardwareCheck.Item(rawValue: arguments[i + 1]) {
             // One checklist pane without the sidebar (README screenshots).
             if arguments.contains("--sensor-check") { runSensorCheck(monitor: monitor) }
+            var height: CGFloat = 470
+            if let h = arguments.firstIndex(of: "--height"), h + 1 < arguments.count, let value = Double(arguments[h + 1]) {
+                height = CGFloat(value)
+            }
             root = AnyView(CheckDetail(item: item)
                 .environment(monitor)
-                .frame(width: 680, height: 470)
+                .frame(width: 680, height: height)
                 .background(Color(nsColor: .windowBackgroundColor)))
         } else if arguments.contains("--live-window") {
             root = AnyView(LiveMonitorView()
