@@ -697,18 +697,18 @@ final class LegacyPortsPane: BlockPane, LegacySnapshotStartable {
 
 final class LegacyLidPane: BlockPane {
     private let watcher = LidWatcher()
-    private let drawing = LidAngleView()
+    private let drawing = NotebookSideView()
     private var recorded: String?
 
     override init(core: MonitorCore) {
         super.init(core: core)
+        drawing.source = { [weak self] in self?.watcher.liveAngle() }
         watcher.onChange = { [weak self] in
             guard let self else { return }
             if let evidence = LidText.evidence(watcher), evidence != recorded {
                 recorded = evidence
                 core.recordCheck(.lid, detail: evidence, passed: LidText.finding(watcher) == nil)
             }
-            drawing.angle = watcher.angle
             refresh()
         }
     }
@@ -935,33 +935,42 @@ final class TouchBarMirrorView: NSView {
     }
 }
 
-/// Side view of the notebook at the measured hinge angle (AppKit twin of `LidAngleDrawing`).
-final class LidAngleView: NSView {
-    var angle: Double? { didSet { if angle != oldValue { needsDisplay = true } } }
+/// This Mac seen from the side, its lid at the measured angle (AppKit twin of `LidAngleScene`):
+/// the core's `NotebookSideScene`, redrawn 60 times a second while on screen, the angle read from
+/// the sensor every frame and eased.
+final class NotebookSideView: NSView {
+    /// The newest angle (degrees, 0 = closed).
+    var source: () -> Double? = { nil }
+    private let follower = AngleFollower()
+    private let notebook = NotebookSideScene.Body.current()
+    private let finish = HousingColor.current()
+    private var shown: Double?
+    private var timer: Timer?
 
-    override var intrinsicContentSize: NSSize { NSSize(width: 220, height: 150) }
+    override var isFlipped: Bool { true }
+    override var intrinsicContentSize: NSSize { NSSize(width: 480, height: 250) }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        timer?.invalidate()
+        timer = nil
+        guard window != nil else { return }
+        let timer = Timer(timeInterval: 1.0 / 60, target: self, selector: #selector(tick), userInfo: nil, repeats: true)
+        RunLoop.main.add(timer, forMode: .common)
+        self.timer = timer
+        tick()
+    }
+
+    @objc private func tick() {
+        let next = follower.value(at: Date(), target: source())
+        if next != shown {
+            shown = next
+            needsDisplay = true
+        }
+    }
 
     override func draw(_ dirtyRect: NSRect) {
-        let length = bounds.width * 0.62
-        // AppKit's y axis points up: the hinge sits near the bottom.
-        let hinge = NSPoint(x: bounds.width * 0.3, y: 18)
-        NSColor.secondaryLabelColor.setFill()
-        NSBezierPath(roundedRect: NSRect(x: hinge.x, y: hinge.y - 7, width: length, height: 7), xRadius: 3, yRadius: 3).fill()
-        guard let angle else { return }
-        let degrees = CGFloat(min(max(angle, 0), 200))
-        let radians = degrees * .pi / 180
-        let lid = NSBezierPath()
-        lid.move(to: hinge)
-        lid.line(to: NSPoint(x: hinge.x + length * cos(radians), y: hinge.y + length * sin(radians)))
-        lid.lineWidth = 6
-        lid.lineCapStyle = .round
-        LegacyStyle.accent.setStroke()
-        lid.stroke()
-        let arc = NSBezierPath()
-        arc.appendArc(withCenter: hinge, radius: 34, startAngle: 0, endAngle: degrees)
-        arc.lineWidth = 1.5
-        arc.setLineDash([3, 3], count: 2, phase: 0)
-        NSColor.secondaryLabelColor.setStroke()
-        arc.stroke()
+        guard let context = NSGraphicsContext.current?.cgContext else { return }
+        NotebookSideScene(size: bounds.size, body: notebook, finish: finish).draw(in: context, angle: shown ?? 110)
     }
 }

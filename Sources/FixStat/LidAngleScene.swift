@@ -32,27 +32,6 @@ struct LidAngleScene: View {
     }
 }
 
-/// Eases the shown angle towards the sensor's (critically damped, ~60 ms), so integer steps and
-/// the gaps between sensor reports do not show.
-@available(macOS 14.0, *)
-final class AngleFollower {
-    private var shown: Double?
-    private var last: Date?
-
-    func value(at date: Date, target: Double?) -> Double? {
-        guard let target else { return shown }
-        defer { last = date }
-        guard let current = shown, let last else {
-            shown = target
-            return target
-        }
-        let elapsed = min(max(date.timeIntervalSince(last), 0), 0.1)
-        let next = current + (target - current) * (1 - exp(-elapsed / 0.06))
-        shown = abs(next - target) < 0.05 ? target : next
-        return shown
-    }
-}
-
 /// Draws `NotebookSideScene` (this Mac's body from the side) for one lid angle.
 @available(macOS 14.0, *)
 struct NotebookSideModel: View {
