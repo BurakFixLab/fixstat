@@ -5717,11 +5717,11 @@
           "note" : "SMC; same reading as TR5d (PMU2 tdev5); Δsingle +0.7, Δall +0.8, Δgpu +0.9, Δssd +1.7, Δcharging +4.3"
         },
         {
-          "confidence" : "estimated",
+          "confidence" : "verified",
           "group" : "other",
           "id" : "board.wifi",
           "key" : "TW0P",
-          "note" : "SMC; same reading as TP4d (PMU tdev4); Δsingle +0.7, Δall +1.4, Δgpu +1.0, Δssd +4.5, Δcharging +2.2"
+          "note" : "Located by loading the wifi (+1.8 °C, +2.0 °C above the board)"
         },
         {
           "confidence" : "estimated",
