@@ -22,10 +22,25 @@
         5.9
       ]
     },
+    "Mac16,1" : {
+      "idleDisplayOffW" : [
+        7.3
+      ]
+    },
     "MacBookAir6,1" : {
       "idleDisplayOffW" : [
         5.8,
         5.7
+      ]
+    },
+    "MacBookPro13,2" : {
+      "idleDisplayOffW" : [
+        7.2
+      ]
+    },
+    "MacBookPro14,1" : {
+      "idleDisplayOffW" : [
+        10.1
       ]
     },
     "MacBookPro14,2" : {

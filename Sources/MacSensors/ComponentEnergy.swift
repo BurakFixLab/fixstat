@@ -246,7 +246,8 @@ public final class ClusterActivitySampler {
         var out: [ClusterActivity] = []
         for channel in channels where report.subGroup(channel) == "CPU Complex Performance States" {
             let name = report.name(channel)
-            guard !name.hasSuffix("CPM") else { continue }
+            // Cluster power managers ("ECPM", and "ECPM_IDLE" on M5) are not clusters.
+            guard !name.contains("CPM") else { continue }
             let count = Int(report.api.stateCount(channel))
             var idle: Int64 = 0
             var states: [Int64] = []

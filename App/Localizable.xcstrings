@@ -10424,6 +10424,24 @@
         }
       }
     },
+    "sensor.gpu.die.n" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPU die %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPU die %lld"
+          }
+        }
+      }
+    },
     "sensor.gpu.proximity" : {
       "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
       "extractionState" : "manual",

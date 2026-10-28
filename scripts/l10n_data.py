@@ -1043,6 +1043,7 @@ SENSORS = {
     "sensor.cpu.proximity": ("CPU proximity", "CPU yakını"),
     "sensor.gpu.cluster.n": ("GPU cluster %lld", "GPU kümesi %lld"),
     "sensor.gpu.die": ("GPU die", "GPU die"),
+    "sensor.gpu.die.n": ("GPU die %lld", "GPU die %lld"),
     "sensor.gpu.proximity": ("GPU proximity", "GPU yakını"),
     "sensor.soc.mtr.n": ("SoC zone %lld", "SoC bölgesi %lld"),
     "sensor.soc.pmgr.n": ("SoC die (PMGR) %lld", "SoC die (PMGR) %lld"),

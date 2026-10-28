@@ -42,12 +42,28 @@
       "cellVendors": ["ATL"],
       "samples": 1
     },
+    "Mac16,1": {
+      "designCapacity": [6249],
+      "chemistryIDs": [28705],
+      "gauges": ["bq40z651"],
+      "cellCount": 3,
+      "cellVendors": ["COS"],
+      "samples": 1
+    },
     "Mac16,12": {
       "designCapacity": [4629],
       "chemistryIDs": [29845],
       "gauges": ["bq40z651"],
       "cellCount": 3,
       "cellVendors": ["COS"],
+      "samples": 1
+    },
+    "Mac17,3": {
+      "designCapacity": [4629],
+      "chemistryIDs": [29961],
+      "gauges": ["bq40z651"],
+      "cellCount": 3,
+      "cellVendors": ["ATL"],
       "samples": 1
     },
     "MacBookAir10,1": {
@@ -77,6 +93,14 @@
     "MacBookAir9,1": {
       "designCapacity": [4381],
       "chemistryIDs": [6210],
+      "gauges": ["bq20z451"],
+      "cellCount": 3,
+      "cellVendors": ["ATL"],
+      "samples": 1
+    },
+    "MacBookPro13,2": {
+      "designCapacity": [4315],
+      "chemistryIDs": [14626],
       "gauges": ["bq20z451"],
       "cellCount": 3,
       "cellVendors": ["ATL"],
@@ -131,7 +155,7 @@
       "watts": 94,
       "profiles": [[5000, 3000], [9000, 3000], [15000, 3000], [20000, 4700]],
       "firmware": ["01070051"],
-      "samples": 12
+      "samples": 15
     },
     {
       "id": "0x1656",
@@ -175,7 +199,7 @@
       "watts": 60,
       "profiles": [[5000, 3000], [9000, 3000], [15000, 3000], [20000, 3000]],
       "firmware": ["01050029"],
-      "samples": 2
+      "samples": 4
     }
   ]
 }
