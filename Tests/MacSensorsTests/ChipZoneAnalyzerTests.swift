@@ -54,6 +54,26 @@ import Testing
         #expect(result.review.contains("Te04"))
     }
 
+    @Test func m5HasOneKeyPerZone() throws {
+        // M5: no raw / calibrated pairs; each Tp / Te / Tg key moves on its own.
+        let keys = ["Tp00", "Tp04", "Te04", "Tg04", "Tg0C", "Tf05"]
+        let system = SystemInfo(model: "Mac17,3", marketingName: nil, boardTarget: nil, chip: "Apple M5",
+                                architecture: "arm64", isAppleSilicon: true, osVersion: "26")
+        var recording = SensorRecording(system: system, startedAt: Date(),
+                                        sensors: keys.map { SensorDescriptor(source: .smc, key: $0, hidName: nil) })
+        for t in 0..<60 {
+            let load = Double(t)
+            let values: [Double?] = [32 + load, 32 + load * 0.8 + Double(t % 3), 31 + load * 0.5 + Double(t % 4),
+                                     32 + load * 0.3, 32 + load * 0.35 + Double(t % 2), 27.6]
+            recording.samples.append(.init(t: Double(t), values: values))
+        }
+        let result = try #require(ChipZoneAnalyzer.analyze(recording))
+        #expect(result.entry.sensors.map(\.key) == ["Tp00", "Tp04", "Te04", "Tg04", "Tg0C"])
+        #expect(result.entry.sensors.map(\.id) == ["cpu.pcluster.1", "cpu.pcluster.2", "cpu.ecluster.1",
+                                                    "gpu.cluster.1", "gpu.cluster.2"])
+        #expect(result.entry.ignored == ["Tf05"])
+    }
+
     @Test func notForIntelOrHIDDieSensors() {
         #expect(ChipZoneAnalyzer.analyze(Self.recording(apple: false)) == nil)
         #expect(ChipZoneAnalyzer.analyze(Self.recording(hidDie: true)) == nil)

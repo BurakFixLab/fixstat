@@ -8,7 +8,8 @@ import Foundation
 /// raw reading, the calibrated reading (raw + a constant offset, the one to show) and a
 /// noisier peak; GPU keys in pairs (raw, calibrated). The triplets are not aligned to the
 /// key alphabet on every chip (M4), so they are found from the data: neighbours (in key
-/// order) whose difference stays constant (within `Family.tolerance`). Exact copies of
+/// order) whose difference stays constant (within `Family.tolerance`). M5 has one key per zone
+/// (no pairs in a family): each key that moves is a zone. Exact copies of
 /// other keys (cluster maxima) are derived; constant keys are calibration values and
 /// ignored. What fits no rule is listed for review (e.g. the cluster averages `Tp3*` on M4).
 public enum ChipZoneAnalyzer {
@@ -99,9 +100,12 @@ public enum ChipZoneAnalyzer {
             }
         }
 
+        var unpaired: [(Family, [String])] = []
         for family in families {
             let keys = series.keys.filter { $0.hasPrefix(family.prefix) }.sorted { order($0) < order($1) }
             var used = Set<String>()
+            var familyReview: [String] = []
+            var familyCopies: [String] = []
             var zone = 0
             for (i, key) in keys.enumerated() where !used.contains(key) {
                 if isConstant(key) {
@@ -129,11 +133,37 @@ public enum ChipZoneAnalyzer {
                             + "reads 0 + offset while power gated; from a \(model) recording"))
                 } else if keys.contains(where: { $0 != key && sameAs(key, $0) }) {
                     derived.append(key)
+                    familyCopies.append(key)
                     used.insert(key)
                 } else {
-                    review.append(key)
+                    familyReview.append(key)
                 }
             }
+            unpaired.append((family, (familyReview + familyCopies).sorted { order($0) < order($1) }))
+        }
+        // M5: one key per zone, no raw / calibrated pairs in any family; then every key that
+        // moves and copies no other is a zone of its own. With pairs elsewhere, unpaired keys
+        // are left for review (M4's cluster averages).
+        if sensors.isEmpty {
+            // Neighbouring zones can read alike (M5 GPU: pairs within 0.05 °C on average): keep
+            // the first of each group of copies as the zone, the others are derived.
+            derived.removeAll { key in unpaired.contains { $0.1.contains(key) } }
+            for (family, keys) in unpaired {
+                var zones: [String] = []
+                for key in keys {
+                    if zones.contains(where: { sameAs(key, $0) }) {
+                        derived.append(key)
+                        continue
+                    }
+                    zones.append(key)
+                    sensors.append(.init(
+                        key: key, id: "\(family.id).\(zones.count)", group: family.group, confidence: .estimated,
+                        note: "SMC, \(family.what) thermal zone: a single reading (no raw / offset pair on this chip); "
+                            + "from a \(model) recording"))
+                }
+            }
+        } else {
+            review += unpaired.flatMap { family, keys in keys.filter { !derived.contains($0) } }
         }
         guard !sensors.isEmpty else { return nil }
         return Result(chip: recording.system.chip,

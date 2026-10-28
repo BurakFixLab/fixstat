@@ -1220,6 +1220,245 @@
           "note" : "SMC, GPU thermal zone: calibrated reading (raw key + constant offset); reads 0 + offset while power gated; from a Mac16,12 bench recording"
         }
       ]
+    },
+    "Apple M5" : {
+      "derived" : [
+        "Tg0X",
+        "Tg0d",
+        "Tg0p",
+        "Tg12",
+        "Tg1A",
+        "Tg1I",
+        "Tg1M",
+        "Tg1Y",
+        "Tg1g"
+      ],
+      "sensors" : [
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.1",
+          "key" : "Tp00",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.2",
+          "key" : "Tp04",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.3",
+          "key" : "Tp0C",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.4",
+          "key" : "Tp0G",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.5",
+          "key" : "Tp0O",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.6",
+          "key" : "Tp0R",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.7",
+          "key" : "Tp0X",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.8",
+          "key" : "Tp0a",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.9",
+          "key" : "Tp0p",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.10",
+          "key" : "Tp0u",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.11",
+          "key" : "Tp0y",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.12",
+          "key" : "Tp12",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.13",
+          "key" : "Tp16",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.pcluster.14",
+          "key" : "Tp1E",
+          "note" : "SMC, performance cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.1",
+          "key" : "Te04",
+          "note" : "SMC, efficiency cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.2",
+          "key" : "Te08",
+          "note" : "SMC, efficiency cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.3",
+          "key" : "Te0C",
+          "note" : "SMC, efficiency cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.ecluster.4",
+          "key" : "Te0R",
+          "note" : "SMC, efficiency cluster thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.1",
+          "key" : "Tg04",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.2",
+          "key" : "Tg0C",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.3",
+          "key" : "Tg0G",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.4",
+          "key" : "Tg0K",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.5",
+          "key" : "Tg0O",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.6",
+          "key" : "Tg0R",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.7",
+          "key" : "Tg0U",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.8",
+          "key" : "Tg0g",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.9",
+          "key" : "Tg0j",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.10",
+          "key" : "Tg0m",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.11",
+          "key" : "Tg16",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.12",
+          "key" : "Tg1c",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.13",
+          "key" : "Tg1o",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "gpu",
+          "id" : "gpu.cluster.14",
+          "key" : "Tg1s",
+          "note" : "SMC, GPU thermal zone: a single reading (no raw / offset pair on this chip); from a Mac17,3 recording"
+        }
+      ]
     }
   },
   "models" : {
