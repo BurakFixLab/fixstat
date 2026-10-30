@@ -6112,6 +6112,148 @@
         }
       ]
     },
+    "MacBookPro11,3" : {
+      "board" : "Mac",
+      "chip" : "Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz",
+      "ignored" : [
+        "TBXT",
+        "TCTD",
+        "TG1D",
+        "TG1F",
+        "TG1d",
+        "TH0F",
+        "TH0R",
+        "TH0c"
+      ],
+      "sensors" : [
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "id" : "battery.pack.1",
+          "key" : "TB0T",
+          "note" : "SMC; constant during all tests; Δall +0.0, Δgpu +0.0, Δssd +0.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "id" : "battery.pack.2",
+          "key" : "TB1T",
+          "note" : "SMC; constant during all tests; Δall +0.0, Δgpu +0.0, Δssd +0.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "battery",
+          "id" : "battery.pack.3",
+          "key" : "TB2T",
+          "note" : "SMC; constant during all tests; Δall +0.0, Δgpu +0.0, Δssd +0.0"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "chassis",
+          "id" : "chassis.palmrest.1",
+          "key" : "Ts0P",
+          "note" : "SMC; Δall +0.1, Δgpu +0.5, Δssd +0.9"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.1",
+          "key" : "TC1C",
+          "note" : "SMC; Δall +31.5, Δgpu +21.5, Δssd -18.5"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.2",
+          "key" : "TC2C",
+          "note" : "SMC; Δall +28.9, Δgpu +20.1, Δssd -20.8"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.3",
+          "key" : "TC3C",
+          "note" : "SMC; Δall +30.7, Δgpu +21.9, Δssd -19.5"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.core.4",
+          "key" : "TC4C",
+          "note" : "SMC; Δall +28.4, Δgpu +21.8, Δssd -19.5"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "cpu",
+          "id" : "cpu.core.5",
+          "key" : "TCFC",
+          "note" : "SMC; Δall +0.9, Δgpu +0.0, Δssd +0.0"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.die.1",
+          "key" : "TC0E",
+          "note" : "SMC; Δall +29.2, Δgpu +3.3, Δssd -27.8"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.die.2",
+          "key" : "TC0F",
+          "note" : "SMC; Δall +28.3, Δgpu +4.0, Δssd -28.5"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "cpu",
+          "id" : "cpu.proximity",
+          "key" : "TC0P",
+          "note" : "SMC; Δall +11.2, Δgpu +11.1, Δssd -16.4"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "gpu",
+          "id" : "gpu.die.1",
+          "key" : "TCGC",
+          "note" : "SMC; Δall +15.8, Δgpu +21.6, Δssd -19.4"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "gpu",
+          "id" : "gpu.die.2",
+          "key" : "TG0D",
+          "note" : "SMC; Δall +14.1, Δgpu +24.9, Δssd -19.2"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "gpu",
+          "id" : "gpu.proximity",
+          "key" : "TG0P",
+          "note" : "SMC; Δall +9.5, Δgpu +18.3, Δssd -18.9"
+        },
+        {
+          "confidence" : "verified",
+          "group" : "other",
+          "id" : "board.memory",
+          "key" : "TM0P",
+          "note" : "Located by loading the memory (+5.6 °C, +3.9 °C above the board)"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "id" : "board.pch",
+          "key" : "TPCD",
+          "note" : "SMC; Δall +1.7, Δgpu +1.9, Δssd -0.8"
+        },
+        {
+          "confidence" : "estimated",
+          "group" : "other",
+          "id" : "board.wifi",
+          "key" : "TW0P",
+          "note" : "SMC; Δall +1.0, Δgpu -0.5, Δssd -2.5"
+        }
+      ]
+    },
     "MacBookPro14,3" : {
       "board" : "Mac",
       "chip" : "Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz",
