@@ -232,6 +232,22 @@ import Testing
         #expect(connectors[1].lanes.map(\.name) == ["HS02", "SSP2"])
     }
 
+    @Test func usbAPortsOfAMacBookPro2013() {
+        // MacBookPro11,3 (Late 2013, Big Sur), from a dump: Lynx Point XHCI (AppleUSBXHCILPTH) with
+        // HS01 / HS05 + SSP1 / SSP2 as the two USB-A ports; HS08 / HS12 and the card reader (SSP4)
+        // are internal (255) and not passed in. Thunderbolt 2 and HDMI are not USB root ports.
+        let roots = [
+            PortReader.RootPort(location: 0x1410_0000, name: "HS01", connector: 3, superSpeed: false, enumerationFailures: 0),
+            PortReader.RootPort(location: 0x1420_0000, name: "HS05", connector: 3, superSpeed: false, enumerationFailures: 0),
+            PortReader.RootPort(location: 0x1450_0000, name: "SSP1", connector: 3, superSpeed: true),
+            PortReader.RootPort(location: 0x1460_0000, name: "SSP2", connector: 3, superSpeed: true),
+        ]
+        let connectors = PortReader.connectors(from: roots, notebook: true)
+        #expect(connectors.map(\.kind) == ["USB-A", "USB-A"])
+        #expect(connectors[0].lanes.map(\.name) == ["HS01", "SSP1"])
+        #expect(connectors[1].lanes.map(\.name) == ["HS05", "SSP2"])
+    }
+
     @Test func thunderbolt3PortsPairedByPortNumber() {
         // MacBookPro13,1 (2016, two Thunderbolt 3 ports), from a dump: USB 2 lanes on the PCH
         // (HS02 / HS08, numbered), USB 3 on the Thunderbolt controller (SSP1 / SSP2, numbered)
