@@ -7791,6 +7791,18 @@
     },
     {
       "group" : "cpu",
+      "id" : "cpu.die",
+      "key" : "TCXC",
+      "note" : "Intel: CPU die, the hottest PECI reading"
+    },
+    {
+      "group" : "cpu",
+      "id" : "cpu.systemagent",
+      "key" : "TCSA",
+      "note" : "Intel: CPU system agent (memory controller), PECI"
+    },
+    {
+      "group" : "cpu",
       "id" : "cpu.proximity",
       "key" : "TC0P",
       "note" : "Intel: CPU proximity"

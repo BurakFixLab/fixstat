@@ -1040,6 +1040,7 @@ SENSORS = {
     "sensor.cpu.core.n": ("CPU core %lld", "CPU çekirdeği %lld"),
     "sensor.cpu.die": ("CPU die", "CPU die"),
     "sensor.cpu.die.n": ("CPU die %lld", "CPU die %lld"),
+    "sensor.cpu.systemagent": ("CPU system agent", "CPU sistem ajanı"),
     "sensor.cpu.proximity": ("CPU proximity", "CPU yakını"),
     "sensor.gpu.cluster.n": ("GPU cluster %lld", "GPU kümesi %lld"),
     "sensor.gpu.die": ("GPU die", "GPU die"),

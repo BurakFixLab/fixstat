@@ -10388,6 +10388,24 @@
         }
       }
     },
+    "sensor.cpu.systemagent" : {
+      "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU system agent"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU sistem ajanı"
+          }
+        }
+      }
+    },
     "sensor.gpu.cluster.n" : {
       "comment" : "Sensor name; key = sensor map id. '.n' keys take the index (%lld).",
       "extractionState" : "manual",
