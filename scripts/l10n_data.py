@@ -8,6 +8,7 @@ the ".n" variants take one integer (%lld) — the index from the sensor map id.
 """
 
 TR = {
+    'SMART data does not come through USB here: the USB adapter does not pass it on, or this macOS version does not (macOS 11 does not; macOS 27 does with the same adapter). Read / write errors are counted.': "SMART verisi burada USB üzerinden gelmiyor: ya USB adaptörü iletmiyor ya da bu macOS sürümü (macOS 11 iletmiyor; macOS 27 aynı adaptörle iletiyor). Okuma / yazma hataları sayılıyor.",
     'Airflow temperature': 'Hava akışı sıcaklığı',
     "%@ interface CRC errors between the drive and the USB adapter: check the enclosure's connector and the adapter (pulling the drive out while it is busy counts too).": "Disk ile USB adaptörü arasında %@ arayüz CRC hatası: kutunun konnektörünü ve adaptörü kontrol edin (disk çalışırken çıkarılması da sayılır).",
     'External drives': 'Harici diskler',

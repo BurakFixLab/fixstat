@@ -294,7 +294,9 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   device (bridge VID / PID, chip vendor from the VID, link speed); macOS 27's own USB mass storage driver
   passes ATA SMART through a USB–SATA bridge (ASMedia ASM1153E + Samsung 870 EVO: same ATASMARTLib
   path, no driver). USB–NVMe bridges / sticks report no "SMART Capable" (said so, I/O errors still
-  counted); external NVMe drives with "NVMe SMART Capable" are read through NVMeSMARTLib like the
+  counted); macOS 11 (Big Sur, MacBookAir6,1) passes no SMART through the same Ugreen / ASMedia box and
+  UAS driver chain (no "SMART Capable"), so below `SSDText.usbSMARTKnownFrom` (27) the text says the adapter
+  or the macOS version; the first version that passes it is not known yet. External NVMe drives with "NVMe SMART Capable" are read through NVMeSMARTLib like the
   internal SSD (`FSNVMeReadSMARTLog(device, …)`; untested on a real Thunderbolt enclosure). Older macOS
   untested. `StorageLocation`: external = location "External" or behind a Thunderbolt PCIe tunnel
   (`IOPCITunnelled` above it: Thunderbolt NVMe can report "Internal"); the internal SSD, its NVMe

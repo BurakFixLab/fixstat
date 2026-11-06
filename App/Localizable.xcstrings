@@ -6882,6 +6882,16 @@
         }
       }
     },
+    "SMART data does not come through USB here: the USB adapter does not pass it on, or this macOS version does not (macOS 11 does not; macOS 27 does with the same adapter). Read / write errors are counted." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SMART verisi burada USB üzerinden gelmiyor: ya USB adaptörü iletmiyor ya da bu macOS sürümü (macOS 11 iletmiyor; macOS 27 aynı adaptörle iletiyor). Okuma / yazma hataları sayılıyor."
+          }
+        }
+      }
+    },
     "SMART data is not available for this SSD." : {
       "localizations" : {
         "tr" : {
