@@ -93,7 +93,10 @@ public struct SSDInfo: Codable, Sendable, Equatable {
 
     public static func read(includeSerial: Bool = false) -> SSDInfo? {
         var info = SSDInfo()
-        if let controller = Registry.properties(ofClass: "IONVMeController") {
+        // The internal drive and its controller: an NVMe drive in a Thunderbolt enclosure has its own.
+        let device = StorageLocation.internalBlockDevice()
+        defer { if let device { IOObjectRelease(device) } }
+        if let controller = internalNVMeControllerProperties(device: device) {
             info.model = (controller.string("Model Number"))?.trimmingCharacters(in: .whitespaces)
             info.firmware = (controller.string("Firmware Revision"))?.trimmingCharacters(in: .whitespaces)
             if let characteristics = controller.dict("Controller Characteristics") {
@@ -107,7 +110,7 @@ public struct SSDInfo: Codable, Sendable, Equatable {
             }
         }
         info.health = readHealth()
-        if let device = Registry.properties(ofClass: "IOBlockStorageDevice") {
+        if let device, let device = Registry.properties(of: device) {
             let characteristics = device.dict("Device Characteristics") ?? [:]
             if info.model == nil { info.model = characteristics.string("Product Name")?.trimmingCharacters(in: .whitespaces) }
             if info.firmware == nil {
@@ -117,11 +120,7 @@ public struct SSDInfo: Codable, Sendable, Equatable {
         }
         if info.capacity == nil {
             // Intel NVMe (no "Controller Characteristics"): the size of the disk medium.
-            let service = IOServiceGetMatchingService(ioMainPort, IOServiceMatching("IOBlockStorageDevice"))
-            if service != IO_OBJECT_NULL {
-                info.capacity = ATADrive.mediaSize(below: service)
-                IOObjectRelease(service)
-            }
+            if let device { info.capacity = ATADrive.mediaSize(below: device) }
         }
         var drives = ATADrive.readAll(includeSerial: includeSerial)
         if info.health == nil, let index = drives.firstIndex(where: { $0.isSolidState }) ?? drives.indices.first {
@@ -151,10 +150,36 @@ public struct SSDInfo: Codable, Sendable, Equatable {
         return info
     }
 
+    /// NVMe SMART of the internal SSD (never of an external NVMe drive).
     public static func readHealth() -> NVMeHealth? {
+        guard let device = StorageLocation.internalBlockDevice(nvmeOnly: true) else { return nil }
+        defer { IOObjectRelease(device) }
+        return readHealth(of: device)
+    }
+
+    /// NVMe SMART of a block storage device.
+    static func readHealth(of device: io_service_t) -> NVMeHealth? {
         var log = [UInt8](repeating: 0, count: 512)
-        guard FSNVMeReadSMARTLog(&log) == KERN_SUCCESS else { return nil }
+        guard FSNVMeReadSMARTLog(device, &log) == KERN_SUCCESS else { return nil }
         return NVMeHealth.parse(log)
+    }
+
+    /// The NVMe controller above the internal drive; without one (no drive found, a driver that
+    /// sits elsewhere) the first controller that is not behind Thunderbolt.
+    static func internalNVMeControllerProperties(device: io_service_t?) -> [String: Any]? {
+        if let device, let controller = StorageLocation.nvmeController(above: device) {
+            defer { IOObjectRelease(controller) }
+            return Registry.properties(of: controller)
+        }
+        var iterator: io_iterator_t = 0
+        guard IOServiceGetMatchingServices(ioMainPort, IOServiceMatching("IONVMeController"), &iterator) == KERN_SUCCESS
+        else { return nil }
+        defer { IOObjectRelease(iterator) }
+        while case let service = IOIteratorNext(iterator), service != IO_OBJECT_NULL {
+            defer { IOObjectRelease(service) }
+            if !StorageLocation.isThunderbolt(service) { return Registry.properties(of: service) }
+        }
+        return nil
     }
 }
 

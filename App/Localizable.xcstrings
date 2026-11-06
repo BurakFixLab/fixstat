@@ -3348,16 +3348,6 @@
         }
       }
     },
-    "FixStat does not read the SMART data of external NVMe drives yet. Read / write errors are counted." : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "FixStat harici NVMe disklerin SMART verisini henüz okumuyor. Okuma / yazma hataları sayılıyor."
-          }
-        }
-      }
-    },
     "FixStat has no Bluetooth access. Allow it in System Settings › Privacy & Security › Bluetooth." : {
       "localizations" : {
         "tr" : {

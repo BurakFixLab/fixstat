@@ -165,9 +165,15 @@ public struct SensorReport: Encodable {
         for (index, drive) in (ssd?.externalDrives ?? []).enumerated() {
             let key = "external\(index + 1)"
             add("ssd", key + "Capacity", drive.model ?? "", drive.capacity, "B")
+            if let h = drive.nvmeHealth {
+                add("ssd", key + "PercentageUsed", "", Double(h.percentageUsed), "%")
+                add("ssd", key + "AvailableSpare", "", Double(h.availableSpare), "%")
+                add("ssd", key + "BytesWritten", "", h.bytesWritten, "B")
+                add("ssd", key + "MediaErrors", "", h.mediaErrors, "")
+            }
             add("ssd", key + "LifeLeft", drive.health?.lifeLeft.map { "attribute \($0.attribute)" } ?? "",
                 drive.health?.lifeLeft.map { Double($0.percent) }, "%")
-            add("ssd", key + "PowerOnHours", "", drive.health?.powerOnHours, "h")
+            add("ssd", key + "PowerOnHours", "", drive.nvmeHealth?.powerOnHours ?? drive.health?.powerOnHours, "h")
             add("ssd", key + "ReallocatedSectors", "", drive.health?.reallocatedSectors, "")
             add("ssd", key + "CrcErrors", "", drive.health?.crcErrors, "")
             add("ssd", key + "IOErrors", "", drive.io.map { Double($0.errors + $0.retries) }, "")

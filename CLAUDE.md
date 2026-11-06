@@ -294,7 +294,11 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   device (bridge VID / PID, chip vendor from the VID, link speed); macOS 27's own USB mass storage driver
   passes ATA SMART through a USB–SATA bridge (ASMedia ASM1153E + Samsung 870 EVO: same ATASMARTLib
   path, no driver). USB–NVMe bridges / sticks report no "SMART Capable" (said so, I/O errors still
-  counted); external NVMe (Thunderbolt) SMART is not read yet. Older macOS untested. Samsung SATA
+  counted); external NVMe drives with "NVMe SMART Capable" are read through NVMeSMARTLib like the
+  internal SSD (`FSNVMeReadSMARTLog(device, …)`; untested on a real Thunderbolt enclosure). Older macOS
+  untested. `StorageLocation`: external = location "External" or behind a Thunderbolt PCIe tunnel
+  (`IOPCITunnelled` above it: Thunderbolt NVMe can report "Internal"); the internal SSD, its NVMe
+  controller and its SMART are taken from the internal block device, never the first one found. Samsung SATA
   SSDs report the temperature only in 190 (airflow). `StorageWatcher` (IOKit match / terminate
   notifications on IOBlockStorageDevice, 1.5 s debounce) refreshes the window when a drive comes or
   goes. `-FixStatSampleExternalDrive YES` adds a SATA SSD behind a JMicron bridge and an NVMe SSD

@@ -385,8 +385,8 @@ final class LegacySSD: LegacySnapshotStartable {
             let findings = SSDText.externalFindings(drive)
             blocks.append(findings.isEmpty ? .item(drive.model ?? "–", detail: SSDText.externalIdentity(drive))
                 : .status(drive.model ?? "–", .bad, detail: SSDText.externalIdentity(drive)))
-            if let health = drive.health {
-                if let summary = SSDText.healthSummary(health) { blocks.append(.headline(summary, nil)) }
+            if SSDText.externalHasSMART(drive) {
+                if let summary = SSDText.externalHealthSummary(drive) { blocks.append(.headline(summary, nil)) }
                 if findings.isEmpty { blocks.append(.status(L("SSD health is good."), .good)) }
             }
             blocks += findings.map { .status($0, .bad) }
@@ -400,9 +400,10 @@ final class LegacySSD: LegacySnapshotStartable {
                 }
             }
             if let io = drive.io, SSDText.ioFinding(io) == nil { blocks.append(.caption(SSDText.io(io))) }
-            if let health = drive.health {
-                blocks.append(.rows(SSDText.ataRows(health).map { DocRow(title: $0.0, value: $0.1) }, labelWidth: 200))
-                let attributes = SSDText.ataTable(health)
+            if SSDText.externalHasSMART(drive) {
+                blocks.append(.rows(SSDText.externalHealthRows(drive).map { DocRow(title: $0.0, value: $0.1) }, labelWidth: 200))
+            }
+            if let attributes = SSDText.externalAttributes(drive) {
                 blocks.append(.caption(L("All SMART attributes")))
                 blocks.append(.table(header: SSDText.ataTableHeader, rows: attributes,
                                      tones: attributes.map { _ in Array(repeating: nil, count: 6) }, leading: true))

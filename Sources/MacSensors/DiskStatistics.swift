@@ -52,8 +52,7 @@ public struct DiskIOStatistics: Codable, Sendable, Equatable {
         var out: [(String?, DiskIOStatistics)] = []
         while case let service = IOIteratorNext(iterator), service != IO_OBJECT_NULL {
             defer { IOObjectRelease(service) }
-            guard let properties = Registry.properties(of: service),
-                  (properties.dict("Protocol Characteristics")?.string("Physical Interconnect Location") ?? "Internal") == "Internal",
+            guard StorageLocation.isInternal(service), let properties = Registry.properties(of: service),
                   let statistics = below(service)
             else { continue }
             let model = properties.dict("Device Characteristics")?.string("Product Name")?.trimmingCharacters(in: .whitespaces)

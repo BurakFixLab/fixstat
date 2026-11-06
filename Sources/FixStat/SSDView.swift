@@ -336,8 +336,8 @@ private struct ExternalDriveView: View {
                 Text(verbatim: SSDText.externalIdentity(drive)).font(.callout).foregroundStyle(.secondary)
                     .textSelection(.enabled)
             }
-            if let health = drive.health {
-                if let summary = SSDText.healthSummary(health) {
+            if SSDText.externalHasSMART(drive) {
+                if let summary = SSDText.externalHealthSummary(drive) {
                     Text(verbatim: summary)
                 }
                 if findings.isEmpty {
@@ -359,9 +359,11 @@ private struct ExternalDriveView: View {
             if let io = drive.io, SSDText.ioFinding(io) == nil {
                 Text(verbatim: SSDText.io(io)).font(.callout).foregroundStyle(.secondary)
             }
-            if let health = drive.health {
-                SMARTRows(rows: SSDText.ataRows(health))
-                SMARTAttributeTable(attributes: SSDText.ataTable(health))
+            if SSDText.externalHasSMART(drive) {
+                SMARTRows(rows: SSDText.externalHealthRows(drive))
+            }
+            if let attributes = SSDText.externalAttributes(drive) {
+                SMARTAttributeTable(attributes: attributes)
             }
         }
     }

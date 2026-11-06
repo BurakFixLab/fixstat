@@ -158,8 +158,13 @@ public struct ATADrive: Codable, Sendable, Equatable {
     /// External drives: the drive offers SMART ("SMART Capable"; false: a USB bridge that does not
     /// pass SMART through, a memory stick).
     public var smartCapable: Bool?
-    /// External drives: an NVMe drive (Thunderbolt enclosure, USB4); its SMART is not read yet.
+    /// External drives: an NVMe drive (Thunderbolt enclosure, USB4, or behind a USB–NVMe bridge
+    /// that shows it as one).
     public var nvme: Bool?
+    /// External NVMe drives: SMART / health log (NVMeSMARTLib, like the internal SSD).
+    public var nvmeHealth: NVMeHealth?
+    /// External drives: behind a Thunderbolt PCIe tunnel.
+    public var thunderbolt: Bool?
 
     public var isSolidState: Bool { medium?.localizedCaseInsensitiveContains("solid") ?? true }
 
@@ -188,19 +193,24 @@ public struct ATADrive: Codable, Sendable, Equatable {
             let smartCapable = (properties["SMART Capable"] as? NSNumber)?.boolValue == true
             let device = properties.dict("Device Characteristics") ?? [:]
             let protocolInfo = properties.dict("Protocol Characteristics") ?? [:]
-            let location = protocolInfo.string("Physical Interconnect Location") ?? "Internal"
             var drive = ATADrive()
             if external {
                 // "File" / "Virtual": disk images; an empty card reader has no media.
-                guard location == "External", protocolInfo.string("Physical Interconnect") != "Virtual Interface",
+                guard StorageLocation.isExternal(service), protocolInfo.string("Physical Interconnect") != "Virtual Interface",
                       let size = mediaSize(below: service), size > 0 else { continue }
                 drive.smartCapable = smartCapable
-                drive.nvme = (properties["NVMe SMART Capable"] as? NSNumber)?.boolValue == true
-                    || IOObjectConformsTo(service, "IONVMeBlockStorageDevice") != 0 ? true : nil
+                let nvmeSMART = (properties["NVMe SMART Capable"] as? NSNumber)?.boolValue == true
+                drive.nvme = nvmeSMART || IOObjectConformsTo(service, "IONVMeBlockStorageDevice") != 0 ? true : nil
+                drive.thunderbolt = StorageLocation.isThunderbolt(service) ? true : nil
                 drive.bsdName = wholeDiskName(below: service)
                 drive.usb = USBVolumes.usbDevice(above: service)
+                if nvmeSMART {
+                    drive.smartCapable = true
+                    drive.nvmeHealth = SSDInfo.readHealth(of: service)
+                    if drive.nvmeHealth == nil { drive.smartError = "NVMe SMART read failed" }
+                }
             } else {
-                guard smartCapable, location == "Internal" else { continue }
+                guard smartCapable, StorageLocation.isInternal(service) else { continue }
             }
             drive.model = device.string("Product Name")?.trimmingCharacters(in: .whitespaces)
             if external, let vendor = device.string("Vendor Name")?.trimmingCharacters(in: .whitespaces), !vendor.isEmpty,
@@ -216,7 +226,7 @@ public struct ATADrive: Codable, Sendable, Equatable {
             drive.interconnect = protocolInfo.string("Physical Interconnect")
             drive.capacity = mediaSize(below: service)
             drive.io = DiskIOStatistics.below(service)
-            guard smartCapable else {
+            guard smartCapable, drive.nvme != true else {
                 drives.append(drive)
                 continue
             }
@@ -254,7 +264,8 @@ public struct ATADrive: Codable, Sendable, Equatable {
     }
 
     /// `-FixStatSampleExternalDrive YES`: a made-up SATA SSD in a USB enclosure (SMART through the
-    /// bridge, a few CRC errors) and an NVMe SSD behind a USB bridge that does not pass SMART on.
+    /// bridge, a few CRC errors), an NVMe SSD behind a USB bridge that does not pass SMART on and a
+    /// worn NVMe SSD in a Thunderbolt enclosure.
     static func sampleExternal() -> [ATADrive] {
         func a(_ id: Int, _ current: Int, _ raw: UInt64) -> ATASMARTAttribute {
             ATASMARTAttribute(id: id, current: current, worst: current, threshold: 0, raw: raw)
@@ -277,7 +288,18 @@ public struct ATADrive: Codable, Sendable, Equatable {
         nvme.usb = USBDeviceInfo(name: "RTL9210B-CG", vendorID: 0x0BDA, productID: 0x9210, speed: 4, portNumber: 2)
         nvme.bsdName = "disk99"
         nvme.smartCapable = false
-        return [sata, nvme]
+        var thunderbolt = ATADrive(model: "Samsung SSD 970 EVO Plus 2TB", firmware: "2B2QEXM7", serial: nil,
+                                   medium: "Solid State", interconnect: "PCI-Express", capacity: 2_000_398_934_016,
+                                   io: DiskIOStatistics(readErrors: 0, writeErrors: 0, readRetries: 0, writeRetries: 0,
+                                                        bytesRead: 5_100_000_000, bytesWritten: 1_200_000_000))
+        thunderbolt.nvmeHealth = NVMeHealth(criticalWarning: 0, temperature: 47, availableSpare: 100, availableSpareThreshold: 10,
+                                            percentageUsed: 84, bytesRead: 410e12, bytesWritten: 1_020e12, powerCycles: 2_310,
+                                            powerOnHours: 21_480, unsafeShutdowns: 188, mediaErrors: 0, errorLogEntries: 41)
+        thunderbolt.bsdName = "disk97"
+        thunderbolt.smartCapable = true
+        thunderbolt.nvme = true
+        thunderbolt.thunderbolt = true
+        return [sata, nvme, thunderbolt]
     }
 
     /// Size of the whole-disk IOMedia below a block storage device.

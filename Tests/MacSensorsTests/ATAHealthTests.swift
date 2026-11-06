@@ -143,4 +143,24 @@ import FixStatCore
         #expect(SSDText.externalSMARTProblem(drive)?.contains("USB") == true)
         #expect(!SSDText.needsFullDiskAccess(drive))
     }
+
+    @Test func thunderboltNVMeTexts() {
+        var drive = ATADrive(model: "Samsung SSD 970 EVO Plus 2TB", firmware: "2B2QEXM7", serial: nil, medium: "Solid State",
+                             interconnect: "PCI-Express", capacity: 2_000_398_934_016)
+        drive.nvme = true
+        drive.thunderbolt = true
+        drive.smartCapable = true
+        // NVMe SMART capable but the read failed: say so, no Full Disk Access hint (that is ATA only).
+        #expect(SSDText.externalSMARTProblem(drive)?.contains("SMART") == true)
+        #expect(!SSDText.needsFullDiskAccess(drive))
+        drive.nvmeHealth = NVMeHealth(criticalWarning: 0, temperature: 47, availableSpare: 100, availableSpareThreshold: 10,
+                                      percentageUsed: 84, bytesRead: 1e12, bytesWritten: 2e12, powerCycles: 10,
+                                      powerOnHours: 100, unsafeShutdowns: 1, mediaErrors: 0, errorLogEntries: 0)
+        #expect(SSDText.externalSMARTProblem(drive) == nil)
+        #expect(SSDText.externalIdentity(drive).contains("Thunderbolt"))
+        #expect(SSDText.externalHealthSummary(drive)?.contains("84") == true)
+        #expect(SSDText.externalHealthRows(drive).count == SSDText.healthRows(drive.nvmeHealth!).count)
+        #expect(SSDText.externalAttributes(drive) == nil)
+        #expect(SSDText.externalFindings(drive).count == 1, "most of the rated endurance used")
+    }
 }

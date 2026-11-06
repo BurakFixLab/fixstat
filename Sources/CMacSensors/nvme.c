@@ -4,7 +4,8 @@
 // The plug-in type / interface UUIDs and the function table layout follow
 // Apple's NVMeSMARTLibExternal.h (IOStorageFamily, APSL), as also used by
 // smartmontools (os_darwin). Only SMARTReadData is called: it returns the
-// standard 512-byte NVMe "SMART / Health Information" log page.
+// standard 512-byte NVMe "SMART / Health Information" log page. The caller picks the
+// device (the internal SSD, or an external NVMe drive), see `StorageLocation`.
 
 #include "CMacSensors.h"
 #include <IOKit/IOCFPlugIn.h>
@@ -23,36 +24,13 @@ typedef struct {
     IOReturn (*GetIdentifyData)(void *interface, void *identify4096, unsigned int namespaceID);
 } FSNVMeSMARTInterface;
 
-static io_service_t FSFindSMARTCapableDevice(void) {
-    io_iterator_t iterator = IO_OBJECT_NULL;
-    if (IOServiceGetMatchingServices(MACH_PORT_NULL /* default main port, all macOS versions */, IOServiceMatching("IOBlockStorageDevice"), &iterator) != KERN_SUCCESS) {
-        return IO_OBJECT_NULL;
-    }
-    io_service_t found = IO_OBJECT_NULL;
-    io_service_t service;
-    while ((service = IOIteratorNext(iterator)) != IO_OBJECT_NULL) {
-        CFTypeRef capable = IORegistryEntryCreateCFProperty(service, CFSTR("NVMe SMART Capable"), kCFAllocatorDefault, 0);
-        Boolean yes = capable != NULL && CFGetTypeID(capable) == CFBooleanGetTypeID() && CFBooleanGetValue(capable);
-        if (capable != NULL) CFRelease(capable);
-        if (yes && found == IO_OBJECT_NULL) {
-            found = service;
-        } else {
-            IOObjectRelease(service);
-        }
-    }
-    IOObjectRelease(iterator);
-    return found;
-}
-
-kern_return_t FSNVMeReadSMARTLog(uint8_t *outLog512) {
-    io_service_t device = FSFindSMARTCapableDevice();
+kern_return_t FSNVMeReadSMARTLog(io_service_t device, uint8_t *outLog512) {
     if (device == IO_OBJECT_NULL) return kIOReturnNotFound;
 
     IOCFPlugInInterface **plugin = NULL;
     SInt32 score = 0;
     kern_return_t kr = IOCreatePlugInInterfaceForService(device, FS_NVME_SMART_USERCLIENT_TYPE,
                                                          kIOCFPlugInInterfaceID, &plugin, &score);
-    IOObjectRelease(device);
     if (kr != KERN_SUCCESS || plugin == NULL) return kr != KERN_SUCCESS ? kr : kIOReturnError;
 
     FSNVMeSMARTInterface **smart = NULL;

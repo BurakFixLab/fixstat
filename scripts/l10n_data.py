@@ -11,7 +11,6 @@ TR = {
     'Airflow temperature': 'Hava akışı sıcaklığı',
     "%@ interface CRC errors between the drive and the USB adapter: check the enclosure's connector and the adapter (pulling the drive out while it is busy counts too).": "Disk ile USB adaptörü arasında %@ arayüz CRC hatası: kutunun konnektörünü ve adaptörü kontrol edin (disk çalışırken çıkarılması da sayılır).",
     'External drives': 'Harici diskler',
-    'FixStat does not read the SMART data of external NVMe drives yet. Read / write errors are counted.': "FixStat harici NVMe disklerin SMART verisini henüz okumuyor. Okuma / yazma hataları sayılıyor.",
     'No external drive connected. Plug one in: the list updates by itself.': 'Bağlı harici disk yok. Bir disk takın: liste kendiliğinden yenilenir.',
     'SMART read failed (%@).': 'SMART okunamadı (%@).',
     'The USB adapter does not pass SMART data on (common with USB–NVMe adapters, memory sticks and card readers). Read / write errors are counted.': "USB adaptörü SMART verisini iletmiyor (USB–NVMe adaptörlerde, USB belleklerde ve kart okuyucularda sık görülür). Okuma / yazma hataları sayılıyor.",

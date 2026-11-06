@@ -232,10 +232,12 @@ public enum SSDText {
 
     // MARK: External drives
 
-    /// "SSD · 500 GB · USB 5 Gb/s · Ugreen Storage Device (ASMedia, 174c:1153) · disk4".
+    /// "SSD · 500 GB · USB 5 Gb/s · Ugreen Storage Device (ASMedia, 174c:1153) · disk4";
+    /// "SSD · 2 TB · Thunderbolt · FW 3B2QGXA7 · disk5".
     public static func externalIdentity(_ drive: ATADrive) -> String {
         let kind = drive.isSolidState ? L("SSD") : L("Hard disk")
-        let link = drive.usb?.megabitsPerSecond.map { "USB " + PortText.speed($0) } ?? drive.interconnect.map(interconnect)
+        let link = drive.thunderbolt == true ? "Thunderbolt"
+            : drive.usb?.megabitsPerSecond.map { "USB " + PortText.speed($0) } ?? drive.interconnect.map(interconnect)
         let bridge = drive.usb.map { usb -> String in
             let chip = [usb.chipVendor, usb.vendorID.flatMap { vendor in
                 usb.productID.map { String(format: "%04x:%04x", vendor, $0) }
@@ -255,10 +257,36 @@ public enum SSDText {
         return L("Health %@ (SMART attribute %lld, vendor estimate)", Format.percent(Double(life.percent)), life.attribute)
     }
 
+    /// "Health 97 % (3 % of the rated endurance used)".
+    public static func healthSummary(_ h: NVMeHealth) -> String {
+        L("Health %@ (%@ of the rated endurance used)", Format.percent(Double(max(0, 100 - h.percentageUsed))),
+          Format.percent(Double(h.percentageUsed)))
+    }
+
+    /// The drive's SMART was read (ATA through a USB bridge, or NVMe).
+    public static func externalHasSMART(_ drive: ATADrive) -> Bool {
+        drive.health != nil || drive.nvmeHealth != nil
+    }
+
+    public static func externalHealthSummary(_ drive: ATADrive) -> String? {
+        if let h = drive.nvmeHealth { return healthSummary(h) }
+        return drive.health.flatMap(healthSummary)
+    }
+
+    public static func externalHealthRows(_ drive: ATADrive) -> [(String, String)] {
+        if let h = drive.nvmeHealth { return healthRows(h) }
+        return drive.health.map(ataRows) ?? []
+    }
+
+    /// The ATA attribute table; nil for NVMe and drives without SMART.
+    public static func externalAttributes(_ drive: ATADrive) -> [[String]]? {
+        drive.health.map(ataTable)
+    }
+
     /// SMART findings and read / write errors since startup. CRC errors of a drive in an enclosure
     /// come from the link between the drive and the adapter, not from a SATA cable in a Mac.
     public static func externalFindings(_ drive: ATADrive) -> [String] {
-        var findings = drive.health.map(ataFindings) ?? []
+        var findings = drive.nvmeHealth.map(healthFindings) ?? drive.health.map(ataFindings) ?? []
         if drive.usb != nil, let count = drive.health?.crcErrors, count > 0,
            let index = findings.firstIndex(of: L("%@ interface CRC errors: check the SATA cable / flex and the connector.",
                                                   Format.number(count))) {
@@ -270,29 +298,26 @@ public enum SSDText {
 
     /// Why an external drive shows no SMART data; nil when it has SMART.
     public static func externalSMARTProblem(_ drive: ATADrive) -> String? {
-        guard drive.health == nil else { return nil }
-        if drive.nvme == true {
-            return L("FixStat does not read the SMART data of external NVMe drives yet. Read / write errors are counted.")
+        guard !externalHasSMART(drive) else { return nil }
+        if drive.smartCapable == true {
+            return L("SMART read failed (%@).", drive.smartError ?? "–")
         }
-        if drive.smartCapable == false {
-            return drive.usb == nil
-                ? L("This drive does not offer SMART data. Read / write errors are counted.")
-                : L("The USB adapter does not pass SMART data on (common with USB–NVMe adapters, memory sticks and card readers). Read / write errors are counted.")
-        }
-        return L("SMART read failed (%@).", drive.smartError ?? "–")
+        return drive.usb == nil
+            ? L("This drive does not offer SMART data. Read / write errors are counted.")
+            : L("The USB adapter does not pass SMART data on (common with USB–NVMe adapters, memory sticks and card readers). Read / write errors are counted.")
     }
 
-    /// SMART of an external drive could not be read and FixStat has no Full Disk Access.
+    /// ATA SMART of an external drive could not be read and FixStat has no Full Disk Access.
     public static func needsFullDiskAccess(_ drive: ATADrive) -> Bool {
-        drive.health == nil && drive.smartCapable == true && drive.nvme != true && !FullSSDRunner.hasFullDiskAccess
+        !externalHasSMART(drive) && drive.smartCapable == true && drive.nvme != true && !FullSSDRunner.hasFullDiskAccess
     }
 
     /// One line for the PDF report: identity, health and findings.
     public static func externalSummary(_ drive: ATADrive) -> String {
         let findings = externalFindings(drive)
         let state: String
-        if drive.health != nil {
-            state = ([drive.health.flatMap(healthSummary)].compactMap { $0 }
+        if externalHasSMART(drive) {
+            state = ([externalHealthSummary(drive)].compactMap { $0 }
                 + [findings.isEmpty ? L("SMART: no problems") : findings.joined(separator: " ")]).joined(separator: " · ")
         } else {
             state = ([L("SMART not readable")] + findings).joined(separator: " ")

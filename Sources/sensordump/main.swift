@@ -258,11 +258,12 @@ if let ssd = snapshot.ssd {
     }
     for drive in ssd.externalDrives ?? [] {
         let smart: String
-        if let health = drive.health {
+        if let health = drive.nvmeHealth {
+            smart = "NVMe SMART: \(health.percentageUsed) % used, spare \(health.availableSpare) %, media errors "
+                + String(format: "%.0f", health.mediaErrors) + (health.criticalWarning != 0 ? ", CRITICAL WARNING" : "")
+        } else if let health = drive.health {
             smart = health.thresholdExceeded == true ? "SMART FAILING" : "SMART ok"
                 + (health.lifeLeft.map { ", life \($0.percent) %" } ?? "")
-        } else if drive.nvme == true {
-            smart = "NVMe, SMART not read"
         } else if drive.smartCapable == false {
             smart = "no SMART (bridge does not pass it)"
         } else {
@@ -272,7 +273,8 @@ if let ssd = snapshot.ssd {
             [u.name, u.chipVendor, String(format: "%04x:%04x", u.vendorID ?? 0, u.productID ?? 0),
              u.megabitsPerSecond.map { "\($0) Mb/s" }].compactMap { $0 }.joined(separator: " ")
         }
-        rows.append(("External drive", [drive.model, drive.bsdName, drive.interconnect, usb,
+        rows.append(("External drive", [drive.model, drive.bsdName, drive.interconnect,
+                                        drive.thunderbolt == true ? "Thunderbolt" : nil, usb,
                                         drive.capacity.map { String(format: "%.0f GB", $0 / 1e9) }, smart]
             .compactMap { $0 }.joined(separator: " · ")))
         if let errors = drive.io.map({ $0.errors + $0.retries }), errors > 0 {
