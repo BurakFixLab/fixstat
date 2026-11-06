@@ -83,10 +83,16 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
 | `Mac14,7` | MacBook Pro (13-inch, M2, 2022) | Apple M2 | J493 | 63 | 11 | 15.7 |
 | `Mac14,9` | MacBook Pro (14-inch, 2023) | Apple M2 Pro | J414s | 69 | 22 | 26.6 |
 | `Mac15,12` | MacBook Air (13-inch, M3, 2024) | Apple M3 | J613 | 76 | 6 | 27.0 |
+| `Mac15,3` | MacBook Pro (14-inch, M3, Nov 2023) | Apple M3 | J504 | 75 | 20 | 27.0 |
+| `Mac16,1` | MacBook Pro (14-inch, M4, 2024) | Apple M4 | J604 | 74 | 12 | 26.2 |
 | `Mac16,12` | MacBook Air (13-inch, M4, 2025) | Apple M4 | J713 | 75 | 12 | 15.5 |
-| `MacBookAir10,1` | MacBook Air (M1, 2020) | Apple M1 | J313 | 64 | 16 | 26.6 |
+| `MacBookAir10,1` | MacBook Air (M1, 2020) | Apple M1 | J313 | 64 | 17 | 26.6 |
 | `MacBookAir6,1` | MacBook Air (11-inch, Mid 2013 / Early 2014) | Intel Core i5 (Haswell) | – | 15 | 5 | 11.7 |
+| `MacBookPro11,3` | MacBook Pro (15-inch, Late 2013 / Mid 2014, discrete graphics) | Intel Core i7 (Haswell) | – | 18 | 11 | 11.4 |
+| `MacBookPro14,3` | MacBook Pro (15-inch, 2017) | Intel Core i7 (Kaby Lake) | – | 21 | 13 | 12.6 |
+| `MacBookPro15,1` | MacBook Pro (15-inch, 2018 / 2019) | Intel Core i9 (Coffee Lake) | – | 22 | 11 | 15.0 |
 | `MacBookPro15,2` | MacBook Pro (13-inch, 2018, four Thunderbolt 3 ports) | Intel Core i7 (Coffee Lake) | – | 17 | 7 | 15.8 |
+| `MacBookPro17,1` | MacBook Pro (13-inch, M1, 2020) | Apple M1 | J293 | 69 | 11 | 14.6 |
 | `MacBookPro18,3` | MacBook Pro (14-inch, 2021) | Apple M1 Pro | J314s | 58 | 13 | 14.8 |
 
 Her harita bir Mac'in tezgâh kayıtlarından çıkarıldı (CPU, GPU, SSD ve şarj aleti yük testleri).
@@ -96,7 +102,7 @@ kontrol edildi. Bu Mac'ler isimlendirilenden daha fazla sıcaklık anahtarı bil
 "Eşleşmeyen" altında görünür).
 
 Diğer Mac'lerde de çalışır; o durumda sensörler çip ve anahtar kalıplarından
-isimlendirilir ve "tahmini" olarak işaretlenir. **M1 Pro / Max, M2, M2 Pro / Max, M3 ve M4**
+isimlendirilir ve "tahmini" olarak işaretlenir. **M1 Pro / Max, M2, M2 Pro / Max, M3, M4 ve M5**
 çiplerinin CPU ve GPU bölgeleri tezgâh kayıtlarından çip bazında isimlendirildi (bu çiplerde
 yalnızca SMC anahtarı olarak bulunurlar); bu çipe sahip her Mac, iMac ve Mac mini dahil,
 CPU sıcaklığını gösterir. Kendi modelinizi eklemek için
