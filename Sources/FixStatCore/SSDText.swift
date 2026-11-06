@@ -190,6 +190,7 @@ public enum SSDText {
         case 181: return L("Program fails")
         case 182: return L("Erase fails")
         case 187: return L("Reported uncorrectable errors")
+        case 190: return L("Airflow temperature")
         case 192: return L("Unsafe shutdowns")
         case 194: return L("Temperature")
         case 196: return L("Reallocation events")
@@ -227,6 +228,76 @@ public enum SSDText {
         let state = drive.health == nil ? L("SMART not readable")
             : findings.isEmpty ? L("SMART: no problems") : findings.joined(separator: " ")
         return [kind, drive.capacity.map { Format.bytes($0) }, state].compactMap { $0 }.joined(separator: " · ")
+    }
+
+    // MARK: External drives
+
+    /// "SSD · 500 GB · USB 5 Gb/s · Ugreen Storage Device (ASMedia, 174c:1153) · disk4".
+    public static func externalIdentity(_ drive: ATADrive) -> String {
+        let kind = drive.isSolidState ? L("SSD") : L("Hard disk")
+        let link = drive.usb?.megabitsPerSecond.map { "USB " + PortText.speed($0) } ?? drive.interconnect.map(interconnect)
+        let bridge = drive.usb.map { usb -> String in
+            let chip = [usb.chipVendor, usb.vendorID.flatMap { vendor in
+                usb.productID.map { String(format: "%04x:%04x", vendor, $0) }
+            }].compactMap { $0 }.joined(separator: ", ")
+            guard let name = usb.name, !name.isEmpty else { return chip }
+            return chip.isEmpty ? name : name + " (" + chip + ")"
+        }
+        // USB bridges often report "0" instead of the drive's firmware.
+        let firmware = drive.firmware.flatMap { $0.allSatisfy { "0. ".contains($0) } ? nil : "FW " + $0 }
+        return [kind, drive.capacity.map { Format.bytes($0) }, link, bridge, firmware, drive.bsdName]
+            .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
+    }
+
+    /// "Health 99 % (SMART attribute 177, vendor estimate)"; nil without a life attribute.
+    public static func healthSummary(_ h: ATAHealth) -> String? {
+        guard let life = h.lifeLeft else { return nil }
+        return L("Health %@ (SMART attribute %lld, vendor estimate)", Format.percent(Double(life.percent)), life.attribute)
+    }
+
+    /// SMART findings and read / write errors since startup. CRC errors of a drive in an enclosure
+    /// come from the link between the drive and the adapter, not from a SATA cable in a Mac.
+    public static func externalFindings(_ drive: ATADrive) -> [String] {
+        var findings = drive.health.map(ataFindings) ?? []
+        if drive.usb != nil, let count = drive.health?.crcErrors, count > 0,
+           let index = findings.firstIndex(of: L("%@ interface CRC errors: check the SATA cable / flex and the connector.",
+                                                  Format.number(count))) {
+            findings[index] = L("%@ interface CRC errors between the drive and the USB adapter: check the enclosure's connector and the adapter (pulling the drive out while it is busy counts too).",
+                                Format.number(count))
+        }
+        return findings + [drive.io.flatMap(ioFinding)].compactMap { $0 }
+    }
+
+    /// Why an external drive shows no SMART data; nil when it has SMART.
+    public static func externalSMARTProblem(_ drive: ATADrive) -> String? {
+        guard drive.health == nil else { return nil }
+        if drive.nvme == true {
+            return L("FixStat does not read the SMART data of external NVMe drives yet. Read / write errors are counted.")
+        }
+        if drive.smartCapable == false {
+            return drive.usb == nil
+                ? L("This drive does not offer SMART data. Read / write errors are counted.")
+                : L("The USB adapter does not pass SMART data on (common with USB–NVMe adapters, memory sticks and card readers). Read / write errors are counted.")
+        }
+        return L("SMART read failed (%@).", drive.smartError ?? "–")
+    }
+
+    /// SMART of an external drive could not be read and FixStat has no Full Disk Access.
+    public static func needsFullDiskAccess(_ drive: ATADrive) -> Bool {
+        drive.health == nil && drive.smartCapable == true && drive.nvme != true && !FullSSDRunner.hasFullDiskAccess
+    }
+
+    /// One line for the PDF report: identity, health and findings.
+    public static func externalSummary(_ drive: ATADrive) -> String {
+        let findings = externalFindings(drive)
+        let state: String
+        if drive.health != nil {
+            state = ([drive.health.flatMap(healthSummary)].compactMap { $0 }
+                + [findings.isEmpty ? L("SMART: no problems") : findings.joined(separator: " ")]).joined(separator: " · ")
+        } else {
+            state = ([L("SMART not readable")] + findings).joined(separator: " ")
+        }
+        return externalIdentity(drive) + " · " + state
     }
 
     public static func finding(_ f: SSDStressTest.Result.Finding) -> String {

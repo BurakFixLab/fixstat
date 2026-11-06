@@ -54,6 +54,7 @@ struct SSDView: View {
     @Environment(FullSSDTestRunner.self) private var fullRunner
     @State private var info = SSDInfo.read()
     @State private var gigabytes = 8.0
+    @State private var watcher = StorageWatcher()
 
     var body: some View {
         ScrollView {
@@ -97,6 +98,7 @@ struct SSDView: View {
                 } else {
                     Text("No internal SSD found.").foregroundStyle(.secondary)
                 }
+                externalDrives
                 stressTest
                 Card {
                     FullSSDTestSection(writeVerifyGigabytes: gigabytes)
@@ -108,6 +110,28 @@ struct SSDView: View {
         .monospacedDigit()
         .onChange(of: runner.state) { _, state in
             if state == .finished { info = SSDInfo.read() }
+        }
+        .onAppear {
+            watcher.onChange = { MainActor.assumeIsolated { info = SSDInfo.read() } }
+            watcher.start()
+        }
+        .onDisappear { watcher.stop() }
+    }
+
+    // MARK: External drives
+
+    private var externalDrives: some View {
+        Card {
+            CardHeader("External drives", systemImage: "externaldrive")
+            let drives = info?.externalDrives ?? []
+            if drives.isEmpty {
+                Text("No external drive connected. Plug one in: the list updates by itself.")
+                    .foregroundStyle(.secondary)
+            }
+            ForEach(Array(drives.enumerated()), id: \.offset) { index, drive in
+                if index > 0 { Divider() }
+                ExternalDriveView(drive: drive)
+            }
         }
     }
 
@@ -245,34 +269,99 @@ private struct HealthCard: View {
                     FindingRow(text: finding)
                 }
             }
-            Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: Design.rowSpacing) {
-                ForEach(Array(stride(from: 0, to: rows.count, by: 2)), id: \.self) { index in
-                    GridRow {
-                        CardRow(title: Text(verbatim: rows[index].0), value: rows[index].1)
-                        if index + 1 < rows.count {
-                            CardRow(title: Text(verbatim: rows[index + 1].0), value: rows[index + 1].1)
-                        }
+            SMARTRows(rows: rows)
+            if let attributes {
+                SMARTAttributeTable(attributes: attributes)
+            }
+        }
+    }
+}
+
+/// SMART values in two columns.
+@available(macOS 14.0, *)
+private struct SMARTRows: View {
+    let rows: [(String, String)]
+
+    var body: some View {
+        Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: Design.rowSpacing) {
+            ForEach(Array(stride(from: 0, to: rows.count, by: 2)), id: \.self) { index in
+                GridRow {
+                    CardRow(title: Text(verbatim: rows[index].0), value: rows[index].1)
+                    if index + 1 < rows.count {
+                        CardRow(title: Text(verbatim: rows[index + 1].0), value: rows[index + 1].1)
                     }
                 }
             }
-            .padding(.top, 4)
-            if let attributes {
-                DisclosureGroup {
-                    Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 3) {
-                        GridRow {
-                            ForEach(SSDText.ataTableHeader, id: \.self) { Text(verbatim: $0).foregroundStyle(.secondary) }
-                        }
-                        ForEach(Array(attributes.enumerated()), id: \.offset) { _, row in
-                            GridRow {
-                                ForEach(Array(row.enumerated()), id: \.offset) { _, cell in Text(verbatim: cell) }
-                            }
-                        }
-                    }
-                    .font(.caption.monospaced())
-                    .padding(.top, 4)
-                } label: {
-                    Text("All SMART attributes").foregroundStyle(.secondary)
+        }
+        .padding(.top, 4)
+    }
+}
+
+/// Every ATA SMART attribute, collapsed.
+@available(macOS 14.0, *)
+private struct SMARTAttributeTable: View {
+    let attributes: [[String]]
+
+    var body: some View {
+        DisclosureGroup {
+            Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 3) {
+                GridRow {
+                    ForEach(SSDText.ataTableHeader, id: \.self) { Text(verbatim: $0).foregroundStyle(.secondary) }
                 }
+                ForEach(Array(attributes.enumerated()), id: \.offset) { _, row in
+                    GridRow {
+                        ForEach(Array(row.enumerated()), id: \.offset) { _, cell in Text(verbatim: cell) }
+                    }
+                }
+            }
+            .font(.caption.monospaced())
+            .padding(.top, 4)
+        } label: {
+            Text("All SMART attributes").foregroundStyle(.secondary)
+        }
+    }
+}
+
+/// One external drive: identity, health, findings, SMART values or why there are none.
+@available(macOS 14.0, *)
+private struct ExternalDriveView: View {
+    let drive: ATADrive
+
+    var body: some View {
+        let findings = SSDText.externalFindings(drive)
+        VStack(alignment: .leading, spacing: Design.rowSpacing) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: drive.model ?? "–").font(.headline)
+                    .foregroundStyle(findings.isEmpty ? .primary : TemperatureColor.hot)
+                Text(verbatim: SSDText.externalIdentity(drive)).font(.callout).foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+            }
+            if let health = drive.health {
+                if let summary = SSDText.healthSummary(health) {
+                    Text(verbatim: summary)
+                }
+                if findings.isEmpty {
+                    FindingRow(text: String(localized: "SSD health is good."), problem: false)
+                }
+            }
+            ForEach(Array(findings.enumerated()), id: \.offset) { _, finding in
+                FindingRow(text: finding)
+            }
+            if let problem = SSDText.externalSMARTProblem(drive) {
+                Text(verbatim: problem).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                if SSDText.needsFullDiskAccess(drive) {
+                    Label(SSDText.fullDiskAccessHint, systemImage: "lock.shield")
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button("Open System Settings") { FullSSDTestRunner.openFullDiskAccessSettings() }
+                }
+            }
+            if let io = drive.io, SSDText.ioFinding(io) == nil {
+                Text(verbatim: SSDText.io(io)).font(.callout).foregroundStyle(.secondary)
+            }
+            if let health = drive.health {
+                SMARTRows(rows: SSDText.ataRows(health))
+                SMARTAttributeTable(attributes: SSDText.ataTable(health))
             }
         }
     }

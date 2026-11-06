@@ -288,7 +288,17 @@ individual cores. Never name them per core ("P-core 1"). Use ids like
   e.g. `kIOReturnIOError` 0xe00002ca on an SD0128F that DriveDx reads, fixed by IDENTIFY first)
   → `ATAHealth`; Apple's SanDisk SSDs ("APPLE SSD SD…"): 174 / 175 = host reads / writes in
   MiB, 173 raw = erase counts (average, maximum, minimum 16-bit words), life from 169;
-  every internal ATA drive is read (`ATADrive`, e.g. a Fusion Drive's hard disk). Health % =
+  every internal ATA drive is read (`ATADrive`, e.g. a Fusion Drive's hard disk). External drives
+  (`ATADrive.readExternal`, `SSDInfo.externalDrives`; "External drives" in the SSD window, PDF / CSV):
+  every block storage device with location "External" and media (disk images left out), with its USB
+  device (bridge VID / PID, chip vendor from the VID, link speed); macOS 27's own USB mass storage driver
+  passes ATA SMART through a USB–SATA bridge (ASMedia ASM1153E + Samsung 870 EVO: same ATASMARTLib
+  path, no driver). USB–NVMe bridges / sticks report no "SMART Capable" (said so, I/O errors still
+  counted); external NVMe (Thunderbolt) SMART is not read yet. Older macOS untested. Samsung SATA
+  SSDs report the temperature only in 190 (airflow). `StorageWatcher` (IOKit match / terminate
+  notifications on IOBlockStorageDevice, 1.5 s debounce) refreshes the window when a drive comes or
+  goes. `-FixStatSampleExternalDrive YES` adds a SATA SSD behind a JMicron bridge and an NVMe SSD
+  behind a Realtek bridge without SMART. Health % =
   100 − NVMe percentage used, or the normalized value of the first ATA life attribute
   (231, 169, 233, 177, 202, 173; vendor specific, to be confirmed with bench recordings). Startup
   volume space from `URLResourceValues` (important-usage capacity, like Finder).

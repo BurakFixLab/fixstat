@@ -53,7 +53,7 @@ battery gauge data you normally dig out of `ioreg`.
   through `PMU tdev7`.
 - **Battery history.** Charge, current and health from the last hour up to 30 days,
   plus a daily health log that is kept indefinitely.
-- **Diagnostics in one app.** Post-repair stress test, SSD health in % (NVMe and AHCI / SATA SMART, capacity and free space) with a
+- **Diagnostics in one app.** Post-repair stress test, SSD health in % (NVMe and AHCI / SATA SMART, capacity and free space; also SATA drives in USB enclosures) with a
   write–verify stress test and an optional full surface scan, memory test, kernel panic
   and shutdown cause history, battery and power adapter originality check, battery
   capacity (discharge) test, sleep / wake analysis with battery drain while asleep and

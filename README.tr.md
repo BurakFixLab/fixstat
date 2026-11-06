@@ -54,7 +54,7 @@ isimleri Mac modeline göre doğrulanmıştır. Teknisyen modu, normalde `ioreg`
   şarj devresi NTC'si olarak görünür.
 - **Batarya geçmişi.** Son 1 saatten 30 güne kadar şarj, akım ve sağlık; ayrıca süresiz
   tutulan günlük sağlık kaydı.
-- **Tek uygulamada tanı araçları.** Tamir sonrası stres testi, yüzde olarak SSD sağlığı (NVMe ve AHCI / SATA SMART, kapasite ve boş alan),
+- **Tek uygulamada tanı araçları.** Tamir sonrası stres testi, yüzde olarak SSD sağlığı (NVMe ve AHCI / SATA SMART, kapasite ve boş alan; USB kutudaki SATA diskler de),
   yaz–doğrula stres testi ve isteğe bağlı tam yüzey taraması, bellek testi, kernel panic
   ve kapanma nedeni geçmişi, batarya ve adaptör orijinallik kontrolü, batarya kapasite
   (deşarj) testi, uykuda ve kapalıyken batarya tüketimiyle uyku / uyanma analizi, canlı

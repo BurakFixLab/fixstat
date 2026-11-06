@@ -8,6 +8,14 @@ the ".n" variants take one integer (%lld) — the index from the sensor map id.
 """
 
 TR = {
+    'Airflow temperature': 'Hava akışı sıcaklığı',
+    "%@ interface CRC errors between the drive and the USB adapter: check the enclosure's connector and the adapter (pulling the drive out while it is busy counts too).": "Disk ile USB adaptörü arasında %@ arayüz CRC hatası: kutunun konnektörünü ve adaptörü kontrol edin (disk çalışırken çıkarılması da sayılır).",
+    'External drives': 'Harici diskler',
+    'FixStat does not read the SMART data of external NVMe drives yet. Read / write errors are counted.': "FixStat harici NVMe disklerin SMART verisini henüz okumuyor. Okuma / yazma hataları sayılıyor.",
+    'No external drive connected. Plug one in: the list updates by itself.': 'Bağlı harici disk yok. Bir disk takın: liste kendiliğinden yenilenir.',
+    'SMART read failed (%@).': 'SMART okunamadı (%@).',
+    'The USB adapter does not pass SMART data on (common with USB–NVMe adapters, memory sticks and card readers). Read / write errors are counted.': "USB adaptörü SMART verisini iletmiyor (USB–NVMe adaptörlerde, USB belleklerde ve kart okuyucularda sık görülür). Okuma / yazma hataları sayılıyor.",
+    'This drive does not offer SMART data. Read / write errors are counted.': 'Bu disk SMART verisi sunmuyor. Okuma / yazma hataları sayılıyor.',
     'Touch Bar width used: %@ pt': 'Kullanılan Touch Bar genişliği: %@ pt',
     'Fan %1$lld runs at %2$@ although the system asks for only %3$@: the SMC does not control it. Before the sensors, check the fan itself (try a known-good fan) and its drive circuit (PWM line, fan connector, fan power); this is common after liquid damage.': 'Fan %1$lld, sistem yalnızca %3$@ isterken %2$@ hızında dönüyor: SMC fanı kontrol edemiyor. Sensörlerden önce fanın kendisine (sağlam bir fanla deneyin) ve fan sürme devresine bakın (PWM hattı, fan konnektörü, fan beslemesi); sıvı hasarından sonra sık görülür.',
     "No broken sensor found, but a fan is out of the SMC's control.": "Bozuk sensör bulunamadı, ama bir fan SMC'nin kontrolünde değil.",

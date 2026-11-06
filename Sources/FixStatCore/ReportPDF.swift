@@ -305,6 +305,9 @@ private final class ReportWriter {
         for drive in ssd.otherDrives {
             row(drive.model ?? L("Other internal drives"), SSDText.driveSummary(drive))
         }
+        for drive in ssd.externalDrives ?? [] {
+            row(drive.model ?? L("External drives"), SSDText.externalSummary(drive))
+        }
         if let test = data.ssdTest {
             let problems = test.findings.filter { $0 != .stoppedEarly }
             row(L("Write–verify stress test"), (problems.isEmpty ? L("No problems found") : L("Needs attention"))

@@ -276,6 +276,7 @@ final class LegacySSD: LegacySnapshotStartable {
     private let fullRunner: FullSSDRunner
     private var info: SSDInfo?
     private(set) var window: LegacyToolWindow!
+    private let watcher = StorageWatcher()
 
     private let sizes: [Double] = [2, 8, 16, 32]
     private let sizeControl: NSSegmentedControl
@@ -302,7 +303,16 @@ final class LegacySSD: LegacySnapshotStartable {
         speedChart.heightAnchor.constraint(equalToConstant: 150).isActive = true
         surfaceChart.heightAnchor.constraint(equalToConstant: 130).isActive = true
         window = LegacyToolWindow(title: L("SSD"), contentWidth: 620, height: 700) { [unowned self] in blocks() }
-        window.onOpen = { [unowned self] in info = SSDInfo.read() }
+        window.onOpen = { [unowned self] in
+            info = SSDInfo.read()
+            watcher.start()
+        }
+        window.onClose = { [unowned self] in watcher.stop() }
+        watcher.onChange = { [weak self] in
+            guard let self else { return }
+            info = SSDInfo.read()
+            window.reload()
+        }
         runner.onChange = { [weak self] in
             guard let self else { return }
             if runner.state == .finished { info = SSDInfo.read() }
@@ -357,10 +367,48 @@ final class LegacySSD: LegacySnapshotStartable {
         } else {
             blocks.append(.secondary(L("No internal SSD found.")))
         }
+        blocks.append(externalDrives())
         blocks += quickTest()
         blocks.append(.gap)
         blocks += fullTest()
         return blocks
+    }
+
+    private func externalDrives() -> Block {
+        let drives = info?.externalDrives ?? []
+        guard !drives.isEmpty else {
+            return .group(L("External drives"), [.secondary(L("No external drive connected. Plug one in: the list updates by itself."))])
+        }
+        var blocks: [Block] = []
+        for (index, drive) in drives.enumerated() {
+            if index > 0 { blocks.append(.gap) }
+            let findings = SSDText.externalFindings(drive)
+            blocks.append(findings.isEmpty ? .item(drive.model ?? "–", detail: SSDText.externalIdentity(drive))
+                : .status(drive.model ?? "–", .bad, detail: SSDText.externalIdentity(drive)))
+            if let health = drive.health {
+                if let summary = SSDText.healthSummary(health) { blocks.append(.headline(summary, nil)) }
+                if findings.isEmpty { blocks.append(.status(L("SSD health is good."), .good)) }
+            }
+            blocks += findings.map { .status($0, .bad) }
+            if let problem = SSDText.externalSMARTProblem(drive) {
+                blocks.append(.secondary(problem))
+                if SSDText.needsFullDiskAccess(drive) {
+                    blocks.append(.status(SSDText.fullDiskAccessHint, .neutral))
+                    blocks.append(.actions([DocAction(title: L("Open System Settings")) {
+                        if let url = FullSSDRunner.fullDiskAccessSettingsURL { NSWorkspace.shared.open(url) }
+                    }]))
+                }
+            }
+            if let io = drive.io, SSDText.ioFinding(io) == nil { blocks.append(.caption(SSDText.io(io))) }
+            if let health = drive.health {
+                blocks.append(.rows(SSDText.ataRows(health).map { DocRow(title: $0.0, value: $0.1) }, labelWidth: 200))
+                let attributes = SSDText.ataTable(health)
+                blocks.append(.caption(L("All SMART attributes")))
+                blocks.append(.table(header: SSDText.ataTableHeader, rows: attributes,
+                                     tones: attributes.map { _ in Array(repeating: nil, count: 6) }, leading: true))
+            }
+        }
+        return .group(L("External drives"), blocks)
     }
 
     private func healthGroup(summary: String?, findings: [String], rows: [(String, String)],

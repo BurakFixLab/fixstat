@@ -162,6 +162,16 @@ public struct SensorReport: Encodable {
             add("ssd", "unsafeShutdowns", "", h.unsafeShutdowns, "")
             add("ssd", "mediaErrors", "", h.mediaErrors, "")
         }
+        for (index, drive) in (ssd?.externalDrives ?? []).enumerated() {
+            let key = "external\(index + 1)"
+            add("ssd", key + "Capacity", drive.model ?? "", drive.capacity, "B")
+            add("ssd", key + "LifeLeft", drive.health?.lifeLeft.map { "attribute \($0.attribute)" } ?? "",
+                drive.health?.lifeLeft.map { Double($0.percent) }, "%")
+            add("ssd", key + "PowerOnHours", "", drive.health?.powerOnHours, "h")
+            add("ssd", key + "ReallocatedSectors", "", drive.health?.reallocatedSectors, "")
+            add("ssd", key + "CrcErrors", "", drive.health?.crcErrors, "")
+            add("ssd", key + "IOErrors", "", drive.io.map { Double($0.errors + $0.retries) }, "")
+        }
         add("load", "cpu", "", load.cpuUsagePercent, "%")
         add("load", "memoryUsed", "", load.memoryUsedBytes.map(Double.init), "B")
         let text = rows.map { $0.map(Self.escape).joined(separator: ",") }.joined(separator: "\n") + "\n"

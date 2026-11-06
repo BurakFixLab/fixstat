@@ -78,8 +78,20 @@ public enum USBVolumes {
     /// Walks up the service plane from the volume's media to the USB device it is on.
     static func usbDevice(bsdName: String) -> (device: USBDeviceInfo, rootPortLocation: Int?)? {
         guard let matching = IOBSDNameMatching(ioMainPort, 0, bsdName) else { return nil }
-        var current = IOServiceGetMatchingService(ioMainPort, matching)
-        guard current != IO_OBJECT_NULL else { return nil }
+        let media = IOServiceGetMatchingService(ioMainPort, matching)
+        guard media != IO_OBJECT_NULL else { return nil }
+        defer { IOObjectRelease(media) }
+        return usbDeviceWalking(from: media)
+    }
+
+    /// The USB device above a block storage device (nil: not on USB).
+    static func usbDevice(above service: io_service_t) -> USBDeviceInfo? {
+        usbDeviceWalking(from: service)?.device
+    }
+
+    private static func usbDeviceWalking(from service: io_service_t) -> (device: USBDeviceInfo, rootPortLocation: Int?)? {
+        var current = service
+        IOObjectRetain(current)
         defer { IOObjectRelease(current) }
         // APFS volumes sit a few levels above the physical media: container, scheme, partition.
         for _ in 0..<32 {

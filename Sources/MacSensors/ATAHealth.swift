@@ -37,6 +37,7 @@ public struct ATAHealth: Codable, Sendable, Equatable {
         public static let powerCycles = 12
         public static let unsafeShutdowns = 192
         public static let temperature = 194
+        public static let airflowTemperature = 190
         public static let reallocationEvents = 196
         public static let pending = 197
         public static let uncorrectable = 198
@@ -91,8 +92,12 @@ public struct ATAHealth: Codable, Sendable, Equatable {
     public var pendingSectors: Double? { counter(ID.pending) }
     public var uncorrectableSectors: Double? { counter(ID.uncorrectable) }
     public var crcErrors: Double? { counter(ID.crcErrors) }
+    /// 194, or 190 "Airflow temperature" (Samsung SATA SSDs report only that one).
     public var temperature: Double? {
-        attribute(ID.temperature).map { Double($0.raw & 0xFF) }.flatMap { (1...120).contains($0) ? $0 : nil }
+        for id in [ID.temperature, ID.airflowTemperature] {
+            if let value = attribute(id).map({ Double($0.raw & 0xFF) }), (1...120).contains(value) { return value }
+        }
+        return nil
     }
 
     /// Total data written: LBAs × 512 bytes (most SSDs; some count in larger units), or
@@ -128,7 +133,8 @@ public struct ATAHealth: Codable, Sendable, Equatable {
     public var failingAttributes: [ATASMARTAttribute] { attributes.filter(\.failing) }
 }
 
-/// An internal SMART capable ATA drive (AHCI SSD, SATA SSD or hard disk).
+/// A SMART capable internal ATA drive (AHCI SSD, SATA SSD or hard disk), or an external drive
+/// (USB / Thunderbolt), SMART capable or not.
 public struct ATADrive: Codable, Sendable, Equatable {
     public var model: String?
     public var firmware: String?
@@ -145,10 +151,32 @@ public struct ATADrive: Codable, Sendable, Equatable {
     /// Read / write errors and retries since startup (no SMART needed).
     public var io: DiskIOStatistics?
 
+    /// External drives: the USB device the drive sits on (an enclosure's bridge chip, a stick).
+    public var usb: USBDeviceInfo?
+    /// External drives: "disk4".
+    public var bsdName: String?
+    /// External drives: the drive offers SMART ("SMART Capable"; false: a USB bridge that does not
+    /// pass SMART through, a memory stick).
+    public var smartCapable: Bool?
+    /// External drives: an NVMe drive (Thunderbolt enclosure, USB4); its SMART is not read yet.
+    public var nvme: Bool?
+
     public var isSolidState: Bool { medium?.localizedCaseInsensitiveContains("solid") ?? true }
 
     /// Every internal SMART capable ATA block device.
     public static func readAll(includeSerial: Bool = false) -> [ATADrive] {
+        read(external: false, includeSerial: includeSerial)
+    }
+
+    /// Every external drive (USB, Thunderbolt, FireWire) with media; SMART read where the drive
+    /// (its bridge) offers it. Disk images and other virtual devices are left out.
+    public static func readExternal(includeSerial: Bool = false) -> [ATADrive] {
+        var drives = read(external: true, includeSerial: includeSerial)
+        if UserDefaults.standard.bool(forKey: "FixStatSampleExternalDrive") { drives += sampleExternal() }
+        return drives
+    }
+
+    static func read(external: Bool, includeSerial: Bool) -> [ATADrive] {
         var iterator: io_iterator_t = 0
         guard IOServiceGetMatchingServices(ioMainPort, IOServiceMatching("IOBlockStorageDevice"), &iterator) == KERN_SUCCESS
         else { return [] }
@@ -156,13 +184,30 @@ public struct ATADrive: Codable, Sendable, Equatable {
         var drives: [ATADrive] = []
         while case let service = IOIteratorNext(iterator), service != IO_OBJECT_NULL {
             defer { IOObjectRelease(service) }
-            guard let properties = Registry.properties(of: service),
-                  (properties["SMART Capable"] as? NSNumber)?.boolValue == true else { continue }
+            guard let properties = Registry.properties(of: service) else { continue }
+            let smartCapable = (properties["SMART Capable"] as? NSNumber)?.boolValue == true
             let device = properties.dict("Device Characteristics") ?? [:]
             let protocolInfo = properties.dict("Protocol Characteristics") ?? [:]
-            guard (protocolInfo.string("Physical Interconnect Location") ?? "Internal") == "Internal" else { continue }
+            let location = protocolInfo.string("Physical Interconnect Location") ?? "Internal"
             var drive = ATADrive()
+            if external {
+                // "File" / "Virtual": disk images; an empty card reader has no media.
+                guard location == "External", protocolInfo.string("Physical Interconnect") != "Virtual Interface",
+                      let size = mediaSize(below: service), size > 0 else { continue }
+                drive.smartCapable = smartCapable
+                drive.nvme = (properties["NVMe SMART Capable"] as? NSNumber)?.boolValue == true
+                    || IOObjectConformsTo(service, "IONVMeBlockStorageDevice") != 0 ? true : nil
+                drive.bsdName = wholeDiskName(below: service)
+                drive.usb = USBVolumes.usbDevice(above: service)
+            } else {
+                guard smartCapable, location == "Internal" else { continue }
+            }
             drive.model = device.string("Product Name")?.trimmingCharacters(in: .whitespaces)
+            if external, let vendor = device.string("Vendor Name")?.trimmingCharacters(in: .whitespaces), !vendor.isEmpty,
+               let model = drive.model, !model.localizedCaseInsensitiveContains(vendor) {
+                // USB / SCSI drives split the name: "Samsung" + "SSD 870 EVO 500G".
+                drive.model = vendor + " " + model
+            }
             drive.firmware = device.string("Product Revision Level")?.trimmingCharacters(in: .whitespaces)
             if let serial = device.string("Serial Number")?.trimmingCharacters(in: .whitespaces), !serial.isEmpty {
                 drive.serial = includeSerial ? serial : Privacy.mask(serial)
@@ -171,6 +216,10 @@ public struct ATADrive: Codable, Sendable, Equatable {
             drive.interconnect = protocolInfo.string("Physical Interconnect")
             drive.capacity = mediaSize(below: service)
             drive.io = DiskIOStatistics.below(service)
+            guard smartCapable else {
+                drives.append(drive)
+                continue
+            }
             var data = [UInt8](repeating: 0, count: 512)
             var thresholds = [UInt8](repeating: 0, count: 512)
             var exceeded: Int32 = -1
@@ -196,6 +245,39 @@ public struct ATADrive: Codable, Sendable, Equatable {
             guard code != FSATAStepNotRun else { return nil }
             return name + " " + (code == KERN_SUCCESS ? "ok" : String(format: "0x%08x", UInt32(bitPattern: code)))
         }.joined(separator: " · ")
+    }
+
+    /// BSD name of the whole-disk IOMedia below a block storage device ("disk4").
+    static func wholeDiskName(below service: io_service_t) -> String? {
+        IORegistryEntrySearchCFProperty(service, kIOServicePlane, "BSD Name" as CFString, kCFAllocatorDefault,
+                                        IOOptionBits(kIORegistryIterateRecursively)) as? String
+    }
+
+    /// `-FixStatSampleExternalDrive YES`: a made-up SATA SSD in a USB enclosure (SMART through the
+    /// bridge, a few CRC errors) and an NVMe SSD behind a USB bridge that does not pass SMART on.
+    static func sampleExternal() -> [ATADrive] {
+        func a(_ id: Int, _ current: Int, _ raw: UInt64) -> ATASMARTAttribute {
+            ATASMARTAttribute(id: id, current: current, worst: current, threshold: 0, raw: raw)
+        }
+        var sata = ATADrive(model: "Samsung SSD 860 EVO 250GB", firmware: "RVT04B6Q", serial: nil, medium: "Solid State",
+                            interconnect: "USB", capacity: 250_059_350_016,
+                            health: ATAHealth(attributes: [a(5, 100, 0), a(9, 97, 14_211), a(12, 99, 1_204), a(177, 91, 108),
+                                                           a(187, 100, 0), a(190, 66, 34), a(199, 99, 14),
+                                                           a(241, 99, 61_349_521_408)],
+                                              thresholdExceeded: false, model: "Samsung SSD 860 EVO 250GB"),
+                            io: DiskIOStatistics(readErrors: 0, writeErrors: 0, readRetries: 0, writeRetries: 0,
+                                                 bytesRead: 2_400_000_000, bytesWritten: 310_000_000))
+        sata.usb = USBDeviceInfo(name: "USB 3.0 SATA Adapter", vendorID: 0x152D, productID: 0x0578, speed: 3, portNumber: 1)
+        sata.bsdName = "disk98"
+        sata.smartCapable = true
+        var nvme = ATADrive(model: "WD_BLACK SN770 1TB", firmware: "1.00", serial: nil, medium: "Solid State",
+                            interconnect: "USB", capacity: 1_000_204_886_016, health: nil, smartError: nil,
+                            io: DiskIOStatistics(readErrors: 0, writeErrors: 0, readRetries: 0, writeRetries: 0,
+                                                 bytesRead: 900_000_000, bytesWritten: 0))
+        nvme.usb = USBDeviceInfo(name: "RTL9210B-CG", vendorID: 0x0BDA, productID: 0x9210, speed: 4, portNumber: 2)
+        nvme.bsdName = "disk99"
+        nvme.smartCapable = false
+        return [sata, nvme]
     }
 
     /// Size of the whole-disk IOMedia below a block storage device.

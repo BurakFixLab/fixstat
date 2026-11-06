@@ -256,6 +256,29 @@ if let ssd = snapshot.ssd {
                                      drive.health.map { $0.thresholdExceeded == true ? "SMART FAILING" : "SMART ok" }]
             .compactMap { $0 }.joined(separator: " · ")))
     }
+    for drive in ssd.externalDrives ?? [] {
+        let smart: String
+        if let health = drive.health {
+            smart = health.thresholdExceeded == true ? "SMART FAILING" : "SMART ok"
+                + (health.lifeLeft.map { ", life \($0.percent) %" } ?? "")
+        } else if drive.nvme == true {
+            smart = "NVMe, SMART not read"
+        } else if drive.smartCapable == false {
+            smart = "no SMART (bridge does not pass it)"
+        } else {
+            smart = "SMART read failed (\(drive.smartError ?? "?"))"
+        }
+        let usb = drive.usb.map { u in
+            [u.name, u.chipVendor, String(format: "%04x:%04x", u.vendorID ?? 0, u.productID ?? 0),
+             u.megabitsPerSecond.map { "\($0) Mb/s" }].compactMap { $0 }.joined(separator: " ")
+        }
+        rows.append(("External drive", [drive.model, drive.bsdName, drive.interconnect, usb,
+                                        drive.capacity.map { String(format: "%.0f GB", $0 / 1e9) }, smart]
+            .compactMap { $0 }.joined(separator: " · ")))
+        if let errors = drive.io.map({ $0.errors + $0.retries }), errors > 0 {
+            rows.append(("  I/O errors + retries", "\(errors)"))
+        }
+    }
     if let h = ssd.health {
         rows += [
             ("Percentage used", "\(h.percentageUsed) %"),

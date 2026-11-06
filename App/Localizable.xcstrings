@@ -233,6 +233,16 @@
         }
       }
     },
+    "%@ interface CRC errors between the drive and the USB adapter: check the enclosure's connector and the adapter (pulling the drive out while it is busy counts too)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk ile USB adaptörü arasında %@ arayüz CRC hatası: kutunun konnektörünü ve adaptörü kontrol edin (disk çalışırken çıkarılması da sayılır)."
+          }
+        }
+      }
+    },
     "%@ interface CRC errors: check the SATA cable / flex and the connector." : {
       "localizations" : {
         "tr" : {
@@ -958,6 +968,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yönetici izni verilmedi."
+          }
+        }
+      }
+    },
+    "Airflow temperature" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hava akışı sıcaklığı"
           }
         }
       }
@@ -3120,6 +3140,16 @@
         }
       }
     },
+    "External drives" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Harici diskler"
+          }
+        }
+      }
+    },
     "Failed" : {
       "localizations" : {
         "tr" : {
@@ -3314,6 +3344,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FixStat %@ çıktı. İndirmek için menü çubuğundaki paneli açın."
+          }
+        }
+      }
+    },
+    "FixStat does not read the SMART data of external NVMe drives yet. Read / write errors are counted." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FixStat harici NVMe disklerin SMART verisini henüz okumuyor. Okuma / yazma hataları sayılıyor."
           }
         }
       }
@@ -5102,6 +5142,16 @@
         }
       }
     },
+    "No external drive connected. Plug one in: the list updates by itself." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlı harici disk yok. Bir disk takın: liste kendiliğinden yenilenir."
+          }
+        }
+      }
+    },
     "No extra load, display on — like web browsing, writing or watching videos." : {
       "localizations" : {
         "tr" : {
@@ -6882,6 +6932,16 @@
         }
       }
     },
+    "SMART read failed (%@)." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SMART okunamadı (%@)."
+          }
+        }
+      }
+    },
     "SMART: no problems" : {
       "localizations" : {
         "tr" : {
@@ -8100,6 +8160,16 @@
         }
       }
     },
+    "The USB adapter does not pass SMART data on (common with USB–NVMe adapters, memory sticks and card readers). Read / write errors are counted." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB adaptörü SMART verisini iletmiyor (USB–NVMe adaptörlerde, USB belleklerde ve kart okuyucularda sık görülür). Okuma / yazma hataları sayılıyor."
+          }
+        }
+      }
+    },
     "The ambient light sensor responds correctly." : {
       "localizations" : {
         "tr" : {
@@ -8472,6 +8542,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu Mac güç rayı bildirmiyor."
+          }
+        }
+      }
+    },
+    "This drive does not offer SMART data. Read / write errors are counted." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu disk SMART verisi sunmuyor. Okuma / yazma hataları sayılıyor."
           }
         }
       }

@@ -75,6 +75,8 @@ public struct SSDInfo: Codable, Sendable, Equatable {
     public var space: VolumeSpace?
     /// Further internal ATA drives, e.g. the hard disk of a Fusion Drive iMac.
     public var otherDrives: [ATADrive] = []
+    /// Drives in USB / Thunderbolt enclosures and sticks (nil: none connected).
+    public var externalDrives: [ATADrive]?
     /// Why there is no SMART data: "no SMART capable drive" or the read's IOKit return code.
     public var smartProblem: String?
     /// Read / write errors and retries of the SSD since startup (no SMART needed).
@@ -143,6 +145,8 @@ public struct SSDInfo: Codable, Sendable, Equatable {
         }
         info.space = InternalStorage.space()
         if UserDefaults.standard.bool(forKey: "FixStatSampleATA") { info = sampleATA(space: info.space) }
+        let external = ATADrive.readExternal(includeSerial: includeSerial)
+        info.externalDrives = external.isEmpty ? nil : external
         guard info.model != nil || info.health != nil || info.ata != nil else { return nil }
         return info
     }

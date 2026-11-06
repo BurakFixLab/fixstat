@@ -111,6 +111,32 @@ public struct USBDeviceInfo: Codable, Sendable, Equatable {
         default: nil
         }
     }
+
+    /// Vendor of the USB chip (an enclosure's bridge, a stick's controller) from the vendor ID;
+    /// enclosures often keep the chip maker's id under their own brand name.
+    public var chipVendor: String? {
+        switch vendorID {
+        case 0x174C: "ASMedia"
+        case 0x152D: "JMicron"
+        case 0x0BDA: "Realtek"
+        case 0x05E3: "Genesys Logic"
+        case 0x2109: "VIA Labs"
+        case 0x1F75: "Innostor"
+        case 0x090C: "Silicon Motion"
+        case 0x13FE: "Phison"
+        case 0x1E3D: "Chipsbank"
+        case 0x0781: "SanDisk"
+        case 0x0951: "Kingston"
+        case 0x04E8: "Samsung"
+        case 0x1058: "Western Digital"
+        case 0x0BC2: "Seagate"
+        case 0x059F: "LaCie"
+        case 0x125F: "ADATA"
+        case 0x154B: "PNY"
+        case 0x8564: "Transcend"
+        default: nil
+        }
+    }
 }
 
 public enum PortReader {

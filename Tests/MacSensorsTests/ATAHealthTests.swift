@@ -2,6 +2,7 @@ import CMacSensors
 import Foundation
 import Testing
 @testable import MacSensors
+import FixStatCore
 
 @Suite struct ATAHealthTests {
     /// SMART data with the given attributes (id, current, worst, raw) and thresholds (id: value).
@@ -109,5 +110,37 @@ import Testing
                                       kern_return_t(bitPattern: 0xe00002c7), FSATAStepNotRun]
         #expect(ATADrive.describe(steps: steps)
             == "plugin ok · interface ok · identify ok · read 0xe00002ca · retry 0xe00002ca · parent plugin 0xe00002c7")
+    }
+}
+
+@Suite struct ExternalDriveTests {
+    @Test func samsungSATAReportsOnlyAirflowTemperature() throws {
+        // Samsung 870 EVO behind an ASMedia USB bridge: no 194, 190 raw = 28 °C.
+        let (data, limits) = ATAHealthTests.smart([(9, 99, 99, 1636), (177, 99, 99, 5), (190, 72, 44, 0x2C_1E1C)])
+        let health = try #require(ATAHealth.parse(data: data, thresholds: limits, exceeded: 0))
+        #expect(health.temperature == 28)
+    }
+
+    @Test func usbDriveTexts() throws {
+        let (data, limits) = ATAHealthTests.smart([(177, 99, 99, 5), (199, 99, 99, 1)])
+        var drive = ATADrive(model: "Samsung SSD 870 EVO 500G", firmware: "0", serial: nil, medium: "Solid State",
+                             interconnect: "USB", capacity: 500_107_862_016,
+                             health: ATAHealth.parse(data: data, thresholds: limits, exceeded: 0))
+        drive.usb = USBDeviceInfo(name: "Storage Device", vendorID: 0x174C, productID: 0x1153, speed: 3, portNumber: nil)
+        drive.bsdName = "disk4"
+        drive.smartCapable = true
+        let identity = SSDText.externalIdentity(drive)
+        #expect(identity.contains("ASMedia, 174c:1153"), "\(identity)")
+        #expect(!identity.contains("FW 0"), "the bridge's placeholder firmware is hidden: \(identity)")
+        // CRC errors of a drive in an enclosure point at the enclosure, not at a SATA cable.
+        let findings = SSDText.externalFindings(drive)
+        #expect(findings.count == 1)
+        #expect(findings.first?.contains("USB") == true, "\(findings)")
+        #expect(SSDText.externalSMARTProblem(drive) == nil)
+
+        drive.health = nil
+        drive.smartCapable = false
+        #expect(SSDText.externalSMARTProblem(drive)?.contains("USB") == true)
+        #expect(!SSDText.needsFullDiskAccess(drive))
     }
 }
